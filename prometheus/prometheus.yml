@@ -40,7 +40,7 @@ scrape_configs:
   static_configs:
   - targets:
     - sebastienbarbier.com:9100
-    - status.fromedwin.com:9100
+    - ca.sebastienbarbier.com:9100
 - job_name: 'blackbox'
   metrics_path: /probe
   scrape_interval: 40s

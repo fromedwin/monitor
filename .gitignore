@@ -133,3 +133,6 @@ dmypy.json
 
 certbot/
 data/
+
+# nginx authentication
+.htpasswd
