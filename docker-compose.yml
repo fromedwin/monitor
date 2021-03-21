@@ -7,6 +7,7 @@ services:
       - "443:443"
     volumes:
       - ./data/log:/var/log
+      - ./data/log/nginx:/var/log/nginx
       - ./nginx/local/:/etc/nginx/conf.d/
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
@@ -22,32 +23,15 @@ services:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-  prometheus:
-    image: prom/prometheus
-    volumes:
-      - ./data/prometheus:/prometheus
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - ./prometheus/prometheus_rules.yml:/etc/prometheus/prometheus_rules.yml:ro
-    links:
-      - blackbox
-      - alertmanager
-      # - django
-    user: "65534"
-    ports:
-      - 9090:9090
   grafana:
     image: grafana/grafana
     environment:
       - GF_INSTALL_PLUGINS=grafana-worldmap-panel 0.3.2
     links:
-      - prometheus
       - loki
     volumes:
       - ./data/log:/var/log
       - ./data/grafana:/var/lib/grafana
-    user: "65534"
-  blackbox:
-    image: prom/blackbox-exporter:master
     user: "65534"
   loki:
     image: grafana/loki:2.0.0
