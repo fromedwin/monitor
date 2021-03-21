@@ -31,7 +31,8 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
     'django',
-    'local.django.sebastienbarbier.com'
+    'local.django.sebastienbarbier.com',
+    'status.fromedwin.com'
 ]
 
 
