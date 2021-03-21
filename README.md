@@ -24,6 +24,12 @@ user3:$apr1$Mr5A0e.U$0j39Hp5FfxRkneklXaMrr/
 $> touch django/monitor/.env
 ```
 
+## Create nginx golder in data/log
+
+```
+$> mkdir data/log/nginx
+```
+
 ## Run
 
 ```

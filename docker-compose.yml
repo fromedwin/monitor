@@ -13,9 +13,10 @@ services:
       - ./certbot/www:/var/www/certbot
       - ./.htpasswd:/etc/nginx/.htpasswd:ro
     links:
+      - alertmanager
       - grafana
       - loki
-      # - django
+      - django
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
   certbot:
     image: certbot/certbot
@@ -29,10 +30,10 @@ services:
       - GF_INSTALL_PLUGINS=grafana-worldmap-panel 0.3.2
     links:
       - loki
+    user: root
     volumes:
       - ./data/log:/var/log
       - ./data/grafana:/var/lib/grafana
-    user: "65534"
   loki:
     image: grafana/loki:2.0.0
     # ports:
