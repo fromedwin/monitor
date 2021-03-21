@@ -11,7 +11,7 @@ services:
       - ./nginx/local/:/etc/nginx/conf.d/
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-      - ./.htpasswd:/etc/nginx/.htpasswd
+      - ./.htpasswd:/etc/nginx/.htpasswd:ro
     links:
       - grafana
       - loki
