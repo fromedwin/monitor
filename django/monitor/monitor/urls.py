@@ -23,7 +23,7 @@ from health.views import healthy
 urlpatterns = [
     path('', index, name='index'),
     path('', include('django_prometheus.urls')),
-    path('healthy/', healthy, name='healthy'),
+    path('healthy/<int:id>/', healthy, name='healthy'),
     path('alert/', webhook, name='alert'),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls'))
