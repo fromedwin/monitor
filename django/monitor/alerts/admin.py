@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import Alert
 
-# Register your models here.
+class AlertAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'date', 'user')
+
+admin.site.register(Alert, AlertAdmin)
