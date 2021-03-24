@@ -1,20 +1,20 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.utils import timezone
 from .models import GenericAlert, InstanceDownAlert
+
 import json
 import datetime
 # Create your views here.
 
 @api_view(["POST"])
 def webhook(request):
-    print(request.data)
     if request.data["alerts"]:
         for alert in request.data["alerts"]:
             json_formated = json.dumps(alert, indent=2, sort_keys=True)
             if alert["labels"]["alertname"] == "InstanceDown":
 
-                print(alert)
                 # Status is 0 if resolved and 1 if firing
                 status = 0
                 if alert["status"] == "resolved":
@@ -29,14 +29,23 @@ def webhook(request):
                 if alert["labels"]["severity"] == "critical":
                     severity = 2
 
-                startsAt = datetime.datetime.strptime(alert["startsAt"].split(".")[0], "%Y-%m-%dT%H:%M:%S")
+                startsAt = timezone.make_aware(datetime.datetime.strptime(alert["startsAt"].split(".")[0], "%Y-%m-%dT%H:%M:%S"))
+
                 endsAt = None
-                if alert["endsAt"] and not alert["endsAt"].startswith("0001"):
-                    endsAt = datetime.datetime.now()
+                if  alert["endsAt"] and not alert["endsAt"].startswith("0001"):
+                    endsAt = timezone.make_aware(datetime.datetime.strptime(alert["endsAt"].split(".")[0], "%Y-%m-%dT%H:%M:%S"))
+
+                # If we receive resolved, we delete firing with same startAt and fingerprint
+                try:
+                    if alert["status"] == "resolved":
+                        InstanceDownAlert.objects.get(fingerprint=alert["fingerprint"], startsAt=startsAt, status=2).delete()
+                except:
+                    pass
 
                 object = InstanceDownAlert(
                     startsAt=startsAt,
                     endsAt=endsAt,
+                    fingerprint=alert["fingerprint"],
                     instance=alert["labels"]["instance"],
                     summary=alert["annotations"]["summary"],
                     description=alert["annotations"]["description"],
@@ -49,7 +58,7 @@ def webhook(request):
                 object.save()
     else:
         json_formated = json.dumps(request.data, indent=2, sort_keys=True)
-        object = GenericAlert(json=json_formated)
+        object = GenericAlert(json=json_formated, fingerprint="Unknown")
         object.save()
 
     return Response()

@@ -6,6 +6,13 @@ from django.template.defaultfilters import truncatechars
 class AbstractAlert(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True, editable=False, help_text="Creation date")
     json = models.TextField(blank=False, help_text="RAW json as received by the webhook")
+    fingerprint = models.CharField(
+        max_length=128,
+        null=False,
+        blank=False,
+        editable=False,
+        help_text="Fingerprint provided by prometheus"
+    )
 
     class Meta:
         abstract = True
@@ -16,7 +23,7 @@ class AbstractAlert(models.Model):
 
 
 class GenericAlert(AbstractAlert):
-    
+
     class Meta:
         verbose_name = "Unknown alert"
         verbose_name_plural = "Unknown alerts"
@@ -56,7 +63,9 @@ class InstanceDownAlert(AbstractAlert):
 
     @property
     def duration(self):
-        return this.endsAt - this.startsAt
+        if self.endsAt:
+            return  self.endsAt - self.startsAt
+        return ''
 
     class Meta:
         verbose_name = "Instance down alert"
