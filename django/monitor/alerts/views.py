@@ -38,7 +38,9 @@ def webhook(request):
                 # If we receive resolved, we delete firing with same startAt and fingerprint
                 try:
                     if alert["status"] == "resolved":
-                        InstanceDownAlert.objects.get(fingerprint=alert["fingerprint"], startsAt=startsAt, status=2).delete()
+                        items = InstanceDownAlert.objects.filter(fingerprint=alert["fingerprint"], startsAt=startsAt, status=2)
+                        for item in items:
+                            item.delete()
                 except:
                     pass
 
