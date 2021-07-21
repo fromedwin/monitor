@@ -24,6 +24,12 @@ user3:$apr1$Mr5A0e.U$0j39Hp5FfxRkneklXaMrr/
 $> touch django/monitor/.env
 ```
 
+Add a SECRET_KEY value within the .env file you just created
+
+```
+ SECRET_KEY="abcd"
+```
+
 ## Create nginx golder in data/log
 
 ```
