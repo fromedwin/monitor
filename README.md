@@ -18,6 +18,14 @@ user2:$apr1$QdR8fNLT$vbCEEzDj7LyqCMyNpSoBh/
 user3:$apr1$Mr5A0e.U$0j39Hp5FfxRkneklXaMrr/
 ```
 
+### Configure Pagerduty
+
+Uncomment the pagerduty_configs from receivers :
+```
+#  pagerduty_configs:
+#  - routing_key: 'YOU_CODE_GOES_HERE'
+````
+
 ## Create django .env
 
 ```
@@ -35,4 +43,3 @@ $> mkdir data/log/nginx
 ```
 $> docker-compose up
 ```
-
