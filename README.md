@@ -32,6 +32,12 @@ Uncomment the pagerduty_configs from receivers :
 $> touch django/monitor/.env
 ```
 
+Add a SECRET_KEY value within the .env file you just created
+
+```
+ SECRET_KEY="abcd"
+```
+
 ## Create nginx golder in data/log
 
 ```
