@@ -62,10 +62,10 @@ route:
   #     service: files
   #   receiver: team-Y-mails
 
-routes:
-- match:
-    severity: critical
-  receiver: pager-duty-and-hooks
+  routes:
+  - match:
+      severity: critical
+    receiver: pager-duty-and-hooks
 
   # # This route handles all alerts coming from a database service. If there's
   # # no team to handle it, it defaults to the DB team.

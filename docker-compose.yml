@@ -3,12 +3,12 @@ services:
   nginx:
     image: "nginx:latest"
     ports:
-      - "80:80"
+      - "${PORT}:80"
       - "443:443"
     volumes:
       - ./data/log:/var/log
       - ./data/log/nginx:/var/log/nginx
-      - ./nginx/local/:/etc/nginx/conf.d/
+      - ./nginx/${NGINX}/:/etc/nginx/conf.d/
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
       - ./.htpasswd:/etc/nginx/.htpasswd:ro
@@ -28,19 +28,19 @@ services:
     image: grafana/grafana
     environment:
       - GF_INSTALL_PLUGINS=grafana-worldmap-panel 0.3.2
+      - GF_SERVER_ROOT_URL=/grafana/
+      - GR_SERVER_SERVE_FROM_SUB_PATH=True
     links:
       - loki
     user: root
     volumes:
       - ./data/log:/var/log
       - ./data/grafana:/var/lib/grafana
-  # loki:
-  #   image: grafana/loki:2.0.0
-  #   # ports:
-  #   #   - "3100:3100"
-  #   command: -config.file=/etc/loki/local-config.yaml
-  #   volumes:
-  #     - ./loki/loki-config.yaml:/etc/loki/local-config.yaml:ro
+  loki:
+    image: grafana/loki:2.0.0
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./loki/loki-config.yaml:/etc/loki/local-config.yaml:ro
   alertmanager:
     image: quay.io/prometheus/alertmanager
     volumes:
@@ -49,13 +49,13 @@ services:
     build: ./django
     env_file:
      - ./django/monitor/.env
-    # ports:
-    #   - 8000:8000
-    # promtail:
-    #   image: grafana/promtail:1.6.0
-    #   volumes:
-    #     - ./data/log:/var/log
-    #     - ./promtail/promtail-config.yaml:/etc/promtail/config.yml
-    #   command: -config.file=/etc/promtail/config.yml
+    volumes:  
+      - ./django/monitor/:/opt/monitor/
+  promtail:
+    image: grafana/promtail:1.6.0
+    volumes:
+      - ./data/log:/var/log
+      - ./promtail/promtail-config.yaml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml
 volumes:
   logvolume01: {}
