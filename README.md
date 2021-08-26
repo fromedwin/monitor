@@ -1,5 +1,9 @@
 # Monitor
 
+## Installation
+
+Run `./install.sh` script to generate `.env` files and start `docker-compose` 
+
 ## Configure
 
 Define basic authentication credentials for NGINX using apache2-utils. Verify that apache2-utils (Debian, Ubuntu) or httpd-tools (RHEL/CentOS/Oracle Linux) is installed. (See [documentation](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-http-basic-authentication/) for details)
