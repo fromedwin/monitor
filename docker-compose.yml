@@ -34,13 +34,7 @@ services:
     volumes:
       - ./data/log:/var/log
       - ./data/grafana:/var/lib/grafana
-  # loki:
-  #   image: grafana/loki:2.0.0
-  #   # ports:
-  #   #   - "3100:3100"
-  #   command: -config.file=/etc/loki/local-config.yaml
-  #   volumes:
-  #     - ./loki/loki-config.yaml:/etc/loki/local-config.yaml:ro
+
   alertmanager:
     image: quay.io/prometheus/alertmanager
     volumes:
@@ -49,13 +43,5 @@ services:
     build: ./django
     env_file:
      - ./django/monitor/.env
-    # ports:
-    #   - 8000:8000
-    # promtail:
-    #   image: grafana/promtail:1.6.0
-    #   volumes:
-    #     - ./data/log:/var/log
-    #     - ./promtail/promtail-config.yaml:/etc/promtail/config.yml
-    #   command: -config.file=/etc/promtail/config.yml
 volumes:
   logvolume01: {}
