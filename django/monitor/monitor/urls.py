@@ -16,9 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import include, url
-from home.views import index
 from alerts.views import webhook
 from health.views import healthy
+from home.views import index
 
 urlpatterns = [
     path('', index, name='index'),
@@ -26,5 +26,6 @@ urlpatterns = [
     path('healthy/<int:id>/', healthy, name='healthy'),
     path('alert/', webhook, name='alert'),
     path('admin/', admin.site.urls),
-    path('api-auth/', include('rest_framework.urls'))
+    path('clients/', include('clients.urls')),
+    path('api-auth/', include('rest_framework.urls')),
 ]

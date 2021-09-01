@@ -53,3 +53,20 @@ $> mkdir data/log/nginx
 ```
 $> docker-compose up
 ```
+
+## Stop
+
+
+```
+$> docker-compose down
+```
+
+# Frequently Asked Questions
+
+## no such table: django_session
+
+Run `docker exec -u root -t -i monitor_django_1 python3 manage.py migrate`
+
+## Create super user
+
+Run `docker exec -u root -t -i monitor_django_1 python3 manage.py createsuperuser`
