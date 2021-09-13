@@ -20,7 +20,15 @@ class AlertsConfigSerializer(serializers.ModelSerializer):
 
 class PrometheusConfigSerializer(serializers.HyperlinkedModelSerializer):
 
+    yaml = serializers.SerializerMethodField()
+
+    def get_yaml(self, obj):
+        return yaml.dump(
+            obj.yaml,
+            Dumper=OrderedDumper,
+            default_flow_style=False
+        )
 
     class Meta:
         model = PrometheusConfig
-        fields = ['pk', 'title', 'yaml_load']
+        fields = ['pk', 'title', 'yaml']
