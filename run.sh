@@ -1,4 +1,3 @@
-touch .env
 touch django/monitor/.env
 
 # If ./.env file exist, we export variables to current system to display later

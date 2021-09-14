@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from yamlfield.fields import YAMLField
 
@@ -10,7 +11,9 @@ class PrometheusConfig(models.Model):
     yaml = YAMLField()
 
 class Server(models.Model):
-    uuid = models.CharField(max_length=128, blank=False, unique=True)
     ip = models.CharField(max_length=128, blank=False)
-    creation_date = models.DateTimeField(auto_now_add=True)
-    last_seen = models.DateTimeField()
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    creation_date = models.DateTimeField(auto_now_add=True, editable=False)
+    last_seen = models.DateTimeField(auto_now_add=True)
+
+

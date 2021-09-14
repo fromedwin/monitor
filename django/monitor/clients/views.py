@@ -2,7 +2,7 @@ import ipaddress
 from django.http import HttpResponse
 from rest_framework import viewsets
 from .serializers import AlertsConfigSerializer, PrometheusConfigSerializer
-from .models import AlertsConfig, PrometheusConfig
+from .models import AlertsConfig, PrometheusConfig, Server
 
 class AlertsConfigViewSet(viewsets.ModelViewSet):
     """
@@ -23,7 +23,11 @@ def register(request):
     Fetched on start by monitor_client to introduce itself and get credentials
     """
     ip = ipaddress.IPv4Address(request.META['REMOTE_ADDR'])
-    return HttpResponse(status=200, content=ip.is_private)
+
+    server = Server(ip=ip if not ip.is_private else 'localhost')
+    server.save()
+
+    return HttpResponse(status=200, content=server)
 
 
 def heartbeat(request):
