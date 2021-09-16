@@ -1,4 +1,5 @@
 import uuid
+import ipaddress
 from django.db import models
 from yamlfield.fields import YAMLField
 
@@ -16,4 +17,9 @@ class Server(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True, editable=False)
     last_seen = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def is_public(self):
+        if self.ip =='localhost':
+            return False
+        return not ipaddress.IPv4Address(self.ip).is_private
 

@@ -24,7 +24,7 @@ def register(request):
     """
     ip = ipaddress.IPv4Address(request.META['REMOTE_ADDR'])
 
-    server = Server(ip=ip if not ip.is_private else 'localhost')
+    server = Server(ip=ip)
     server.save()
 
     return HttpResponse(status=200, content=server)

@@ -1,5 +1,5 @@
-asgiref==3.3.1
-Django==3.1.4
+asgiref==3.3.2
+Django==3.2.7
 django-prometheus==2.1.0
 django-yamlfield==1.1.0
 djangorestframework==3.12.2
