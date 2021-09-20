@@ -5,6 +5,8 @@ from rest_framework import viewsets
 from .serializers import AlertsConfigSerializer, PrometheusConfigSerializer
 from .models import AlertsConfig, PrometheusConfig, Server
 from django.shortcuts import get_object_or_404
+from django.core.serializers import serialize
+from django.http import JsonResponse
 
 class AlertsConfigViewSet(viewsets.ModelViewSet):
     """
@@ -29,7 +31,9 @@ def register(request):
     server = Server(ip=ip)
     server.save()
 
-    return HttpResponse(status=200, content=server)
+    return JsonResponse({
+        'uuid': server.uuid
+    })
 
 
 def heartbeat(request, id):
@@ -37,7 +41,6 @@ def heartbeat(request, id):
     Called by monitor_client to report status and detect lost of client.
     Require to be registered using register api.
     """
-
     server = get_object_or_404(Server, uuid=id)
     server.last_seen = datetime.datetime.now()
     server.save()
