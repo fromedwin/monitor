@@ -1,5 +1,6 @@
 import uuid
 import ipaddress
+
 from django.db import models
 from yamlfield.fields import YAMLField
 

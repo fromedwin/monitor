@@ -11,5 +11,5 @@ router.register(r'prometheus', PrometheusConfigViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('register', register),
-    path('heartbeat', heartbeat),
+    path('heartbeat/<uuid:id>/', heartbeat),
 ]
