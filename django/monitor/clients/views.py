@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404
 from django.core.serializers import serialize
 from django.http import JsonResponse
 from django.contrib.auth.models import User
-
+from django.conf import settings
 
 class AlertsConfigViewSet(viewsets.ModelViewSet):
     """
@@ -25,10 +25,14 @@ def prometheus(request, id):
     """
     Fetched on start by monitor_client to introduce itself and get credentials
     """
+    get_object_or_404(Server, uuid=id)
 
     users = User.objects.filter(applications__isnull=False).distinct()
 
-    yaml = render_to_string("prometheus_template.yml", { "users": users})
+    yaml = render_to_string("prometheus_template.yml", {
+        "users": users,
+        "settings": settings,
+    })
 
     # Should retur application/x-yaml
     return HttpResponse(yaml, content_type="text/plain")

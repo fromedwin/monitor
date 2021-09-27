@@ -1,13 +1,5 @@
-import uuid
-import ipaddress
-
 from django.db import models
 from django.contrib.auth.models import User
-from yamlfield.fields import YAMLField
-from django.utils import timezone
-import math
-import datetime
-from django.conf import settings
 
 # Create your models here.
 class Application(models.Model):
