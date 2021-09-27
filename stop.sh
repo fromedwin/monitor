@@ -10,4 +10,5 @@ fi
 if [[ -z "${PORT}" ]]; then export PORT=8000
 fi
 
+
 docker-compose down

@@ -1,7 +1,49 @@
+{% load socialaccount %}
+{% load account %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🤖 Status from edwin</title>
+</head>
+<body>
+
+{% if user.is_authenticated %}
+
 <h1>Welcome to fromedwin/monitor 👋</h1>
+Hi: {% user_display user %} - {{ is_staff}} - <a href="/accounts/logout">logout</a>
 <p>Access to :</p>
 <ul>
 	<li><a href="/grafana/">Grafana</a></li>
 	<li><a href="/alertmanager/#/alerts">Alertmanager</a></li>
 	<li><a href="/admin/">Administration</a></li>
 </ul>
+
+<p>Use the secret key to start a remote server : <code>{{ token }}</code></p>
+<h2>Servers</h2>
+
+<table>
+	{% for server in servers %}
+	<tr>
+		<td>{{ server.uuid }}</td>
+		<td>{{ server.last_seen_from }}</td>
+	</tr>
+	{% endfor %}
+</table>
+
+{% else %}
+
+{% get_providers as socialaccount_providers %}
+{% if socialaccount_providers|length >= 1 %}
+<p>Please <a href="{% provider_login_url 'github' %}">Authenticate with GitHub</a></p>
+{% else %}
+<p>Please <a href="/accounts/login">Authenticate with username/password</a></p>
+{% endif %}
+
+{% endif %}
+
+{{ settings.WEBAUTH_USERNAME }}
+
+</body>
+</html>

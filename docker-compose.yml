@@ -10,7 +10,7 @@ services:
       - ./nginx/${NGINX}/:/etc/nginx/conf.d/
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-      - ./.htpasswd:/etc/nginx/.htpasswd:ro
+      - ./.htpasswd:/etc/nginx/.htpasswd/.htpasswd:ro
     links:
       - alertmanager
       - grafana
@@ -50,6 +50,10 @@ services:
      - ./django/monitor/.env
     volumes:  
       - ./django/monitor/:/opt/monitor/
+    environment:
+      - SECRET_KEY=${DJANGO_SECRET_KEY}
+      - WEBAUTH_USERNAME=${WEBAUTH_USERNAME}
+      - WEBAUTH_PASSWORD=${WEBAUTH_PASSWORD}
   promtail:
     image: grafana/promtail:1.6.0
     volumes:

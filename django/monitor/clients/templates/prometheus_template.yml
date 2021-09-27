@@ -1,0 +1,74 @@
+global:
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  evaluation_interval: 15s
+
+rule_files:
+- /etc/prometheus/alerts/*.yml
+
+alerting:
+  alertmanagers:
+  - scheme: http
+    timeout: 10s
+    path_prefix: /alertmanager
+    api_version: v1
+    static_configs:
+    - targets:
+      - 192.168.1.13:8000
+
+scrape_configs:
+- job_name: prometheus
+  honor_timestamps: true
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  metrics_path: /metrics
+  scheme: http
+  static_configs:
+  - targets:
+    - localhost:9090
+    
+- job_name: alertmanager
+  honor_timestamps: true
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  metrics_path: /alertmanager/metrics
+  scheme: http
+  static_configs:
+  - targets:
+    - 192.168.1.13:8000
+
+- job_name: sebastienbarbier
+  honor_timestamps: true
+  scrape_interval: 15s
+  scrape_timeout: 5s
+  metrics_path: /metrics
+  scheme: http
+  static_configs:
+  - targets:
+    - fr-1.sebastienbarbier.com:9100
+    - fr-2.sebastienbarbier.com:9100
+    - ca-1.sebastienbarbier.com:9100
+
+- job_name: blackbox
+  metrics_path: /probe
+  scrape_interval: 1m
+  params:
+    module:
+    - http_2xx
+  static_configs:
+  {% for user in users %}{% for application in user.applications.all %}
+  - labels:
+      user: {{ user }}
+      application: {{ application }}
+    targets:
+    {% for service in application.services.all %}- {{ service.url }}
+    {% endfor %}{% endfor %}{% endfor %}
+  relabel_configs:
+  - source_labels:
+    - __address__
+    target_label: __param_target
+  - source_labels:
+    - __param_target
+    target_label: instance
+  - target_label: __address__
+    replacement: blackbox:9115

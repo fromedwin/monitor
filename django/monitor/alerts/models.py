@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.template.defaultfilters import truncatechars
-
+from django.contrib.auth.models import User
 
 class AbstractAlert(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True, editable=False, help_text="Creation date")
@@ -12,7 +12,7 @@ class AbstractAlert(models.Model):
         blank=False,
         editable=False,
         help_text="Fingerprint provided by prometheus"
-    )
+    )    
 
     class Meta:
         abstract = True
@@ -23,6 +23,14 @@ class AbstractAlert(models.Model):
 
 
 class GenericAlert(AbstractAlert):
+
+    user = models.ForeignKey(
+        User,
+        on_delete = models.CASCADE,
+        related_name = "genericalerts",
+        blank = True,
+        null = True,
+    )
 
     class Meta:
         verbose_name = "Unknown alert"
@@ -47,8 +55,7 @@ class InstanceDownAlert(AbstractAlert):
         User,
         null=True,
         on_delete = models.CASCADE,
-        related_name = "alerts",
-        related_query_name = "alert",
+        related_name = "instancedownalerts",
     )
 
     status = models.IntegerField(choices=STATUS)

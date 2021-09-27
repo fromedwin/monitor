@@ -1,12 +1,17 @@
 import ipaddress
 import datetime
 from django.http import HttpResponse
+from django.template.loader import render_to_string
 from rest_framework import viewsets
-from .serializers import AlertsConfigSerializer, PrometheusConfigSerializer
-from .models import AlertsConfig, PrometheusConfig, Server
+from rest_framework.views import APIView
+from rest_framework.decorators import api_view
+from .serializers import AlertsConfigSerializer
+from .models import AlertsConfig, Server
 from django.shortcuts import get_object_or_404
 from django.core.serializers import serialize
 from django.http import JsonResponse
+from django.contrib.auth.models import User
+
 
 class AlertsConfigViewSet(viewsets.ModelViewSet):
     """
@@ -15,13 +20,20 @@ class AlertsConfigViewSet(viewsets.ModelViewSet):
     queryset = AlertsConfig.objects.all()
     serializer_class = AlertsConfigSerializer
 
-class PrometheusConfigViewSet(viewsets.ModelViewSet):
+@api_view(['GET'])
+def prometheus(request, id):
     """
-    API endpoint that allows users to be viewed or edited.
+    Fetched on start by monitor_client to introduce itself and get credentials
     """
-    queryset = PrometheusConfig.objects.all()
-    serializer_class = PrometheusConfigSerializer
 
+    users = User.objects.filter(applications__isnull=False).distinct()
+
+    yaml = render_to_string("prometheus_template.yml", { "users": users})
+
+    # Should retur application/x-yaml
+    return HttpResponse(yaml, content_type="text/plain")
+
+@api_view(['GET'])
 def register(request):
     """
     Fetched on start by monitor_client to introduce itself and get credentials
@@ -35,7 +47,7 @@ def register(request):
         'uuid': server.uuid
     })
 
-
+@api_view(['GET'])
 def heartbeat(request, id):
     """
     Called by monitor_client to report status and detect lost of client.

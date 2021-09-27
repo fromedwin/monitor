@@ -26,6 +26,7 @@ urlpatterns = [
     path('healthy/<int:id>/', healthy, name='healthy'),
     path('alert/', webhook, name='alert'),
     path('admin/', admin.site.urls),
+    path('accounts/', include('allauth.urls')),
     path('clients/', include('clients.urls')),
     path('api-auth/', include('rest_framework.urls')),
 ]
