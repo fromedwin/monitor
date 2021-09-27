@@ -17,7 +17,7 @@ alerting:
       password: {{ settings.WEBAUTH_PASSWORD }}
     static_configs:
     - targets:
-      - 192.168.0.277:8000
+      - {{ settings.DOMAIN }}:{{ settings.PORT }}
 
 scrape_configs:
 - job_name: prometheus
@@ -36,9 +36,12 @@ scrape_configs:
   scrape_timeout: 10s
   metrics_path: /alertmanager/metrics
   scheme: http
+  basic_auth:
+    username: {{ settings.WEBAUTH_USERNAME }}
+    password: {{ settings.WEBAUTH_PASSWORD }}
   static_configs:
   - targets:
-    - 192.168.0.277:8000
+    - {{ settings.DOMAIN }}:{{ settings.PORT }}
 
 - job_name: sebastienbarbier
   honor_timestamps: true

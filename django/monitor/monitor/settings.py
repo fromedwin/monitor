@@ -21,6 +21,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
+DOMAIN = os.environ.get('DOMAIN')
+PORT = os.environ.get('PORT')
 WEBAUTH_USERNAME = os.environ.get('WEBAUTH_USERNAME')
 WEBAUTH_PASSWORD = os.environ.get('WEBAUTH_PASSWORD')
 
