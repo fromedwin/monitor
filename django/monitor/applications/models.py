@@ -23,3 +23,15 @@ class Service(models.Model):
     title = models.CharField(max_length=128, blank=False)
     url = models.URLField(max_length=512, blank=False)
     is_public = models.BooleanField(default=True)
+
+class Metrics(models.Model):
+    """
+    Fetch {{url}}/metrics within prometheus
+    Can be used for node_explorer or custom metrics
+    """
+    user = models.ForeignKey(
+        User,
+        on_delete = models.CASCADE,
+        related_name = "metrics",
+    )
+    url = models.URLField(max_length=512, blank=False)
