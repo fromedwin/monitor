@@ -21,7 +21,7 @@ fi
 if [[ -z "${DJANGO_SECRET_KEY}" ]]; then export DJANGO_SECRET_KEY=$(openssl rand -base64 24)
 fi
 # Set domain to share and use to reach Django app
-if [[ -z "${DOMAIN}" ]]; then export DOMAIN=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
+if [[ -z "${DOMAIN}" ]]; then export DOMAIN="host.docker.internal"
 fi
 
 # GENERATE PASSWORD
