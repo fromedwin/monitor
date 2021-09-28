@@ -36,7 +36,8 @@ ALLOWED_HOSTS = [
     'localhost',
     'django',
     'local.django.sebastienbarbier.com',
-    'status.fromedwin.com'
+    'status.fromedwin.com',
+    os.environ.get('DOMAIN'),
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

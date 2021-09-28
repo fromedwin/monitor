@@ -12,6 +12,7 @@ from django.core.serializers import serialize
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.conf import settings
+from django.db.models import Q
 
 class AlertsConfigViewSet(viewsets.ModelViewSet):
     """
@@ -27,7 +28,7 @@ def prometheus(request, id):
     """
     get_object_or_404(Server, uuid=id)
 
-    users = User.objects.filter(applications__isnull=False).distinct()
+    users = User.objects.filter(Q(applications__isnull=False) | Q(healthTest__isnull=False)).distinct()
 
     yaml = render_to_string("prometheus_template.yml", {
         "users": users,
