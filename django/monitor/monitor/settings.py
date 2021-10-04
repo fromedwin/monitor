@@ -26,6 +26,8 @@ PORT = os.environ.get('PORT')
 WEBAUTH_USERNAME = os.environ.get('WEBAUTH_USERNAME')
 WEBAUTH_PASSWORD = os.environ.get('WEBAUTH_PASSWORD')
 
+IS_SERVICE_DOWN_SCRAPE_INTERVAL = '1m'
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
