@@ -29,8 +29,46 @@ Hi: {% user_display user %} - {{ is_staff}} - <a href="/accounts/logout">logout<
 		<td>{{ server.uuid }}</td>
 		<td>{{ server.last_seen_from }}</td>
 	</tr>
+	{% empty %}
+	<tr>
+		<td>🚨 No server connected</td>
+	</tr>
 	{% endfor %}
 </table>
+
+<h2>Applications</h2>
+{% for application in user.applications.all %}
+<h3>➡️ {{ application }}</h3>
+<ul>
+	{% for service in application.services.all %}
+	<li>{{ service.url }}</li>
+	{% endfor %}
+</ul>
+{% empty %}
+<p>No applications</p>
+{% endfor %}
+
+<h3>➡️ Health test</h3>
+<ul>
+{% for healthTest in user.healthTest.all %}
+	{% if settings.DOMAIN != 'host.docker.internal' %}
+	<li>http://{{ settings.DOMAIN }}:{{ settings.PORT }}/healthy/{{ healthTest.pk }}</li>
+	{% else %}
+	<li>http://localhost:{{ settings.PORT }}/healthy/{{ healthTest.pk }} - return HTTP_{{ healthTest.code }}</li>
+	{% endif %}
+{% empty %}
+<li>No Health test</li>
+{% endfor %}
+</ul>
+
+<h2>Metrics 📊</h2>
+<ul>
+	{% for metric in user.metrics.all %}
+	<li>{{ metric.url }}</li>
+	{% empty %}
+	<li>No Metrics</li>
+	{% endfor %}
+</ul>
 
 {% else %}
 
