@@ -105,8 +105,8 @@ receivers:
   webhook_configs:
   - send_resolved: True
     url: http://django:8000/alert/
-  # pagerduty_configs:
-  # - routing_key: 'YOU_CODE_GOES_HERE'
+  pagerduty_configs:
+  - routing_key: 'YOU_CODE_GOES_HERE'
 
 - name: 'webhook-only'
   webhook_configs:

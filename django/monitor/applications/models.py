@@ -24,6 +24,9 @@ class Service(models.Model):
     url = models.URLField(max_length=512, blank=False)
     is_public = models.BooleanField(default=True)
 
+    def __str__(self):
+        return f'{self.application} - {self.title}'
+
 class Metrics(models.Model):
     """
     Fetch {{url}}/metrics within prometheus

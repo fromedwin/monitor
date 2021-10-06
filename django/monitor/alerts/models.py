@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from applications.models import Service, Application
 from django.template.defaultfilters import truncatechars
-from django.contrib.auth.models import User
 
 class AbstractAlert(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True, editable=False, help_text="Creation date")
@@ -21,8 +21,19 @@ class AbstractAlert(models.Model):
     def short_json(self):
         return "%s..." % truncatechars(self.json, 70)
 
-
 class GenericAlert(AbstractAlert):
+
+    STATUS = [
+        (0, 'unknown'),
+        (1, 'resolved'),
+        (2, 'firing'),
+    ]
+
+    SEVERITY = [
+        (0, 'unknown'),
+        (1, 'warning'),
+        (2, 'critical'),
+    ]
 
     user = models.ForeignKey(
         User,
@@ -32,9 +43,67 @@ class GenericAlert(AbstractAlert):
         null = True,
     )
 
+    status = models.IntegerField(choices=STATUS)
+    severity = models.IntegerField(choices=SEVERITY)
+
+    startsAt = models.DateTimeField(null=False)
+    endsAt = models.DateTimeField(null=True, blank=True)
+
+    instance = models.TextField(null=True)
+    summary = models.TextField(null=True)
+    description = models.TextField(null=True)
+
+    @property
+    def duration(self):
+        if self.endsAt:
+            return  self.endsAt - self.startsAt
+        return ''
+    
     class Meta:
         verbose_name = "Unknown alert"
         verbose_name_plural = "Unknown alerts"
+
+class ApplicationAlert(AbstractAlert):
+
+    STATUS = [
+        (0, 'unknown'),
+        (1, 'resolved'),
+        (2, 'firing'),
+    ]
+
+    SEVERITY = [
+        (0, 'unknown'),
+        (1, 'warning'),
+        (2, 'critical'),
+    ]
+
+    application = models.ForeignKey(
+        Application,
+        null=True,
+        on_delete = models.CASCADE,
+        related_name = "applicationalerts",
+    )
+
+    status = models.IntegerField(choices=STATUS)
+    severity = models.IntegerField(choices=SEVERITY)
+
+    startsAt = models.DateTimeField(null=False)
+    endsAt = models.DateTimeField(null=True, blank=True)
+
+    instance = models.TextField(null=True)
+    summary = models.TextField(null=True)
+    description = models.TextField(null=True)
+
+    @property
+    def duration(self):
+        if self.endsAt:
+            return  self.endsAt - self.startsAt
+        return ''
+
+    class Meta:
+        verbose_name = "Application alert"
+        verbose_name_plural = "Application alerts"
+
 
 # Create your models here.
 class InstanceDownAlert(AbstractAlert):
@@ -51,8 +120,8 @@ class InstanceDownAlert(AbstractAlert):
         (2, 'critical'),
     ]
 
-    user = models.ForeignKey(
-        User,
+    service = models.ForeignKey(
+        Service,
         null=True,
         on_delete = models.CASCADE,
         related_name = "instancedownalerts",
@@ -75,6 +144,6 @@ class InstanceDownAlert(AbstractAlert):
         return ''
 
     class Meta:
-        verbose_name = "Instance down alert"
-        verbose_name_plural = "Instance down alerts"
+        verbose_name = "Service down alert"
+        verbose_name_plural = "Service down alerts"
 

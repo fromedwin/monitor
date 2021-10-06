@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'alerts',
     'applications',
     'clients',
+    'notifications',
 ]
 
 MIDDLEWARE = [

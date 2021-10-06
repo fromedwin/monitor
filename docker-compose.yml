@@ -47,6 +47,7 @@ services:
      - ./django/monitor/.env
     volumes:  
       - ./django/monitor/:/opt/monitor/
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
     environment:
       - SECRET_KEY=${DJANGO_SECRET_KEY}
       - DOMAIN=${DOMAIN}

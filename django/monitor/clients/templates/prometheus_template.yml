@@ -61,17 +61,12 @@ scrape_configs:
     module:
     - http_2xx
   static_configs:
-  {% for user in users %}{% if user.healthTest.all.0 %}
+  {% for user in users %}{% for application in user.applications.all %}{% for service in application.services.all %}
   - labels:
-      user: {{ user }}
+      application: {{ application.id }}
+      service: {{ service.id }}
     targets:
-    - http://{{ settings.DOMAIN }}:{{ settings.PORT }}/healthy/{{ user.healthTest.all.0.id }}{% endif %}
-    {% for application in user.applications.all %}
-  - labels:
-      user: {{ user }}
-      application: {{ application }}
-    targets:
-    {% for service in application.services.all %}- {{ service.url }}
+    - {{ service.url }}
     {% endfor %}{% endfor %}{% endfor %}
   relabel_configs:
   - source_labels:

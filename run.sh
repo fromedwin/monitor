@@ -28,7 +28,6 @@ fi
 htpasswd -cmb .htpasswd $WEBAUTH_USERNAME $WEBAUTH_PASSWORD
 
 echo "Loading nginx/$NGINX files"
-
 docker-compose up
 
 # IF load-config.py return code 0
