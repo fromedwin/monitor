@@ -14,7 +14,6 @@ services:
     links:
       - alertmanager
       - grafana
-      - loki
       - django
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
   certbot:
@@ -29,17 +28,15 @@ services:
       - GF_INSTALL_PLUGINS=grafana-worldmap-panel 0.3.2
       - GF_SERVER_ROOT_URL=/grafana/
       - GR_SERVER_SERVE_FROM_SUB_PATH=True
-    links:
-      - loki
     user: root
     volumes:
       - ./data/log:/var/log
       - ./data/grafana:/var/lib/grafana
-  loki:
-    image: grafana/loki:2.0.0
-    command: -config.file=/etc/loki/local-config.yaml
-    volumes:
-      - ./loki/loki-config.yaml:/etc/loki/local-config.yaml:ro
+  # loki:
+  #   image: grafana/loki:2.0.0
+  #   command: -config.file=/etc/loki/local-config.yaml
+  #   volumes:
+  #     - ./loki/loki-config.yaml:/etc/loki/local-config.yaml:ro
   alertmanager:
     image: quay.io/prometheus/alertmanager
     volumes:

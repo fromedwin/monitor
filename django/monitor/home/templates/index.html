@@ -20,14 +20,16 @@ Hi: {% user_display user %} - {{ is_staff}} - <a href="/accounts/logout">logout<
 	<li><a href="/admin/">Administration</a></li>
 </ul>
 
-<p>Use the secret key to start a remote server : <code>{{ token }}</code></p>
+<p>Use the secret key to start a remote server : 🔐 <code>{{ token }}</code></p>
 <h2>Servers</h2>
 
 <table>
 	{% for server in servers %}
 	<tr>
-		<td>{{ server.uuid }}</td>
+		<td>{% if server.is_active %}✅{% else %}❌{% endif %} {{ server.uuid }}</td>
 		<td>{{ server.last_seen_from }}</td>
+		<td><a href="/clients/prometheus/{{ server.uuid }}">Prometheus</a></td>
+		<td><a href="/clients/alerts">Alerts</a></td>
 	</tr>
 	{% empty %}
 	<tr>

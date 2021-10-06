@@ -1,5 +1,6 @@
 import ipaddress
 import datetime
+from django.utils import timezone
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from rest_framework import viewsets
@@ -63,7 +64,7 @@ def heartbeat(request, id):
     Require to be registered using register api.
     """
     server = get_object_or_404(Server, uuid=id)
-    server.last_seen = datetime.datetime.now()
+    server.last_seen = timezone.now()
     server.save()
 
     return HttpResponse(status=200)

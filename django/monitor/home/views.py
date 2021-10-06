@@ -6,6 +6,7 @@ from rest_framework.authtoken.models import Token
 from django.shortcuts import render
 from clients.models import Server
 import datetime
+from django.utils import timezone
 
 # Create your views here.
 def index(request):
@@ -18,7 +19,7 @@ def index(request):
         is_staff = request.user.is_staff
         token = Token.objects.get(user=request.user)
         servers = Server.objects.filter(
-            last_seen__gte=datetime.datetime.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
+            last_seen__gte=timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
         ).order_by('-last_seen')
 
     return render(request, 'index.html', {
