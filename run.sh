@@ -71,8 +71,6 @@ if [[ $@ == *"-prod"* ]]; then
 
 else
 
-  export NGINX="local"  # Will load nginx/local/*.conf files
-
   if [[ $@ == *"-d"* ]]; then
     docker-compose up -d
 
