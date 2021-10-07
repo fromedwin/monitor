@@ -5,4 +5,7 @@ class MyAppConfig(AppConfig):
     name = 'monitor'
     verbose_name = "Monitor"
     def ready(self):
-        generate_alert_manager_config()
+        try:
+            generate_alert_manager_config()
+        except:
+            pass

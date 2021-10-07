@@ -78,5 +78,8 @@ docker-compose run --rm --entrypoint "\
     --force-renewal" certbot
 echo
 
+## Create symbolic link give nginx access to generated certificate
+ln -sf $DOMAIN ./certbot/conf/live/monitor
+
 echo "### Reloading nginx ..."
 docker-compose exec nginx nginx -s reload

@@ -18,7 +18,7 @@ fi
 # Set default https port to access dashboard
 if [[ -z "${PORT_HTTPS}" ]]; then
   if [[ $@ == *"-prod"* ]]; then
-    export PORT=443
+    export PORT_HTTPS=443
   else
     export PORT_HTTPS=8443
   fi
@@ -37,6 +37,7 @@ if [[ -z "${DOMAIN}" ]]; then export DOMAIN="host.docker.internal"
 fi
 
 # GENERATE PASSWORD
+echo "Generate user $WEBAUTH_USERNAME with password $WEBAUTH_PASSWORD"
 htpasswd -cmb .htpasswd $WEBAUTH_USERNAME $WEBAUTH_PASSWORD
 
 # Create shared volume between django and alertmanager
