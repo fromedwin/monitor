@@ -41,10 +41,10 @@ services:
     build: ./django
     env_file:
      - ./django/monitor/.env
-
     volumes:  
       - ./django/monitor/:/opt/monitor/
       - ./alertmanager/shared/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - ./django/requirements.txt:/opt/monitor/requirements.txt:ro
     environment:
       - SECRET_KEY=${DJANGO_SECRET_KEY}
       - DOMAIN=${DOMAIN}
