@@ -8,10 +8,20 @@ if [ -f .env ]; then
 fi
 
 # Set default port to access dashboard
-if [[ -z "${PORT}" ]]; then export PORT=8000
+if [[ -z "${PORT}" ]]; then
+  if [[ $@ == *"-prod"* ]]; then
+    export PORT=80
+  else
+    export PORT=8000
+  fi
 fi
 # Set default https port to access dashboard
-if [[ -z "${PORT_HTTPS}" ]]; then export PORT_HTTPS=80000
+if [[ -z "${PORT_HTTPS}" ]]; then
+  if [[ $@ == *"-prod"* ]]; then
+    export PORT=443
+  else
+    export PORT_HTTPS=8443
+  fi
 fi
 # Set default username for web auth
 if [[ -z "${WEBAUTH_USERNAME}" ]]; then export WEBAUTH_USERNAME=$(openssl rand -base64 12)
