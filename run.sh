@@ -68,7 +68,11 @@ if [[ $@ == *"-prod"* ]]; then
     echo '⚠️ Running lets-encrypt staging with potential request limits'
   fi
 
-  source scripts/init-letsencrypt.sh
+  if [[ $@ == *"-cert"* ]]; then
+    source scripts/init-letsencrypt.sh
+  else
+    docker-compose up -d
+  fi
 
 else
 
