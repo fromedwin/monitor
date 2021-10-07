@@ -34,18 +34,43 @@ mkdir -p alertmanager/shared && cp alertmanager/alertmanager.yml alertmanager/sh
 
 echo "Loading nginx/$NGINX files"
 
-if [[ $@ == *"-d"* ]]; then
-  docker-compose up -d
-
-  # IF load-config.py return code 0
-  if [ $? -ne 0 ]; then
-    echo "❌ Docker might not be running."
+if [[ $@ == *"-prod"* ]]; then
+  if [[ $DOMAIN == *"localhost"* ]]; then
+    echo 'You need to define a custom domain other than localhost or host.docker.internal'
     exit
   fi
-  
-  echo "✅ Access fromedwin/monitor at localhost:$PORT"
+
+  if [[ $DOMAIN == *"host.docker.internal"* ]]; then
+    echo 'You need to define a custom domain other than localhost or host.docker.internal'
+    exit
+  fi
+
+  if [[ -z "${MAIL}" ]]; then 
+    echo 'Defining MAIL env var is required'
+    exit
+  fi
+
+  # Set STAGING to 1 if you're testing your setup to avoid hitting request limits
+  if [[ -z "${STAGING}" ]]; then 
+    export STAGING=0
+    echo '⚠️ Running lets-encrypt staging with potential request limits'
+  fi
+
+  source scripts/init-letsencrypt.sh
 
 else
-  docker-compose up
-fi
+  if [[ $@ == *"-d"* ]]; then
+    docker-compose up -d
 
+    # IF load-config.py return code 0
+    if [ $? -ne 0 ]; then
+      echo "❌ Docker might not be running."
+      exit
+    fi
+
+    echo "✅ Access fromedwin/monitor at localhost:$PORT"
+
+  else
+    docker-compose up
+  fi
+fi
