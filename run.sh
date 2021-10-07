@@ -1,3 +1,5 @@
+#!/bin/bash
+
 touch django/monitor/.env
 
 # If ./.env file exist, we export variables to current system to display later
@@ -31,12 +33,19 @@ htpasswd -cmb .htpasswd $WEBAUTH_USERNAME $WEBAUTH_PASSWORD
 mkdir -p alertmanager/shared && cp alertmanager/alertmanager.yml alertmanager/shared/alertmanager.yml
 
 echo "Loading nginx/$NGINX files"
-docker-compose up
 
-# IF load-config.py return code 0
-if [ $? -ne 0 ]; then
-  echo "❌ Docker might not be running."
-  exit
+if [[ $@ == *"-d"* ]]; then
+  docker-compose up -d
+
+  # IF load-config.py return code 0
+  if [ $? -ne 0 ]; then
+    echo "❌ Docker might not be running."
+    exit
+  fi
+  
+  echo "✅ Access fromedwin/monitor at localhost:$PORT"
+
+else
+  docker-compose up
 fi
 
-echo "✅ Access fromedwin/monitor at localhost:$PORT"
