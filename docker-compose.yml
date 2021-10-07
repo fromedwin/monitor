@@ -40,20 +40,22 @@ services:
   alertmanager:
     image: quay.io/prometheus/alertmanager
     volumes:
-      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - ./alertmanager/shared/alertmanager.yml:/etc/alertmanager/alertmanager.yml
   django:
     build: ./django
     env_file:
      - ./django/monitor/.env
     volumes:  
       - ./django/monitor/:/opt/monitor/
-      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - ./alertmanager/shared/alertmanager.yml:/etc/alertmanager/alertmanager.yml
     environment:
       - SECRET_KEY=${DJANGO_SECRET_KEY}
       - DOMAIN=${DOMAIN}
       - PORT=${PORT}
       - WEBAUTH_USERNAME=${WEBAUTH_USERNAME}
       - WEBAUTH_PASSWORD=${WEBAUTH_PASSWORD}
+    links:
+      - alertmanager
   promtail:
     image: grafana/promtail:1.6.0
     volumes:

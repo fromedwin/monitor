@@ -23,6 +23,7 @@ class Service(models.Model):
     title = models.CharField(max_length=128, blank=False)
     url = models.URLField(max_length=512, blank=False)
     is_public = models.BooleanField(default=True)
+    creation_date = models.DateTimeField(auto_now_add=True, editable=False, help_text="Creation date")
 
     def __str__(self):
         return f'{self.application} - {self.title}'

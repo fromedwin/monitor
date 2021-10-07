@@ -63,9 +63,13 @@ route:
   #   receiver: team-Y-mails
 
   routes:
+
+{% for pager in pager_duty %}
   - match:
+      application: {{ pager.application.id }}
       severity: critical
-    receiver: pager-duty-and-hooks
+    receiver: 'application-{{ pager.application.id }}'
+{% endfor %}
 
   # # This route handles all alerts coming from a database service. If there's
   # # no team to handle it, it defaults to the DB team.
@@ -101,12 +105,15 @@ inhibit_rules:
   equal: ['alertname', 'cluster', 'service']
 
 receivers:
-- name: 'pager-duty-and-hooks'
+
+{% for pager in pager_duty %}
+- name: 'application-{{ pager.application.id }}'
   webhook_configs:
   - send_resolved: True
     url: http://django:8000/alert/
   pagerduty_configs:
-  - routing_key: 'YOU_CODE_GOES_HERE'
+  - routing_key: '{{ pager.routing_key }}'
+{% endfor %}
 
 - name: 'webhook-only'
   webhook_configs:

@@ -27,6 +27,9 @@ fi
 # GENERATE PASSWORD
 htpasswd -cmb .htpasswd $WEBAUTH_USERNAME $WEBAUTH_PASSWORD
 
+# Create shared volume between django and alertmanager
+mkdir -p alertmanager/shared && cp alertmanager/alertmanager.yml alertmanager/shared/alertmanager.yml
+
 echo "Loading nginx/$NGINX files"
 docker-compose up
 

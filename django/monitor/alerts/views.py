@@ -100,8 +100,9 @@ def webhook(request):
                 # If we receive resolved, we delete firing with same startAt and fingerprint
                 try:
                     if alert["status"] == "resolved":
-                        items = GenericAlert.objects.filter(fingerprint=alert["fingerprint"], startsAt=startsAt, status=2)
+                        items = GenericAlert.objects.filter(fingerprint=alert["fingerprint"], status=2)
                         for item in items:
+                            startsAt = item.startsAt
                             item.delete()
                 except:
                     pass
@@ -110,7 +111,7 @@ def webhook(request):
                     startsAt=startsAt,
                     endsAt=endsAt,
                     fingerprint=alert["fingerprint"],
-                    instance=alert["labels"]["instance"],
+                    instance=alert["labels"]["instance"] if 'instance' in alert["labels"] else None,
                     summary=alert["annotations"]["summary"],
                     description=alert["annotations"]["description"],
                     severity=severity,
