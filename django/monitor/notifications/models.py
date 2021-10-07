@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
 from applications.models import Application
@@ -22,8 +22,9 @@ class Pager_Duty(models.Model):
         verbose_name = "Pager Duty key"
         verbose_name_plural = "Pager Duty keys"
 
-
 @receiver(post_save, sender=Pager_Duty)
+@receiver(post_delete, sender=Pager_Duty)
+@receiver(post_delete, sender=Application)
 def refresh_alert_manager_configuration(sender, instance=None, created=False, **kwargs):
     """
     Assign a django rest framework token when a user is created.
