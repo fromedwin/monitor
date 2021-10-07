@@ -1,0 +1,87 @@
+{% load socialaccount %}
+{% load account %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🤖 Status from edwin</title>
+</head>
+<body>
+
+{% if user.is_authenticated %}
+
+<h1>Welcome to fromedwin/monitor 👋</h1>
+Hi: {% user_display user %} - {{ is_staff}} - <a href="/accounts/logout">logout</a>
+<p>Access to :</p>
+<ul>
+	<li><a href="/grafana/">Grafana</a></li>
+	<li><a href="/alertmanager/#/alerts">Alertmanager</a></li>
+	<li><a href="/admin/">Administration</a></li>
+</ul>
+
+<p>Use the secret key to start a remote server : 🔐 <code>{{ token }}</code></p>
+<h2>Servers</h2>
+
+<table>
+	{% for server in servers %}
+	<tr>
+		<td>{% if server.is_active %}✅{% else %}❌{% endif %} {{ server.uuid }}</td>
+		<td>{{ server.last_seen_from }}</td>
+		<td><a href="/clients/prometheus/{{ server.uuid }}">Prometheus</a></td>
+		<td><a href="/clients/alerts">Alerts</a></td>
+	</tr>
+	{% empty %}
+	<tr>
+		<td>🚨 No server connected</td>
+	</tr>
+	{% endfor %}
+</table>
+
+<h2>Applications</h2>
+{% for application in user.applications.all %}
+<h3>➡️ {{ application }}</h3>
+<ul>
+	{% for service in application.services.all %}
+	<li>{{ service.url }}</li>
+	{% endfor %}
+</ul>
+{% empty %}
+<p>No applications</p>
+{% endfor %}
+
+<h3>➡️ Health test</h3>
+<ul>
+{% for healthTest in user.healthTest.all %}
+	{% if settings.DOMAIN != 'host.docker.internal' %}
+	<li>http://{{ settings.DOMAIN }}:{{ settings.PORT }}/healthy/{{ healthTest.pk }}</li>
+	{% else %}
+	<li>http://localhost:{{ settings.PORT }}/healthy/{{ healthTest.pk }} - return HTTP_{{ healthTest.code }}</li>
+	{% endif %}
+{% empty %}
+<li>No Health test</li>
+{% endfor %}
+</ul>
+
+<h2>Metrics 📊</h2>
+<ul>
+	{% for metric in user.metrics.all %}
+	<li>{{ metric.url }}</li>
+	{% empty %}
+	<li>No Metrics</li>
+	{% endfor %}
+</ul>
+
+{% else %}
+
+{% get_providers as socialaccount_providers %}
+{% if socialaccount_providers|length >= 1 %}
+<p>Please <a href="{% provider_login_url 'github' %}">Authenticate with GitHub</a></p>
+{% else %}
+<p>Please <a href="/accounts/login">Authenticate with username/password</a></p>
+{% endif %}
+
+{% endif %}
+
+</body>
+</html>

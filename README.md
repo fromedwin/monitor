@@ -1,5 +1,9 @@
 # Monitor
 
+## Installation
+
+Run `./install.sh` script to generate `.env` files and start `docker-compose` 
+
 ## Configure
 
 Define basic authentication credentials for NGINX using apache2-utils. Verify that apache2-utils (Debian, Ubuntu) or httpd-tools (RHEL/CentOS/Oracle Linux) is installed. (See [documentation](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-http-basic-authentication/) for details)
@@ -49,3 +53,20 @@ $> mkdir data/log/nginx
 ```
 $> docker-compose up
 ```
+
+## Stop
+
+
+```
+$> docker-compose down
+```
+
+# Frequently Asked Questions
+
+## no such table: django_session
+
+Run `docker exec -u root -t -i monitor_django_1 python3 manage.py migrate`
+
+## Create super user
+
+Run `docker exec -u root -t -i monitor_django_1 python3 manage.py createsuperuser`

@@ -21,6 +21,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 See for sample https://raw.githubusercontent.com/favoloso/conventional-changelog-emoji/master/CHANGELOG.md
 -->
 
+## [0.2.0] - yyyy-mm-dd
+### ✨ Feature
+- Centralize prometheus and alerts through APIs ([#3](https://github.com/fromedwin/monitor/issues/3))
+- Provide run scripts to automate some configuration ([#4](https://github.com/fromedwin/monitor/issues/4))
+### 🚨 Changed
+- Migrate NGINX to folder base urls ([#1](https://github.com/fromedwin/monitor/issues/1))
+### 📚 Documentation
+- First draft for documentation ([#2](https://github.com/fromedwin/monitor/issues/2))
+
 ## [0.1.0] - 2021-08-11
 ### ✨ Feature
 - Alertmanager initialise to report alerts using webhook and pagerduty (if configured)

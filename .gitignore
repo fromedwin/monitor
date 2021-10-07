@@ -136,3 +136,4 @@ data/
 
 # nginx authentication
 .htpasswd
+alertmanager/shared
