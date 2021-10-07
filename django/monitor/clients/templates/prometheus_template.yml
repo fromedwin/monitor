@@ -9,7 +9,7 @@ rule_files:
 
 alerting:
   alertmanagers:
-  - scheme: http
+  - scheme: {{ settings.ALERT_MANAGER_PROTOCOL }}
     timeout: 10s
     path_prefix: /alertmanager
     api_version: v1
@@ -18,7 +18,7 @@ alerting:
       password: {{ settings.WEBAUTH_PASSWORD }}
     static_configs:
     - targets:
-      - {{ settings.DOMAIN }}:{{ settings.PORT }}
+      - {{ settings.DOMAIN }}:{{ settings.ALERT_MANAGER_PORT }}
 
 scrape_configs:
 - job_name: prometheus_metrics
