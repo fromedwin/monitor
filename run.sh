@@ -7,11 +7,11 @@ if [ -f .env ]; then
   export $(echo $(cat .env | sed 's/#.*//g'| xargs) | envsubst)
 fi
 
-# Set default nginx files as local
-if [[ -z "${NGINX}" ]]; then export NGINX="local"
-fi
 # Set default port to access dashboard
 if [[ -z "${PORT}" ]]; then export PORT=8000
+fi
+# Set default https port to access dashboard
+if [[ -z "${PORT_HTTPS}" ]]; then export PORT_HTTPS=80000
 fi
 # Set default username for web auth
 if [[ -z "${WEBAUTH_USERNAME}" ]]; then export WEBAUTH_USERNAME=$(openssl rand -base64 12)
@@ -32,9 +32,10 @@ htpasswd -cmb .htpasswd $WEBAUTH_USERNAME $WEBAUTH_PASSWORD
 # Create shared volume between django and alertmanager
 mkdir -p alertmanager/shared && cp alertmanager/alertmanager.yml alertmanager/shared/alertmanager.yml
 
-echo "Loading nginx/$NGINX files"
-
 if [[ $@ == *"-prod"* ]]; then
+
+  export NGINX="production" # Will load nginx/production/*.conf files
+
   if [[ $DOMAIN == *"localhost"* ]]; then
     echo 'You need to define a custom domain other than localhost or host.docker.internal'
     exit
@@ -59,6 +60,9 @@ if [[ $@ == *"-prod"* ]]; then
   source scripts/init-letsencrypt.sh
 
 else
+
+  export NGINX="local"  # Will load nginx/local/*.conf files
+
   if [[ $@ == *"-d"* ]]; then
     docker-compose up -d
 
