@@ -67,4 +67,6 @@ def heartbeat(request, id):
     server.last_seen = timezone.now()
     server.save()
 
-    return HttpResponse(status=200)
+    return JsonResponse({
+        'last_modified_setup': server.last_modified_setup
+    })

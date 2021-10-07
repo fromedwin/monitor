@@ -20,5 +20,3 @@ def generate_alert_manager_config():
         response.raise_for_status()
     except Exception as err:
         raise Exception(f'Error occurred: {err}')
-
-    print('👋👋👋👋👋👋')

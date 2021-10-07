@@ -1,27 +1,18 @@
 import uuid
 import ipaddress
+import math
+import datetime
 
 from django.db import models
 from django.contrib.auth.models import User
-from yamlfield.fields import YAMLField
 from django.utils import timezone
-import math
-import datetime
 from django.conf import settings
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 
-# SEVERITY =(
-#     ("CRITICAL", "Critical"),
-#     ("WARN", "Warning"),
-# )
+from applications.models import Service, Metrics, Application
 
-# class Alerts(models.Model):
-#     alert = models.CharField(max_length=200, unique=True, help_text="eg. InstanceDown")
-#     expr = models.TextField(help_text="eg. probe_success == 0")
-#     waiting_duration = model.CharField(max_length=20, help_text="5m")
-#     severity = model.CharField(max_length=8, choices=SEVERITY)
-#     summary = model.TextField(help_text="annotation.summary")
-#     description = model.TextField(help_text="annotation.description")
-#     is_active = model.BooleanField(default=True, help_text="Will be ignored")
+from yamlfield.fields import YAMLField
 
 class AlertsConfig(models.Model):
     title = models.CharField(max_length=200)
@@ -99,4 +90,17 @@ class Server(models.Model):
             else:
                 return str(years) + " years ago"
         return self.last_seen
+
+@receiver(post_save, sender=AlertsConfig)
+@receiver(post_delete, sender=AlertsConfig)
+@receiver(post_delete, sender=Application)
+@receiver(post_save, sender=Service)
+@receiver(post_delete, sender=Service)
+@receiver(post_save, sender=Metrics)
+@receiver(post_delete, sender=Metrics)
+def update_last_modified_setup(sender, instance=None, created=False, **kwargs):
+    servers = Server.objects.all()
+    for server in servers:
+        server.last_modified_setup = timezone.now()
+        server.save()
 
