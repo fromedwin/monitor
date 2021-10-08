@@ -1,38 +1,74 @@
-# Monitor
 
-Monitor is a django application to configure a set of docker images and provide prometheus metrics as no or low code.
+# Monitor fromedwin
 
-## Run
+This project provide a no code interface to configure a prometheus instance.
 
-```bash
-./run.sh
-./run.sh -d # Run locally as deamon
-```
 
-Default UI is available
+## Installation
 
-## Stop
+[Docker](https://www.docker.com/) and [Docker-compose](https://docs.docker.com/compose/) are required to run this project.
+## Run Locally
+
+Clone the project
 
 ```bash
-./stop.sh
+  git clone https://github.com/fromedwin/monitor.git
 ```
 
-## Customise credential for web auth
+Go to the project directory
 
+```bash
+  cd monitor
 ```
-sudo htpasswd .htpasswd user2
-``` 
 
-# Frequently Asked Questions
+Start the server
 
-## no such table: django_session
+```bash
+  ./run.sh
+```
 
-Run `docker exec -u root -t -i monitor_django_1 python3 manage.py migrate`
+Create a superuser
 
-## Create super user
+```bash
+  docker exec -u root -t -i monitor_django_1 python3 manage.py createsuperuser
+```
 
-Run `docker exec -u root -t -i monitor_django_1 python3 manage.py createsuperuser`
+  
+## Environment Variables
 
-## Install python dependancies
+No variables are required to run locally, but might be needed to configure your production environment
 
-Run `apk update && apk add alpine-sdk gcc musl-dev python3-dev libffi-dev openssl-dev`
+You will need to add the following environment variables to your `.env` file
+
+`PORT` *(default: 8000)*
+
+`PORT_HTTPS` *(default: 8443)*
+
+`NGINX` nginx config folder used on start *(default: local)*
+
+`MAIL` email shared with letsencrypt to register SSL certificate
+
+`STAGING` set to 1 if you're testing your setup to avoid hitting request limits *(default: 1)*
+
+`DOMAIN` url used to generate letsencrypt SSL certificate and access the application
+
+`DJANGO_SECRET_KEY` secret key used by django's session
+
+`WEBAUTH_USERNAME` username to protect none public access
+
+`WEBAUTH_PASSWORD` password to protect none public access
+
+`ALERT_MANAGER_PROTOCOL` http or https used to reach alertmanager
+
+`ALERT_MANAGER_PORT` port number used to reach alertmanager *(default: 443)*
+
+  
+## Feedback
+
+If you have any feedback, please reach out to us at fromedwin@sebastienbarbier.com
+
+  
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
+
