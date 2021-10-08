@@ -8,6 +8,8 @@ from clients.models import Server
 import datetime
 from django.utils import timezone
 
+from allauth.socialaccount.models import SocialApp
+
 # Create your views here.
 def index(request):
 
@@ -22,8 +24,11 @@ def index(request):
             last_seen__gte=timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
         ).order_by('-last_seen')
 
+    socialapps = SocialApp.objects.all()
+
     return render(request, 'index.html', {
         'servers': servers,
+        'socialapps': socialapps,
         'token': token,
         'is_staff': is_staff,
         'settings': settings,

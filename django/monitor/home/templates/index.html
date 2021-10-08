@@ -74,11 +74,10 @@ Hi: {% user_display user %} - {{ is_staff}} - <a href="/accounts/logout">logout<
 
 {% else %}
 
-{% get_providers as socialaccount_providers %}
-{% if socialaccount_providers|length >= 1 %}
+{% if socialapps|length >= 1 %}
 <p>Please <a href="{% provider_login_url 'github' %}">Authenticate with GitHub</a></p>
 {% else %}
-<p>Please <a href="/accounts/login">Authenticate with username/password</a></p>
+<p>🤖 Coming soon</p>
 {% endif %}
 
 {% endif %}
