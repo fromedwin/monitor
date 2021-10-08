@@ -1,7 +1,7 @@
 
 # Monitor fromedwin
 
-This project provide a no code interface to configure a prometheus instance.
+This project provide a no code Prometheus setup for instance down monitoring
 
 
 ## Installation
