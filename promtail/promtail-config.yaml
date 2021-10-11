@@ -18,7 +18,7 @@ scrape_configs:
   - targets:
       - localhost
     labels:
-      job: nginx
-      host: nginx01
+      job: status_fromedwin
+      host: monitor
       agent: promtail
       __path__: /var/log/nginx/status_fromedwin.log

@@ -137,3 +137,5 @@ data/
 # nginx authentication
 .htpasswd
 alertmanager/shared
+nginx/geolite
+.DS_Store
