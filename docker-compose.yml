@@ -1,17 +1,20 @@
 version: "3.9"  # optional since v1.27.0
 services:
   nginx:
-    image: "nginx:latest"
+    image: "nginx:alpine"
     ports:
       - "${PORT:-8000}:80"
       - "${PORT_HTTPS:-8443}:443"
     volumes:
       - ./data/log:/var/log
       - ./data/log/nginx:/var/log/nginx
-      - ./nginx/${NGINX:-local}/:/etc/nginx/conf.d/
+      # - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf/${NGINX:-local}/:/etc/nginx/conf.d/
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
       - ./.htpasswd:/etc/nginx/.htpasswd/.htpasswd:ro
+      # - ./nginx/geolite/GeoLite2-Country.mmdb:/etc/GeoLite2-Country.mmdb
+      # - ./nginx/geolite/GeoLite2-City.mmdb:/etc/GeoLite2-City.mmdb
     links:
       - alertmanager
       - grafana
@@ -24,7 +27,7 @@ services:
       - ./certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:8.2.0
     environment:
       - GF_INSTALL_PLUGINS=grafana-worldmap-panel 0.3.2
       - GF_SERVER_ROOT_URL=/grafana/
@@ -56,7 +59,7 @@ services:
     links:
       - alertmanager
   promtail:
-    image: grafana/promtail:1.6.0
+    image: grafana/promtail:2.3.0
     volumes:
       - ./data/log:/var/log
       - ./promtail/promtail-config.yaml:/etc/promtail/config.yml

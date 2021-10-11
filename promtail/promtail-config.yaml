@@ -9,10 +9,16 @@ positions:
 #   - url: http://loki:3100/loki/api/v1/push
 
 scrape_configs:
-- job_name: system
+- job_name: nginx
+  pipeline_stages:
+  - replace:
+      expression: '(?:[0-9]{1,3}\.){3}([0-9]{1,3})'
+      replace: '***'
   static_configs:
   - targets:
       - localhost
     labels:
-      job: varlogs
-      __path__: /var/log/nginx/*log
+      job: nginx
+      host: nginx01
+      agent: promtail
+      __path__: /var/log/nginx/status_fromedwin.log
