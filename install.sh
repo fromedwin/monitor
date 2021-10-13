@@ -18,6 +18,9 @@ cd geolite
 tar -xf "./GeoLite2-City.tar.gz"
 tar -xf "./GeoLite2-Country.tar.gz"
 
+rm "./GeoLite2-City.tar.gz"
+rm "./GeoLite2-Country.tar.gz"
+
 find . -iname "GeoLite2-City.mmdb" -exec mv {} . \;
 find . -iname "GeoLite2-Country.mmdb" -exec mv {} . \;
 

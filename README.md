@@ -25,6 +25,12 @@ Go to the project directory
   cd monitor
 ```
 
+Install dependencies
+
+```bash
+  ./install.sh
+```
+
 Start the server
 
 ```bash

@@ -47,6 +47,12 @@ ALLOWED_HOSTS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # Application definition
 
+# TAILWIND SETTINGS
+TAILWIND_APP_NAME = 'theme'
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -55,6 +61,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'tailwind',
+    'theme',
     'django_prometheus',
     'rest_framework',
     'rest_framework.authtoken',
