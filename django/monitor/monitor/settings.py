@@ -30,8 +30,9 @@ ALERT_MANAGER_PORT = os.environ.get('ALERT_MANAGER_PORT')
 
 IS_SERVICE_DOWN_SCRAPE_INTERVAL = '1m'
 
+print(os.environ.get('DEBUG'))
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG') or False
+DEBUG = True if os.environ.get('DEBUG') == '1' else False
 
 ALLOWED_HOSTS = [
     'c871cc84c243.ngrok.io',
