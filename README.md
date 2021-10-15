@@ -72,6 +72,7 @@ You will need to add the following environment variables to your `.env` file
 
 `ALERT_MANAGER_PORT` port number used to reach alertmanager *(default: 443)*
 
+`DEBUG` Set debug mode within django project *(default: False)*
   
 ## Feedback
 
