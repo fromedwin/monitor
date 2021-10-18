@@ -68,6 +68,8 @@ services:
   tailwind:
     <<: *default-app
     command: "python3 manage.py tailwind start"
+    profiles:
+      - dev
     ports:
       - "8383:8383"
   promtail:

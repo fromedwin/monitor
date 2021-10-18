@@ -77,7 +77,7 @@ if [[ $@ == *"-prod"* ]]; then
 else
 
   if [[ $@ == *"-d"* ]]; then
-    docker-compose up -d
+    docker-compose --profile dev up -d
 
     # IF load-config.py return code 0
     if [ $? -ne 0 ]; then
@@ -88,6 +88,6 @@ else
     echo "✅ Access fromedwin/monitor at localhost:$PORT"
 
   else
-    docker-compose up
+    docker-compose --profile dev up
   fi
 fi
