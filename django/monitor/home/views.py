@@ -13,22 +13,26 @@ from allauth.socialaccount.models import SocialApp
 # Create your views here.
 def index(request):
 
+    if request.user.is_anonymous:
+
+        socialapps = SocialApp.objects.all()
+        return render(request, 'homepage.html', {
+            'socialapps': socialapps,
+        })
+
     token = None
     is_staff = False
     servers = []
 
-    if not request.user.is_anonymous:
-        is_staff = request.user.is_staff
-        token = Token.objects.get(user=request.user)
-        servers = Server.objects.filter(
-            last_seen__gte=timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
-        ).order_by('-last_seen')
+    is_staff = request.user.is_staff
+    token = Token.objects.get(user=request.user)
+    servers = Server.objects.filter(
+        last_seen__gte=timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
+    ).order_by('-last_seen')
 
-    socialapps = SocialApp.objects.all()
 
-    return render(request, 'index.html', {
+    return render(request, 'dashboard.html', {
         'servers': servers,
-        'socialapps': socialapps,
         'token': token,
         'is_staff': is_staff,
         'settings': settings,

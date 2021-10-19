@@ -1,15 +1,7 @@
-{% load tailwind_tags %}
-{% load socialaccount %}
-{% load account %}
+{% extends 'base.html' %}
+{% load socialaccount account tailwind_tags %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>🤖 Status from edwin</title>
-    {% tailwind_css %}
-</head>
-<body>
+{% block content %}
 
 {% if user.is_authenticated %}
 
@@ -76,13 +68,7 @@ Hi: {% user_display user %} - {{ is_staff}} - <a href="/accounts/logout">logout<
 
 {% else %}
 
-{% if socialapps|length >= 1 %}
-<p>Please <a href="{% provider_login_url 'github' %}">Authenticate with GitHub</a></p>
-{% else %}
-<p>🤖 Coming soon</p>
-{% endif %}
+
 
 {% endif %}
-
-</body>
-</html>
+{% endblock %}
