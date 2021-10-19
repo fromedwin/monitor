@@ -37,6 +37,7 @@ services:
       - ./.htpasswd:/etc/nginx/.htpasswd/.htpasswd:ro
       - ./nginx/geolite/GeoLite2-Country.mmdb:/etc/GeoLite2-Country.mmdb
       - ./nginx/geolite/GeoLite2-City.mmdb:/etc/GeoLite2-City.mmdb
+      - ./django/monitor/staticfiles:/etc/staticfiles
     links:
       - alertmanager
       - grafana
