@@ -34,3 +34,5 @@ CMD python3 manage.py migrate
 
 CMD SECRET_KEY=nothing python3 manage.py tailwind install --no-input;
 CMD SECRET_KEY=nothing python3 manage.py tailwind build --no-input;
+
+CMD SECRET_KEY=nothing python3 manage.py collectstatic;
