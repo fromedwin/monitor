@@ -50,7 +50,7 @@ class Server(models.Model):
         if diff.days == 0 and diff.seconds >= 0 and diff.seconds < 60:
             seconds= diff.seconds
             if seconds == 1:
-                return str(seconds) +  "second ago"
+                return str(seconds) + " second ago"
             else:
                 return str(seconds) + " seconds ago"
 

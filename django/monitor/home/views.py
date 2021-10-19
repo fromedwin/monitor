@@ -10,6 +10,8 @@ from django.utils import timezone
 
 from allauth.socialaccount.models import SocialApp
 
+from django.contrib.auth.decorators import login_required
+
 # Create your views here.
 def index(request):
 
@@ -24,7 +26,6 @@ def index(request):
     is_staff = False
     servers = []
 
-    is_staff = request.user.is_staff
     token = Token.objects.get(user=request.user)
     servers = Server.objects.filter(
         last_seen__gte=timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
@@ -34,6 +35,10 @@ def index(request):
     return render(request, 'dashboard.html', {
         'servers': servers,
         'token': token,
-        'is_staff': is_staff,
         'settings': settings,
     })
+
+@login_required
+def projects(request):
+
+    return render(request, 'projects.html', {})

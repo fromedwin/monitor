@@ -11,6 +11,9 @@ class Application(models.Model):
     title = models.CharField(max_length=128, blank=False)
     enable_public_status = models.BooleanField(default=False)
 
+    def is_healthy(self):
+        return not self.services.filter(instancedownalerts__status=2)
+
     def __str__(self):
         return self.title
 

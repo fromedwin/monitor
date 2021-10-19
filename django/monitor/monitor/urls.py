@@ -14,14 +14,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.contrib.auth.views import LogoutView
 from django.urls import path
 from django.conf.urls import include, url
 from alerts.views import webhook
 from health.views import healthy
-from home.views import index
+from home.views import index, projects
+from django.conf import settings
+
 
 urlpatterns = [
     path('', index, name='index'),
+    path('projects', projects, name='projects'),
     path('', include('django_prometheus.urls')),
     path('healthy/<int:id>/', healthy, name='healthy'),
     path('alert/', webhook, name='alert'),
@@ -29,4 +33,5 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('clients/', include('clients.urls')),
     path('api-auth/', include('rest_framework.urls')),
+    url(r'^logout/$', LogoutView.as_view(), {'next_page': settings.LOGOUT_REDIRECT_URL}, name='logout'),
 ]
