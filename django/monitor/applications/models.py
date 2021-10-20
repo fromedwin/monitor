@@ -14,6 +14,12 @@ class Application(models.Model):
     def is_healthy(self):
         return not self.services.filter(instancedownalerts__status=2)
 
+    def is_critical(self):
+        return self.services.filter(instancedownalerts__status=2, is_critical=True)
+
+    def is_warning(self):
+        return self.services.filter(instancedownalerts__status=2, is_critical=False)
+
     def __str__(self):
         return self.title
 
@@ -26,6 +32,8 @@ class Service(models.Model):
     title = models.CharField(max_length=128, blank=False)
     url = models.URLField(max_length=512, blank=False)
     is_public = models.BooleanField(default=True)
+    is_enabled = models.BooleanField(default=True)
+    is_critical = models.BooleanField(default=True)
     creation_date = models.DateTimeField(auto_now_add=True, editable=False, help_text="Creation date")
 
     def __str__(self):
@@ -42,3 +50,4 @@ class Metrics(models.Model):
         related_name = "metrics",
     )
     url = models.URLField(max_length=512, blank=False)
+    is_enabled = models.BooleanField(default=True)

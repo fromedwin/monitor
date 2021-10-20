@@ -61,13 +61,13 @@ scrape_configs:
     module:
     - http_2xx
   static_configs:
-  {% for user in users %}{% for application in user.applications.all %}{% for service in application.services.all %}
+  {% for user in users %}{% for application in user.applications.all %}{% for service in application.services.all %}{% if service.is_enabled %}
   - labels:
       application: {{ application.id }}
       service: {{ service.id }}
     targets:
     - {{ service.url }}
-    {% endfor %}{% endfor %}{% endfor %}
+    {% endif %}{% endfor %}{% endfor %}{% endfor %}
   relabel_configs:
   - source_labels:
     - __address__

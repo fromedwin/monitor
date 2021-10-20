@@ -12,7 +12,7 @@ class AbstractAlert(models.Model):
         blank=False,
         editable=False,
         help_text="Fingerprint provided by prometheus"
-    )    
+    )
 
     class Meta:
         abstract = True

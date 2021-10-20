@@ -65,9 +65,11 @@ services:
       - ./alertmanager/shared/alertmanager.yml:/etc/alertmanager/alertmanager.yml
   django:
     <<: *default-app
+    container_name: monitor_django
     command: "python3 manage.py runserver 0.0.0.0:8000"
   tailwind:
     <<: *default-app
+    container_name: monitor_tailwind
     command: "python3 manage.py tailwind start"
     profiles:
       - dev
