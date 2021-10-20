@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load socialaccount account tailwind_tags %}
+{% load socialaccount account tailwind_tags starts_with %}
 
 {% block body %}
 
@@ -14,8 +14,9 @@
             <a href="/" class="{% if request.path == '/' %}border-green-500 text-gray-900 {% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium" aria-current="page">
               Dashboard
             </a>
-
-            <a href="/projects" class="{% if request.path == '/projects' %}border-green-500 text-gray-900 {% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+            
+            {% starts_with request.path '/projects' as is_selected %}
+            <a href="/projects" class="{% if is_selected %}border-green-500 text-gray-900 {% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
               Projects
             </a>
           </div>
@@ -131,6 +132,7 @@
   </nav>
 
   <div class="py-10">
+    {% block title_header %}
     <header>
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold leading-tight text-gray-900">
@@ -138,6 +140,7 @@
         </h1>
       </div>
     </header>
+    {% endblock %}
     <main>
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         {% block content %}{% endblock %}

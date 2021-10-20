@@ -19,13 +19,14 @@ from django.urls import path
 from django.conf.urls import include, url
 from alerts.views import webhook
 from health.views import healthy
-from home.views import index, projects
+from home.views import index, projects, project
 from django.conf import settings
 
 
 urlpatterns = [
     path('', index, name='index'),
     path('projects', projects, name='projects'),
+    path('projects/<int:id>/', project, name='project'),
     path('', include('django_prometheus.urls')),
     path('healthy/<int:id>/', healthy, name='healthy'),
     path('alert/', webhook, name='alert'),

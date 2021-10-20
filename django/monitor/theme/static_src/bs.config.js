@@ -20,7 +20,7 @@ module.exports = {
     logSnippet: false,
     open: false,
     reloadOnRestart: true,
-    notify: false,
+    notify: true,
     files: [
         '../static/css/dist/styles.css',
     ]

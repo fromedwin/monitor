@@ -5,7 +5,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('user', 'title', 'enable_public_status')
 
 class ServiceAdmin(admin.ModelAdmin):
-    list_display = ('application', 'title',  'url', 'is_public')
+    list_display = ('application', 'title',  'url', 'is_critical', 'is_enabled', 'is_public')
 
 class MetricsAdmin(admin.ModelAdmin):
     list_display = ('user', 'url')

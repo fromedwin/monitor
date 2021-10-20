@@ -9,6 +9,8 @@ import datetime
 from django.utils import timezone
 
 from allauth.socialaccount.models import SocialApp
+from applications.models import Application
+from django.shortcuts import get_object_or_404
 
 from django.contrib.auth.decorators import login_required
 
@@ -42,3 +44,13 @@ def index(request):
 def projects(request):
 
     return render(request, 'projects.html', {})
+
+
+@login_required
+def project(request, id):
+
+    application = get_object_or_404(Application, pk=id)
+
+    return render(request, 'project.html', {
+        'application': application
+    })

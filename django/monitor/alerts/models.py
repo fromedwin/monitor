@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from applications.models import Service, Application
 from django.template.defaultfilters import truncatechars
+from django.utils import timezone
 
 class AbstractAlert(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True, editable=False, help_text="Creation date")
@@ -57,7 +58,7 @@ class GenericAlert(AbstractAlert):
     def duration(self):
         if self.endsAt:
             return  self.endsAt - self.startsAt
-        return ''
+        return timezone.now() - self.startsAt
     
     class Meta:
         verbose_name = "Unknown alert"
@@ -98,7 +99,7 @@ class ApplicationAlert(AbstractAlert):
     def duration(self):
         if self.endsAt:
             return  self.endsAt - self.startsAt
-        return ''
+        return timezone.now() - self.startsAt
 
     class Meta:
         verbose_name = "Application alert"
@@ -141,7 +142,7 @@ class InstanceDownAlert(AbstractAlert):
     def duration(self):
         if self.endsAt:
             return  self.endsAt - self.startsAt
-        return ''
+        return timezone.now() - self.startsAt
 
     class Meta:
         verbose_name = "Service down alert"
