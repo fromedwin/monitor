@@ -16,10 +16,10 @@ class Application(models.Model):
         return not self.services.filter(instancedownalerts__status=2)
 
     def is_critical(self):
-        return self.services.filter(instancedownalerts__status=2, is_critical=True)
+        return self.services.filter(instancedownalerts__status=2, is_critical=True, is_enabled=True)
 
     def is_warning(self):
-        return self.services.filter(instancedownalerts__status=2, is_critical=False)
+        return self.services.filter(instancedownalerts__status=2, is_critical=False, is_enabled=True)
 
     def availability(self, days=7):
 
