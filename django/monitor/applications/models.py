@@ -12,13 +12,13 @@ class Application(models.Model):
     title = models.CharField(max_length=128, blank=False)
     enable_public_status = models.BooleanField(default=False)
 
-    def is_healthy(self):
+    def is_online(self):
         return not self.services.filter(instancedownalerts__status=2)
 
-    def is_critical(self):
+    def is_offline(self):
         return self.services.filter(instancedownalerts__status=2, is_critical=True, is_enabled=True)
 
-    def is_warning(self):
+    def is_degraded(self):
         return self.services.filter(instancedownalerts__status=2, is_critical=False, is_enabled=True)
 
     def availability(self, days=7):
@@ -73,13 +73,13 @@ class Service(models.Model):
 
         return round(100 - total_unavailability * 100 / total_second, 3)
 
-    def is_healthy(self):
+    def is_online(self):
         return not self.instancedownalerts.filter(endsAt__isnull=True)
 
-    def is_critical_state(self):
+    def is_offline(self):
         return self.instancedownalerts.filter(status=2, endsAt__isnull=True)
 
-    def is_warning(self):
+    def is_degraded(self):
         return self.instancedownalerts.filter(status=2, endsAt__isnull=True)
 
     def __str__(self):

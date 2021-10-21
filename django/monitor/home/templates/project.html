@@ -7,196 +7,196 @@
 
 {% block content %}
 <div class="p-4">
-	<div>
-	  <div>
-	    <nav class="sm:hidden" aria-label="Back">
-	      <a href="/projects" class="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700">
-	        <!-- Heroicon name: solid/chevron-left -->
-	        <svg class="flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-	          <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-	        </svg>
-	        Back
-	      </a>
-	    </nav>
-	    <nav class="hidden sm:flex" aria-label="Breadcrumb">
-	      <ol role="list" class="flex items-center space-x-4">
-	        <li>
-	          <div class="flex">
-	            <a href="/projects" class="text-sm font-medium text-gray-500 hover:text-gray-700">Projects</a>
-	          </div>
-	        </li>
-	      </ol>
-	    </nav>
-	  </div>
-	  <div class="mt-2 md:flex md:items-center md:justify-between">
-	    <div class="flex-1 min-w-0">
-	      <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-	        {{ application }}
-	      </h2>
-	    </div>
-	  </div>
-	</div>
+    <div>
+      <div>
+        <nav class="sm:hidden" aria-label="Back">
+          <a href="/projects" class="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700">
+            <!-- Heroicon name: solid/chevron-left -->
+            <svg class="flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+            Back
+          </a>
+        </nav>
+        <nav class="hidden sm:flex" aria-label="Breadcrumb">
+          <ol role="list" class="flex items-center space-x-4">
+            <li>
+              <div class="flex">
+                <a href="/projects" class="text-sm font-medium text-gray-500 hover:text-gray-700">Projects</a>
+              </div>
+            </li>
+          </ol>
+        </nav>
+      </div>
+      <div class="mt-2 md:flex md:items-center md:justify-between">
+        <div class="flex-1 min-w-0">
+          <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+            {{ application }}
+          </h2>
+        </div>
+      </div>
+    </div>
 
-	<div class="pt-4">
-	  <h3 class="text-lg leading-6 font-medium text-gray-900">
-	    Last 7 days
-	  </h3>
-	  <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
-	    <div class="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6">
-	      <dt class="text-sm font-medium text-gray-500 truncate">
-	        Availability
-	      </dt>
-	      <dd class="mt-1 text-3xl font-semibold text-green-500">
-	        {{ application.availability }} %
-	      </dd>
-	    </div>
-	  </dl>
-	</div>
+    <div class="pt-4">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">
+        Last 7 days
+      </h3>
+      <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
+        <div class="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6">
+          <dt class="text-sm font-medium text-gray-500 truncate">
+            Availability
+          </dt>
+          <dd class="mt-1 text-3xl font-semibold text-green-500">
+            {{ application.availability }} %
+          </dd>
+        </div>
+      </dl>
+    </div>
 
-	<div class="pb-5 border-b border-gray-200 pt-4">
-	  <h3 class="text-lg leading-6 font-medium text-gray-900">
-	    Services
-	  </h3>
-	</div>
+    <div class="pb-5 border-b border-gray-200 pt-4">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">
+        Services
+      </h3>
+    </div>
 
-	{% if application.is_warning %}
-	<div class="rounded-md bg-yellow-50 p-4 mt-4 mb-4">
-	  <div class="flex">
-	    <div class="flex-shrink-0">
-	      <!-- Heroicon name: solid/exclamation -->
-	      <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-	        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-	      </svg>
-	    </div>
-	    <div class="ml-3">
-	      <h3 class="text-sm font-medium text-yellow-800">
-	        None critical services are failing
-	      </h3>
-	      <div class="mt-2 text-sm text-yellow-700">
-	        <p>
-	          Application still works and can be used and so not in an outrage state, but some none critical services are failing and might need attention.
-	        </p>
-	      </div>
-	    </div>
-	  </div>
-	</div>
-	{% endif %}
+    {% if application.is_warning %}
+    <div class="rounded-md bg-yellow-50 p-4 mt-4 mb-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <!-- Heroicon name: solid/exclamation -->
+          <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-yellow-800">
+            None critical services are failing
+          </h3>
+          <div class="mt-2 text-sm text-yellow-700">
+            <p>
+              Application still works and can be used and so not in an outrage state, but some none critical services are failing and might need attention.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
 
-	<div class="flex flex-col">
-	  <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-	    <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-	      <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-	        <table class="min-w-full divide-y divide-gray-200">
-	          <thead class="bg-gray-50">
-	            <tr>
-	              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-	                Name
-	              </th>
-	              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-	                Availability
-	              </th>
-	              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-	                Status
-	              </th>
-	            </tr>
-	          </thead>
-	          <tbody class="bg-white divide-y divide-gray-200">
-	          	{% for service in application.services.all %}
-	            <tr>
-	              <td class="px-6 py-4 whitespace-nowrap">
-	                <div class="flex items-center">
-	               	  <!-- 	
-	                  <div class="flex-shrink-0 h-10 w-10">
-	                    <img class="h-10 w-10 rounded-full" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60" alt="">
-	                  </div>-->
-	                  <div class="ml-4">
-	                    <div class="text-sm font-medium text-gray-900">
-	                      {{ service.title }}
-	                    </div>
-	                    <div class="text-sm text-gray-500">
-	                      {{ service.url }}
-	                    </div>
-	                  </div>
-	                </div>
-	              </td>
-	              <td class="px-6 py-4 whitespace-nowrap">
-	                <div class="text-sm text-gray-900">{{ service.availability }} %</div>
-	              </td>
-	              <td class="px-6 py-4 whitespace-nowrap">
-	              	{% if not service.is_enabled %}
-		                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-600">
-		                  Disabled
-		                </span>
-	              	{% else %}
-	                	{% if service.is_critical and service.is_critical_state %}
-			                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-			                  Failing
-			                </span>
-		              	{% elif service.is_warning %}
-			                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-200 text-yellow-800">
-			                  Failing
-			                </span>
-		              	{% else %}
-			                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-			                  Working
-			                </span>
-		                {% endif %}
-	                {% endif %}
-	              </td>
-	            </tr>
-	            {% endfor %}
-	          </tbody>
-	        </table>
-	      </div>
-	    </div>
-	  </div>
-	</div>
+    <div class="flex flex-col">
+      <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+          <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Name
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Availability
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                {% for service in application.services.all %}
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <!--
+                      <div class="flex-shrink-0 h-10 w-10">
+                        <img class="h-10 w-10 rounded-full" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60" alt="">
+                      </div>-->
+                      <div class="ml-4">
+                        <div class="text-sm font-medium text-gray-900">
+                          {{ service.title }}
+                        </div>
+                        <div class="text-sm text-gray-500">
+                          {{ service.url }}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-900">{{ service.availability }} %</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    {% if not service.is_enabled %}
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-600">
+                          Disabled
+                        </span>
+                    {% else %}
+                        {% if service.is_critical and service.is_offline %}
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                              Offline
+                            </span>
+                        {% elif service.is_degraded %}
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-200 text-yellow-800">
+                              Degraded
+                            </span>
+                        {% else %}
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                              Online
+                            </span>
+                        {% endif %}
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
 
-	<div class="pb-5 border-b border-gray-200 pt-4">
-	  <h3 class="text-lg leading-6 font-medium text-gray-900">
-	    Notifications
-	  </h3>
-	</div>
+    <div class="pb-5 border-b border-gray-200 pt-4">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">
+        Notifications
+      </h3>
+    </div>
 
-	<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 pt-4">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 pt-4">
 
-	  {% for notification in application.pager_duty.all %}
-	  <div class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
-	    <div class="flex-shrink-0">
-	      <span class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-green-500">
-			  <span class="text-lg font-medium leading-none text-white">P</span>
-			</span>
-	    </div>
-	    <div class="flex-1 min-w-0">
-	      <a href="#" class="focus:outline-none">
-	        <span class="absolute inset-0" aria-hidden="true"></span>
-	        <p class="text-sm font-medium text-gray-900">
-	          PagerDuty
-	        </p>
-	        <p class="text-sm text-gray-500 truncate">
-	          {{ notification.routing_key }}
-	        </p>
-	      </a>
-	    </div>
-	  </div>
-	  {% empty %}
-	  	<div class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
-	    <div class="flex-shrink-0">
-	      	<span class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-gray-500">
-			  <span class="text-lg font-medium leading-none text-white">+</span>
-			</span>
-	    </div>
-	    <div class="flex-1 min-w-0">
-	      <a href="#" class="focus:outline-none">
-	        <span class="absolute inset-0" aria-hidden="true"></span>
-	        <p class="text-sm font-medium text-gray-900">
-	          Add PagerDuty
-	        </p>
-	      </a>
-	    </div>
-	  </div>
-	  {% endfor %}
-	</div>
+      {% for notification in application.pager_duty.all %}
+      <div class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+        <div class="flex-shrink-0">
+          <span class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-green-500">
+              <span class="text-lg font-medium leading-none text-white">P</span>
+            </span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <a href="#" class="focus:outline-none">
+            <span class="absolute inset-0" aria-hidden="true"></span>
+            <p class="text-sm font-medium text-gray-900">
+              PagerDuty
+            </p>
+            <p class="text-sm text-gray-500 truncate">
+              {{ notification.routing_key }}
+            </p>
+          </a>
+        </div>
+      </div>
+      {% empty %}
+        <div class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+        <div class="flex-shrink-0">
+            <span class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-gray-500">
+              <span class="text-lg font-medium leading-none text-white">+</span>
+            </span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <a href="#" class="focus:outline-none">
+            <span class="absolute inset-0" aria-hidden="true"></span>
+            <p class="text-sm font-medium text-gray-900">
+              Add PagerDuty
+            </p>
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
 </div>
 
 {% endblock %}
