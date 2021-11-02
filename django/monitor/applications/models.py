@@ -21,7 +21,7 @@ class Application(models.Model):
     def is_degraded(self):
         return self.services.filter(instancedownalerts__status=2, is_critical=False, is_enabled=True)
 
-    def availability(self, days=7):
+    def availability(self, days=30):
 
         from alerts.models import InstanceDownAlert
 
@@ -32,7 +32,9 @@ class Application(models.Model):
 
         total_unavailability = 0
         for alert in alerts:
-            if alert.startsAt < start_date:
+            if not alert.endsAt:
+                total_unavailability += (timezone.now() - alert.startsAt).seconds
+            elif alert.startsAt < start_date:
                 total_unavailability += (alert.endsAt - start_date).seconds
             else:
                 total_unavailability += alert.duration.seconds
@@ -55,7 +57,7 @@ class Service(models.Model):
     is_critical = models.BooleanField(default=True)
     creation_date = models.DateTimeField(auto_now_add=True, editable=False, help_text="Creation date")
 
-    def availability(self, days=7):
+    def availability(self, days=30):
 
         from alerts.models import InstanceDownAlert
 
@@ -66,7 +68,9 @@ class Service(models.Model):
 
         total_unavailability = 0
         for alert in alerts:
-            if alert.startsAt < start_date:
+            if not alert.endsAt:
+                total_unavailability += (timezone.now() - alert.startsAt).seconds
+            elif alert.startsAt < start_date:
                 total_unavailability += (alert.endsAt - start_date).seconds
             else:
                 total_unavailability += alert.duration.seconds
