@@ -54,3 +54,28 @@ def project(request, id):
     return render(request, 'project.html', {
         'application': application
     })
+
+@login_required
+def projects_form(request, id=None):
+    
+    application = None
+
+    if id != None:
+        application = get_object_or_404(Application, pk=id)
+
+    return render(request, 'projects/form.html', {
+        'application': application
+    })
+
+@login_required
+def service_form(request, application_id, service_id=None):
+    
+    application = None
+
+    if application_id != None:
+        application = get_object_or_404(Application, pk=application_id)
+
+    return render(request, 'projects/services/form.html', {
+        'application': application,
+        'service': service_id,
+    })
