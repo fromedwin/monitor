@@ -4,35 +4,70 @@
 {% block title %}Projects{% endblock %}
 
 {% block content %}
+
 <div class="pt-4">
-	<ul role="list" class="mt-3 grid grid-cols-1 gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
-		{% for application in user.applications.all %}
-		<li class="col-span-1 flex shadow-sm rounded-md">
-		  {% if application.is_offline %}
-	      <div class="flex-shrink-0 flex items-center justify-center w-16 bg-red-600 text-white text-sm font-medium rounded-l-md">
-	        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-			  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-			</svg>
-	      </div>
-	      {% elif application.is_degraded %}
-	      <div class="flex-shrink-0 flex items-center justify-center w-16 bg-yellow-600 text-white text-sm font-medium rounded-l-md">
-	        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-	      </div>
-	      {% else %}
-	      <div class="flex-shrink-0 flex items-center justify-center w-16 bg-green-600 text-white text-sm font-medium rounded-l-md">
-	        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-			  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-			</svg>
-	      </div>
-	      {% endif %}
-	      <div class="flex-1 flex items-center justify-between border-t border-r border-b border-gray-200 bg-white rounded-r-md truncate">
-	        <div class="flex-1 px-4 py-2 text-sm truncate">
-	          <a href="/projects/{{ application.id }}" class="text-gray-900 font-medium hover:text-gray-600">{{ application }}</a>
-	          <p class="text-gray-500">{{ application.services.all|length }} services</p>
-	        </div>
-	      </div>
-	    </li>
-		{% endfor %}
-	</ul>
+	<!-- This example requires Tailwind CSS v2.0+ -->
+	<div class="bg-white shadow overflow-hidden sm:rounded-md">
+		<ul role="list" class="divide-y divide-gray-200">
+			{% for application in user.applications.all %}
+			<li>
+				<a href="/projects/{{ application.id }}" class="block hover:bg-gray-50">
+					<div class="flex items-center px-4 py-4 sm:px-6">
+						<div class="min-w-0 flex-1 flex items-center">
+							<div class="flex-shrink-0">
+								{% if application.is_offline %}
+								<div class="h-12 w-12 flex justify-center items-center rounded-full bg-red-600 text-white text-sm font-medium">
+									<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+									</svg>
+								</div>
+								{% elif application.is_degraded %}
+								<div class="h-12 w-12 flex justify-center items-center rounded-full bg-yellow-600 text-white text-sm font-medium">
+									<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+								</div>
+								{% else %}
+								<div class="h-12 w-12 flex justify-center items-center rounded-full bg-green-600 text-white text-sm font-medium">
+									<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+									</svg>
+								</div>
+								{% endif %}
+							</div>
+							<div class="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
+								<div>
+									<p class="text-sm font-medium text-gray-800 truncate">{{ application }}</p>
+									<p class="mt-2 flex items-center text-sm text-gray-500">
+										{% for service in application.services.all %}										
+										<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium mr-1 {% if not service.is_enabled %}bg-gray-100 text-gray-800{% elif service.is_critical and service.is_offline %}bg-red-100 text-red-800{% elif service.is_degraded %}bg-yellow-100 text-yellow-800{% else %}bg-green-100 text-green-800{% endif %}">
+											<svg class="mr-1.5 h-2 w-2 {% if not service.is_enabled %}text-gray-400{% elif service.is_critical and service.is_offline %}text-red-400{% elif service.is_degraded %}text-yellow-400{% else %}text-green-400{% endif %}" fill="currentColor" viewBox="0 0 8 8">
+												<circle cx="4" cy="4" r="3" />
+											</svg>
+											{{ service.title }}
+										</span>
+										{% endfor %}
+									</p>
+								</div>
+								<div class="hidden md:block">
+							      <dt class="text-sm font-medium text-gray-500 truncate">
+							        Availability 30 days
+							      </dt>
+							      <dd class="mt-1 text-xl font-semibold text-gray-900">
+							        {{ application.availability }} %
+							      </dd>
+								</div>
+							</div>
+						</div>
+						<div>
+							<!-- Heroicon name: solid/chevron-right -->
+							<svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+								<path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+							</svg>
+						</div>
+					</div>
+				</a>
+			</li>
+			{% endfor %}
+		</ul>
+	</div>
 </div>
 {% endblock %}
