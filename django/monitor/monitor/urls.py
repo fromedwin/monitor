@@ -31,6 +31,7 @@ urlpatterns = [
     path('projects/<int:id>/', project, name='project'),
     path('projects/<int:application_id>/services/add', service_form, name='services_add'),
     path('projects/<int:application_id>/services/<int:service_id>/edit', service_form, name='services_edit'),
+    path('projects/<int:application_id>/services/<int:service_id>/delete', service_form, name='services_delete'),
     path('', include('django_prometheus.urls')),
     path('healthy/<int:id>/', healthy, name='healthy'),
     path('alert/', webhook, name='alert'),

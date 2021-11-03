@@ -77,5 +77,5 @@ def service_form(request, application_id, service_id=None):
 
     return render(request, 'projects/services/form.html', {
         'application': application,
-        'service': service_id,
+        'service': { 'id': service_id },
     })
