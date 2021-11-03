@@ -36,9 +36,9 @@
 							<div class="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
 								<div>
 									<p class="text-sm font-medium text-gray-800 truncate">{{ application }}</p>
-									<p class="mt-2 flex items-center text-sm text-gray-500">
-										{% for service in application.services.all %}										
-										<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium mr-1 {% if not service.is_enabled %}bg-gray-100 text-gray-800{% elif service.is_critical and service.is_offline %}bg-red-100 text-red-800{% elif service.is_degraded %}bg-yellow-100 text-yellow-800{% else %}bg-green-100 text-green-800{% endif %}">
+									<p class="mt-2 flex flex-wrap items-center text-sm text-gray-500">
+										{% for service in application.services.all %}
+										<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium mr-1 mb-1 {% if not service.is_enabled %}bg-gray-100 text-gray-800{% elif service.is_critical and service.is_offline %}bg-red-100 text-red-800{% elif service.is_degraded %}bg-yellow-100 text-yellow-800{% else %}bg-green-100 text-green-800{% endif %}">
 											<svg class="mr-1.5 h-2 w-2 {% if not service.is_enabled %}text-gray-400{% elif service.is_critical and service.is_offline %}text-red-400{% elif service.is_degraded %}text-yellow-400{% else %}text-green-400{% endif %}" fill="currentColor" viewBox="0 0 8 8">
 												<circle cx="4" cy="4" r="3" />
 											</svg>
