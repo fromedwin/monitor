@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.conf import settings
+from django.urls import reverse
 
 from rest_framework.authtoken.models import Token
 from django.shortcuts import render
@@ -58,6 +59,9 @@ def project(request, id):
 @login_required
 def projects_form(request, id=None):
     
+    if request.POST:
+        return redirect(reverse('projects'))
+
     application = None
 
     if id != None:
@@ -66,6 +70,11 @@ def projects_form(request, id=None):
     return render(request, 'projects/form.html', {
         'application': application
     })
+
+@login_required
+def projects_delete(request, id=None):
+    return redirect(reverse('projects'))
+
 
 @login_required
 def service_form(request, application_id, service_id=None):

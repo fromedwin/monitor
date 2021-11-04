@@ -1,7 +1,7 @@
 {% extends 'application.html' %}
 
 {% block content %}
-<form class="space-y-8 divide-y divide-gray-200">
+<form method="POST" class="space-y-8 divide-y divide-gray-200">
   <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
     <div>
       <div>
@@ -25,6 +25,8 @@
               </span>
               <input type="text" name="username" id="username" autocomplete="username" class="flex-1 block w-full focus:ring-indigo-500 focus:border-indigo-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300">
             </div>
+
+            {% csrf_token %}
           </div>
         </div>
       </div>

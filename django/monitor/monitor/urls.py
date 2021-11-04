@@ -19,7 +19,7 @@ from django.urls import path
 from django.conf.urls import include, url
 from alerts.views import webhook
 from health.views import healthy
-from home.views import index, projects, project, projects_form, service_form
+from home.views import index, projects, project, projects_form, service_form, projects_delete
 from django.conf import settings
 
 urlpatterns = [
@@ -27,7 +27,7 @@ urlpatterns = [
     path('projects', projects, name='projects'),
     path('projects/add', projects_form, name='projects_add'),
     path('projects/<int:id>/edit/', projects_form, name='projects_edit'),
-    path('projects/<int:id>/delete/', projects_form, name='projects_delete'),
+    path('projects/<int:id>/delete/', projects_delete, name='projects_delete'),
     path('projects/<int:id>/', project, name='project'),
     path('projects/<int:application_id>/services/add', service_form, name='services_add'),
     path('projects/<int:application_id>/services/<int:service_id>/edit', service_form, name='services_edit'),
