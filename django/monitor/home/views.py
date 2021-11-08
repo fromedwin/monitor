@@ -10,12 +10,12 @@ import datetime
 from django.utils import timezone
 
 from allauth.socialaccount.models import SocialApp
-from applications.models import Application
+from applications.models import Application, Service
 from django.shortcuts import get_object_or_404
 
 from django.contrib.auth.decorators import login_required
 
-from applications.forms import ApplicationForm
+from applications.forms import ApplicationForm, ServiceForm
 
 # Create your views here.
 def index(request):
@@ -74,7 +74,7 @@ def projects_form(request, id=None):
             project.user = request.user
             project.save()
 
-            return redirect(reverse('projects'))
+            return redirect(reverse('project', args=[project.id]))
     else:
         if application:
             form = ApplicationForm(instance=application)
@@ -97,12 +97,41 @@ def projects_delete(request, id=None):
 @login_required
 def service_form(request, application_id, service_id=None):
     
-    application = None
+    service = None
 
-    if application_id != None:
+    if service_id != None:
+        service = get_object_or_404(Service, pk=service_id)
+        application = service.application
+    else:
         application = get_object_or_404(Application, pk=application_id)
+
+    if request.POST:
+
+        form = ServiceForm(request.POST, instance=service)
+
+        if form.is_valid():
+            service = form.save(commit=False)
+            service.application = application
+            service.save()
+
+            return redirect(reverse('project', args=[application_id]))
+    else:
+        if service:
+            form = ServiceForm(instance=service)
+        else:
+            form = ServiceForm()
 
     return render(request, 'projects/services/form.html', {
         'application': application,
-        'service': { 'id': service_id },
+        'service': service,
+        'form': form,
     })
+
+
+@login_required
+def service_delete(request, application_id, service_id):
+
+    service = get_object_or_404(Service, pk=service_id)
+    service.delete()
+
+    return redirect(reverse('project', args=[application_id]))

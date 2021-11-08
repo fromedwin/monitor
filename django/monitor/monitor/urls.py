@@ -19,7 +19,7 @@ from django.urls import path
 from django.conf.urls import include, url
 from alerts.views import webhook
 from health.views import healthy
-from home.views import index, projects, project, projects_form, service_form, projects_delete
+from home.views import index, projects, project, projects_form, service_form, projects_delete, service_delete
 from django.conf import settings
 
 urlpatterns = [
@@ -31,7 +31,7 @@ urlpatterns = [
     path('projects/<int:id>/', project, name='project'),
     path('projects/<int:application_id>/services/add', service_form, name='services_add'),
     path('projects/<int:application_id>/services/<int:service_id>/edit', service_form, name='services_edit'),
-    path('projects/<int:application_id>/services/<int:service_id>/delete', service_form, name='services_delete'),
+    path('projects/<int:application_id>/services/<int:service_id>/delete', service_delete, name='services_delete'),
     path('', include('django_prometheus.urls')),
     path('healthy/<int:id>/', healthy, name='healthy'),
     path('alert/', webhook, name='alert'),
