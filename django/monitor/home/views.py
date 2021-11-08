@@ -15,6 +15,8 @@ from django.shortcuts import get_object_or_404
 
 from django.contrib.auth.decorators import login_required
 
+from applications.forms import ApplicationForm
+
 # Create your views here.
 def index(request):
 
@@ -58,21 +60,37 @@ def project(request, id):
 
 @login_required
 def projects_form(request, id=None):
-    
-    if request.POST:
-        return redirect(reverse('projects'))
 
     application = None
-
     if id != None:
         application = get_object_or_404(Application, pk=id)
 
+    if request.POST:
+
+        form = ApplicationForm(request.POST, instance=application)
+
+        if form.is_valid():
+            project = form.save(commit=False)
+            project.user = request.user
+            project.save()
+
+            return redirect(reverse('projects'))
+    else:
+        if application:
+            form = ApplicationForm(instance=application)
+        else:
+            form = ApplicationForm()
     return render(request, 'projects/form.html', {
-        'application': application
+        'application': application,
+        'form': form,
     })
 
 @login_required
 def projects_delete(request, id=None):
+
+    application = get_object_or_404(Application, pk=id)
+    application.delete()
+
     return redirect(reverse('projects'))
 
 
