@@ -188,7 +188,7 @@
             </span>
         </div>
         <div class="flex-1 min-w-0">
-          <a href="#" class="focus:outline-none">
+          <a href="{% url 'pagerduty_edit' application.id notification.id %}" class="focus:outline-none">
             <span class="absolute inset-0" aria-hidden="true"></span>
             <p class="text-sm font-medium text-gray-900">
               PagerDuty
@@ -207,7 +207,7 @@
             </span>
         </div>
         <div class="flex-1 min-w-0">
-          <a href="#" class="focus:outline-none">
+          <a href="{% url 'pagerduty_add' application.id %}" class="focus:outline-none">
             <span class="absolute inset-0" aria-hidden="true"></span>
             <p class="text-sm font-medium text-gray-900">
               Add PagerDuty

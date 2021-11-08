@@ -52,7 +52,7 @@ class Service(models.Model):
     )
     title = models.CharField(max_length=128, blank=False)
     url = models.URLField(max_length=512, blank=False)
-    is_public = models.BooleanField(default=True, help_text="Service will appears on applicaiton status board")
+    is_public = models.BooleanField('Is visible', default=True, help_text="Service will appears on application status board")
     is_enabled = models.BooleanField(default=True, help_text="Disabled service will not be monitored")
     is_critical = models.BooleanField(default=True, help_text="Application is offline if this service fail, otherwise will only report as degraded")
     creation_date = models.DateTimeField(auto_now_add=True, editable=False, help_text="Creation date")

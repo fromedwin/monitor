@@ -39,5 +39,6 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('clients/', include('clients.urls')),
     path('api-auth/', include('rest_framework.urls')),
+    path('projects/<int:application_id>/notifications/', include('notifications.urls')),
     url(r'^logout/$', LogoutView.as_view(), {'next_page': settings.LOGOUT_REDIRECT_URL}, name='logout'),
 ]
