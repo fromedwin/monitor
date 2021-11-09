@@ -10,12 +10,12 @@ import datetime
 from django.utils import timezone
 
 from allauth.socialaccount.models import SocialApp
-from applications.models import Application, Service
+from projects.models import Application, Service
 from django.shortcuts import get_object_or_404
 
 from django.contrib.auth.decorators import login_required
 
-from applications.forms import ApplicationForm, ServiceForm
+from projects.forms import ApplicationForm, ServiceForm
 
 # Create your views here.
 def index(request):

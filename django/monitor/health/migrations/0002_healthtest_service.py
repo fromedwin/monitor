@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('applications', '0006_auto_20211020_1147'),
+        ('projects', '0006_auto_20211020_1147'),
         ('health', '0001_initial'),
     ]
 
@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='healthtest',
             name='service',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='healthTest', related_query_name='', to='applications.service'),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='healthTest', related_query_name='', to='projects.service'),
         ),
     ]

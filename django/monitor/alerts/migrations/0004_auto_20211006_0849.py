@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('applications', '0004_delete_notify_pager_duty'),
+        ('projects', '0004_delete_notify_pager_duty'),
         ('alerts', '0003_auto_20210922_1921'),
     ]
 
@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='instancedownalert',
             name='service',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='instancedownalerts', to='applications.service'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='instancedownalerts', to='projects.service'),
         ),
         migrations.CreateModel(
             name='ApplicationAlert',
@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
                 ('instance', models.TextField(null=True)),
                 ('summary', models.TextField(null=True)),
                 ('description', models.TextField(null=True)),
-                ('application', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='applicationalerts', to='applications.application')),
+                ('application', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='applicationalerts', to='projects.application')),
             ],
             options={
                 'verbose_name': 'Application alert',

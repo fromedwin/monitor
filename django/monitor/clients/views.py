@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from .serializers import AlertsConfigSerializer
 from .models import AlertsConfig, Server
-from applications.models import Metrics
+from projects.models import Metrics
 from django.shortcuts import get_object_or_404
 from django.core.serializers import serialize
 from django.http import JsonResponse

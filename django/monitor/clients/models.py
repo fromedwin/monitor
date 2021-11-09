@@ -10,7 +10,7 @@ from django.conf import settings
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
-from applications.models import Service, Metrics, Application
+from projects.models import Service, Metrics, Application
 
 from yamlfield.fields import YAMLField
 

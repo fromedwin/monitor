@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.utils import timezone
 from .models import GenericAlert, InstanceDownAlert, ApplicationAlert
-from applications.models import Service, Application
+from projects.models import Service, Application
 
 import json
 import datetime

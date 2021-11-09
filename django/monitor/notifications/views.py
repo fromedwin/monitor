@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 
 from .models import Pager_Duty
 from .forms import PagerDutyForm
-from applications.models import Application
+from projects.models import Application
 
 @login_required
 def pagerduty_form(request, application_id, pagerduty_id=None):

@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('applications', '0003_notify_pager_duty'),
+        ('projects', '0003_notify_pager_duty'),
     ]
 
     operations = [

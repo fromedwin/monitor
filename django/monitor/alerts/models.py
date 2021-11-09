@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from applications.models import Service, Application
+from projects.models import Service, Application
 from django.template.defaultfilters import truncatechars
 from django.utils import timezone
 

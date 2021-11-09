@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
-from applications.models import Application
+from projects.models import Application
 from clients.config import generate_alert_manager_config
 # Create your models here.
 

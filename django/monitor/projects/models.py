@@ -2,8 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-# Create your models here.
 class Application(models.Model):
+    """
+    A user own a project he want to monitor and work on.
+    """
     user = models.ForeignKey(
         User,
         on_delete = models.CASCADE,

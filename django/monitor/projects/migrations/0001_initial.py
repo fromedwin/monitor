@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=128)),
                 ('url', models.URLField(max_length=512)),
                 ('is_public', models.BooleanField(default=True)),
-                ('application', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='services', to='applications.application')),
+                ('application', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='services', to='projects.application')),
             ],
         ),
     ]

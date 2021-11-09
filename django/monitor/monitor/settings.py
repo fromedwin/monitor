@@ -75,7 +75,7 @@ INSTALLED_APPS = [
     'home',
     'health',
     'alerts',
-    'applications',
+    'projects',
     'clients',
     'notifications',
 ]

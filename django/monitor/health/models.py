@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from applications.models import Service
+from projects.models import Service
 
 # Create your models here.
 class HealthTest(models.Model):
