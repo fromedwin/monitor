@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 
 from .models import Pager_Duty
 from .forms import PagerDutyForm
-from projects.models import Application
+from projects.models import Project
 
 @login_required
 def pagerduty_form(request, application_id, pagerduty_id=None):
@@ -19,9 +19,9 @@ def pagerduty_form(request, application_id, pagerduty_id=None):
 
     if pagerduty_id != None:
         pagerduty = get_object_or_404(Pager_Duty, pk=pagerduty_id)
-        application = pagerduty.application
+        project = pagerduty.project
     else:
-        application = get_object_or_404(Application, pk=application_id)
+        project = get_object_or_404(Project, pk=application_id)
 
     if request.POST:
 
@@ -29,7 +29,7 @@ def pagerduty_form(request, application_id, pagerduty_id=None):
 
         if form.is_valid():
             pagerduty = form.save(commit=False)
-            pagerduty.application = application
+            pagerduty.project = project
             pagerduty.save()
 
             return redirect(reverse('project', args=[application_id]))
@@ -40,7 +40,7 @@ def pagerduty_form(request, application_id, pagerduty_id=None):
             form = PagerDutyForm()
 
     return render(request, 'notifications/pagerduty/form.html', {
-        'application': application,
+        'project': project,
         'pagerduty': pagerduty,
         'form': form,
     })

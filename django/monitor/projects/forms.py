@@ -1,9 +1,9 @@
 from django.forms import ModelForm
-from .models import Application, Service
+from .models import Project, Service
 
-class ApplicationForm(ModelForm):
+class ProjectForm(ModelForm):
 	class Meta:
-		model = Application
+		model = Project
 		fields = ['title']
 
 class ServiceForm(ModelForm):

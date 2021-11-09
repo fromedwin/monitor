@@ -2,15 +2,14 @@ from django.db import models
 from django.contrib.auth.models import User
 from projects.models import Service
 
-# Create your models here.
-class HealthTest(models.Model):
+HTTP_CODES = [
+    (200, '200 - OK'),
+    (404, '404 - Not Found'),
+    (418, '418 - I’m a teapot'),
+    (500, '500 - Internal Server Error'),
+]
 
-    HTTP_CODES = [
-        (200, '200 - OK'),
-        (404, '404 - Not Found'),
-        (418, '418 - I’m a teapot'),
-        (500, '500 - Internal Server Error'),
-    ]
+class HealthTest(models.Model):
 
     user = models.ForeignKey(
         User,

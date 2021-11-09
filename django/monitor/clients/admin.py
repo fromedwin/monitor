@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import AlertsConfig, Server
+from .models import AlertsConfig, Server, Metrics
 from django.utils import timezone
 import math
 
@@ -20,6 +20,9 @@ class ServerAdmin(admin.ModelAdmin):
     def last_seen_duration(self, obj):
         return obj.last_seen_from
 
+class MetricsAdmin(admin.ModelAdmin):
+    list_display = ('user', 'url')
 
 admin.site.register(AlertsConfig, AlertsConfigAdmin)
 admin.site.register(Server, ServerAdmin)
+admin.site.register(Metrics, MetricsAdmin)

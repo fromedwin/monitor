@@ -7,10 +7,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
-from django.db.models.signals import post_save, post_delete
-from django.dispatch import receiver
-
-from projects.models import Service, Metrics, Application
 
 from yamlfield.fields import YAMLField
 
@@ -91,16 +87,15 @@ class Server(models.Model):
                 return str(years) + " years ago"
         return self.last_seen
 
-@receiver(post_save, sender=AlertsConfig)
-@receiver(post_delete, sender=AlertsConfig)
-@receiver(post_delete, sender=Application)
-@receiver(post_save, sender=Service)
-@receiver(post_delete, sender=Service)
-@receiver(post_save, sender=Metrics)
-@receiver(post_delete, sender=Metrics)
-def update_last_modified_setup(sender, instance=None, created=False, **kwargs):
-    servers = Server.objects.all()
-    for server in servers:
-        server.last_modified_setup = timezone.now()
-        server.save()
-
+class Metrics(models.Model):
+    """
+    Fetch {{url}}/metrics within prometheus
+    Can be used for node_explorer or custom metrics
+    """
+    user = models.ForeignKey(
+        User,
+        on_delete = models.CASCADE,
+        related_name = "metrics",
+    )
+    url = models.URLField(max_length=512, blank=False)
+    is_enabled = models.BooleanField(default=True)

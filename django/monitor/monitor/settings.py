@@ -74,7 +74,7 @@ INSTALLED_APPS = [
     'monitor',
     'home',
     'health',
-    'alerts',
+    'incidents',
     'projects',
     'clients',
     'notifications',

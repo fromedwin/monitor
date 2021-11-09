@@ -16,23 +16,17 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
 from django.urls import path
-from django.conf.urls import include, url
-from alerts.views import webhook
-from health.views import healthy
-from home.views import index, projects, project, projects_form, service_form, projects_delete, service_delete
 from django.conf import settings
+from django.conf.urls import include, url
+
+from incidents.views import webhook
+from health.views import healthy
+from home.views import index
 
 urlpatterns = [
     path('', index, name='index'),
-    path('projects', projects, name='projects'),
-    path('projects/add', projects_form, name='projects_add'),
-    path('projects/<int:id>/edit/', projects_form, name='projects_edit'),
-    path('projects/<int:id>/delete/', projects_delete, name='projects_delete'),
-    path('projects/<int:id>/', project, name='project'),
-    path('projects/<int:application_id>/services/add', service_form, name='services_add'),
-    path('projects/<int:application_id>/services/<int:service_id>/edit', service_form, name='services_edit'),
-    path('projects/<int:application_id>/services/<int:service_id>/delete', service_delete, name='services_delete'),
     path('', include('django_prometheus.urls')),
+    path('projects/', include('projects.urls')),
     path('healthy/<int:id>/', healthy, name='healthy'),
     path('alert/', webhook, name='alert'),
     path('admin/', admin.site.urls),

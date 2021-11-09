@@ -1,13 +1,13 @@
-from django.shortcuts import render
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from django.utils import timezone
-from .models import GenericAlert, InstanceDownAlert, ApplicationAlert
-from projects.models import Service, Application
-
 import json
 import datetime
-# Create your views here.
+from django.shortcuts import render
+from django.utils import timezone
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+from .models import GenericIncident, InstanceDownIncident, ProjectIncident
+from projects.models import Project, Service
 
 @api_view(["POST"])
 def webhook(request):
@@ -44,13 +44,13 @@ def webhook(request):
                 # If we receive resolved, we delete firing with same startAt and fingerprint
                 try:
                     if alert["status"] == "resolved":
-                        items = InstanceDownAlert.objects.filter(fingerprint=alert["fingerprint"], startsAt=startsAt, status=2)
+                        items = InstanceDownIncident.objects.filter(fingerprint=alert["fingerprint"], startsAt=startsAt, status=2)
                         for item in items:
                             item.delete()
                 except:
                     pass
 
-                object = InstanceDownAlert(
+                object = InstanceDownIncident(
                     service=service,
                     startsAt=startsAt,
                     endsAt=endsAt,
@@ -62,10 +62,10 @@ def webhook(request):
                     status=status,
                     json=json_formated)
                 object.save()
-            elif "application" in alert["labels"]:
-                application = None
-                if alert["labels"]["application"]:
-                    application = Application.objects.get(pk=alert["labels"]["application"])
+            elif "project" in alert["labels"]:
+                project = None
+                if alert["labels"]["project"]:
+                    project = Project.objects.get(pk=alert["labels"]["project"])
 
                 endsAt = None
                 if alert["endsAt"] and not alert["endsAt"].startswith("0001"):
@@ -74,14 +74,14 @@ def webhook(request):
                 # If we receive resolved, we delete firing with same startAt and fingerprint
                 try:
                     if alert["status"] == "resolved":
-                        items = ApplicationAlert.objects.filter(fingerprint=alert["fingerprint"], startsAt=startsAt, status=2)
+                        items = ProjectIncident.objects.filter(fingerprint=alert["fingerprint"], startsAt=startsAt, status=2)
                         for item in items:
                             item.delete()
                 except:
                     pass
 
-                object = ApplicationAlert(
-                    application=application,
+                object = ProjectIncident(
+                    project=project,
                     startsAt=startsAt,
                     endsAt=endsAt,
                     fingerprint=alert["fingerprint"],
@@ -100,14 +100,14 @@ def webhook(request):
                 # If we receive resolved, we delete firing with same startAt and fingerprint
                 try:
                     if alert["status"] == "resolved":
-                        items = GenericAlert.objects.filter(fingerprint=alert["fingerprint"], status=2)
+                        items = GenericIncident.objects.filter(fingerprint=alert["fingerprint"], status=2)
                         for item in items:
                             startsAt = item.startsAt
                             item.delete()
                 except:
                     pass
 
-                object = GenericAlert(
+                object = GenericIncident(
                     startsAt=startsAt,
                     endsAt=endsAt,
                     fingerprint=alert["fingerprint"],

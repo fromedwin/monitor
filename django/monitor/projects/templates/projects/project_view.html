@@ -12,13 +12,13 @@
       <div class="md:flex md:items-center md:justify-between md:space-x-5">
         <div class="flex items-start space-x-5">
           <div class="flex-shrink-0 flex content-center ">
-              {% if application.is_offline %}
+              {% if project.is_offline %}
                 <div class="h-16 w-16 flex justify-center items-center rounded-full bg-red-600 text-white text-sm font-medium">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </div>
-                {% elif application.is_degraded %}
+                {% elif project.is_degraded %}
                 <div class="h-16 w-16 flex justify-center items-center rounded-full bg-yellow-600 text-white text-sm font-medium">
                   <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                 </div>
@@ -35,12 +35,12 @@
             but preserve the same layout if the text wraps without making the image jump around.
           -->
           <div class="pt-1.5">
-            <h1 class="text-3xl font-bold text-gray-900">{{ application }}</h1>
+            <h1 class="text-3xl font-bold text-gray-900">{{ project }}</h1>
             <p class="text-sm font-medium text-gray-500">Service is fully online and work as expected</p>
           </div>
         </div>
         <div class="mt-6 flex flex-col-reverse justify-stretch space-y-4 space-y-reverse sm:flex-row-reverse sm:justify-end sm:space-x-reverse sm:space-y-0 sm:space-x-3 md:mt-0 md:flex-row md:space-x-3">
-          <a href="{% url 'projects_edit' application.id %}" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-green-500">
+          <a href="{% url 'projects_edit' project.id %}" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-green-500">
             Edit
           </a>
         </div>
@@ -57,7 +57,7 @@
             Availability
           </dt>
           <dd class="mt-1 text-3xl font-semibold text-green-500">
-            {{ application.availability }} %
+            {{ project.availability }} %
           </dd>
         </div>
       </dl>
@@ -69,13 +69,13 @@
         Services
       </h3>
       <div class="mt-3 sm:mt-0 sm:ml-4">
-        <a href="{% url 'services_add' application.id %}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+        <a href="{% url 'services_add' project.id %}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
           Add new service
         </a>
       </div>
     </div>
 
-    {% if application.is_warning %}
+    {% if project.is_warning %}
     <div class="rounded-md bg-yellow-50 p-4 mt-4 mb-4">
       <div class="flex">
         <div class="flex-shrink-0">
@@ -118,7 +118,7 @@
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
-                {% for service in application.services.all %}
+                {% for service in project.services.all %}
                 <tr>
                   <td class="px-6 py-4 whitespace-nowrap">
                     <div class="flex items-center">
@@ -161,7 +161,7 @@
                     {% endif %}
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <a href="{% url 'services_edit' application.id service.id %}" class="text-green-600 hover:text-green-900">Edit</a>
+                    <a href="{% url 'services_edit' project.id service.id %}" class="text-green-600 hover:text-green-900">Edit</a>
                   </td>
                 </tr>
                 {% endfor %}
@@ -180,7 +180,7 @@
 
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 pt-4">
 
-      {% for notification in application.pager_duty.all %}
+      {% for notification in project.pager_duty.all %}
       <div class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-green-500">
         <div class="flex-shrink-0">
           <span class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-green-500">
@@ -188,7 +188,7 @@
             </span>
         </div>
         <div class="flex-1 min-w-0">
-          <a href="{% url 'pagerduty_edit' application.id notification.id %}" class="focus:outline-none">
+          <a href="{% url 'pagerduty_edit' project.id notification.id %}" class="focus:outline-none">
             <span class="absolute inset-0" aria-hidden="true"></span>
             <p class="text-sm font-medium text-gray-900">
               PagerDuty
@@ -207,7 +207,7 @@
             </span>
         </div>
         <div class="flex-1 min-w-0">
-          <a href="{% url 'pagerduty_add' application.id %}" class="focus:outline-none">
+          <a href="{% url 'pagerduty_add' project.id %}" class="focus:outline-none">
             <span class="absolute inset-0" aria-hidden="true"></span>
             <p class="text-sm font-medium text-gray-900">
               Add PagerDuty

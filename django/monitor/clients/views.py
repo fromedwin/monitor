@@ -3,18 +3,20 @@ import datetime
 from django.utils import timezone
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-from rest_framework import viewsets
-from rest_framework.views import APIView
-from rest_framework.decorators import api_view
-from .serializers import AlertsConfigSerializer
-from .models import AlertsConfig, Server
-from projects.models import Metrics
 from django.shortcuts import get_object_or_404
 from django.core.serializers import serialize
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.db.models import Q
+
+from rest_framework import viewsets
+from rest_framework.views import APIView
+from rest_framework.decorators import api_view
+
+from .serializers import AlertsConfigSerializer
+from .models import AlertsConfig, Server
+from clients.models import Metrics
 
 class AlertsConfigViewSet(viewsets.ModelViewSet):
     """
