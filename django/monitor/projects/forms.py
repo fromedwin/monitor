@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from .models import Project, Service
+from .models import Project, Service, HTTPCodeService
 
 class ProjectForm(ModelForm):
 	class Meta:
@@ -9,4 +9,9 @@ class ProjectForm(ModelForm):
 class ServiceForm(ModelForm):
 	class Meta:
 		model = Service
-		fields = ['title', 'url', 'is_public', 'is_enabled', 'is_critical']
+		fields = ['title', 'is_public', 'is_enabled','is_critical']
+
+class HTTPCodeServiceForm(ModelForm):
+	class Meta:
+		model = HTTPCodeService
+		fields = ['url']

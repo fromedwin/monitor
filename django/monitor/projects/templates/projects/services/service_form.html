@@ -16,13 +16,13 @@
 
 			<div class="mt-6 sm:mt-5 space-y-6 sm:space-y-5">
 				<div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-					<label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-						{{ form.title.label }}
+					<label for="{{ formService.title.id_for_label }}" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+						{{ formService.title.label }}
 					</label>
 					<div class="mt-1 sm:mt-0 sm:col-span-2">
-						<input type="text" {% if form.title.value %}value="{{ form.title.value }}"{% endif %} name="{{ form.title.html_name }}" id="{{ form.title.id_for_label }}" class="max-w-lg block w-full shadow-sm focus:ring-green-500 focus:border-green-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md">
-						{% if form.title.errors %}
-						{% for error in form.title.errors %}
+						<input type="text" {% if formService.title.value %}value="{{ formService.title.value }}"{% endif %} name="{{ formService.title.html_name }}" id="{{ formService.title.id_for_label }}" class="max-w-lg block w-full shadow-sm focus:ring-green-500 focus:border-green-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md">
+						{% if formService.title.errors %}
+						{% for error in formService.title.errors %}
 						<p class="mt-2 text-sm text-red-500">{{ error|escape }}</p>
 						{% endfor %}
 						{% endif %}
@@ -60,21 +60,21 @@
 								<div class="max-w-lg space-y-4">
 									<div class="relative flex items-start">
 										<div class="flex items-center h-5">
-											<input id="{{ form.is_enabled.id_for_label }}" name="{{ form.is_enabled.html_name }}" {% if form.is_enabled.value %}checked{% endif %} type="checkbox" class="focus:ring-green-500 h-4 w-4 text-green-600 border-gray-300 rounded">
+											<input id="{{ formService.is_enabled.id_for_label }}" name="{{ formService.is_enabled.html_name }}" {% if formService.is_enabled.value %}checked{% endif %} type="checkbox" class="focus:ring-green-500 h-4 w-4 text-green-600 border-gray-300 rounded">
 										</div>
 										<div class="ml-3 text-sm">
-											<label for="{{ form.is_enabled.id_for_label }}" class="font-medium text-gray-700">{{ form.is_enabled.label }}</label>
-											<p class="text-gray-500">{{ form.is_enabled.help_text }}</p>
+											<label for="{{ formService.is_enabled.id_for_label }}" class="font-medium text-gray-700">{{ formService.is_enabled.label }}</label>
+											<p class="text-gray-500">{{ formService.is_enabled.help_text }}</p>
 										</div>
 									</div>
 									<div>
 										<div class="relative flex items-start">
 											<div class="flex items-center h-5">
-												<input id="{{ form.is_public.id_for_label }}" name="{{ form.is_public.html_name }}" {% if form.is_public.value %}checked{% endif %} type="checkbox" class="focus:ring-green-500 h-4 w-4 text-green-600 border-gray-300 rounded">
+												<input id="{{ formService.is_public.id_for_label }}" name="{{ formService.is_public.html_name }}" {% if formService.is_public.value %}checked{% endif %} type="checkbox" class="focus:ring-green-500 h-4 w-4 text-green-600 border-gray-300 rounded">
 											</div>
 											<div class="ml-3 text-sm">
-												<label for="{{ form.is_public.id_for_label }}" class="font-medium text-gray-700">{{ form.is_public.label }}</label>
-												<p class="text-gray-500">{{ form.is_public.help_text }}</p>
+												<label for="{{ formService.is_public.id_for_label }}" class="font-medium text-gray-700">{{ formService.is_public.label }}</label>
+												<p class="text-gray-500">{{ formService.is_public.help_text }}</p>
 											</div>
 										</div>
 									</div>
@@ -96,11 +96,11 @@
 								<div class="max-w-lg space-y-4">
 									<div class="relative flex items-start">
 										<div class="flex items-center h-5">
-											<input id="{{ form.is_critical.id_for_label }}" name="{{ form.is_critical.html_name }}" {% if form.is_critical.value %}checked{% endif %} type="checkbox" class="focus:ring-green-500 h-4 w-4 text-green-600 border-gray-300 rounded">
+											<input id="{{ formService.is_critical.id_for_label }}" name="{{ formService.is_critical.html_name }}" {% if formService.is_critical.value %}checked{% endif %} type="checkbox" class="focus:ring-green-500 h-4 w-4 text-green-600 border-gray-300 rounded">
 										</div>
 										<div class="ml-3 text-sm">
-											<label for="{{ form.is_critical.id_for_label }}" class="font-medium text-gray-700">{{ form.is_critical.label }}</label>
-											<p class="text-gray-500">{{ form.is_critical.help_text }}</p>
+											<label for="{{ formService.is_critical.id_for_label }}" class="font-medium text-gray-700">{{ formService.is_critical.label }}</label>
+											<p class="text-gray-500">{{ formService.is_critical.help_text }}</p>
 										</div>
 									</div>
 								</div>
@@ -116,7 +116,7 @@
 
 	<div class="pt-5 flex justify-between">
 		<div>
-			{% if service and service.id %}<a href="{% url 'services_delete' project.id service.id %}" class="mr-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600">
+			{% if service_http.service and service_http.service.id %}<a href="{% url 'services_delete' project.id service_http.service.id %}" class="mr-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600">
 				Delete
 			</a>{% endif %}
 		</div>
@@ -125,7 +125,7 @@
 				Cancel
 			</a>
 			<button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-				{% if service %}Save{% else %}Create{% endif %}
+				{% if service_http %}Save{% else %}Create{% endif %}
 			</button>
 		</div>
 	</div>

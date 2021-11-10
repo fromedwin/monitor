@@ -12,8 +12,6 @@ from allauth.socialaccount.models import SocialApp
 from rest_framework.authtoken.models import Token
 
 from clients.models import Server
-from projects.models import Project, Service
-from projects.forms import ProjectForm, ServiceForm
 
 def index(request):
     """

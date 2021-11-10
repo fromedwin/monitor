@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import projects, project, projects_form, service_form, projects_delete, service_delete
+from .views import projects, project, projects_form, service_http_form, projects_delete, service_http_delete
 
 urlpatterns = [
     path('', projects, name='projects'),
@@ -8,8 +8,8 @@ urlpatterns = [
     path('<int:id>/edit/', projects_form, name='projects_edit'),
     path('<int:id>/delete/', projects_delete, name='projects_delete'),
     path('<int:id>/', project, name='project'),
-    path('<int:application_id>/services/add', service_form, name='services_add'),
-    path('<int:application_id>/services/<int:service_id>/edit', service_form, name='services_edit'),
-    path('<int:application_id>/services/<int:service_id>/delete', service_delete, name='services_delete'),
+    path('<int:application_id>/services/add', service_http_form, name='services_add'),
+    path('<int:application_id>/services/<int:service_http_id>/edit', service_http_form, name='services_edit'),
+    path('<int:application_id>/services/<int:service_http_id>/delete', service_http_delete, name='services_delete'),
 
 ]

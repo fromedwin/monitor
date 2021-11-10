@@ -10,12 +10,12 @@ import datetime
 from django.utils import timezone
 
 from allauth.socialaccount.models import SocialApp
-from projects.models import Project, Service
+from projects.models import Project, HTTPCodeService
 from django.shortcuts import get_object_or_404
 
 from django.contrib.auth.decorators import login_required
 
-from projects.forms import ProjectForm, ServiceForm
+from projects.forms import ProjectForm, ServiceForm, HTTPCodeServiceForm
 
 @login_required
 def projects(request):
@@ -79,48 +79,60 @@ def projects_delete(request, id=None):
     return redirect(reverse('projects'))
 
 @login_required
-def service_form(request, application_id, service_id=None):
+def service_http_form(request, application_id, service_http_id=None):
     """
         Create or edit service model
     """
 
-    service = None
+    service_http = None
 
-    if service_id != None:
-        service = get_object_or_404(Service, pk=service_id)
-        project = service.project
+    if service_http_id != None:
+        service_http = get_object_or_404(HTTPCodeService, pk=service_http_id)
+        project = service_http.service.project
     else:
         project = get_object_or_404(Project, pk=application_id)
 
     if request.POST:
 
-        form = ServiceForm(request.POST, instance=service)
+        form = HTTPCodeServiceForm(request.POST, instance=service_http)
+        if service_http:
+            formService = ServiceForm(request.POST, instance=service_http.service)
+        else:
+            formService = ServiceForm(request.POST)
 
-        if form.is_valid():
-            service = form.save(commit=False)
+        if form.is_valid() and formService.is_valid():
+
+            service = formService.save(commit=False)
             service.project = project
             service.save()
 
+            service_http = form.save(commit=False)
+            service_http.service = service
+            service_http.save()
+
             return redirect(reverse('project', args=[application_id]))
     else:
-        if service:
-            form = ServiceForm(instance=service)
+        if service_http and service_http.service:
+            form = HTTPCodeServiceForm(instance=service_http)
+            formService = ServiceForm(instance=service_http.service)
         else:
-            form = ServiceForm()
+            form = HTTPCodeServiceForm()
+            formService = ServiceForm()
 
     return render(request, 'projects/services/service_form.html', {
         'project': project,
-        'service': service,
+        'service_http': service_http,
         'form': form,
+        'formService': formService,
     })
 
 @login_required
-def service_delete(request, application_id, service_id):
+def service_http_delete(request, application_id, service_http_id):
     """
         Delete service model
     """
 
-    service = get_object_or_404(Service, pk=service_id)
-    service.delete()
+    service = get_object_or_404(HTTPCodeService, pk=service_http_id)
+    service.service.delete()
 
     return redirect(reverse('project', args=[application_id]))

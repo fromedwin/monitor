@@ -56,7 +56,6 @@ class Service(models.Model):
         related_name = "services",
     )
     title = models.CharField(max_length=128, blank=False)
-    url = models.URLField(max_length=512, blank=False)
     is_public = models.BooleanField('Is visible', default=True, help_text="Service will appears on application status board")
     is_enabled = models.BooleanField(default=True, help_text="Disabled service will not be monitored")
     is_critical = models.BooleanField(default=True, help_text="Application is offline if this service fail, otherwise will only report as degraded")
@@ -93,3 +92,26 @@ class Service(models.Model):
 
     def __str__(self):
         return f'{self.project} - {self.title}'
+
+class HTTPCodeService(models.Model):
+    url = models.URLField(max_length=512, blank=False)
+    service = models.ForeignKey(
+        Service,
+        on_delete = models.CASCADE,
+        related_name = "httpcode",
+    )
+
+HTTP_CODES = [
+    (200, '200 - OK'),
+    (404, '404 - Not Found'),
+    (418, '418 - I’m a teapot'),
+    (500, '500 - Internal Server Error'),
+]
+
+class HTTPMockedCodeService(models.Model):
+    code = models.IntegerField(choices=HTTP_CODES)
+    service = models.ForeignKey(
+        Service,
+        on_delete = models.CASCADE,
+        related_name = "httpmockedcode",
+    )
