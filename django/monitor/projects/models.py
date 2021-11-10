@@ -95,7 +95,7 @@ class Service(models.Model):
 
 class HTTPCodeService(models.Model):
     url = models.URLField(max_length=512, blank=False)
-    service = models.ForeignKey(
+    service = models.OneToOneField(
         Service,
         on_delete = models.CASCADE,
         related_name = "httpcode",
@@ -110,7 +110,7 @@ HTTP_CODES = [
 
 class HTTPMockedCodeService(models.Model):
     code = models.IntegerField(choices=HTTP_CODES)
-    service = models.ForeignKey(
+    service = models.OneToOneField(
         Service,
         on_delete = models.CASCADE,
         related_name = "httpmockedcode",

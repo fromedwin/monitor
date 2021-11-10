@@ -131,7 +131,7 @@
                           {{ service.title }}
                         </div>
                         <div class="text-sm text-gray-500">
-                          {{ service.url }}
+                          {% if service.httpcode %}{{ service.httpcode.url }}{% endif %}
                         </div>
                       </div>
                     </div>
@@ -161,7 +161,10 @@
                     {% endif %}
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <a href="{% url 'services_edit' project.id service.id %}" class="text-green-600 hover:text-green-900">Edit</a>
+                    {% if service.httpcode %}
+                    <a href="{% url 'services_edit' project.id service.httpcode.id %}" class="text-green-600 hover:text-green-900">Edit</a>
+                    {% else %}
+                    <a href="{% url 'services_edit' project.id service.id %}" class="text-green-600 hover:text-green-900">Edit</a>{% endif %}
                   </td>
                 </tr>
                 {% endfor %}

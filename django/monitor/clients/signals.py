@@ -3,6 +3,7 @@ from django.dispatch import receiver
 
 from .models import AlertsConfig, Metrics, Server
 from projects.models import Project, Service
+from django.utils import timezone
 
 @receiver(post_save, sender=AlertsConfig)
 @receiver(post_delete, sender=AlertsConfig)
