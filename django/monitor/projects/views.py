@@ -79,6 +79,13 @@ def projects_delete(request, id=None):
     return redirect(reverse('projects'))
 
 @login_required
+def service_list(request, application_id):
+    """
+    List of services
+    """
+    return render(request, 'projects/services/service_list.html', {'application_id': application_id})
+
+@login_required
 def service_http_form(request, application_id, service_http_id=None):
     """
         Create or edit service model
