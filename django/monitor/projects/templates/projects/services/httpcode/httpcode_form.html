@@ -7,10 +7,10 @@
 		<div>
 			<div>
 				<h3 class="text-lg leading-6 font-medium text-gray-900">
-					Services
+					HTTP Code
 				</h3>
 				<p class="mt-1 max-w-2xl text-sm text-gray-500">
-					This is a service
+					This service fetch every second a specific URL expecting HTTP code 200. Will trigger an outrage if code if 400+.
 				</p>
 			</div>
 
@@ -116,7 +116,7 @@
 
 	<div class="pt-5 flex justify-between">
 		<div>
-			{% if service_http.service and service_http.service.id %}<a href="{% url 'services_httpcode_delete' project.id service_http.service.id %}" class="mr-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600">
+			{% if service_http.service and service_http.service.id %}<a href="{% url 'services_httpcode_delete' project.id service_http.id %}" class="mr-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600">
 				Delete
 			</a>{% endif %}
 		</div>

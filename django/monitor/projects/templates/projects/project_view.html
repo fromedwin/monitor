@@ -132,6 +132,7 @@
                         </div>
                         <div class="text-sm text-gray-500">
                           {% if service.httpcode %}{{ service.httpcode.url }}{% endif %}
+                          {% if service.httpmockedcode %}Return HTTP {{ service.httpmockedcode.code }}{% endif %}
                         </div>
                       </div>
                     </div>
@@ -163,6 +164,8 @@
                   <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     {% if service.httpcode %}
                     <a href="{% url 'services_httpcode_edit' project.id service.httpcode.id %}" class="text-green-600 hover:text-green-900">Edit</a>
+                    {% elif service.httpmockedcode %}
+                    <a href="{% url 'services_mockedhttpcode_edit' project.id service.httpmockedcode.id %}" class="text-green-600 hover:text-green-900">Edit</a>
                     {% else %}
                     <a href="{% url 'services_httpcode_edit' project.id service.id %}" class="text-green-600 hover:text-green-900">Edit</a>{% endif %}
                   </td>
