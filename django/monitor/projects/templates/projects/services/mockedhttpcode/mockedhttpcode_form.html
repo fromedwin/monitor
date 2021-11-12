@@ -41,7 +41,7 @@
 				    <legend class="sr-only">HTTP code returned</legend>
 				    <div class="space-y-4">
 				      <div class="flex items-center">
-				        <input id="200" value="200" name="code" type="radio" {% if form.code.value == 200 %}checked{% endif %} class="focus:ring-green-500 h-4 w-4 text-green-600 border-gray-300">
+				        <input id="200" value="200" name="code" type="radio" {% if not form.id or form.code.value == 200 %}checked{% endif %} class="focus:ring-green-500 h-4 w-4 text-green-600 border-gray-300">
 				        <label for="200" class="ml-3 block text-sm font-medium text-gray-700">
 				          200 - OK
 				        </label>
