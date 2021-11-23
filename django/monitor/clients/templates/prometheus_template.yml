@@ -67,6 +67,12 @@ scrape_configs:
       service: {{ service.id }}
     targets:
     - {{ service.httpcode.url }}
+    {% endif %}{% if service.is_enabled and service.httpmockedcode %}
+  - labels:
+      application: {{ application.id }}
+      service: {{ service.id }}
+    targets:
+    - {{ service.httpmockedcode.url }}
     {% endif %}{% endfor %}{% endfor %}{% endfor %}
   relabel_configs:
   - source_labels:

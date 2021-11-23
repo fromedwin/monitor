@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.conf import settings
 
 class Project(models.Model):
     """
@@ -13,14 +14,14 @@ class Project(models.Model):
     )
     title = models.CharField(max_length=128, blank=False)
 
-    def is_online(self):
-        return not self.services.filter(instancedownincidents__status=2)
-
     def is_offline(self):
-        return self.services.filter(instancedownincidents__status=2, is_critical=True, is_enabled=True)
+        return self.services.filter(instancedownincidents__status=2, is_critical=True, is_enabled=True, instancedownincidents__severity=2)
 
     def is_degraded(self):
-        return self.services.filter(instancedownincidents__status=2, is_critical=False, is_enabled=True)
+        return self.services.filter(instancedownincidents__status=2, is_critical=False, is_enabled=True, instancedownincidents__severity=2)
+
+    def is_warning(self):
+        return self.services.filter(instancedownincidents__status=2, is_critical=True, is_enabled=True, instancedownincidents__severity=1)
 
     def availability(self, days=30):
 
@@ -81,14 +82,16 @@ class Service(models.Model):
 
         return round(100 - total_unavailability * 100 / total_second, 3)
 
-    def is_online(self):
-        return not self.instancedownincidents.filter(endsAt__isnull=True)
-
     def is_offline(self):
-        return self.instancedownincidents.filter(status=2, endsAt__isnull=True)
+        return self.instancedownincidents.filter(status=2, endsAt__isnull=True, severity=2)
 
     def is_degraded(self):
-        return self.instancedownincidents.filter(status=2, endsAt__isnull=True)
+        return self.instancedownincidents.filter(status=2, endsAt__isnull=True, severity=2)
+
+    def is_warning(self):
+        if not self.is_critical:
+            return False
+        return self.instancedownincidents.filter(status=2, endsAt__isnull=True, severity=1)
 
     def __str__(self):
         return f'{self.project} - {self.title}'
@@ -115,3 +118,6 @@ class HTTPMockedCodeService(models.Model):
         on_delete = models.CASCADE,
         related_name = "httpmockedcode",
     )
+
+    def url(self):
+        return f'http://{settings.DOMAIN}:{settings.PORT}/healthy/{self.id}'

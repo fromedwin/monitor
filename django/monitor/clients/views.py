@@ -32,7 +32,7 @@ def prometheus(request, id):
     """
     get_object_or_404(Server, uuid=id)
 
-    users = User.objects.filter(Q(applications__isnull=False) | Q(healthTest__isnull=False)).distinct()
+    users = User.objects.filter(Q(applications__isnull=False)).distinct()
 
     metrics = Metrics.objects.all()
 
