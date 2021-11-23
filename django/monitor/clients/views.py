@@ -16,7 +16,8 @@ from rest_framework.decorators import api_view
 
 from .serializers import AlertsConfigSerializer
 from .models import AlertsConfig, Server
-from clients.models import Metrics
+from clients.models import Metrics, Alerts
+from incidents.models import INCIDENT_SEVERITY
 
 class AlertsConfigViewSet(viewsets.ModelViewSet):
     """
@@ -24,6 +25,26 @@ class AlertsConfigViewSet(viewsets.ModelViewSet):
     """
     queryset = AlertsConfig.objects.all()
     serializer_class = AlertsConfigSerializer
+
+@api_view(['GET'])
+def alerts(request, id):
+    """
+    Fetched on start by monitor_client to introduce itself and get credentials
+    """
+    get_object_or_404(Server, uuid=id)
+
+    users = User.objects.filter(Q(applications__isnull=False)).distinct()
+
+    alerts = Alerts.objects.all()
+
+    yaml = render_to_string("alerts_template.yml", {
+        "alerts": alerts,
+        "severity": INCIDENT_SEVERITY,
+        "settings": settings,
+    })
+
+    # Should retur application/x-yaml
+    return HttpResponse(yaml, content_type="text/plain")
 
 @api_view(['GET'])
 def prometheus(request, id):

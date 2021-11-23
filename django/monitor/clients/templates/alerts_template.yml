@@ -1,0 +1,31 @@
+groups:
+- name: Monitoring
+  rules:{% verbatim %}
+  - alert: InstanceDown
+    expr: probe_success == 0
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: Instance {{ $labels.instance }} down
+      description: '{{ $labels.instance }} of job {{ $labels.job }} has been down
+        for more than 5 minutes.'
+  - alert: InstanceDown
+    expr: probe_success == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: Instance {{ $labels.instance }} down
+      description: '{{ $labels.instance }} of job {{ $labels.job }} has been down
+        for more than 5 minutes.'
+{% endverbatim %}{% for alert in alerts %}
+  - alert: {{ alert.alert }}
+    expr: {{ alert.expr }}
+    for: {{ alert.duration }}
+    labels:
+      severity: {% for key, value in severity %}{% if alert.severity == key %}{{ value }}{% endif %}{% endfor %}
+    annotations:
+      summary: {{ alert.summary|safe }}
+      description: {{ alert.description|safe }}
+{% endfor %}
