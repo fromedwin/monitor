@@ -66,9 +66,9 @@ route:
 
 {% for pager in pager_duty %}
   - match:
-      application: {{ pager.application.id }}
+      application: {{ pager.project.id }}
       severity: critical
-    receiver: 'application-{{ pager.application.id }}'
+    receiver: 'project-{{ pager.project.id }}-{{ pager.id }}'
 {% endfor %}
 
   # # This route handles all alerts coming from a database service. If there's
@@ -107,7 +107,7 @@ inhibit_rules:
 receivers:
 
 {% for pager in pager_duty %}
-- name: 'application-{{ pager.application.id }}'
+- name: 'project-{{ pager.project.id }}-{{ pager.id }}'
   webhook_configs:
   - send_resolved: True
     url: http://django:8000/alert/

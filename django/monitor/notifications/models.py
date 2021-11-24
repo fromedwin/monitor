@@ -11,6 +11,7 @@ class Pager_Duty(models.Model):
         on_delete = models.CASCADE,
         related_name = "pager_duty",
         blank=False,
+        unique=True
     )
     routing_key = models.CharField(max_length=32, blank=False)
 
