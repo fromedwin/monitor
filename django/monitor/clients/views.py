@@ -10,21 +10,11 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.db.models import Q
 
-from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 
-from .serializers import AlertsConfigSerializer
-from .models import AlertsConfig, Server
-from clients.models import Metrics, Alerts
+from .models import Metrics, Alerts, Server
 from incidents.models import INCIDENT_SEVERITY
-
-class AlertsConfigViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = AlertsConfig.objects.all()
-    serializer_class = AlertsConfigSerializer
 
 @api_view(['GET'])
 def alerts(request, id):

@@ -12,10 +12,6 @@ from yamlfield.fields import YAMLField
 
 from incidents.models import INCIDENT_SEVERITY
 
-class AlertsConfig(models.Model):
-    title = models.CharField(max_length=200)
-    yaml = YAMLField()
-
 class Alerts(models.Model):
     alert = models.CharField(max_length=128)
     expr = models.CharField(max_length=128)

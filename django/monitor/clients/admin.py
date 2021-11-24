@@ -1,11 +1,8 @@
 from django.contrib import admin
-from .models import AlertsConfig, Server, Metrics, Alerts
+from .models import Server, Metrics, Alerts
 from django.utils import timezone
 import math
 
-class AlertsConfigAdmin(admin.ModelAdmin):
-    list_display = ('title', '__str__')
-    
 class AlertsAdmin(admin.ModelAdmin):
     list_display = ('alert', '__str__')
 
@@ -26,7 +23,6 @@ class ServerAdmin(admin.ModelAdmin):
 class MetricsAdmin(admin.ModelAdmin):
     list_display = ('user', 'url')
 
-admin.site.register(AlertsConfig, AlertsConfigAdmin)
 admin.site.register(Alerts, AlertsAdmin)
 admin.site.register(Server, ServerAdmin)
 admin.site.register(Metrics, MetricsAdmin)
