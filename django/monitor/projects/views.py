@@ -16,6 +16,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 
 from projects.forms import ProjectForm, ServiceForm, HTTPCodeServiceForm, MockedHTTPCodeServiceForm
+from incidents.models import InstanceDownIncident
 
 @login_required
 def projects(request):
@@ -32,8 +33,12 @@ def project(request, id):
 
     project = get_object_or_404(Project, pk=id)
 
+    start_date = timezone.now() - timezone.timedelta(days=30)
+    incidents = InstanceDownIncident.objects.filter(service__project=project, startsAt__gte=start_date)
+
     return render(request, 'projects/project_view.html', {
-        'project': project
+        'project': project,
+        'incidents': incidents,
     })
 
 @login_required
