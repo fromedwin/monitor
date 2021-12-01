@@ -23,10 +23,12 @@ from incidents.views import webhook
 from health.views import healthy
 from home.views import index
 
+
 urlpatterns = [
     path('', index, name='index'),
     path('', include('django_prometheus.urls')),
     path('projects/', include('projects.urls')),
+    path('administration/', include('administration.urls')),
     path('healthy/<int:id>/', healthy, name='healthy'),
     path('alert/', webhook, name='alert'),
     path('admin/', admin.site.urls),

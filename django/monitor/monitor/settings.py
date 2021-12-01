@@ -77,6 +77,8 @@ INSTALLED_APPS = [
     'projects',
     'clients',
     'notifications',
+    'administration',
+    'settings',
 ]
 
 MIDDLEWARE = [

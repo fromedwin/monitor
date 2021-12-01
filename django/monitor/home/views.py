@@ -25,18 +25,7 @@ def index(request):
             'socialapps': socialapps,
         })
 
-    token = None
-    is_staff = False
-    servers = []
-
-    token = Token.objects.get(user=request.user)
-    servers = Server.objects.filter(
-        last_seen__gte=timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
-    ).order_by('-last_seen')
-
     return render(request, 'dashboard.html', {
-        'servers': servers,
-        'token': token,
         'settings': settings,
     })
 
