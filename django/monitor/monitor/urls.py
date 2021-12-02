@@ -28,6 +28,7 @@ urlpatterns = [
     path('', index, name='index'),
     path('', include('django_prometheus.urls')),
     path('projects/', include('projects.urls')),
+    path('settings/', include('settings.urls')),
     path('administration/', include('administration.urls')),
     path('healthy/<int:id>/', healthy, name='healthy'),
     path('alert/', webhook, name='alert'),

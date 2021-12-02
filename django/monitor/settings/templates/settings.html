@@ -1,1 +1,32 @@
-settings
+{% extends 'application.html' %}
+
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+
+<div class="py-5 space-y-8 divide-y divide-gray-200">
+  <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
+	  <div class="mt-6 sm:mt-5 space-y-6 sm:space-y-5">
+	    <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+	      <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+	        Delete your account
+	      </label>
+	      <div class="mt-1 sm:mt-0 sm:col-span-2">
+	        <div class="mt-2 max-w-xl text-sm text-gray-500">
+			  <p>
+			    Once you delete your account, you will lose all data associated with it.
+			  </p>
+			</div>
+			<div class="mt-5">
+			  <a href="{% url 'user_delete' %}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm">
+			    Delete account
+			  </a>
+			</div>
+	      </div>
+	      {% csrf_token %}
+	    </div>
+	  </div>
+  </div>
+</div>
+
+{% endblock %}
