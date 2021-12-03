@@ -1,0 +1,59 @@
+{% extends 'application.html' %}
+{% load socialaccount account tailwind_tags %}
+
+{% block title %}Projects {{ id }}{% endblock %}
+
+{% block title_header %}{% endblock %}
+
+{% block content %}
+<div class="p-4">
+
+  <a href="{% url 'project' project.id %}" class="inline-flex items-center px-4 py-2 mb-8 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+    < {{ project }}
+  </a>
+
+  <div class="pb-5 border-b border-gray-200 sm:flex sm:items-center sm:justify-between">
+    <h2 class="text-lg leading-6 font-medium text-gray-900">
+      Incidents {% if not date %}<span class="text-sm font-small">(past 30 days)</span>{% endif %}
+    </h2>
+
+    {% if date %}
+    <div class="mt-3 flex sm:mt-0 sm:ml-4">
+      <span class="inline-flex rounded-full items-center py-0.5 pl-3 pr-1 text-sm font-medium bg-gray-100 text-gray-700">
+        {{ date|date:'D d M Y' }}
+        <a href="{% url 'incidents' project.id %}" class="flex-shrink-0 ml-1 h-4 w-4 rounded-full inline-flex items-center justify-center text-gray-400 hover:bg-gray-200 hover:text-gray-500 focus:outline-none focus:bg-gray-500 focus:text-white">
+          <span class="sr-only">Remove date filter</span>
+          <svg class="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
+            <path stroke-linecap="round" stroke-width="1.5" d="M1 1l6 6m0-6L1 7" />
+          </svg>
+        </a>
+      </span>
+    </div>
+    {% endif %}
+  </div>
+  <div class="pt-4 pb-6">
+    {% for day in days %}
+      <div class="pt-5 pb-5 border-b border-gray-200">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">
+          {{ day.day|date:'D d M Y' }}
+        </h3>
+      </div>
+      {% if day.outrage or day.degradated %}
+        <p class="text-sm text-gray-800 mt-3">{{ day.outrage|length }} outrages and {{ day.degradated|length }} deprected</p>
+      <!--
+        {% for incident in day.outrage %}
+        <p>Outrage : {{ incident.startsAt }} > {{ incident.endsAt }} ({{ incident.duration }})</p>
+        {% endfor %}
+
+        {% for incident in day.degradated %}
+        <p>Degradated : {{ incident.startsAt }} > {{ incident.endsAt }} ({{ incident.duration }})</p>
+        {% endfor %}
+      -->
+      {% else %}
+      <p class="text-sm text-gray-500 mt-3">No incidents</p>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

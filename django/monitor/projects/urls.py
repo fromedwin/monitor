@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import projects, project, projects_form, service_http_form, projects_delete, service_list, service_http_delete, service_mockedhttp_form, service_mockedhttp_delete
+from incidents.views import incidents
 
 urlpatterns = [
     path('', projects, name='projects'),
@@ -15,5 +16,8 @@ urlpatterns = [
     path('<int:application_id>/services/mockedhttpcode/add', service_mockedhttp_form, name='services_mockedhttpcode_add'),
     path('<int:application_id>/services/mockedhttpcode/<int:service_http_id>/edit', service_mockedhttp_form, name='services_mockedhttpcode_edit'),
     path('<int:application_id>/services/mockedhttpcode/<int:service_http_id>/delete', service_mockedhttp_delete, name='services_mockedhttpcode_delete'),
+    # incidents
+    path('<int:id>/incidents/', incidents, name='incidents'),
+    path('<int:id>/incidents/<int:year>/<int:month>/<int:day>/', incidents, name='incidents'),
 
 ]
