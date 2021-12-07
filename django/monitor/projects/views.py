@@ -51,7 +51,8 @@ def project(request, id):
     return render(request, 'projects/project_view.html', {
         'project': project,
         'incidents': incidents,
-        'days': days
+        'days': days,
+        'settings': settings
     })
 
 @login_required
@@ -220,3 +221,14 @@ def service_mockedhttp_delete(request, application_id, service_http_id):
     service.service.delete()
 
     return redirect(reverse('project', args=[application_id]))
+
+@login_required
+def toggle_public_page(request, application_id):
+    project = get_object_or_404(Project, pk=application_id)
+
+    if request.POST:
+        project.enable_public_page = not project.enable_public_page
+        project.save()
+        return redirect(reverse('project', args=[project.id]))
+    else:
+        redirect(reverse('project', args=[project.id]))

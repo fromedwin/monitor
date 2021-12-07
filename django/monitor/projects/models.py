@@ -13,6 +13,7 @@ class Project(models.Model):
         related_name = "applications",
     )
     title = models.CharField(max_length=128, blank=False)
+    enable_public_page = models.BooleanField('Enable public page', default=False, help_text="Will enable the public page to share current project status")
 
     def is_offline(self):
         return self.services.filter(instancedownincidents__status=2, is_critical=True, is_enabled=True, instancedownincidents__severity=2)
