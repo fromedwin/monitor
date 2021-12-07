@@ -105,7 +105,7 @@
                         </tr>
                       </thead>
                       <tbody class="bg-white divide-y divide-gray-200">
-                        {% for service in project.services.all %}
+                        {% for service in project.services.all %}{% if service.is_public and service.is_enabled %}
                         <tr>
                           <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
@@ -152,7 +152,7 @@
                             {% endif %}
                           </td>
                         </tr>
-                        {% endfor %}
+                        {% endif %}{% endfor %}
                       </tbody>
                     </table>
                   </div>
