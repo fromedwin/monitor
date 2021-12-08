@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 {% load socialaccount account tailwind_tags %}
 
-{% block title %}Projects {{ id }}{% endblock %}
+{% block html_head_title %}
+{% if project.is_offline %}❌{% elif project.is_degraded or project.is_warning %}⚠️{% else %}✅{% endif %} Status {{ project.title }}
+{% endblock %}
 
-{% block title_header %}{% endblock %}
+{% block title %}{% endblock %}
 
 {% block body %}
-
 <div class="min-h-screen bg-white">
   <div class="py-10">
     <main>
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
         <div class="pt-4 pl-4 pr-4">
             <div class="pb-12">
               <!-- This example requires Tailwind CSS v2.0+ -->
@@ -173,7 +173,7 @@
               <nav aria-label="Progress">
                 <ol role="list" class="flex flex-wrap items-center pt-4">
 
-                  {% for day in days %}
+                  {% for day in days_reverses %}
                     <li class="relative{% if not forloop.last %} pr-2 sm:pr-4{% endif %} mb-8">
                       <!-- Completed Step -->
                       <div class="absolute inset-0 flex items-center" aria-hidden="true">
