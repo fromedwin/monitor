@@ -11,42 +11,46 @@
 <div class="min-h-screen bg-white">
   <div class="py-10">
     <main>
-      <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="pt-4 pl-4 pr-4">
-            <div class="pb-12">
-              <!-- This example requires Tailwind CSS v2.0+ -->
-              <div class="md:flex md:items-center md:justify-between md:space-x-5">
-                <div class="flex items-start space-x-5">
-                  <div class="flex-shrink-0 flex content-center ">
-                      {% if project.is_offline %}
-                        <div class="h-16 w-16 flex justify-center items-center rounded-full bg-red-600 text-white text-sm font-medium">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </div>
-                        {% elif project.is_degraded or project.is_warning %}
-                        <div class="h-16 w-16 flex justify-center items-center rounded-full bg-yellow-600 text-white text-sm font-medium">
-                          <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                        </div>
-                        {% else %}
-                        <div class="h-16 w-16 flex justify-center items-center rounded-full bg-green-600 text-white text-sm font-medium">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                        {% endif %}
-                  </div>
-                  <!--
-                    Use vertical padding to simulate center alignment when both lines of text are one line,
-                    but preserve the same layout if the text wraps without making the image jump around.
-                  -->
-                  <div class="pt-1.5">
-                    <h1 class="text-3xl font-bold text-gray-900">{{ project }}</h1>
-                    <p class="text-sm font-medium text-gray-500">Service is fully online and works as expected</p>
-                  </div>
-                </div>
+      <div class="bg-white min-h-full px-4 py-16 sm:px-6 sm:py-24 md:grid md:place-items-center lg:px-8">
+        <div class="max-w-max mx-auto">
+          <main class="sm:flex">
+            {% if project.is_offline %}
+            <div class="h-16 w-16 flex justify-center items-center rounded-full bg-red-600 text-white text-sm font-medium">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+            {% elif project.is_degraded or project.is_warning %}
+            <div class="h-16 w-16 flex justify-center items-center rounded-full bg-yellow-600 text-white text-sm font-medium">
+              <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            </div>
+            {% else %}
+            <div class="h-16 w-16 flex justify-center items-center rounded-full bg-green-600 text-white text-sm font-medium">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            {% endif %}
+            <div class="sm:ml-6">
+              <div class="sm:border-l sm:border-gray-200 sm:pl-6">
+                <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight sm:text-5xl">{{ project }}</h1>
+                <p class="mt-2 flex flex-wrap items-center text-sm text-gray-500">
+                  {% for service in services %}
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium mr-1 mb-1 {% if not service.is_enabled %}bg-gray-100 text-gray-800{% elif service.is_critical and service.is_offline %}bg-red-100 text-red-800{% elif service.is_degraded or service.is_warning %}bg-yellow-100 text-yellow-800{% else %}bg-green-100 text-green-800{% endif %}">
+                    <svg class="mr-1.5 h-2 w-2 {% if not service.is_enabled %}text-gray-400{% elif service.is_critical and service.is_offline %}text-red-400{% elif service.is_degraded or service.is_warning %}text-yellow-400{% else %}text-green-400{% endif %}" fill="currentColor" viewBox="0 0 8 8">
+                      <circle cx="4" cy="4" r="3" />
+                    </svg>
+                    {{ service.title }}
+                  </span>
+                  {% endfor %}
+                </p>
               </div>
             </div>
+          </main>
+        </div>
+      </div>
+      <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="pt-4 pl-4 pr-4">
 
             <div class="pt-4 pb-6">
               <h3 class="text-lg leading-6 font-medium text-gray-900">
