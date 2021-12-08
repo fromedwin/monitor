@@ -9,7 +9,7 @@ click==8.0.3
 cookiecutter==1.7.3
 cryptography==3.4.8
 defusedxml==0.7.1
-Django==3.2.7
+Django==3.2.10
 django-allauth==0.45.0
 django-prometheus==2.1.0
 django-tailwind==2.2.2
