@@ -12,7 +12,7 @@ groups:
         for more than 5 minutes.'
   - alert: InstanceDown
     expr: probe_success == 0
-    for: 5m
+    {% endverbatim %}for: {{ settings.IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES }}m{% verbatim %}
     labels:
       severity: critical
     annotations:

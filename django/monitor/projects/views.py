@@ -52,7 +52,7 @@ def project(request, id):
         'project': project,
         'incidents': incidents,
         'days': days,
-        'settings': settings
+        'settings': settings,
     })
 
 @login_required

@@ -29,6 +29,7 @@ ALERT_MANAGER_PROTOCOL = os.environ.get('ALERT_MANAGER_PROTOCOL')
 ALERT_MANAGER_PORT = os.environ.get('ALERT_MANAGER_PORT')
 
 IS_SERVICE_DOWN_SCRAPE_INTERVAL = '1m'
+IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES = 5
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ.get('DEBUG') == '1' else False

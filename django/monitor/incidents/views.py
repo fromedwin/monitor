@@ -1,10 +1,12 @@
 import json
 import datetime
+from datetime import timedelta
 from django.shortcuts import render
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from django.conf import settings
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -32,7 +34,7 @@ def webhook(request):
             if alert["labels"]["severity"] == "critical":
                 severity = 2
 
-            startsAt = timezone.make_aware(datetime.datetime.strptime(alert["startsAt"].split(".")[0], "%Y-%m-%dT%H:%M:%S"))
+            startsAt = timezone.make_aware(datetime.datetime.strptime(alert["startsAt"].split(".")[0], "%Y-%m-%dT%H:%M:%S") - timedelta(minutes=settings.IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES))
 
             if alert["labels"]["alertname"] == "InstanceDown":
 
