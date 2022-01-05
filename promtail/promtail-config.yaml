@@ -21,4 +21,4 @@ scrape_configs:
       job: status_fromedwin
       host: monitor
       agent: promtail
-      __path__: /var/log/nginx/status_fromedwin.log
+      __path__: /var/log/nginx/status_fromedwin.filtered.log
