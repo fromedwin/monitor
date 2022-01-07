@@ -1,9 +1,13 @@
+import requests
+import json
+
 from django.conf import settings
 from django.urls import reverse
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.shortcuts import render
 from django.utils import timezone
+from django.utils.dateformat import format
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -11,7 +15,7 @@ from django.contrib.auth.decorators import login_required
 from rest_framework.authtoken.models import Token
 from allauth.socialaccount.models import SocialApp
 
-from projects.models import Project, HTTPCodeService, HTTPMockedCodeService
+from projects.models import Project, Service, HTTPCodeService, HTTPMockedCodeService
 from clients.models import Server
 from incidents.models import InstanceDownIncident
 from projects.forms import ProjectForm, ServiceForm, HTTPCodeServiceForm, MockedHTTPCodeServiceForm
@@ -48,11 +52,31 @@ def project(request, id):
             'degradated': InstanceDownIncident.objects.filter(service__project=project, severity=2, service__is_critical=False).filter(Q(startsAt__gte=start_of_day, endsAt__lt=end_of_day)|Q(startsAt__lt=start_of_day, endsAt__gt=start_of_day)|Q(startsAt__lt=end_of_day, endsAt__gt=end_of_day)),
         })
 
+
+    # Experiment with Prometheus data fetching
+    content = {}
+    try:
+        headers = {
+            'User-Agent': 'FromEdwinBot Python Django',
+        }
+
+        start = int(format(timezone.now(), 'U'))
+
+        response = requests.get(f'http://host.docker.internal:8001/api/v1/query_range?query=probe_duration_seconds%7Bapplication="{id}"%7D&step=30&start={str(start-600)}&end={str(start)}', headers=headers, auth=('admin', 'admin'))
+        response.raise_for_status()
+        content = json.loads(response.content)
+        for service in content['data']['result']:
+            service['metric']['title'] = Service.objects.get(id=service['metric']['service']).title
+
+    except Exception as err:
+        pass
+
     return render(request, 'projects/project_view.html', {
         'project': project,
         'incidents': incidents,
         'days': days,
         'settings': settings,
+        'graph': json.dumps(content),
     })
 
 @login_required

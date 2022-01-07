@@ -1,6 +1,10 @@
 {% extends 'application.html' %}
 {% load socialaccount account tailwind_tags %}
 
+{% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.2.2/dist/echarts.min.js" integrity="sha256-iJxB0L7blNZTAFBu/ESTfVaVTqFrTeISeWk7RUEePFY=" crossorigin="anonymous"></script>
+{% endblock %}
+
 {% block content %}
 <div class="p-4">
     <div class="pb-12">
@@ -218,6 +222,73 @@
       </div>
     </div>
 
+    <div id="probe_wrapper" style="display: none;">
+      <div class="pb-5 border-b border-gray-200 pt-4 mt-4">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">
+          Probes
+        </h3>
+      </div>
+
+      <div class="pt-4 pb-6">
+        <script>
+          document.addEventListener('DOMContentLoaded', () => {
+            var data = {{ graph|safe }};
+            console.log(data);
+
+            if (data.data && data.data.result.length) {
+
+              document.getElementById('probe_wrapper').style.display = 'block';
+
+              xAxis_data = data.data.result[0].values.map((value) => {
+                d = new Date(value[0]*1000);
+                return d.toLocaleTimeString("en-us", {   
+                    hour: "2-digit", minute: "2-digit"
+                });
+              });
+
+              probes = data.data.result.map((instance => {
+                return {
+                  name: instance.metric.title,
+                  type: 'line',
+                  step: 'start',
+                  data: instance.values.map(value => value[1].substring(0, 5))
+                };
+              }));
+
+              options = {
+                tooltip: {
+                  trigger: 'axis'
+                },
+                legend: {
+                  data: probes.map(value => value.name)
+                },
+                grid: {
+                  left: '3%',
+                  right: '4%',
+                  bottom: '3%',
+                  containLabel: true
+                },
+                xAxis: {
+                  type: 'category',
+                  data: xAxis_data
+                },
+                yAxis: {
+                  type: 'value',
+                },
+                series: probes
+              };
+              const chart = echarts.init(document.getElementById('probes'), null, {renderer: 'svg'});
+              options && chart.setOption(options);
+            } else {
+
+            }
+
+          });
+
+        </script>
+        <div id="probes" style="width: 100%; height: 300px; position: relative; margin-top: 10px;"></div>
+      </div>
+    </div>
     <div class="pb-5 border-b border-gray-200 pt-4 mt-4">
       <h3 class="text-lg leading-6 font-medium text-gray-900">
         Incidents
