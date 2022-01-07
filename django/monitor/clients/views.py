@@ -13,7 +13,7 @@ from django.db.models import Q
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 
-from .models import Metrics, Alerts, Server
+from .models import Metrics, Alerts, Server, AuthBasic
 from incidents.models import INCIDENT_SEVERITY
 
 @api_view(['GET'])
@@ -65,6 +65,13 @@ def register(request):
 
     server = Server(ip=ip)
     server.save()
+
+    if request.GET.get('username') and request.GET.get('password'):
+        AuthBasic(
+            server=server, 
+            username=request.GET.get('username'), 
+            password=request.GET.get('password')
+        ).save()
 
     return JsonResponse({
         'uuid': server.uuid

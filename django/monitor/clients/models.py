@@ -93,6 +93,19 @@ class Server(models.Model):
                 return str(years) + " years ago"
         return self.last_seen
 
+class AuthBasic(models.Model):
+    """
+    Server can be protected with Basic Authentication.
+    Credentials are generated and provided by the server on registration.
+    """
+    server = models.ForeignKey(
+        Server,
+        on_delete = models.CASCADE,
+        related_name = "authbasic"
+    )
+    username = models.CharField(max_length=128, blank=False)
+    password = models.CharField(max_length=128, blank=False)
+
 class Metrics(models.Model):
     """
     Fetch {{url}}/metrics within prometheus

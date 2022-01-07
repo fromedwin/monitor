@@ -1,5 +1,6 @@
 import requests
 import json
+import datetime
 
 from django.conf import settings
 from django.urls import reverse
@@ -55,19 +56,24 @@ def project(request, id):
 
     # Experiment with Prometheus data fetching
     content = {}
+
     try:
+        servers = Server.objects.filter(
+            last_seen__gte=timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
+        ).order_by('-last_seen')
+
+        authbasic = servers[0].authbasic.first()
         headers = {
             'User-Agent': 'FromEdwinBot Python Django',
         }
 
         start = int(format(timezone.now(), 'U'))
 
-        response = requests.get(f'http://host.docker.internal:8001/api/v1/query_range?query=probe_duration_seconds%7Bapplication="{id}"%7D&step=30&start={str(start-600)}&end={str(start)}', headers=headers, auth=('admin', 'admin'))
+        response = requests.get(f'http://host.docker.internal:8001/api/v1/query_range?query=probe_duration_seconds%7Bapplication="{id}"%7D&step=30&start={str(start-600)}&end={str(start)}', headers=headers, auth=(authbasic.username, authbasic.password))
         response.raise_for_status()
         content = json.loads(response.content)
         for service in content['data']['result']:
             service['metric']['title'] = Service.objects.get(id=service['metric']['service']).title
-
     except Exception as err:
         pass
 

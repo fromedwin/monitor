@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Server, Metrics, Alerts
+from .models import Server, Metrics, Alerts, AuthBasic
 from django.utils import timezone
 import math
 
@@ -26,3 +26,4 @@ class MetricsAdmin(admin.ModelAdmin):
 admin.site.register(Alerts, AlertsAdmin)
 admin.site.register(Server, ServerAdmin)
 admin.site.register(Metrics, MetricsAdmin)
+admin.site.register(AuthBasic)
