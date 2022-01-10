@@ -75,7 +75,9 @@ def project(request, id):
         for service in content['data']['result']:
             service['metric']['title'] = Service.objects.get(id=service['metric']['service']).title
     except Exception as err:
-        pass
+        content = {
+            'error': getattr(err, 'message', repr(err))
+        }
 
     return render(request, 'projects/project_view.html', {
         'project': project,
