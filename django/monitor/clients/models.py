@@ -26,6 +26,11 @@ class Server(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True, editable=False)
     last_modified_setup = models.DateTimeField(auto_now_add=True)
     last_seen = models.DateTimeField(auto_now_add=True)
+
+    # URL used to fetch server
+    url = models.CharField(max_length=256, blank=False, default='host.docker.internal')
+    port = models.IntegerField(blank=False, default=8001)
+
     user = models.ForeignKey(
         User,
         on_delete = models.CASCADE,

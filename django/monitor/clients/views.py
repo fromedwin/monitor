@@ -63,7 +63,10 @@ def register(request):
     """
     ip = ipaddress.IPv4Address(request.META['REMOTE_ADDR'])
 
-    server = Server(ip=ip)
+    url = request.GET.get('url') or 'host.docker.internal'
+    port = request.GET.get('port') or '8001'
+
+    server = Server(ip=ip, url=url, port=port)
     server.save()
 
     if request.GET.get('username') and request.GET.get('password'):
