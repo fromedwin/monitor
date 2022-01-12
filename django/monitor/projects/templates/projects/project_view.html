@@ -262,7 +262,7 @@
                 <span class="sr-only">{{ day.day }}</span>
               </a>
               {% endif %}
-              <span class="absolute text-xs text-gray-500 pt-1">{{ day.day.day }}.{{ day.day.month }}</span>
+              <span class="w-full text-center absolute text-xs text-gray-500 pt-1 sm:pr-4">{{ day.day.day }}.{{ day.day.month }}</span>
             </li>
           {% endfor %}
         </ol>
@@ -281,8 +281,7 @@
         </div>
       </nav>
 
-<!--
-      <!- -<div class="flex flex-row justify-between items-center">
+      <!--<div class="flex flex-row justify-between items-center">
         {% for day in days %}
         <p class="max-w-8 w-20 h-8 mt-4 mb-4 ml-1 mr-1 rounded {% if day.outrage|length %}bg-red-600{% elif day.degradated|length %}bg-yellow-600{% else %}bg-green-500{% endif %}"></p>
         {% endfor %}
