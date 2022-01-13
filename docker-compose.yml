@@ -38,10 +38,12 @@ services:
       - ./nginx/geolite/GeoLite2-Country.mmdb:/etc/GeoLite2-Country.mmdb
       - ./nginx/geolite/GeoLite2-City.mmdb:/etc/GeoLite2-City.mmdb
       - ./django/monitor/staticfiles:/etc/staticfiles
+      - ./docs:/docs
     links:
       - alertmanager
       - grafana
       - django
+      - sphinx
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
   certbot:
     container_name: monitor_certbot
@@ -78,6 +80,17 @@ services:
       - dev
     ports:
       - "8383:8383"
+  sphinx:
+    container_name: monitor_sphinx
+    build: ./sphinx
+    command: "sphinx-reload /docs"
+    profiles:
+      - dev
+    volumes:
+      - ./docs:/docs
+      - ./sphinx/requirements.txt:/requirements.txt
+    ports:
+      - "5500:5500"
   promtail:
     container_name: monitor_promtail
     image: grafana/promtail:2.3.0
