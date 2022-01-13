@@ -2,11 +2,11 @@
 
 This project is **alpha** quality. We don't yet guarantee stability, data integrity or a clean upgrade path. Only use this project if you are interested in experimenting with it.
 
-
 # Monitor fromedwin
 
 This project provide a no code Prometheus setup for instance down monitoring
 
+[![Documentation Status](https://readthedocs.org/projects/fromedwin-monitor/badge/?version=latest)](https://fromedwin-monitor.readthedocs.io/en/latest/?badge=latest)
 
 ## Installation
 
