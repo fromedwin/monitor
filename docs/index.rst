@@ -10,8 +10,6 @@ Welcome to FromEdwin Monitor's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-HELLOOO AGAIN
-
 Indices and tables
 ==================
 
