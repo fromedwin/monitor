@@ -18,11 +18,3 @@ This project provide a self hosted no code interface to monitor your projects.
    faq
    changelog
 
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
