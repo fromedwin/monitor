@@ -8,71 +8,9 @@ This project provide a no code Prometheus setup for instance down monitoring
 
 [![Documentation Status](https://readthedocs.org/projects/fromedwin-monitor/badge/?version=latest)](https://fromedwin-monitor.readthedocs.io/en/latest/?badge=latest)
 
-## Installation
+## Installation and Quickstart
 
-[Docker](https://www.docker.com/) and [Docker-compose](https://docs.docker.com/compose/) are required to run this project.
-## Run Locally
-
-Clone the project
-
-```bash
-  git clone https://github.com/fromedwin/monitor.git
-```
-
-Go to the project directory
-
-```bash
-  cd monitor
-```
-
-Install dependencies
-
-```bash
-  ./install.sh
-```
-
-Start the server
-
-```bash
-  ./run.sh
-```
-
-Create a superuser
-
-```bash
-  docker exec -u root -t -i monitor_django_1 python3 manage.py createsuperuser
-```
-
-  
-## Environment Variables
-
-No variables are required to run locally, but might be needed to configure your production environment
-
-You will need to add the following environment variables to your `.env` file
-
-`PORT` *(default: 8000)*
-
-`PORT_HTTPS` *(default: 8443)*
-
-`NGINX` nginx config folder used on start *(default: local)*
-
-`MAIL` email shared with letsencrypt to register SSL certificate
-
-`STAGING` set to 1 if you're testing your setup to avoid hitting request limits *(default: 1)*
-
-`DOMAIN` url used to generate letsencrypt SSL certificate and access the application
-
-`DJANGO_SECRET_KEY` secret key used by django's session
-
-`WEBAUTH_USERNAME` username to protect none public access
-
-`WEBAUTH_PASSWORD` password to protect none public access
-
-`ALERT_MANAGER_PROTOCOL` http or https used to reach alertmanager
-
-`ALERT_MANAGER_PORT` port number used to reach alertmanager *(default: 443)*
-
-`DEBUG` Set debug mode within django project *(default: False)*
+Follow instructions as described within the [documentation](https://fromedwin-monitor.readthedocs.io/en/latest/).
   
 ## Feedback
 
