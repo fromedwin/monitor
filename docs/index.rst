@@ -3,12 +3,22 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to FromEdwin Monitor's documentation!
-=============================================
+Status From Edwin
+=================
+
+This project provide a self hosted no code interface to monitor your projects.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+
+   installation
+   configuration
+   authentication
+   faq
+   changelog
+
+
 
 Indices and tables
 ==================

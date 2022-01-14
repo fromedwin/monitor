@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'FromEdwin Monitor'
+project = 'Status from Edwin'
 copyright = '2022, Sébastien Barbier'
 author = 'Sébastien Barbier'
 
