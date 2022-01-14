@@ -44,3 +44,7 @@ def public(request, id):
         'days': days,
         'days_reverses': reversed(days),
     })
+
+def restricted(request):
+    return render(request, 'restricted.html', {
+    })

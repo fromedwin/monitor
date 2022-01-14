@@ -19,7 +19,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls import include, url
 
-from .views import public
+from .views import public, restricted
 from incidents.views import webhook
 from health.views import healthy
 from home.views import index
@@ -33,6 +33,7 @@ urlpatterns = [
     path('administration/', include('administration.urls')),
     path('healthy/<int:id>/', healthy, name='healthy'),
     path('alert/', webhook, name='alert'),
+    path('restricted/', restricted, name='restricted'),
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('clients/', include('clients.urls')),
