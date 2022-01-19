@@ -71,7 +71,7 @@ if [[ $@ == *"-prod"* ]]; then
   if [[ $@ == *"-cert"* ]]; then
     source scripts/init-letsencrypt.sh
   else
-    docker-compose --profile prod up -d
+    docker-compose --profile prod -f docker-compose.yml -f docker-compose.prod.yml up -d
   fi
 
 else

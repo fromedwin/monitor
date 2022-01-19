@@ -70,16 +70,7 @@ services:
   django:
     <<: *default-app
     container_name: monitor_django
-    profiles:
-      - dev
     command: "python3 manage.py runserver 0.0.0.0:8000"
-  django:
-    <<: *default-app
-    container_name: monitor_django
-    profiles:
-      - prod
-    command: "gunicorn -b 0.0.0.0:8000 monitor.wsgi"
-    # command: "python3 manage.py runserver 0.0.0.0:8000"
   tailwind:
     <<: *default-app
     container_name: monitor_tailwind
