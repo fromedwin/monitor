@@ -15,6 +15,7 @@ This project provide a self hosted no code interface to monitor your projects.
    installation
    configuration
    authentication
+   deployment
    faq
    changelog
 
