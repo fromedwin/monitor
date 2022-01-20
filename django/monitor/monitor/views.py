@@ -41,6 +41,11 @@ def public(request, id):
         'project': project,
         'services': project.services.filter(is_public=True, is_enabled=True),
         'incidents': incidents,
+        'availability': {
+            '1': project.availability(days=1),
+            '7': project.availability(days=7),
+            '30': project.availability(days=30),
+        },
         'days': days,
         'days_reverses': reversed(days),
     })

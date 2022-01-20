@@ -60,27 +60,29 @@
               <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
                 <div class="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6">
                   <dt class="text-sm font-medium text-gray-500 truncate">
-                    Availability
+                    24 hours
                   </dt>
                   <dd class="mt-1 text-3xl font-semibold text-green-500">
-                    {{ project.availability }} %
+                    {{ availability.1 }} %
                   </dd>
                 </div>
                 <div class="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6">
                   <dt class="text-sm font-medium text-gray-500 truncate">
-                    Incidents
+                    7 days
                   </dt>
-                  <dd class="mt-1 text-3xl font-semibold text-gray-900">
-                    {{ incidents|length }}
+                  <dd class="mt-1 text-3xl font-semibold text-green-500">
+                    {{ availability.7 }} %
+                  </dd>
+                </div>
+                <div class="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6">
+                  <dt class="text-sm font-medium text-gray-500 truncate">
+                    30 days
+                  </dt>
+                  <dd class="mt-1 text-3xl font-semibold text-green-500">
+                    {{ availability.30 }} %
                   </dd>
                 </div>
               </dl>
-
-              <!--<div class="flex flex-row justify-between items-center">
-                {% for day in days %}
-                <p class="max-w-8 w-20 h-8 mt-4 mb-4 ml-1 mr-1 rounded {% if day.outrage|length %}bg-red-600{% elif day.degradated|length %}bg-yellow-600{% else %}bg-green-500{% endif %}"></p>
-                {% endfor %}
-              </div>-->
             </div>
 
             {% if services %}
@@ -168,7 +170,7 @@
 
             <div class="pb-5 border-b border-gray-200 pt-4 mt-4">
               <h3 class="text-lg leading-6 font-medium text-gray-900">
-                Incidents
+                Incidents {% if incidents %}({{ incidents|length }}){% endif %}
               </h3>
             </div>
 

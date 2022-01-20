@@ -86,6 +86,11 @@ def project(request, id):
         'incidents': incidents,
         'days': days,
         'settings': settings,
+        'availability': {
+            '1': project.availability(days=1),
+            '7': project.availability(days=7),
+            '30': project.availability(days=30),
+        },
         'graph': json.dumps(content),
     })
 
