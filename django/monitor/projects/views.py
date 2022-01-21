@@ -26,7 +26,12 @@ def projects(request):
     """
     List of projects for current user
     """
-    return render(request, 'projects/project_list.html', {})
+
+    applications = request.user.applications.order_by('-is_favorite')
+
+    return render(request, 'projects/project_list.html', {
+        'applications': applications
+    })
 
 @login_required
 def project(request, id):

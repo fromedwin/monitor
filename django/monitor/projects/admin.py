@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Project, Service, HTTPCodeService
 
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('user', 'title')
+    list_display = ('user', 'title', 'is_favorite')
 
 class ServiceAdmin(admin.ModelAdmin):
     list_display = ('project', 'title', 'is_public', 'is_enabled', 'is_critical', 'creation_date',)

@@ -13,6 +13,7 @@ class Project(models.Model):
         related_name = "applications",
     )
     title = models.CharField(max_length=128, blank=False)
+    is_favorite = models.BooleanField('Is favorite', default=False, help_text="Favorite project are highlighted and first shown when possible.")
     enable_public_page = models.BooleanField('Enable public page', default=False, help_text="Will enable the public page to share current project status")
 
     def is_offline(self):

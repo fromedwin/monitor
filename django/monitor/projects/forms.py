@@ -4,7 +4,7 @@ from .models import Project, Service, HTTPCodeService, HTTPMockedCodeService
 class ProjectForm(ModelForm):
 	class Meta:
 		model = Project
-		fields = ['title']
+		fields = ['title', 'is_favorite']
 
 class ServiceForm(ModelForm):
 	class Meta:
