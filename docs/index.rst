@@ -6,14 +6,15 @@
 Status From Edwin
 =================
 
-This project provide an **out of the box** **highly opinionated implementation** of open source **monitoring tools**, unified as a **no code web interface**.
+This project provide an **out of the box** **highly opinionated implementation** of open-source **monitoring tools**, unified as a **no code web interface**.
 
-Metrics focus on **availability**, with future integration for **performance**, **statistics**, and **budget**.
+Metrics are focused on **availability**, with future integration for **performance**, **statistics**, and **budget**.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   introduction
    installation
    configuration
    authentication

@@ -1,6 +1,6 @@
-# Installation
+# Getting started
 
-## Run locally
+## Installation
 
 ### Clone git repository
 
