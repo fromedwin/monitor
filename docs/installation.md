@@ -1,6 +1,8 @@
 # Installation
 
-## Clone git repository
+## Run locally
+
+### Clone git repository
 
 Create a folder where to run your project and clone our main repository.
 
@@ -10,7 +12,7 @@ cd monitor
 git clone https://github.com/fromedwin/monitor.git
 ```
 
-## Configure GeoLite2
+### Configure GeoLite2
 
 You need to register and request an authentication key to automatically download the Geomind database from maxming.
 
@@ -18,7 +20,7 @@ Registration can be done on [maxmind website](https://dev.maxmind.com/geoip/geol
 
 Then define your License key as the environment variable `MAXMIND_KEY` (can be one within a `.env` file).
 
-## Install and build docker
+### Install and build docker
 
 [Docker](https://www.docker.com/) and [Docker-compose](https://docs.docker.com/compose/) are required to run this project.
 
@@ -26,7 +28,7 @@ Then define your License key as the environment variable `MAXMIND_KEY` (can be o
 ./install.sh
 ```
 
-## Run locally
+### Run locally
 
 Start a local dev server with
 
@@ -38,7 +40,7 @@ Server can be start in background using `-d` parameter.
 
 Open `http://localhost:8000` to access your local instance. 
 
-## Create a superuser account
+### Create a superuser account
 
 Create a superuser
 

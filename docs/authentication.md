@@ -4,7 +4,7 @@ To provide a fast and easy experience, default authentication mecanism is fully 
 
 ## Github
 
-Register a new application within your [github developer settings page](https://github.com/settings/developers>)
+Register a new application within your [github developer settings page](https://github.com/settings/developers)
 
 To run locally, you can set values to : 
 

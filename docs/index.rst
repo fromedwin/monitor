@@ -6,7 +6,9 @@
 Status From Edwin
 =================
 
-This project provide a self hosted no code interface to monitor your projects.
+This project provide an **out of the box** **highly opinionated implementation** of open source **monitoring tools**, unified as a **no code web interface**.
+
+Metrics focus on **availability**, with future integration for **performance**, **statistics**, and **budget**.
 
 .. toctree::
    :maxdepth: 2
