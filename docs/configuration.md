@@ -6,7 +6,11 @@ All variables have a **default value** and probably **won't need to be configure
 
 If needed, you can **create a `.env` file** within the **root folder** and set then manually. You will need to **restart docker** images to apply them.
 
-For production instance, define them directly within your hosting platform. 
+For **production** instance, define them directly within your **hosting platform**. 
+
+```{warning}
+Environment variables might contain **sensitive informations** and **compromise security**, make sure to **keep those values secures**.
+```
 
 ## List of all configurations
 
@@ -26,13 +30,11 @@ Nginx listen to HTTP request. On dev mode your might keep the default value but 
 
 `CERTBOT_STAGING` set to 1 if you're testing your setup to avoid hitting request limits *(default: 1, 0 or 1)*
 
-Django domain url used for generate the https certificate, and set within django settings.py allowed_url 
-
-`DOMAIN` url used to generate letsencrypt SSL certificate and access the application
+`DOMAIN` domain url used for generate the https certificate, and set within django settings.py allowed_url.  *(eg: status.fromedwin.com)*
 
 ### Django Secret key
 
-`DJANGO_SECRET_KEY` secret key used by django's session
+`DJANGO_SECRET_KEY` secret key used by django's session.
 
 ### WebAuth credentials
 
