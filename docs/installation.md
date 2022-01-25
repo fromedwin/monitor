@@ -1,4 +1,4 @@
-# Getting started
+# Installation
 
 **This documentation will assume you are familiar with your system terminal**, running **git**, **[docker](https://www.docker.com/)**, and **[docker-compose](https://docs.docker.com/compose/)** instruction. Also make sure those are **installed on your machine**.
 

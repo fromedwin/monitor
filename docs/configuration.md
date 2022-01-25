@@ -28,7 +28,7 @@ Nginx listen to HTTP request. On dev mode your might keep the default value but 
 
 ### Certbot https generation
 
-`CERTBOT_STAGING` set to 1 if you're testing your setup to avoid hitting request limits *(default: 1, 0 or 1)*.
+`CERTBOT_STAGING` set to 1 if you're testing your setup to avoid hitting request limits *(default: 1, 0 or 1)*. *Learn about Let's encrypt **[Staging Environment](https://letsencrypt.org/docs/staging-environment/)**.*
 
 `DOMAIN` domain url used for generate the https certificate, and set within django settings.py allowed_url.  *(eg: status.fromedwin.com)*.
 
@@ -51,3 +51,7 @@ Nginx listen to HTTP request. On dev mode your might keep the default value but 
 ### Debug mode
 
 `DEBUG` Set debug mode within django project *(default: True, False with -prod, False or True)*.
+
+### Maxmind key
+
+`MAXMIND_KEY` Licence Key generated within the [deployment](deployment) process.
