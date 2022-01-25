@@ -18,7 +18,6 @@ Follow instructions as described within the [documentation](https://fromedwin-mo
 
 If you have any feedback, please reach out to us at fromedwin@sebastienbarbier.com
 
-  
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
