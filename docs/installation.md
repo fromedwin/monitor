@@ -13,7 +13,7 @@ git clone https://github.com/fromedwin/monitor.git
 ```
 
 ```{note}
-Release notes and versioning will be opt for implementation and **implemented soon**, but for now we recommand to **only run the latest version**.
+Release notes and versioning will be **implemented soon**. Until then we recommand to **only run the latest version**.
 ```
 
 ## Starting locally
@@ -31,19 +31,22 @@ You can now use **use your browser** to access the following application:
 
 - [localhost:8000](http://localhost:8000): main home page
 - [localhost:8000/admin](http://localhost:8000/admin): django administration page
-- [localhost:8000/grafana](http://localhost:8000/grafana/): grafana web interface
-- [localhost:8000/alertmanager](http://localhost:8000/alertmanager/): alertmanager web interface
-- [localhost:8000/docs](http://localhost:8000/docs/): sphinx documentation
+- [localhost:8000/docs/](http://localhost:8000/docs/): sphinx documentation
+- [localhost:8000/grafana/](http://localhost:8000/grafana/): grafana web interface
+
+The following service is protected by a **Web authentication**. Generated **username** and **password** are **displayed in the console** when first running the run script. They can be [configured](configuration) to be **static**.
+
+- [localhost:8000/alertmanager/](http://localhost:8000/alertmanager/): alertmanager web interface
 
 ## Create a superuser
 
-A **django user account** will be needed to configure the [authentication](authentication) process.
+A **django superuser account** will be needed to configure the [oAuth authentication](authentication).
 
 ```bash
 docker exec -u root -t -i monitor_django python3 manage.py createsuperuser
 ```
 
-**Follow the instructions** and try using it within the  [django administration page](http://localhost:8000/admin/login/). *You can always rerun this command to create a new user in case you are locked outside of the application.*
+**Follow the instructions**, then try using the user account within the  [django administration page](http://localhost:8000/admin/login/). *You can always rerun this command to create a new user in case you are locked outside of the application.*
 
 ## Other commands
 
