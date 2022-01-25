@@ -50,4 +50,4 @@ Nginx listen to HTTP request. On dev mode your might keep the default value but 
 
 ### Debug mode
 
-`DEBUG` Set debug mode within django project *(default: False, False or True)*.
+`DEBUG` Set debug mode within django project *(default: True, False with -prod, False or True)*.
