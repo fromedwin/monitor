@@ -2,8 +2,6 @@ version: "3.9"  # optional since v1.27.0
 
 x-monitor: &default-app
   build: ./django
-  env_file:
-   - ./django/monitor/.env
   volumes:
     - ./django/monitor/:/opt/monitor/
     - ./alertmanager/shared/alertmanager.yml:/etc/alertmanager/alertmanager.yml
@@ -12,7 +10,7 @@ x-monitor: &default-app
     - SECRET_KEY=${DJANGO_SECRET_KEY}
     - DOMAIN=${DOMAIN}
     - PORT=${PORT}
-    - DEBUG=${DEBUG}
+    - DEBUG=${DEBUG:-0}
     - WEBAUTH_USERNAME=${WEBAUTH_USERNAME}
     - WEBAUTH_PASSWORD=${WEBAUTH_PASSWORD}
     - ALERT_MANAGER_PROTOCOL=${ALERT_MANAGER_PROTOCOL:-http}

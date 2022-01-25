@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# If .env file exist, we export variables to current system to use later
+# If .env file does not exist, we export variables from current system.
 if [ -f .env ]; then
   export $(echo $(cat .env | sed 's/#.*//g'| xargs) | envsubst)
 fi
@@ -21,6 +21,23 @@ if [[ -z "${PORT_HTTPS}" ]]; then
     export PORT_HTTPS=8443
   fi
 fi
+# Set default value to access Alert Manager
+if [[ -z "${ALERT_MANAGER_PROTOCOL}" ]]; then
+  if [[ $@ == *"-prod"* ]]; then
+    export ALERT_MANAGER_PROTOCOL="https"
+  else
+    export ALERT_MANAGER_PROTOCOL="http"
+  fi
+fi
+# Set default value to access Alert Manager
+if [[ -z "${ALERT_MANAGER_PORT}" ]]; then
+  if [[ $@ == *"-prod"* ]]; then
+    export ALERT_MANAGER_PORT=$PORT_HTTPS
+  else
+    export ALERT_MANAGER_PORT=$PORT
+  fi
+fi
+
 # Set default username for web auth
 if [[ -z "${WEBAUTH_USERNAME}" ]]; then export WEBAUTH_USERNAME=$(openssl rand -base64 12)
 fi
@@ -73,6 +90,10 @@ if [[ $@ == *"-prod"* ]]; then
   fi
 
 else
+
+  # Set default DEBUG value
+  if [[ -z "${DEBUG}" ]]; then export DEBUG=1
+  fi
 
   if [[ $@ == *"-d"* ]]; then
     docker-compose --profile dev up -d

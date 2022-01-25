@@ -46,7 +46,7 @@ Nginx listen to HTTP request. On dev mode your might keep the default value but 
 
 `ALERT_MANAGER_PROTOCOL` http or https used to reach alertmanager *(default: http, https with -prod, http or https)*.
 
-`ALERT_MANAGER_PORT` port number used to reach alertmanager *(default: 443)*.
+`ALERT_MANAGER_PORT` port number used to reach alertmanager *(default: `PORT`, `PORT_HTTPS` with -prod)*.
 
 ### Debug mode
 
