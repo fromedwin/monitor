@@ -1,31 +1,51 @@
 # Configuration
 
-## Environment Variables
+## How to configure
 
-No variables are required to run locally, but might be needed to configure your production environment
+All variables have a **default value** and probably **won't need to be configured** to **run locally**.
 
-You will need to add the following environment variables to your `.env` file
+If needed, you can **create a `.env` file** within the **root folder** and set then manually. You will need to **restart docker** images to apply them.
 
-`PORT` *(default: 8000)*
+For production instance, define them directly within your hosting platform. 
 
-`PORT_HTTPS` *(default: 8443)*
+## List of all configurations
 
-`NGINX` nginx config folder used on start *(default: local)*
+### HTTP ports
+
+Nginx listen to HTTP request. On dev mode your might keep the default value but will need on production
+
+`PORT` *(default: 8000, 80 with -prod)*
+
+`PORT_HTTPS` *(default: 8443, 443 with -prod)*
+
+### Contact email address
 
 `MAIL` email shared with letsencrypt to register SSL certificate
 
-`STAGING` set to 1 if you're testing your setup to avoid hitting request limits *(default: 1)*
+### Certbot https generation
+
+`CERTBOT_STAGING` set to 1 if you're testing your setup to avoid hitting request limits *(default: 1, 0 or 1)*
+
+Django domain url used for generate the https certificate, and set within django settings.py allowed_url 
 
 `DOMAIN` url used to generate letsencrypt SSL certificate and access the application
 
+### Django Secret key
+
 `DJANGO_SECRET_KEY` secret key used by django's session
+
+### WebAuth credentials
 
 `WEBAUTH_USERNAME` username to protect none public access
 
 `WEBAUTH_PASSWORD` password to protect none public access
 
-`ALERT_MANAGER_PROTOCOL` http or https used to reach alertmanager
+### Alert Manager
+
+`ALERT_MANAGER_PROTOCOL` http or https used to reach alertmanager *(default: http, https with -prod, http or https)*
 
 `ALERT_MANAGER_PORT` port number used to reach alertmanager *(default: 443)*
 
-`DEBUG` Set debug mode within django project *(default: False)*
+### Debug mode
+
+`DEBUG` Set debug mode within django project *(default: False, False or True)*

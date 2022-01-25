@@ -1,8 +1,6 @@
 #!/bin/bash
 
-touch django/monitor/.env
-
-# If ./.env file exist, we export variables to current system to display later
+# If .env file exist, we export variables to current system to use later
 if [ -f .env ]; then
   export $(echo $(cat .env | sed 's/#.*//g'| xargs) | envsubst)
 fi
@@ -63,8 +61,8 @@ if [[ $@ == *"-prod"* ]]; then
   fi
 
   # Set STAGING to 1 if you're testing your setup to avoid hitting request limits
-  if [[ -z "${STAGING}" ]]; then 
-    export STAGING=0
+  if [[ -z "${CERTBOT_STAGING}" ]]; then 
+    export CERTBOT_STAGING=0
     echo '⚠️ Running lets-encrypt staging with potential request limits'
   fi
 

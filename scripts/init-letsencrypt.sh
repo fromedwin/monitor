@@ -10,7 +10,7 @@ domains=($DOMAIN)
 rsa_key_size=4096
 data_path="./certbot"
 email=$MAIL # Adding a valid address is strongly recommended
-staging=$STAGING # Set to 1 if you're testing your setup to avoid hitting request limits
+staging=$CERTBOT_STAGING # Set to 1 if you're testing your setup to avoid hitting request limits
 folder="monitor" # Change needs to be reported to nginx/remote/nginx.conf path to certificate
 
 if [ -d "$data_path" ]; then
