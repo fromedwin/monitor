@@ -40,10 +40,10 @@ The following service is protected by a **Web authentication**. Generated **user
 
 ## Create a superuser
 
-A **django superuser account** will be needed to configure the [oAuth authentication](authentication).
+A **django superuser account** will be needed to configure [authentication with an external identity providers](authentication).
 
 ```bash
-docker exec -u root -t -i monitor_django python3 manage.py createsuperuser
+docker exec -ti monitor_django python3 manage.py createsuperuser
 ```
 
 **Follow the instructions**, then try using the user account within the  [django administration page](http://localhost:8000/admin/login/). *You can always rerun this command to create a new user in case you are locked outside of the application.*

@@ -19,6 +19,4 @@ Metrics are focused on **availability**, with future integration for **performan
    configuration
    authentication
    deployment
-   faq
-   changelog
 
