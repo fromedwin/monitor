@@ -16,21 +16,21 @@ Environment variables might contain **sensitive informations** and **compromise 
 
 ### HTTP ports
 
-Nginx listen to HTTP request. On dev mode your might keep the default value but will need on production
+Nginx listen to HTTP request. On dev mode your might keep the default value but will need on production.
 
-`PORT` *(default: 8000, 80 with -prod)*
+`PORT` *(default: 8000, 80 with -prod)*.
 
-`PORT_HTTPS` *(default: 8443, 443 with -prod)*
+`PORT_HTTPS` *(default: 8443, 443 with -prod)*.
 
 ### Contact email address
 
-`MAIL` email shared with letsencrypt to register SSL certificate
+`MAIL` email shared with letsencrypt to register SSL certificate.
 
 ### Certbot https generation
 
-`CERTBOT_STAGING` set to 1 if you're testing your setup to avoid hitting request limits *(default: 1, 0 or 1)*
+`CERTBOT_STAGING` set to 1 if you're testing your setup to avoid hitting request limits *(default: 1, 0 or 1)*.
 
-`DOMAIN` domain url used for generate the https certificate, and set within django settings.py allowed_url.  *(eg: status.fromedwin.com)*
+`DOMAIN` domain url used for generate the https certificate, and set within django settings.py allowed_url.  *(eg: status.fromedwin.com)*.
 
 ### Django Secret key
 
@@ -38,16 +38,16 @@ Nginx listen to HTTP request. On dev mode your might keep the default value but 
 
 ### WebAuth credentials
 
-`WEBAUTH_USERNAME` username to protect none public access
+`WEBAUTH_USERNAME` username to protect none public access.
 
-`WEBAUTH_PASSWORD` password to protect none public access
+`WEBAUTH_PASSWORD` password to protect none public access.
 
 ### Alert Manager
 
-`ALERT_MANAGER_PROTOCOL` http or https used to reach alertmanager *(default: http, https with -prod, http or https)*
+`ALERT_MANAGER_PROTOCOL` http or https used to reach alertmanager *(default: http, https with -prod, http or https)*.
 
-`ALERT_MANAGER_PORT` port number used to reach alertmanager *(default: 443)*
+`ALERT_MANAGER_PORT` port number used to reach alertmanager *(default: 443)*.
 
 ### Debug mode
 
-`DEBUG` Set debug mode within django project *(default: False, False or True)*
+`DEBUG` Set debug mode within django project *(default: False, False or True)*.
