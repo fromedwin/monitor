@@ -1,6 +1,6 @@
-# Please note !
-
-This project is **alpha** quality. We don't yet guarantee stability, data integrity or a clean upgrade path. Only use this project if you are interested in experimenting with it.
+> **Warning**  
+> 
+> This project is **alpha** quality. We don't yet guarantee stability, data integrity or a clean upgrade path. Only use this project if you are interested in experimenting with it.
 
 # Status From Edwin
 
@@ -17,8 +17,3 @@ Follow instructions as described within the [documentation](https://fromedwin-mo
 ## Feedback
 
 If you have any feedback, please reach out to us at fromedwin@sebastienbarbier.com
-
-## License
-
-[MIT](https://choosealicense.com/licenses/mit/)
-
