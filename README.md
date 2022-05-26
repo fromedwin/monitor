@@ -8,7 +8,7 @@ This project provide an **out of the box** **highly opinionated implementation**
 
 Metrics are focused on **availability**, with future integration for **performance**, **statistics**, and **budget**.
 
-[![Documentation Status](https://readthedocs.org/projects/fromedwin-monitor/badge/?version=latest)](https://fromedwin-monitor.readthedocs.io/en/latest/?badge=latest) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/fromedwin/monitor/blob/main/LICENSE)
+[![Documentation Status](https://readthedocs.org/projects/fromedwin-monitor/badge/?version=latest)](https://fromedwin-monitor.readthedocs.io/en/latest/?badge=latest) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/fromedwin/monitor/blob/main/LICENSE)
 
 ## Installation and Quickstart
 
