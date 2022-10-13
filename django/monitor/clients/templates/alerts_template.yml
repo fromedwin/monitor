@@ -28,7 +28,7 @@ groups:
     annotations:
       summary: {{ alert.summary|safe }}
       description: {{ alert.description|safe }}
-{% endfor %}
+{% endfor %}{% verbatim %}
   - alert: HostOutOfMemory
     expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
     for: 2m
@@ -303,5 +303,4 @@ groups:
       severity: info
     annotations:
       summary: Host requires reboot (instance {{ $labels.instance }})
-      description: "{{ $labels.instance }} requires a reboot.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
-
+      description: "{{ $labels.instance }} requires a reboot.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"{% endverbatim %}
