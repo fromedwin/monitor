@@ -1,4 +1,4 @@
-zservices:
+services:
   django:
     command: "gunicorn -b 0.0.0.0:8000 monitor.wsgi"
   nginx:
@@ -6,6 +6,7 @@ zservices:
       - ./nginx/geolite/GeoLite2-Country.mmdb:/etc/GeoLite2-Country.mmdb
       - ./nginx/geolite/GeoLite2-City.mmdb:/etc/GeoLite2-City.mmdb
       - ./nginx/conf/nginx.prod.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf/production/:/etc/nginx/conf.d/
   promtail:
     container_name: monitor_promtail
     image: grafana/promtail:2.3.0
