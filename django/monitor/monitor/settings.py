@@ -49,7 +49,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # Application definition
 
 # TAILWIND SETTINGS
-TAILWIND_APP_NAME = 'theme'
+TAILWIND_APP_NAME = 'theme' # Tailwind theme
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'tailwind',
     'theme',
+    'django_browser_reload',
     'django_prometheus',
     'rest_framework',
     'rest_framework.authtoken',
@@ -93,6 +94,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_prometheus.middleware.PrometheusAfterMiddleware',
     'monitor.middleware.is_allowed_user',
+    'django_browser_reload.middleware.BrowserReloadMiddleware',
 ]
 
 ROOT_URLCONF = 'monitor.urls'
@@ -117,7 +119,6 @@ WSGI_APPLICATION = 'monitor.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django_prometheus.db.backends.sqlite3',
@@ -180,7 +181,7 @@ SITE_ID = 1
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/django/static/'
+STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),

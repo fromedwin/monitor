@@ -10,10 +10,30 @@ Metrics are focused on **availability**, with future integration for **performan
 
 [![Documentation Status](https://readthedocs.org/projects/fromedwin-monitor/badge/?version=latest)](https://fromedwin-monitor.readthedocs.io/en/latest/?badge=latest) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/fromedwin/monitor/blob/main/LICENSE)
 
-## Installation and Quickstart
+## Installation
 
-Follow instructions as described within the [documentation](https://fromedwin-monitor.readthedocs.io/en/latest/).
-  
-## Feedback
+```bash
+python3 -m venv apps
+source apps/bin/activate
+pip install -r requirements.txt
 
-If you have any feedback, please reach out to us at fromedwin@sebastienbarbier.com
+# Generate random SECRET_KEY and inject in .env file
+SECRET_KEY=$(LC_CTYPE=C tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 32)
+echo "SECRET_KEY=$SECRET_KEY" >> .env
+
+# Create superuser to access django admin panel
+python django/monitor/manage.py createsuperuser
+
+python django/monitor/manage.py migrate
+python django/monitor/manage.py tailwind install
+```
+
+## Developpment mode
+
+Run both command in parallel
+
+```bash
+python django/monitor/manage.py runserver
+python django/monitor/manage.py tailwind start
+```
+

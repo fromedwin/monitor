@@ -15,9 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
-from django.urls import path
 from django.conf import settings
-from django.conf.urls import include, url
+from django.urls import path, include
 
 from .views import public, restricted
 from incidents.views import webhook
@@ -39,5 +38,7 @@ urlpatterns = [
     path('clients/', include('clients.urls')),
     path('api-auth/', include('rest_framework.urls')),
     path('projects/<int:application_id>/notifications/', include('notifications.urls')),
-    url(r'^logout/$', LogoutView.as_view(), {'next_page': settings.LOGOUT_REDIRECT_URL}, name='logout'),
+    path('logout/', LogoutView.as_view(), {'next_page': settings.LOGOUT_REDIRECT_URL}, name='logout'),
+    # Tailwind reload event
+    path("__reload__/", include("django_browser_reload.urls")),
 ]
