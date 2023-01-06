@@ -37,3 +37,10 @@ python django/monitor/manage.py runserver
 python django/monitor/manage.py tailwind start
 ```
 
+## Running documentation
+
+```bash
+cd ./sphinx
+pip install -r requirements.txt
+sphinx-reload ../docs
+```
