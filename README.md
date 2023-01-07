@@ -30,10 +30,17 @@ python django/monitor/manage.py tailwind install
 
 ## Developpment mode
 
-Run both command in parallel
+### Django development server
+
+Start the development server by running the following command:
 
 ```bash
 python django/monitor/manage.py runserver
+```
+
+To enable styling and hot-reload, run in parallel the following command:
+
+```bash
 python django/monitor/manage.py tailwind start
 ```
 
