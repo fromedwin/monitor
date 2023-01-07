@@ -41,13 +41,14 @@ def prometheus(request, id):
     """
     Fetched on start by monitor_client to introduce itself and get credentials
     """
-    get_object_or_404(Server, uuid=id)
+    server = get_object_or_404(Server, uuid=id)
 
     users = User.objects.filter(Q(applications__isnull=False)).distinct()
 
     metrics = Metrics.objects.all()
 
     yaml = render_to_string("prometheus_template.yml", {
+        "server": server,
         "users": users,
         "metrics": metrics,
         "settings": settings,

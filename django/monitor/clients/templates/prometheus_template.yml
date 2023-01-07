@@ -13,14 +13,16 @@ alerting:
     timeout: 10s
     path_prefix: /alertmanager
     api_version: v1
-    basic_auth:
-      username: {{ settings.WEBAUTH_USERNAME }}
-      password: {{ settings.WEBAUTH_PASSWORD }}
+    {% if server.authbasic.all %}basic_auth:
+      username: {{ server.authbasic.all.0.username }}
+      password: {{ server.authbasic.all.0.password }}{% endif %}
     static_configs:
     - targets:
       - {{ settings.DOMAIN }}:{{ settings.ALERT_MANAGER_PORT }}
 
 scrape_configs:
+
+# Prometheus metrics
 - job_name: prometheus_metrics
   honor_timestamps: true
   scrape_interval: 15s
@@ -31,18 +33,19 @@ scrape_configs:
   - targets:
     - localhost:9090
 
+# Alertmanager metrics
 - job_name: alertmanager_metrics
   honor_timestamps: true
   scrape_interval: 15s
   scrape_timeout: 10s
   metrics_path: /alertmanager/metrics
   scheme: http
-  basic_auth:
-    username: {{ settings.WEBAUTH_USERNAME }}
-    password: {{ settings.WEBAUTH_PASSWORD }}
+  {% if server.authbasic.all %}basic_auth:
+    username: {{ server.authbasic.all.0.username }}
+    password: {{ server.authbasic.all.0.password }}{% endif %}
   static_configs:
   - targets:
-    - {{ settings.DOMAIN }}:{{ settings.PORT }}
+    - {{ settings.DOMAIN }}:{{ settings.ALERT_MANAGER_PORT }}
 {% if metrics %}
 - job_name: metrics
   honor_timestamps: true
