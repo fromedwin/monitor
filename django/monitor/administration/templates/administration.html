@@ -46,12 +46,6 @@
 </div>
 {% endif %}
 
-<div class="pt-8 pb-5">
-  <a href="/docs/" target="_blank">
-      <img src='https://readthedocs.org/projects/fromedwin-monitor/badge/?version=latest' alt='Documentation Status' />
-  </a>
-</div>
-
 <div class="pt-8 pb-5 border-b border-gray-200 sm:flex sm:items-center sm:justify-between">
   <h3 class="text-lg leading-6 font-medium text-gray-900">
     Links
@@ -96,11 +90,7 @@
                 <div class="flex items-center">
                   <div class="ml-4">
                     <div class="text-sm font-medium text-gray-900">
-                      {% if server.url == 'host.docker.internal' %}
-                      <a target="_blank" href="{{ server.protocol }}://localhost:{{ server.port }}">{{ server.protocol }}://localhost:{{ server.port }}</a>  
-                      {% else %}
-                      <a target="_blank" href="{{ server.protocol }}://{{ server.url }}:{{ server.port }}">{{ server.protocol }}://{{ server.url }}:{{ server.port }}</a>                      
-                      {% endif %}
+                      <a target="_blank" href="{{ server.href }}">{{ server.href }}</a>
                     </div>
                     <div class="text-sm text-gray-500">
                       {{ server.uuid }}
@@ -131,7 +121,4 @@
     </div>
   </div>
 </div>
-
-
-
 {% endblock %}

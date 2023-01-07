@@ -44,6 +44,13 @@ class Server(models.Model):
         return 'https' if self.url != 'host.docker.internal' else 'http'
 
     @property
+    def href(self):
+        url = self.url
+        if self.url == 'host.docker.internal':
+            url = 'localhost'
+        return self.protocol+'://'+url+':'+str(self.port)
+
+    @property
     def is_active(self):
         return self.last_seen > (timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5))
 

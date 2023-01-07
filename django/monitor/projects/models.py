@@ -1,7 +1,10 @@
+import ipaddress
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
+
 
 class Project(models.Model):
     """
@@ -122,4 +125,6 @@ class HTTPMockedCodeService(models.Model):
     )
 
     def url(self):
-        return f'http://{settings.DOMAIN}:{settings.PORT}/healthy/{self.id}'
+        if settings.DOMAIN != 'localhost' and not ipaddress.IPv4Address(settings.DOMAIN).is_private:
+            return f'http://{settings.DOMAIN}:{settings.PORT}/healthy/{self.id}'
+        return f'http://host.docker.internal:{settings.PORT}/healthy/{self.id}'

@@ -76,7 +76,7 @@ def project(request, id):
 
         start = int(format(timezone.now(), 'U'))
 
-        response = requests.get(f'{server.protocol}://{server.url}:{server.port}/api/v1/query_range?query=probe_duration_seconds%7Bapplication="{id}"%7D&step=30&start={str(start-600)}&end={str(start)}', headers=headers, auth=(authbasic.username, authbasic.password))
+        response = requests.get(f'{server.href}/api/v1/query_range?query=probe_duration_seconds%7Bapplication="{id}"%7D&step=30&start={str(start-600)}&end={str(start)}', headers=headers, auth=(authbasic.username, authbasic.password))
         response.raise_for_status()
         content = json.loads(response.content)
         for service in content['data']['result']:
