@@ -16,6 +16,8 @@ from rest_framework.decorators import api_view
 from .models import Metrics, Alerts, Server, AuthBasic
 from incidents.models import INCIDENT_SEVERITY
 
+from notifications.models import Pager_Duty
+
 @api_view(['GET'])
 def alerts(request, id):
     """
@@ -51,6 +53,24 @@ def prometheus(request, id):
         "server": server,
         "users": users,
         "metrics": metrics,
+        "settings": settings,
+    })
+
+    # Should retur application/x-yaml
+    return HttpResponse(yaml, content_type="text/plain")
+
+
+@api_view(['GET'])
+def alertmanager(request, id):
+    """
+    Fetched on start by monitor_client to introduce itself and get credentials
+    """
+    get_object_or_404(Server, uuid=id)
+
+    pager_duty = Pager_Duty.objects.all()
+
+    yaml = render_to_string('alertmanager_template.yml', {
+        'pager_duty': pager_duty,
         "settings": settings,
     })
 

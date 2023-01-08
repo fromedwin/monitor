@@ -110,7 +110,7 @@ receivers:
 - name: 'project-{{ pager.project.id }}-{{ pager.id }}'
   webhook_configs:
   - send_resolved: True
-    url: http://django:8000/alert/
+    url: http://{% if settings.DOMAIN == 'localhost' %}host.docker.internal{% else %}{{ settings.DOMAIN }}{% endif %}:{{ settings.PORT }}/alert/
   pagerduty_configs:
   - routing_key: '{{ pager.routing_key }}'
 {% endfor %}
@@ -118,7 +118,7 @@ receivers:
 - name: 'webhook-only'
   webhook_configs:
   - send_resolved: True
-    url: http://django:8000/alert/
+    url: http://{% if settings.DOMAIN == 'localhost' %}host.docker.internal{% else %}{{ settings.DOMAIN }}{% endif %}:{{ settings.PORT }}/alert/
 
 # receivers:
 # - name: 'team-X-mails'

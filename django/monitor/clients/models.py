@@ -28,7 +28,7 @@ class Server(models.Model):
     last_seen = models.DateTimeField(auto_now_add=True)
 
     # URL used to fetch server
-    url = models.CharField(max_length=256, blank=False, default='host.docker.internal')
+    url = models.CharField(max_length=256, blank=False, default='localhost')
     port = models.IntegerField(blank=False, default=8001)
 
     user = models.ForeignKey(
