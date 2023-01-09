@@ -12,6 +12,7 @@ from allauth.socialaccount.models import SocialApp
 from rest_framework.authtoken.models import Token
 
 from clients.models import Server
+from incidents.models import GenericIncident, InstanceDownIncident, ProjectIncident
 
 def index(request):
     """
@@ -25,7 +26,10 @@ def index(request):
             'socialapps': socialapps,
         })
 
+    activities = InstanceDownIncident.objects.filter(service__project__in=request.user.applications.all()).order_by('-creation_date')[:20]
+
     return render(request, 'dashboard.html', {
         'settings': settings,
+        'activities': activities
     })
 
