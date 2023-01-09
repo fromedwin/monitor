@@ -64,11 +64,11 @@
             <div class="flex-1 space-y-1">
               <div class="flex items-center justify-between">
                 <h3 class="text-sm font-medium">{{ activity.summary }}</h3>
-                <p class="text-sm text-gray-500">{{ activity.creation_date }}</p>
+                <p class="text-sm text-gray-500">{{ activity.startsAt|timesince }} ago</p>
               </div>
               <p class="text-sm text-gray-500">
                 {{ activity.description }}<br />
-                {{ activity.startsAt }} > {{ activity.endsAt }}
+                Duration: {{ activity.startsAt|timesince:activity.endsAt }}
               </p>
             </div>
           </div>

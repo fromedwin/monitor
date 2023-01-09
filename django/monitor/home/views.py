@@ -26,7 +26,7 @@ def index(request):
             'socialapps': socialapps,
         })
 
-    activities = InstanceDownIncident.objects.filter(service__project__in=request.user.applications.all()).order_by('-creation_date')[:20]
+    activities = InstanceDownIncident.objects.filter(service__project__in=request.user.applications.all(), endsAt__isnull=False).order_by('-startsAt', '-severity')[:20]
 
     return render(request, 'dashboard.html', {
         'settings': settings,

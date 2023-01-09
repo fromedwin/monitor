@@ -9,7 +9,7 @@ rule_files:
 
 alerting:
   alertmanagers:
-  - scheme: {{ settings.ALERT_MANAGER_PROTOCOL }}
+  - scheme: http
     timeout: 10s
     path_prefix: /alertmanager
     api_version: v1
@@ -18,7 +18,7 @@ alerting:
       password: {{ server.authbasic.all.0.password }}{% endif %}
     static_configs:
     - targets:
-      - {% if settings.DOMAIN == 'localhost' %}host.docker.internal{% else %}{{ settings.DOMAIN }}{% endif %}:{{ settings.ALERT_MANAGER_PORT }}
+      - host.docker.internal:8001
 
 scrape_configs:
 
@@ -45,7 +45,7 @@ scrape_configs:
     password: {{ server.authbasic.all.0.password }}{% endif %}
   static_configs:
   - targets:
-    - {% if settings.DOMAIN == 'localhost' %}host.docker.internal{% else %}{{ settings.DOMAIN }}{% endif %}:{{ settings.ALERT_MANAGER_PORT }}
+    - host.docker.internal:8001
 {% if metrics %}
 - job_name: metrics
   honor_timestamps: true
