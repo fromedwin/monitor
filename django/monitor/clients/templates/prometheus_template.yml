@@ -18,7 +18,7 @@ alerting:
       password: {{ server.authbasic.all.0.password }}{% endif %}
     static_configs:
     - targets:
-      - {{ settings.DOMAIN }}:{{ settings.ALERT_MANAGER_PORT }}
+      - {% if settings.DOMAIN == 'localhost' %}host.docker.internal{% else %}{{ settings.DOMAIN }}{% endif %}:{{ settings.ALERT_MANAGER_PORT }}
 
 scrape_configs:
 
@@ -45,7 +45,7 @@ scrape_configs:
     password: {{ server.authbasic.all.0.password }}{% endif %}
   static_configs:
   - targets:
-    - {{ settings.DOMAIN }}:{{ settings.ALERT_MANAGER_PORT }}
+    - {% if settings.DOMAIN == 'localhost' %}host.docker.internal{% else %}{{ settings.DOMAIN }}{% endif %}:{{ settings.ALERT_MANAGER_PORT }}
 {% if metrics %}
 - job_name: metrics
   honor_timestamps: true
