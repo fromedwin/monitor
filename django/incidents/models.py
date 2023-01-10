@@ -4,16 +4,24 @@ from projects.models import Project, Service
 from django.template.defaultfilters import truncatechars
 from django.utils import timezone
 
+STATUS_UNKNOWN = 0
+STATUS_RESOLVED = 1
+STATUS_FIRING = 2
+
+SEVERITY_UNKNOWN = 0
+SEVERITY_WARNING = 1
+SEVERITY_CRITICAL = 2
+
 INCIDENT_STATUS = [
-    (0, 'unknown'),
-    (1, 'resolved'),
-    (2, 'firing'),
+    (STATUS_UNKNOWN, 'unknown'),
+    (STATUS_RESOLVED, 'resolved'),
+    (STATUS_FIRING, 'firing'),
 ]
 
 INCIDENT_SEVERITY = [
-    (0, 'unknown'),
-    (1, 'warning'),
-    (2, 'critical'),
+    (SEVERITY_UNKNOWN, 'unknown'),
+    (SEVERITY_WARNING, 'warning'),
+    (SEVERITY_CRITICAL, 'critical'),
 ]
 
 class AbstractIncident(models.Model):

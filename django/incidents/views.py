@@ -11,45 +11,54 @@ from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import GenericIncident, InstanceDownIncident, ProjectIncident
+from .models import GenericIncident, InstanceDownIncident, ProjectIncident, STATUS_UNKNOWN, STATUS_RESOLVED, STATUS_FIRING, SEVERITY_UNKNOWN, SEVERITY_WARNING, SEVERITY_CRITICAL
 from projects.models import Project, Service
 
 @api_view(["POST"])
 def webhook(request):
     if request.data["alerts"]:
+        # We receive batched alerts from alertmanager and handle them one by
         for alert in request.data["alerts"]:
             json_formated = json.dumps(alert, indent=2, sort_keys=True)
 
             # Status is 0 if resolved and 1 if firing
-            status = 0
+            status = STATUS_UNKNOWN
             if alert["status"] == "resolved":
-                status = 1
+                status = STATUS_RESOLVED
             if alert["status"] == "firing":
-                status = 2
+                status = STATUS_FIRING
 
             # severity is 0 if warning and 1 if critical
-            severity = 0
+            severity = SEVERITY_UNKNOWN
             if alert["labels"]["severity"] == "warning":
-                severity = 1
+                severity = SEVERITY_WARNING
             if alert["labels"]["severity"] == "critical":
-                severity = 2
+                severity = SEVERITY_CRITICAL
 
-            startsAt = timezone.make_aware(datetime.datetime.strptime(alert["startsAt"].split(".")[0], "%Y-%m-%dT%H:%M:%S") - timedelta(minutes=settings.IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES))
+            startsAt = timezone.make_aware(datetime.datetime.strptime(alert["startsAt"].split(".")[0], "%Y-%m-%dT%H:%M:%S"))
 
+            # WE RECEIVE AN UPDATE ABOUT AN INSTANCE DOWN EVENT
             if alert["labels"]["alertname"] == "InstanceDown":
+
+                if severity == SEVERITY_CRITICAL:
+                    startsAt = startsAt - timedelta(minutes=settings.IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES)
 
                 service = None
                 if alert["labels"]["service"]:
                     service = Service.objects.get(pk=alert["labels"]["service"])
 
                 endsAt = None
+
+                # If there is an endsAt,it means we received a status RESOLVED event
                 if alert["endsAt"] and not alert["endsAt"].startswith("0001"):
                     endsAt = timezone.make_aware(datetime.datetime.strptime(alert["endsAt"].split(".")[0], "%Y-%m-%dT%H:%M:%S"))
 
                 # If we receive resolved, we delete firing with same startAt and fingerprint
                 try:
-                    if alert["status"] == "resolved":
-                        items = InstanceDownIncident.objects.filter(fingerprint=alert["fingerprint"], startsAt=startsAt, status=2)
+                    # We might receive multiple critical event as every 12h alertmanager repeat the critical event. 
+                    # This is about deleting all copy.
+                    if status == STATUS_RESOLVED:
+                        items = InstanceDownIncident.objects.filter(fingerprint=alert["fingerprint"], startsAt=startsAt, status=STATUS_FIRING)
                         for item in items:
                             item.delete()
                 except:
@@ -79,7 +88,7 @@ def webhook(request):
                 # If we receive resolved, we delete firing with same startAt and fingerprint
                 try:
                     if alert["status"] == "resolved":
-                        items = ProjectIncident.objects.filter(fingerprint=alert["fingerprint"], startsAt=startsAt, status=2)
+                        items = ProjectIncident.objects.filter(fingerprint=alert["fingerprint"], status=SEVERITY_CRITICAL)
                         for item in items:
                             item.delete()
                 except:
@@ -105,7 +114,7 @@ def webhook(request):
                 # If we receive resolved, we delete firing with same startAt and fingerprint
                 try:
                     if alert["status"] == "resolved":
-                        items = GenericIncident.objects.filter(fingerprint=alert["fingerprint"], status=2)
+                        items = GenericIncident.objects.filter(fingerprint=alert["fingerprint"], status=SEVERITY_CRITICAL)
                         for item in items:
                             startsAt = item.startsAt
                             item.delete()
