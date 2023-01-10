@@ -24,6 +24,8 @@ from projects.views import healthy
 from website.views import homepage
 from dashboard.views import dashboard
 
+from django.conf.urls.static import static
+
 urlpatterns = [
     path('', homepage, name='homepage'),
     path('dashboard/', dashboard, name='dashboard'),
@@ -44,4 +46,4 @@ urlpatterns = [
     path('', include('django_prometheus.urls')),
     # Tailwind reload event
     path("__reload__/", include("django_browser_reload.urls")),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
