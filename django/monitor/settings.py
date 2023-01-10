@@ -73,7 +73,6 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.github',
-    'home',
     'health',
     'incidents',
     'projects',
@@ -81,6 +80,8 @@ INSTALLED_APPS = [
     'notifications',
     'administration',
     'settings',
+    'website',
+    'dashboard',
 ]
 
 MIDDLEWARE = [

@@ -14,18 +14,8 @@ from rest_framework.authtoken.models import Token
 from clients.models import Server
 from incidents.models import GenericIncident, InstanceDownIncident, ProjectIncident
 
-def index(request):
-    """
-    Home page return dashboard view if loggedin, or welcome page if anonymous.
-    """
-
-    if request.user.is_anonymous:
-
-        socialapps = SocialApp.objects.all()
-        return render(request, 'homepage.html', {
-            'socialapps': socialapps,
-        })
-
+def dashboard(request):
+	
     activities = InstanceDownIncident.objects.filter(service__project__in=request.user.applications.all(), endsAt__isnull=False).order_by('-startsAt', '-severity')[:20]
 
     return render(request, 'dashboard.html', {

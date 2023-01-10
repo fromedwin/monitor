@@ -21,11 +21,12 @@ from django.urls import path, include
 from .views import public, restricted
 from incidents.views import webhook
 from health.views import healthy
-from home.views import index
+from website.views import homepage
+from dashboard.views import dashboard
 
 urlpatterns = [
-    path('', index, name='index'),
-    path('', include('django_prometheus.urls')),
+    path('', homepage, name='homepage'),
+    path('dashboard/', dashboard, name='dashboard'),
     path('status/<int:id>/', public, name='public'),
     path('projects/', include('projects.urls')),
     path('settings/', include('settings.urls')),
@@ -39,6 +40,8 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('projects/<int:application_id>/notifications/', include('notifications.urls')),
     path('logout/', LogoutView.as_view(), {'next_page': settings.LOGOUT_REDIRECT_URL}, name='logout'),
+    # Django prometheus, adding /metrics url
+    path('', include('django_prometheus.urls')),
     # Tailwind reload event
     path("__reload__/", include("django_browser_reload.urls")),
 ]
