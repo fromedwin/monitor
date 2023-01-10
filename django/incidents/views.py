@@ -53,6 +53,14 @@ def webhook(request):
                 if alert["endsAt"] and not alert["endsAt"].startswith("0001"):
                     endsAt = timezone.make_aware(datetime.datetime.strptime(alert["endsAt"].split(".")[0], "%Y-%m-%dT%H:%M:%S"))
 
+                ignore_warning_resolved = False
+
+                # If we receive a wanring resolve
+                if status == STATUS_RESOLVED and severity == SEVERITY_WARNING:
+                    # If there is a critical at the same time, we ignore warning resolve
+                    if InstanceDownIncident.objects.filter(startsAt=startsAt, severity=SEVERITY_CRITICAL, service=service):
+                        ignore_warning_resolved = True
+
                 # If we receive resolved, we delete firing with same startAt and fingerprint
                 try:
                     # We might receive multiple critical event as every 12h alertmanager repeat the critical event. 
@@ -64,18 +72,19 @@ def webhook(request):
                 except:
                     pass
 
-                object = InstanceDownIncident(
-                    service=service,
-                    startsAt=startsAt,
-                    endsAt=endsAt,
-                    fingerprint=alert["fingerprint"],
-                    instance=alert["labels"]["instance"],
-                    summary=alert["annotations"]["summary"],
-                    description=alert["annotations"]["description"],
-                    severity=severity,
-                    status=status,
-                    json=json_formated)
-                object.save()
+                if not ignore_warning_resolved:
+                    object = InstanceDownIncident(
+                        service=service,
+                        startsAt=startsAt,
+                        endsAt=endsAt,
+                        fingerprint=alert["fingerprint"],
+                        instance=alert["labels"]["instance"],
+                        summary=alert["annotations"]["summary"],
+                        description=alert["annotations"]["description"],
+                        severity=severity,
+                        status=status,
+                        json=json_formated)
+                    object.save()
             elif "project" in alert["labels"]:
                 project = None
                 if alert["labels"]["project"]:
