@@ -131,13 +131,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-certbot/
-data/
-
-# nginx authentication
-.htpasswd
-alertmanager/shared
-nginx/geolite
 .DS_Store
 
 docs/_build

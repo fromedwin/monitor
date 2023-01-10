@@ -16,11 +16,13 @@ from incidents.models import GenericIncident, InstanceDownIncident, ProjectIncid
 
 @login_required
 def dashboard(request):
-	
-    activities = InstanceDownIncident.objects.filter(service__project__in=request.user.applications.all(), endsAt__isnull=False).order_by('-startsAt', '-severity')[:20]
+
+    activities = InstanceDownIncident\
+        .objects\
+        .filter(service__project__in=request.user.applications.all(), endsAt__isnull=False)\
+        .order_by('-startsAt', '-severity')[:20]
 
     return render(request, 'dashboard.html', {
         'settings': settings,
         'activities': activities
     })
-

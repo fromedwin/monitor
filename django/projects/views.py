@@ -255,11 +255,9 @@ def service_mockedhttp_form(request, application_id, service_http_id=None):
         'formService': formService,
     })
 
-# Return Mocked HTTP service code
+# Return Mocked HTTP service code with code
 def healthy(request, id):
-
     obj = get_object_or_404(HTTPMockedCodeService, pk=id)
-
     return HttpResponse(status=obj.code, content=obj.code)
 
 @login_required

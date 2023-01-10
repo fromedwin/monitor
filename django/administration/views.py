@@ -32,4 +32,3 @@ def administration(request):
         'token': token,
         'settings': settings,
     })
-
