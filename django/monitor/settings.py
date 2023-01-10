@@ -49,7 +49,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # Application definition
 
 # TAILWIND SETTINGS
-TAILWIND_APP_NAME = 'theme' # Tailwind theme
+TAILWIND_APP_NAME = 'monitor.theme' # Tailwind theme
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
@@ -62,8 +62,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'monitor.theme',
     'tailwind',
-    'theme',
     'django_browser_reload',
     'django_prometheus',
     'rest_framework',
