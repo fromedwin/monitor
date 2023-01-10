@@ -55,12 +55,11 @@ def webhook(request):
 
                 # If we receive resolved, we delete firing with same startAt and fingerprint
                 try:
-                    # We might receive multiple critical event as every 12h alertmanager repeat the critical event. 
-                    # This is about deleting all copy.
-                    if status == STATUS_RESOLVED:
-                        items = InstanceDownIncident.objects.filter(fingerprint=alert["fingerprint"], startsAt=startsAt, status=STATUS_FIRING)
-                        for item in items:
-                            item.delete()
+                    # We delete all previous message with the same finger print.
+                    # This will delete the one without endsDate.
+                    items = InstanceDownIncident.objects.filter(fingerprint=alert["fingerprint"])
+                    for item in items:
+                        item.delete()
                 except:
                     pass
 
@@ -88,7 +87,7 @@ def webhook(request):
                 # If we receive resolved, we delete firing with same startAt and fingerprint
                 try:
                     if alert["status"] == "resolved":
-                        items = ProjectIncident.objects.filter(fingerprint=alert["fingerprint"], status=SEVERITY_CRITICAL)
+                        items = ProjectIncident.objects.filter(fingerprint=alert["fingerprint"])
                         for item in items:
                             item.delete()
                 except:
@@ -114,7 +113,7 @@ def webhook(request):
                 # If we receive resolved, we delete firing with same startAt and fingerprint
                 try:
                     if alert["status"] == "resolved":
-                        items = GenericIncident.objects.filter(fingerprint=alert["fingerprint"], status=SEVERITY_CRITICAL)
+                        items = GenericIncident.objects.filter(fingerprint=alert["fingerprint"])
                         for item in items:
                             startsAt = item.startsAt
                             item.delete()
