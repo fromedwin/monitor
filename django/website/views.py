@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 from allauth.socialaccount.models import SocialApp
 from rest_framework.authtoken.models import Token
 
-from clients.models import Server
+from workers.models import Server
 from incidents.models import GenericIncident, InstanceDownIncident, ProjectIncident
 
 def homepage(request):

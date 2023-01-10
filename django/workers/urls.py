@@ -2,7 +2,7 @@ from django.urls import path
 
 from django.conf.urls import include
 from rest_framework import routers
-from clients.views import prometheus, alertmanager, register, heartbeat, alerts
+from workers.views import prometheus, alertmanager, register, heartbeat, alerts
 
 router = routers.DefaultRouter()
 

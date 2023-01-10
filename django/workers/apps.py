@@ -1,7 +1,7 @@
 from django.apps import AppConfig
 
 class ClientsConfig(AppConfig):
-    name = 'clients'
+    name = 'workers'
 
     def ready(self):
-        import clients.signals # Load signals
+        import workers.signals # Load signals

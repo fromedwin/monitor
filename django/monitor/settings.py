@@ -76,7 +76,7 @@ INSTALLED_APPS = [
     'health',
     'incidents',
     'projects',
-    'clients',
+    'workers',
     'notifications',
     'administration',
     'settings',

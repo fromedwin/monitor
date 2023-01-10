@@ -11,7 +11,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from allauth.socialaccount.models import SocialApp
 from rest_framework.authtoken.models import Token
 
-from clients.models import Server
+from workers.models import Server
 
 @staff_member_required
 def administration(request):

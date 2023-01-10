@@ -17,7 +17,7 @@ from rest_framework.authtoken.models import Token
 from allauth.socialaccount.models import SocialApp
 
 from projects.models import Project, Service, HTTPCodeService, HTTPMockedCodeService
-from clients.models import Server
+from workers.models import Server
 from incidents.models import InstanceDownIncident
 from projects.forms import ProjectForm, ServiceForm, HTTPCodeServiceForm, MockedHTTPCodeServiceForm
 
