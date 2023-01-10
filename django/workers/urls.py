@@ -1,13 +1,10 @@
 from django.urls import path
 
 from django.conf.urls import include
-from rest_framework import routers
 from workers.views import prometheus, alertmanager, register, heartbeat, alerts
 
-router = routers.DefaultRouter()
 
 urlpatterns = [
-    path('', include(router.urls)),
     path('register', register),
     path('heartbeat/<uuid:id>/', heartbeat),
     # Access custom configuration files

@@ -73,7 +73,6 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.github',
-    'health',
     'incidents',
     'projects',
     'workers',

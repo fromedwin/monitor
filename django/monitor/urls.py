@@ -20,7 +20,7 @@ from django.urls import path, include
 
 from .views import public, restricted
 from incidents.views import webhook
-from health.views import healthy
+from projects.views import healthy
 from website.views import homepage
 from dashboard.views import dashboard
 
