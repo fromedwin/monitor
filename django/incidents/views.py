@@ -57,9 +57,10 @@ def webhook(request):
                 try:
                     # We might receive multiple critical event as every 12h alertmanager repeat the critical event. 
                     # This is about deleting all copy.
-                    items = InstanceDownIncident.objects.filter(fingerprint=alert["fingerprint"], startsAt=startsAt, status=STATUS_FIRING)
-                    for item in items:
-                        item.delete()
+                    if status == STATUS_RESOLVED or status == STATUS_FIRING:
+                        items = InstanceDownIncident.objects.filter(fingerprint=alert["fingerprint"], startsAt=startsAt, status=STATUS_FIRING)
+                        for item in items:
+                            item.delete()
                 except:
                     pass
 
@@ -86,7 +87,7 @@ def webhook(request):
 
                 # If we receive resolved, we delete firing with same startAt and fingerprint
                 try:
-                    if alert["status"] == "resolved":
+                    if status == STATUS_RESOLVED or status == STATUS_FIRING:
                         items = ProjectIncident.objects.filter(fingerprint=alert["fingerprint"], startsAt=startsAt, status=STATUS_FIRING)
                         for item in items:
                             item.delete()
@@ -112,7 +113,7 @@ def webhook(request):
 
                 # If we receive resolved, we delete firing with same startAt and fingerprint
                 try:
-                    if alert["status"] == "resolved":
+                    if status == STATUS_RESOLVED or status == STATUS_FIRING:
                         items = GenericIncident.objects.filter(fingerprint=alert["fingerprint"], startsAt=startsAt, status=STATUS_FIRING)
                         for item in items:
                             startsAt = item.startsAt
