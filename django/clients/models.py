@@ -28,8 +28,7 @@ class Server(models.Model):
     last_seen = models.DateTimeField(auto_now_add=True)
 
     # URL used to fetch server
-    url = models.CharField(max_length=256, blank=False, default='localhost')
-    port = models.IntegerField(blank=False, default=8001)
+    url = models.CharField(max_length=256, null=False, blank=False)
 
     user = models.ForeignKey(
         User,
@@ -40,15 +39,8 @@ class Server(models.Model):
     )
 
     @property
-    def protocol(self):
-        return 'https' if self.url != 'host.docker.internal' else 'http'
-
-    @property
     def href(self):
-        url = self.url
-        if self.url == 'host.docker.internal':
-            url = 'localhost'
-        return self.protocol+'://'+url+':'+str(self.port)
+        return self.url
 
     @property
     def is_active(self):

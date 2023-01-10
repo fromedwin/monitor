@@ -22,10 +22,10 @@ SECRET_KEY=$(LC_CTYPE=C tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 32)
 echo "SECRET_KEY=$SECRET_KEY" >> .env
 
 # Create superuser to access django admin panel
-python django/monitor/manage.py createsuperuser
+python django/manage.py createsuperuser
 
-python django/monitor/manage.py migrate
-python django/monitor/manage.py tailwind install
+python django/manage.py migrate
+python django/manage.py tailwind install
 ```
 
 ## Developpment mode
@@ -35,13 +35,13 @@ python django/monitor/manage.py tailwind install
 Start the development server by running the following command:
 
 ```bash
-python django/monitor/manage.py runserver
+python django/manage.py runserver
 ```
 
 To enable styling and hot-reload, run in parallel the following command:
 
 ```bash
-python django/monitor/manage.py tailwind start
+python django/manage.py tailwind start
 ```
 
 ## Running documentation
