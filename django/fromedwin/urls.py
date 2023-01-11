@@ -18,7 +18,7 @@ from django.contrib.auth.views import LogoutView
 from django.conf import settings
 from django.urls import path, include
 
-from .views import public, restricted
+from .views import public, restricted, badge
 from incidents.views import webhook
 from projects.views import healthy
 from website.views import homepage
@@ -30,6 +30,7 @@ urlpatterns = [
     path('', homepage, name='homepage'),
     path('dashboard/', dashboard, name='dashboard'),
     path('status/<int:id>/', public, name='public'),
+    path('status/<int:id>/badge.svg', badge, name='badge'),
     path('accounts/', include('allauth.urls')),
     path('clients/', include('workers.urls')),
     path('projects/', include('projects.urls')),

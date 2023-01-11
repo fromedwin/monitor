@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -8,6 +10,11 @@ from django.http import Http404
 
 from projects.models import Project
 from incidents.models import InstanceDownIncident
+
+from django.templatetags.static import static
+
+from django.contrib.staticfiles.storage import staticfiles_storage
+from django.views.decorators.cache import never_cache
 
 def public(request, id):
     """
@@ -49,6 +56,30 @@ def public(request, id):
         'days': days,
         'days_reverses': reversed(days),
     })
+
+@never_cache
+def badge(request, id):
+    """
+    Show Public view of a project status
+    """
+
+    project = get_object_or_404(Project, pk=id)
+
+    if not project.enable_public_page:
+        file = 'badge-disabled.svg'
+    elif project.is_offline():
+        file = 'badge-offline.svg'
+    elif project.is_warning():
+        file = 'badge-degraded.svg'
+    else:
+        file = 'badge-online.svg'
+    
+    # path will look like /this/project/path/monitor/fromedwin
+    path = str(Path(__file__).resolve().parent) 
+    image_data = open(f'{path}/static/badges/{file}', mode='r').read()
+
+    return HttpResponse(image_data, content_type="image/svg+xml")
+
 
 def restricted(request):
     return render(request, 'restricted.html', {

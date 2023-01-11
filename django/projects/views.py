@@ -97,6 +97,7 @@ def project(request, id):
             '30': project.availability(days=30),
         },
         'graph': json.dumps(content),
+        'url': f'{request.META["wsgi.url_scheme"]}://{request.META["HTTP_HOST"]}',
     })
 
 @login_required

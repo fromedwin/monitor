@@ -87,12 +87,15 @@ class Service(models.Model):
 
         return round(100 - total_unavailability * 100 / total_second, 3)
 
+    @property
     def is_offline(self):
         return self.instancedownincidents.filter(status=2, endsAt__isnull=True, severity=2)
 
+    @property
     def is_degraded(self):
         return self.instancedownincidents.filter(status=2, endsAt__isnull=True, severity=2)
 
+    @property
     def is_warning(self):
         if not self.is_critical:
             return False
