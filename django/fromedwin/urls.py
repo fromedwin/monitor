@@ -19,7 +19,7 @@ from django.conf import settings
 from django.urls import path, include
 
 from .views import public, restricted, badge
-from incidents.views import webhook
+from incidents.api import webhook
 from projects.views import healthy
 from website.views import homepage
 from dashboard.views import dashboard
@@ -31,17 +31,19 @@ urlpatterns = [
     path('dashboard/', dashboard, name='dashboard'),
     path('status/<int:id>/', public, name='public'),
     path('status/<int:id>/badge.svg', badge, name='badge'),
+    path('healthy/<int:id>/', healthy, name='healthy'),
+    path('alert/', webhook, name='alert'),
+    path('restricted/', restricted, name='restricted'),
+    path('admin/', admin.site.urls),
+
     path('accounts/', include('allauth.urls')),
     path('clients/', include('workers.urls')),
     path('projects/', include('projects.urls')),
     path('settings/', include('settings.urls')),
     path('administration/', include('administration.urls')),
-    path('healthy/<int:id>/', healthy, name='healthy'),
-    path('alert/', webhook, name='alert'),
-    path('restricted/', restricted, name='restricted'),
-    path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('projects/<int:application_id>/notifications/', include('notifications.urls')),
+
     path('logout/', LogoutView.as_view(), {'next_page': settings.LOGOUT_REDIRECT_URL}, name='logout'),
     # Django prometheus, adding /metrics url
     path('', include('django_prometheus.urls')),
