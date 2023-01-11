@@ -1,3 +1,15 @@
+# A project or a service have a status:
+#   Unknown is the default value
+#   Warning is about to be offline
+#   Degraded is offline but not critical
+#   Offline is ... not good
+STATUS = {
+    'UNKNOWN': 0,
+    'WARNING': 1,
+    'DEGRADED': 2,
+    'OFFLINE': 3,
+}
+
 # Incidents from alertmanager can have an unknown status, be firing, or be resolved.
 INCIDENT_STATUS = {
     'UNKNOWN': 0,
