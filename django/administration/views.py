@@ -9,7 +9,6 @@ from django.utils import timezone
 from django.contrib.admin.views.decorators import staff_member_required
 
 from allauth.socialaccount.models import SocialApp
-from rest_framework.authtoken.models import Token
 
 from workers.models import Server
 
@@ -22,13 +21,11 @@ def administration(request):
     is_staff = False
     servers = []
 
-    token = Token.objects.get(user=request.user)
     servers = Server.objects.filter(
         last_seen__gte=timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
     ).order_by('-last_seen')
 
     return render(request, 'administration.html', {
         'servers': servers,
-        'token': token,
         'settings': settings,
     })

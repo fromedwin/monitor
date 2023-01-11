@@ -94,11 +94,15 @@
                 <div class="flex items-center">
                   <div class="ml-4">
                     <div class="text-sm font-medium text-gray-900">
-                      <a target="_blank" href="{{ server.href }}">{{ server.href }}</a>
+                      <a href="{{ server.href }}">{{ server.href }}</a>
                     </div>
                     <div class="text-sm text-gray-500">
                       {{ server.uuid }}
                     </div>
+                    {% if server.authbasic.all %}<div class="text-sm text-gray-500">
+                      {{ server.authbasic.all.0.username }} {{ server.authbasic.all.0.password }}
+                    </div>
+                    {% endif %}
                   </div>
                 </div>
               </td>
