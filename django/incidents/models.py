@@ -4,25 +4,7 @@ from projects.models import Project, Service
 from django.template.defaultfilters import truncatechars
 from django.utils import timezone
 
-STATUS_UNKNOWN = 0
-STATUS_RESOLVED = 1
-STATUS_FIRING = 2
-
-SEVERITY_UNKNOWN = 0
-SEVERITY_WARNING = 1
-SEVERITY_CRITICAL = 2
-
-INCIDENT_STATUS = [
-    (STATUS_UNKNOWN, 'unknown'),
-    (STATUS_RESOLVED, 'resolved'),
-    (STATUS_FIRING, 'firing'),
-]
-
-INCIDENT_SEVERITY = [
-    (SEVERITY_UNKNOWN, 'unknown'),
-    (SEVERITY_WARNING, 'warning'),
-    (SEVERITY_CRITICAL, 'critical'),
-]
+from constants import INCIDENT_STATUS_CHOICES, INCIDENT_SEVERITY_CHOICES
 
 class AbstractIncident(models.Model):
     """
@@ -37,8 +19,8 @@ class AbstractIncident(models.Model):
     startsAt = models.DateTimeField(null=False)
     endsAt = models.DateTimeField(null=True, blank=True)
 
-    status = models.IntegerField(choices=INCIDENT_STATUS)
-    severity = models.IntegerField(choices=INCIDENT_SEVERITY)
+    status = models.IntegerField(choices=INCIDENT_STATUS_CHOICES)
+    severity = models.IntegerField(choices=INCIDENT_SEVERITY_CHOICES)
 
     # alerts have a unique identifier
     fingerprint = models.CharField(

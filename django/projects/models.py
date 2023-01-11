@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
 
-
 class Project(models.Model):
     """
     A user own a project he want to monitor and work on.

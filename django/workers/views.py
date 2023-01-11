@@ -14,7 +14,7 @@ from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 
 from .models import Metrics, Alerts, Server, AuthBasic
-from incidents.models import INCIDENT_SEVERITY
+from incidents.models import INCIDENT_SEVERITY_CHOICES
 
 from notifications.models import Pager_Duty
 
@@ -31,7 +31,7 @@ def alerts(request, id):
 
     yaml = render_to_string("alerts_template.yml", {
         "alerts": alerts,
-        "severity": INCIDENT_SEVERITY,
+        "severity": INCIDENT_SEVERITY_CHOICES,
         "settings": settings,
     })
 
