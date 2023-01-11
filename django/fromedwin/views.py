@@ -69,6 +69,8 @@ def badge(request, id):
         file = 'badge-disabled.svg'
     elif project.is_offline():
         file = 'badge-offline.svg'
+    elif project.is_degraded():
+        file = 'badge-degraded.svg'
     elif project.is_warning():
         file = 'badge-degraded.svg'
     else:
