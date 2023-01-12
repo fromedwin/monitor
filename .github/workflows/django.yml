@@ -32,7 +32,6 @@ jobs:
         python django/manage.py migrate
     - name: Install tailwind
       run: |
-        python django/manage.py tailwind init
         python django/manage.py tailwind install
         python django/manage.py tailwind build
     - name: "Deploy to production - clever cloud"
