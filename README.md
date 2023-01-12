@@ -15,7 +15,7 @@ Metrics are focused on **availability**, with future integration for **performan
 ```bash
 python3 -m venv apps
 source apps/bin/activate
-pip install -r requirements.txt
+pip install -r django/requirements.txt
 
 # Generate random SECRET_KEY and inject in .env file
 SECRET_KEY=$(LC_CTYPE=C tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 32)
