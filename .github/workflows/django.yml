@@ -50,6 +50,7 @@ jobs:
           SECRET_KEY=${{ secrets.SECRET_KEY }}
           STATIC_FILES_PATH=staticfiles/
           STATIC_URL_PREFIX=/static
+          STORAGE=whitenoise
         appID: app_871f4083-51f1-4065-9aa5-fc9019059569
       env:
         CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
