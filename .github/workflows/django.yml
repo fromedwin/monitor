@@ -38,7 +38,7 @@ jobs:
           APP_FOLDER=django
           DATABASE_URL=${{ secrets.DATABASE_URL }}
           CC_PYTHON_BACKEND=gunicorn
-          CC_PYTHON_MANAGE_TASKS="migrate, compilescss, collectstatic --no-input"
+          CC_PYTHON_MANAGE_TASKS=migrate, compilescss, collectstatic --no-input
           CC_PYTHON_MODULE=fromedwin.wsgi:application
           CC_PYTHON_VERSION=3.9
           ENABLE_GZIP_COMPRESSION=true
