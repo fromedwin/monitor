@@ -36,7 +36,7 @@ jobs:
       with:
         setEnv: |
           APP_FOLDER=django/
-          DATABASE_URL=${{ secrets.DATABASE_URL }}
+          # DATABASE_URL=${{ secrets.DATABASE_URL }}
           CC_PYTHON_BACKEND=gunicorn
           CC_PYTHON_MANAGE_TASKS=migrate, tailwind init, tailwind install, tailwind build, collectstatic --no-input
           CC_PYTHON_MODULE=fromedwin.wsgi:application
