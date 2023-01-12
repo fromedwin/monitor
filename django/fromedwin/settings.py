@@ -41,22 +41,32 @@ ALLOWED_HOSTS = [
     'status.fromedwin.com',
     os.environ.get('DOMAIN'),
 ]
-
-MIDDLEWARE = ()
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'fromedwin', 'static'),
 ]
 
-if os.environ.get('STORAGE') == 'whitenoise':
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-    MIDDLEWARE = MIDDLEWARE + ('whitenoise.middleware.WhiteNoiseMiddleware',)
-
+if os.environ.get('STORAGE') == 'S3':
+    # aws settings
+    AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL', "https://cellar-c2.services.clever-cloud.com")
+    S3_USE_SIGV4 = False
+    AWS_S3_SIGNATURE_VERSION = "s3"
+    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+    AWS_DEFAULT_ACL = 'public-read'
+    AWS_S3_CUSTOM_DOMAIN = os.getenv('AWS_S3_CUSTOM_DOMAIN')
+    AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=0'}
+    AWS_S3_FILE_OVERWRITE = True
+    # s3 static settings
+    AWS_LOCATION = 'static'
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    STATIC_ROOT = os.path.join(BASE_DIR, 'collectstatic')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # Application definition
@@ -81,6 +91,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.github',
+    'storages',
     # Tailwind
     'theme',
     'tailwind',

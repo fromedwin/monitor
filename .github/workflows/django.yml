@@ -40,6 +40,10 @@ jobs:
       with:
         setEnv: |
           APP_FOLDER=django
+          AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_S3_CUSTOM_DOMAIN=cellar-c2.services.clever-cloud.com/cdn.fromedwin.com
+          AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_STORAGE_BUCKET_NAME=cdn.fromedwin.com
           CC_PYTHON_BACKEND=gunicorn
           CC_PYTHON_MANAGE_TASKS=migrate, collectstatic --no-input
           CC_PYTHON_MODULE=fromedwin.wsgi:application
@@ -50,7 +54,7 @@ jobs:
           SECRET_KEY=${{ secrets.SECRET_KEY }}
           STATIC_FILES_PATH=staticfiles/
           STATIC_URL_PREFIX=/static
-          STORAGE=whitenoise
+          STORAGE=S3
         appID: app_871f4083-51f1-4065-9aa5-fc9019059569
       env:
         CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
