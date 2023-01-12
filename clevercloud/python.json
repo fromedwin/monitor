@@ -1,0 +1,10 @@
+{
+    "deploy": {
+        "module": "django.fromedwin.wsgi:application",
+        "managetasks": [
+            "migrate",
+            "compilescss",
+            "collectstatic --no-input",
+        ]
+    }
+}
