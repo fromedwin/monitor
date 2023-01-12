@@ -35,6 +35,7 @@ jobs:
       uses: 47ng/actions-clever-cloud@v1.3.1
       with:
         setEnv: |
+          APP_FOLDER=django
           DATABASE_URL=${{ secrets.DATABASE_URL }}
           CC_PYTHON_BACKEND=gunicorn
           CC_PYTHON_MANAGE_TASKS="migrate, compilescss, collectstatic --no-input"
