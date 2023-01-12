@@ -39,11 +39,12 @@ jobs:
       uses: 47ng/actions-clever-cloud@v1.3.1
       with:
         setEnv: |
-          APP_FOLDER=django/
+          APP_FOLDER=django
           CC_PYTHON_BACKEND=gunicorn
           CC_PYTHON_MANAGE_TASKS=migrate, collectstatic --no-input
           CC_PYTHON_MODULE=fromedwin.wsgi:application
           CC_PYTHON_VERSION=3.9
+          DATABASE_URL=${{ secrets.DATABASE_URL }}
           DOMAIN=fromedwin.cleverapps.io
           ENABLE_GZIP_COMPRESSION=true
           SECRET_KEY=${{ secrets.SECRET_KEY }}
