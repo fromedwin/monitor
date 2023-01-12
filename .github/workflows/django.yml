@@ -44,6 +44,7 @@ jobs:
           CC_PYTHON_MANAGE_TASKS=migrate, collectstatic --no-input
           CC_PYTHON_MODULE=fromedwin.wsgi:application
           CC_PYTHON_VERSION=3.9
+          DOMAIN=fromedwin.cleverapps.io
           ENABLE_GZIP_COMPRESSION=true
           SECRET_KEY=${{ secrets.SECRET_KEY }}
           STATIC_FILES_PATH=staticfiles/
