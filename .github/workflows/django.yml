@@ -30,6 +30,11 @@ jobs:
     - name: Run Migrate
       run: |
         python django/manage.py migrate
+    - name: Install tailwind
+      run: |
+        python django/manage.py tailwind init
+        python django/manage.py tailwind install
+        python django/manage.py tailwind build
     - name: "Deploy to production - clever cloud"
       if: github.ref == 'refs/heads/main'
       uses: 47ng/actions-clever-cloud@v1.3.1
@@ -38,7 +43,7 @@ jobs:
           APP_FOLDER=django/
           DATABASE_URL=${{ secrets.DATABASE_URL }}
           CC_PYTHON_BACKEND=gunicorn
-          CC_PYTHON_MANAGE_TASKS=migrate, tailwind init, tailwind install, tailwind build, collectstatic --no-input
+          CC_PYTHON_MANAGE_TASKS=migrate, collectstatic --no-input
           CC_PYTHON_MODULE=fromedwin.wsgi:application
           CC_PYTHON_VERSION=3.9
           ENABLE_GZIP_COMPRESSION=true
