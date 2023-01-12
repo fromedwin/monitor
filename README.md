@@ -51,3 +51,7 @@ cd ./sphinx
 pip install -r requirements.txt
 sphinx-reload ../docs
 ```
+
+## Env variables
+
+`DATABASE_URL`: (optional) URL to access database

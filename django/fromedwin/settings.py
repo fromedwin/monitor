@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -33,14 +34,10 @@ IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES = 5
 DEBUG = True if os.environ.get('DEBUG') == '1' else False
 
 ALLOWED_HOSTS = [
-    'c871cc84c243.ngrok.io',
-    '192.168.1.2',
     '127.0.0.1',
     'localhost',
     '0.0.0.0',
     'host.docker.internal',
-    'django',
-    'local.django.sebastienbarbier.com',
     'status.fromedwin.com',
     os.environ.get('DOMAIN'),
 ]
@@ -120,14 +117,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'fromedwin.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-DATABASES = {
-    'default': {
-        'ENGINE': 'django_prometheus.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Database confugration using environment variable DATABASES_URL
+DATABASE_URL = os.environ.get('DATABASE_URL')
+DATABASES = {}
+if DATABASE_URL:
+    DATABASES['default'] = dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+
 
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
