@@ -42,6 +42,22 @@ ALLOWED_HOSTS = [
     os.environ.get('DOMAIN'),
 ]
 
+MIDDLEWARE = ()
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/3.1/howto/static-files/
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+if os.environ.get('STORAGE') == 'whitenoise':
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+    MIDDLEWARE = MIDDLEWARE + ('whitenoise.middleware.WhiteNoiseMiddleware',)
+
+
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # Application definition
 
@@ -83,7 +99,7 @@ INSTALLED_APPS = [
     'django_prometheus',
 ]
 
-MIDDLEWARE = [
+MIDDLEWARE = (
     'django_prometheus.middleware.PrometheusAfterMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -95,7 +111,7 @@ MIDDLEWARE = [
     'django_prometheus.middleware.PrometheusAfterMiddleware',
     'fromedwin.middleware.is_allowed_user',
     'django_browser_reload.middleware.BrowserReloadMiddleware',
-]
+)
 
 ROOT_URLCONF = 'fromedwin.urls'
 
@@ -181,17 +197,3 @@ USE_L10N = True
 USE_TZ = True
 
 SITE_ID = 1
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.1/howto/static-files/
-
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
-
-if os.environ.get('STORAGE') == 'whitenoise':
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-    MIDDLEWARE = MIDDLEWARE + ('whitenoise.middleware.WhiteNoiseMiddleware',)
