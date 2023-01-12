@@ -35,8 +35,15 @@ jobs:
       uses: 47ng/actions-clever-cloud@v1.3.1
       with:
         setEnv: |
-          CC_PYTHON_MODULE=django.fromedwin.wsgi:application
+          DATABASE_URL=${{ secrets.DATABASE_URL }}
           CC_PYTHON_BACKEND=gunicorn
+          CC_PYTHON_MANAGE_TASKS="migrate, compilescss, collectstatic --no-input"
+          CC_PYTHON_MODULE=fromedwin.wsgi:application
+          CC_PYTHON_VERSION=3.9
+          ENABLE_GZIP_COMPRESSION=true
+          SECRET_KEY=${{ secrets.SECRET_KEY }}
+          STATIC_FILES_PATH=static/
+          STATIC_URL_PREFIX=/static
         appID: app_871f4083-51f1-4065-9aa5-fc9019059569
       env:
         CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}

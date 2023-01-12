@@ -1,0 +1,10 @@
+{
+    "deploy": {
+        "module": "fromedwin.wsgi:application",
+        "managetasks": [
+            "migrate",
+            "compilescss",
+            "collectstatic --no-input",
+        ]
+    }
+}
