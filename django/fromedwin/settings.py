@@ -35,6 +35,8 @@ DEBUG = True if os.environ.get('DEBUG') == '1' else False
 
 ALLOWED_HOSTS = ['*']
 
+USE_X_FORWARDED_HOST = True
+
 CSRF_TRUSTED_ORIGINS = [
     f'https://{os.environ.get("DOMAIN")}',
     f'https://*.{os.environ.get("DOMAIN")}',
