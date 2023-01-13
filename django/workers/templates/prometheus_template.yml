@@ -11,14 +11,13 @@ alerting:
   alertmanagers:
   - scheme: http
     timeout: 10s
-    path_prefix: /alertmanager
     api_version: v1
     {% if server.authbasic.all %}basic_auth:
       username: {{ server.authbasic.all.0.username }}
       password: {{ server.authbasic.all.0.password }}{% endif %}
     static_configs:
     - targets:
-      - host.docker.internal:8001
+      - alertmanager:9093
 
 scrape_configs:
 
@@ -38,14 +37,14 @@ scrape_configs:
   honor_timestamps: true
   scrape_interval: 15s
   scrape_timeout: 10s
-  metrics_path: /alertmanager/metrics
+  metrics_path: /metrics
   scheme: http
   {% if server.authbasic.all %}basic_auth:
     username: {{ server.authbasic.all.0.username }}
     password: {{ server.authbasic.all.0.password }}{% endif %}
   static_configs:
   - targets:
-    - host.docker.internal:8001
+    - alertmanager:9093
 {% if metrics %}
 - job_name: metrics
   honor_timestamps: true
