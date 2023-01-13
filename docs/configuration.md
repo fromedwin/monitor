@@ -1,27 +1,32 @@
 # Configuration
 
-## How to configure
-
-All variables have a **default value** and probably **won't need to be configured** to **run locally**.
-
-If needed, you can **create a `.env` file** within the **root folder** and set then manually. You will need to **restart docker** images to apply them.
-
-For **production** instance, define them directly within your **hosting platform**. 
+It is considered best practice to store sensitive information such as access keys, secret keys, and other credentials as **environment variables**. This is because environment variables are stored outside of the codebase and are not committed to version control, making them less likely to be exposed in the event of a security breach.
 
 ```{warning}
-Environment variables might contain **sensitive informations** and **compromise security**, make sure to **keep those values secures**.
+When using environment variables, it's important to make sure that they are **properly protected and only accessible by the necessary parties**.
 ```
 
-## List of all configurations
+This project uses a local `.env` file that is loaded on startup **for local development** to store sensitive configuration values.
 
-### Contact email address
+## List of variables
 
-`MAIL` email shared with letsencrypt to register SSL certificate.
+| Configuration value | Description |
+| --- | --- |
+| `SECRET_KEY` | The secret key used for signing cookies |
+| `DOMAIN` | The domain used to access the web interface (default `localhost`) |
+| `PORT` | The port used to access the web interface (default `8000`)|
+| `DEBUG` | The debug mode value (default `1`) |
+| `DATABASE_URL` *(optional)* | URL of the database that the system will connect to. (default `sqlite3`) |
 
-### Django Secret key
+## For deployment only
 
-`DJANGO_SECRET_KEY` secret key used by django's session.
+`STORAGE` variable is used to specify the storage method used for static files. The default value is set to S3, which means that the system is configured to use an S3-like bucket to store the static files.'
 
-### Debug mode
+| Configuration value | Description |
+| --- | --- |
+| `STORAGE` | The storage method used |
+| `AWS_ACCESS_KEY_ID` | The access key ID used for AWS S3 storage |
+| `AWS_SECRET_ACCESS_KEY` | The secret access key used for AWS S3 storage |
+| `AWS_S3_CUSTOM_DOMAIN` | The custom domain used for AWS S3 storage |
+| `AWS_STORAGE_BUCKET_NAME` | The bucket name used for AWS S3 storage |
 
-`DEBUG` Set debug mode within django project *(default: True, False with -prod, False or True)*.

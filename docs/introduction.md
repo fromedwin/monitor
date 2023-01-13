@@ -1,19 +1,18 @@
-# Overview
+# Introduction
 
-## What is Status From Edwin ?
+FromEdwin is a fast, easy-to-use, and highly opinionated monitoring solution designed for small business owners and web developers with side projects in mind. 
 
-This project provide a **plug and play** docker instance to **quickly** run monitoring tools without much configuration. This is possible by making **opinionated decision** with **no possible configuration**. Main idea is to have a **fast to deploy** and **full set of tools** to use when bootstraping a new project.
+## Why an other monitoring app ?
 
-## Features
+FromEdwin is based on existing monitoring solutions, rather than being a completely new product. It offers a none customizable configuration setup that enables quick and easy monitoring of systems and applications, making it a highly opinionated and time-saving solution for basic needs.
 
-- Monitor **http code** of your application/website.
-- Publish a **public status page** with history of experienced outrages. 
-- **Alert on outrage** using [PagerDuty](https://pagerduty.com).
-- Login using a **[Github account](https://github.com)**.
+Designed to fulfill a specific need on one of our projects, it was decided to make it available as a SaaS version, allowing others to benefit from its simplicity as well, with the idea that if it works well for us, it might work well for others.
 
-## Architecture
+## List of features 
 
-Each feature is powered by an **third party open-source project**. This project is architectured around a **django application** running a unified web interface orchestring all APIs.  
+- Monitors the **HTTP status code** of a specified URL
+- Notifies users of changes via **PagerDuty** notifications
+- Uses **GitHub for single sign-on** to simplify authentication
+- Provides a **public status page** to share availability information
 
-- **Availability** is powered by **[Prometheus](https://prometheus.io/)** *(Prometheus, AlertManager, and blackbox_exporter)*
-- **Web interface** is using **[django framework](https://www.djangoproject.com/)**
+To learn more about the system architecture, please continue reading the next section.

@@ -17,8 +17,8 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'Status from Edwin'
-copyright = '2022, Sébastien Barbier'
+project = 'FromEdwin'
+copyright = '2023, Sébastien Barbier'
 author = 'Sébastien Barbier'
 
 
