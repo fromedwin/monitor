@@ -38,8 +38,16 @@ ALLOWED_HOSTS = [
     'localhost',
     '0.0.0.0',
     'host.docker.internal',
+    'fromedwin.com',
     'status.fromedwin.com',
     os.environ.get('DOMAIN'),
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    f'https://{os.environ.get("DOMAIN")}',
+    f'https://*.{os.environ.get("DOMAIN")}',
+    f'https://fromedwin.com',
+    f'https://*.fromedwin.com',
 ]
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
