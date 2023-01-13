@@ -33,15 +33,7 @@ IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES = 5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ.get('DEBUG') == '1' else False
 
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'localhost',
-    '0.0.0.0',
-    'host.docker.internal',
-    'fromedwin.com',
-    'status.fromedwin.com',
-    os.environ.get('DOMAIN'),
-]
+ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [
     f'https://{os.environ.get("DOMAIN")}',
