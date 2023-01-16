@@ -241,7 +241,7 @@ if PORT == '443' or PORT == None or PORT == '':
 else:
     ALERTMANAGER_WEBHOOK_URL += 'http://'
 
-if DOMAIN == 'localhost':
+if DOMAIN == 'localhost' or DOMAIN == None:
     ALERTMANAGER_WEBHOOK_URL += 'host.docker.internal'
 else:
     ALERTMANAGER_WEBHOOK_URL += DOMAIN
