@@ -42,6 +42,9 @@ if os.environ.get('SENTRY_DSN'):
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
+FORCE_HTTPS = False
+if os.environ.get('FORCE_HTTPS') == '1' or os.environ.get('FORCE_HTTPS').lower() == 'true':
+    FORCE_HTTPS = True
 DOMAIN = os.environ.get('DOMAIN')
 PORT = os.environ.get('PORT')
 WEBAUTH_USERNAME = os.environ.get('WEBAUTH_USERNAME')
@@ -236,7 +239,7 @@ SITE_ID = 1
     Generate webhook url used by alert manager yml file
 """
 ALERTMANAGER_WEBHOOK_URL = ''
-if PORT == '443' or PORT == None or PORT == '':
+if FORCE_HTTPS:
     ALERTMANAGER_WEBHOOK_URL += 'https://'
 else:
     ALERTMANAGER_WEBHOOK_URL += 'http://'

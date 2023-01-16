@@ -127,6 +127,28 @@ class HTTPMockedCodeService(models.Model):
     )
 
     def url(self):
+        """
+            Return the url to use within prometheus to get the HTTP code value
+        """
+        result = ''
+
+        # Select protocol between http and https
+        if settings.FORCE_HTTPS:
+            result += 'https://'
+        else:
+            result += 'http://'
+
+        # Handle localhost as host.docker.internal for docker
         if settings.DOMAIN != 'localhost' and not is_private_ipv4(settings.DOMAIN):
-            return f'http://{settings.DOMAIN}:{settings.PORT}/healthy/{self.id}'
-        return f'http://host.docker.internal:{settings.PORT}/healthy/{self.id}'
+            result += 'host.docker.internal'
+        else:
+            result += {settings.DOMAIN}
+
+        # If port if custom, we add it in the url
+        if settings.PORT and settings.PORT != '80' and settings.PORT != '443':
+            result += f':{settings.PORT}'
+
+        # url defined by django app
+        result += f'/healthy/{self.id}/'
+
+        return result
