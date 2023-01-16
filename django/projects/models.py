@@ -140,9 +140,9 @@ class HTTPMockedCodeService(models.Model):
 
         # Handle localhost as host.docker.internal for docker
         if settings.DOMAIN != 'localhost' and not is_private_ipv4(settings.DOMAIN):
-            result += 'host.docker.internal'
+            result += f'{settings.DOMAIN}'
         else:
-            result += {settings.DOMAIN}
+            result += 'host.docker.internal'
 
         # If port if custom, we add it in the url
         if settings.PORT and settings.PORT != '80' and settings.PORT != '443':
