@@ -230,3 +230,22 @@ USE_L10N = True
 USE_TZ = True
 
 SITE_ID = 1
+
+
+"""
+    Generate webhook url used by alert manager yml file
+"""
+ALERTMANAGER_WEBHOOK_URL = ''
+if PORT == '443' or PORT == None or PORT == '':
+    ALERTMANAGER_WEBHOOK_URL += 'https://'
+else:
+    ALERTMANAGER_WEBHOOK_URL += 'http://'
+
+if DOMAIN == 'localhost':
+    ALERTMANAGER_WEBHOOK_URL += 'host.docker.internal'
+else:
+    ALERTMANAGER_WEBHOOK_URL += DOMAIN
+
+if PORT and PORT != '80' and PORT != '443':
+    ALERTMANAGER_WEBHOOK_URL += f':{PORT}'
+ALERTMANAGER_WEBHOOK_URL += '/alert/'
