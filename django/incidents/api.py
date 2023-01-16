@@ -47,7 +47,12 @@ def webhook(request):
 
                 service = None
                 if alert["labels"]["service"]:
-                    service = Service.objects.get(pk=alert["labels"]["service"])
+                    # If user delete a service while an alert is open, alertmanager still send a resolve
+                    # This will ignore the resolve or new update
+                    try:
+                        service = Service.objects.get(pk=alert["labels"]["service"])
+                    except:
+                        pass
 
                 endsAt = None
 
@@ -74,7 +79,8 @@ def webhook(request):
                 except:
                     pass
 
-                if not ignore_warning_resolved:
+                # ignore_warning_resolved is True if a critical_resolved also exist
+                if not ignore_warning_resolved and service:
                     object = InstanceDownIncident(
                         service=service,
                         startsAt=startsAt,
@@ -90,7 +96,12 @@ def webhook(request):
             elif "project" in alert["labels"]:
                 project = None
                 if alert["labels"]["project"]:
-                    project = Project.objects.get(pk=alert["labels"]["project"])
+                    # If user delete a project while an alert is open, alertmanager still send a resolve
+                    # This will ignore the resolve or new update
+                    try:
+                        project = Project.objects.get(pk=alert["labels"]["project"])
+                    except:
+                        pass
 
                 endsAt = None
                 if alert["endsAt"] and not alert["endsAt"].startswith("0001"):
@@ -105,18 +116,19 @@ def webhook(request):
                 except:
                     pass
 
-                object = ProjectIncident(
-                    project=project,
-                    startsAt=startsAt,
-                    endsAt=endsAt,
-                    fingerprint=alert["fingerprint"],
-                    instance=alert["labels"]["instance"],
-                    summary=alert["annotations"]["summary"],
-                    description=alert["annotations"]["description"],
-                    severity=severity,
-                    status=status,
-                    json=json_formated)
-                object.save()
+                if project:
+                    object = ProjectIncident(
+                        project=project,
+                        startsAt=startsAt,
+                        endsAt=endsAt,
+                        fingerprint=alert["fingerprint"],
+                        instance=alert["labels"]["instance"],
+                        summary=alert["annotations"]["summary"],
+                        description=alert["annotations"]["description"],
+                        severity=severity,
+                        status=status,
+                        json=json_formated)
+                    object.save()
             else:
                 endsAt = None
                 if alert["endsAt"] and not alert["endsAt"].startswith("0001"):
