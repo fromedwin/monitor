@@ -52,6 +52,7 @@ jobs:
           DOMAIN=fromedwin.com
           ENABLE_GZIP_COMPRESSION=true
           SECRET_KEY=${{ secrets.SECRET_KEY }}
+          SENTRY_DSN=${{ secrets.SENTRY_DSN }}
           STATIC_FILES_PATH=staticfiles/
           STATIC_URL_PREFIX=/static
           STORAGE=S3
