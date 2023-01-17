@@ -1,5 +1,5 @@
 {% extends 'application.html' %}
-{% load static socialaccount account tailwind_tags %}
+{% load static socialaccount account tailwind_tags fromedwin_tags %}
 
 {% block javascript %}
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.2.2/dist/echarts.min.js" integrity="sha256-iJxB0L7blNZTAFBu/ESTfVaVTqFrTeISeWk7RUEePFY=" crossorigin="anonymous"></script>
@@ -170,6 +170,9 @@
                   <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
                   </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Https
+                  </th>
                   <th></th>
                 </tr>
               </thead>
@@ -221,6 +224,13 @@
                               Online
                             </span>
                         {% endif %}
+                    {% endif %}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    {% if https|get_obj_attr:service.id %}
+                    <div class="text-sm text-gray-900">Expires in:<br/>{{ https|get_obj_attr:service.id|timeuntil }}</div>
+                    {% else %}
+                    <div class="text-sm text-gray-900">Not using https</div>
                     {% endif %}
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

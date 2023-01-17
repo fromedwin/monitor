@@ -58,9 +58,9 @@ def project(request, id):
             'degradated': InstanceDownIncident.objects.filter(service__project=project, severity=2, service__is_critical=False).filter(Q(startsAt__gte=start_of_day, endsAt__lt=end_of_day)|Q(startsAt__lt=start_of_day, endsAt__gt=start_of_day)|Q(startsAt__lt=end_of_day, endsAt__gt=end_of_day)),
         })
 
-
-    # Experiment with Prometheus data fetching
     content = {}
+    graph = []
+    https = {}
 
     try:
         servers = Server.objects.filter(
@@ -76,11 +76,26 @@ def project(request, id):
 
         start = int(format(timezone.now(), 'U'))
 
+        """
+            Fetch prometheus probe duration seconds data
+        """
         response = requests.get(f'{server.href}/api/v1/query_range?query=probe_duration_seconds%7Bapplication="{id}"%7D&step=30&start={str(start-600)}&end={str(start)}', headers=headers, auth=(authbasic.username, authbasic.password))
         response.raise_for_status()
         content = json.loads(response.content)
         for service in content['data']['result']:
             service['metric']['title'] = Service.objects.get(id=service['metric']['service']).title
+
+        graph = json.dumps(content)
+        """
+            Fetch prometheus https expiration value
+        """
+        response = requests.get(f'{server.href}/api/v1/query?query=probe_ssl_earliest_cert_expiry%7Bapplication="{id}"%7D&time={str(start)}', headers=headers, auth=(authbasic.username, authbasic.password))
+        response.raise_for_status()
+        content = json.loads(response.content)
+
+        for service in content['data']['result']:
+            https[service['metric']['service']] = datetime.datetime.fromtimestamp(int(service['value'][1]))
+
     except Exception as err:
         content = {
             'error': getattr(err, 'message', repr(err))
@@ -96,7 +111,8 @@ def project(request, id):
             '7': project.availability(days=7),
             '30': project.availability(days=30),
         },
-        'graph': json.dumps(content),
+        'graph': graph,
+        'https': https,
         'url': f'{request.META["wsgi.url_scheme"]}://{request.META["HTTP_HOST"]}',
     })
 
