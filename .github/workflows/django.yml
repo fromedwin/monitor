@@ -53,6 +53,7 @@ jobs:
           ENABLE_GZIP_COMPRESSION=true
           FORCE_HTTPS=True
           SECRET_KEY=${{ secrets.SECRET_KEY }}
+          SENTRY_ENVIRONMENT=production
           SENTRY_DSN=${{ secrets.SENTRY_DSN }}
           STATIC_FILES_PATH=staticfiles/
           STATIC_URL_PREFIX=/static

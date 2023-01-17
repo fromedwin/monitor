@@ -22,19 +22,10 @@ if os.environ.get('SENTRY_DSN'):
 
     sentry_sdk.init(
         dsn=os.environ.get('SENTRY_DSN'),
-        #dsn="https://f80c4f7d835540129f94d0a82deea2e5@o263489.ingest.sentry.io/4504514121695232",
+        environment= os.getenv('SENTRY_ENVIRONMENT', 'undefined'),
         integrations=[
             DjangoIntegration(),
         ],
-
-        # Set traces_sample_rate to 1.0 to capture 100%
-        # of transactions for performance monitoring.
-        # We recommend adjusting this value in production.
-        traces_sample_rate=1.0,
-
-        # If you wish to associate users to errors (assuming you are using
-        # django.contrib.auth) you may enable sending PII data.
-        send_default_pii=True
     )
 
 # Quick-start development settings - unsuitable for production
