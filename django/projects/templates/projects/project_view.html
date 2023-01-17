@@ -227,7 +227,9 @@
                     {% endif %}
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
-                    {% if https|get_obj_attr:service.id %}
+                    {% if not service.is_enabled %}
+                    <div class="text-sm text-gray-900"></div>
+                    {% elif https|get_obj_attr:service.id %}
                     <div class="text-sm text-gray-900">Expires in:<br/>{{ https|get_obj_attr:service.id|timeuntil }}</div>
                     {% else %}
                     <div class="text-sm text-gray-900">Not using https</div>
