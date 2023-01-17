@@ -14,7 +14,7 @@ from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 
 from .models import Metrics, Alerts, Server, AuthBasic
-from incidents.models import INCIDENT_SEVERITY_CHOICES
+from alerts.models import INCIDENT_SEVERITY_CHOICES
 
 from notifications.models import Pager_Duty
 

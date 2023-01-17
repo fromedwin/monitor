@@ -115,7 +115,7 @@ INSTALLED_APPS = [
     # App
     'administration',
     'dashboard',
-    'incidents',
+    'alerts',
     'fromedwin',
     'notifications',
     'settings',

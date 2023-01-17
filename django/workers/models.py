@@ -10,7 +10,7 @@ from django.conf import settings
 
 from yamlfield.fields import YAMLField
 
-from incidents.models import INCIDENT_SEVERITY_CHOICES
+from alerts.models import INCIDENT_SEVERITY_CHOICES
 
 class Alerts(models.Model):
     alert = models.CharField(max_length=128)

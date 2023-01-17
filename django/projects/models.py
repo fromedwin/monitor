@@ -29,7 +29,7 @@ class Project(models.Model):
 
     def availability(self, days=30):
 
-        from incidents.models import InstanceDownIncident
+        from alerts.models import InstanceDownIncident
 
         total_second = days * 24 * 60 * 60
         start_date = timezone.now() - timezone.timedelta(days=days)
@@ -68,7 +68,7 @@ class Service(models.Model):
 
     def availability(self, days=30):
 
-        from incidents.models import InstanceDownIncident
+        from alerts.models import InstanceDownIncident
 
         total_second = days * 24 * 60 * 60
         start_date = timezone.now() - timezone.timedelta(days=days)

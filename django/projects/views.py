@@ -18,7 +18,7 @@ from allauth.socialaccount.models import SocialApp
 
 from projects.models import Project, Service, HTTPCodeService, HTTPMockedCodeService
 from workers.models import Server
-from incidents.models import InstanceDownIncident
+from alerts.models import InstanceDownIncident
 from projects.forms import ProjectForm, ServiceForm, HTTPCodeServiceForm, MockedHTTPCodeServiceForm
 
 @login_required

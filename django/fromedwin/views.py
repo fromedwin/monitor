@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.http import Http404
 
 from projects.models import Project
-from incidents.models import InstanceDownIncident
+from alerts.models import InstanceDownIncident
 
 from django.templatetags.static import static
 

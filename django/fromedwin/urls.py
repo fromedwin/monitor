@@ -19,7 +19,7 @@ from django.conf import settings
 from django.urls import path, include
 
 from .views import public, restricted, badge
-from incidents.api import webhook
+from alerts.api import webhook
 from projects.views import healthy
 from website.views import homepage
 from dashboard.views import dashboard

@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .views import projects, project, projects_form, service_http_form, projects_delete, service_list, service_http_delete, service_mockedhttp_form, service_mockedhttp_delete, toggle_public_page
-from incidents.views import incidents
+from alerts.views import incidents
 
 urlpatterns = [
     path('', projects, name='projects'),
