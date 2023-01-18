@@ -26,9 +26,12 @@ from dashboard.views import dashboard
 
 from django.conf.urls.static import static
 
+from allauth.account.views import login
+
 urlpatterns = [
     path('', homepage, name='homepage'),
     path('dashboard/', dashboard, name='dashboard'),
+    path('login/', login, name='login'),
     path('status/<int:id>/', public, name='public'),
     path('status/<int:id>/badge.svg', badge, name='badge'),
     path('healthy/<int:id>/', healthy, name='healthy'),
