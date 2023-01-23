@@ -41,7 +41,7 @@ urlpatterns = [
 
     path('accounts/', include('allauth.urls')),
     path('clients/', include('workers.urls')),
-    path('projects/', include('projects.urls')),
+    path('', include('projects.urls')),
     path('settings/', include('settings.urls')),
     path('administration/', include('administration.urls')),
     path('api-auth/', include('rest_framework.urls')),
