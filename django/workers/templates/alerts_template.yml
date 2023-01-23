@@ -12,13 +12,14 @@ groups:
         for more than {% endverbatim %}{{ settings.IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES }} minutes.{% verbatim %}'
   - alert: InstanceDown
     expr: probe_success == 0
+    for: 1m
     {% endverbatim %}for: {{ settings.IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES }}m{% verbatim %}
     labels:
       severity: critical
     annotations:
       summary: Instance {{ $labels.instance }} down
       description: '{{ $labels.instance }} of job {{ $labels.job }} has been down
-        for more than {% endverbatim %}{{ settings.IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES }} minutes.{% verbatim %}'
+        for less than {% endverbatim %}{{ settings.IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES }} minutes.{% verbatim %}'
 {% endverbatim %}{% for alert in alerts %}
   - alert: {{ alert.alert }}
     expr: {{ alert.expr }}
