@@ -33,8 +33,6 @@ def projects(request):
         'applications': applications
     })
 
-
-
 @login_required
 def project(request, id):
     """
