@@ -1,0 +1,66 @@
+{% extends 'projects/project_view.html' %}
+{% load static socialaccount account tailwind_tags fromedwin_tags %}
+
+{% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.2.2/dist/echarts.min.js" integrity="sha256-iJxB0L7blNZTAFBu/ESTfVaVTqFrTeISeWk7RUEePFY=" crossorigin="anonymous"></script>
+
+<script src="{% static 'prismjs/prism.js' %}"></script>
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'prismjs/prism.css' %}">
+{% endblock %}
+
+{% block subsection %}
+  {% if not project.enable_public_page %}
+  <div class="py-5 sm:p-6">
+    <form method="POST" action="{% url 'toggle_public_page' project.id %}" class="mt-2 sm:flex sm:items-start sm:justify-between">
+      <div class="max-w-xl text-sm text-gray-500">
+        <p>
+          Enable your <strong>public page status</strong> to share with your users the current status of your project.
+        </p>
+      </div>
+      {% csrf_token %}
+      <div class="mt-5 sm:mt-0 sm:ml-6 sm:flex-shrink-0 sm:flex sm:items-center">
+        <input type="submit" value="Enable status page" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:text-sm">
+        </input>
+      </div>
+    </form>
+  </div>
+  {% else %}
+
+
+  <div class="py-5 sm:p-6">
+    <form method="POST" action="{% url 'toggle_public_page' project.id %}" class="mt-2 sm:flex sm:items-start sm:justify-between">
+      <div class="max-w-xl text-sm text-gray-500">
+        <p>
+          You can now access your <strong>public status page</strong> at the following url : <button type="button" class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"><a class="flex items-center" href="{{ url }}{% url 'public' project.id %}" target="_blank">{{ url }}{% url 'public' project.id %} <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a></button>
+        </p>
+      </div>
+      {% csrf_token %}
+      <div class="mt-5 sm:mt-0 sm:ml-6 sm:flex-shrink-0 sm:flex sm:items-center">
+        <input type="submit" value="Disable" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+        </input>
+      </div>
+    </form>
+  </div>
+
+  <div class="py-5 sm:p-6">
+    <div class="text-sm text-gray-500">
+      <p>
+        You can also embed your current status badge in third party application using the following code : <a class="inline" href="{{ url }}{% url 'public' project.id %}"><img class="inline" src="{% url 'badge' project.id %}" /></a>
+      </p>
+      
+      <h4 class="pt-2 text-md leading-6 font-medium text-gray-900">As html</h4>
+      <pre><code class="language-html">{% filter force_escape %}<a href="{{ url }}{% url 'public' project.id %}">
+<img src="{{ url }}{% url 'badge' project.id %}" alt="Alt text" />
+</a>{% endfilter %}</code></pre>
+
+      <h4 class="pt-2 text-md leading-6 font-medium text-gray-900">As markdown</h4>
+      <pre><code class="language-markdown">[!Alt text]({{ url }}{% url 'badge' project.id %})]({{ url }}{% url 'public' project.id %})</code></pre>
+      
+    </div>
+  </div>
+  {% endif %}
+
+{% endblock %}

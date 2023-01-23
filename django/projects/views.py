@@ -33,8 +33,22 @@ def projects(request):
         'applications': applications
     })
 
+
+
 @login_required
 def project(request, id):
+    """
+    Show current project status
+    """
+
+    project = get_object_or_404(Project, pk=id)
+
+    return render(request, 'projects/project_view.html', {
+        'project': project,
+    })
+
+@login_required
+def project_availability(request, id):
     """
     Show current project status
     """
@@ -101,7 +115,7 @@ def project(request, id):
             'error': getattr(err, 'message', repr(err))
         }
 
-    return render(request, 'projects/project_view.html', {
+    return render(request, 'projects/availability/availability.html', {
         'project': project,
         'incidents': incidents,
         'days': days,
@@ -114,6 +128,42 @@ def project(request, id):
         'graph': graph,
         'https': https,
         'url': f'{request.META["wsgi.url_scheme"]}://{request.META["HTTP_HOST"]}',
+    })
+
+@login_required
+def project_performances(request, id):
+    """
+    Show current project status
+    """
+
+    project = get_object_or_404(Project, pk=id)
+
+    return render(request, 'projects/performances/performances.html', {
+        'project': project,
+    })
+
+@login_required
+def project_notifications(request, id):
+    """
+    Show current project status
+    """
+
+    project = get_object_or_404(Project, pk=id)
+
+    return render(request, 'projects/notifications/notifications.html', {
+        'project': project,
+    })
+
+@login_required
+def project_status_public(request, id):
+    """
+    Show current project status
+    """
+
+    project = get_object_or_404(Project, pk=id)
+
+    return render(request, 'projects/status_public/status_public.html', {
+        'project': project,
     })
 
 @login_required
@@ -197,7 +247,7 @@ def service_http_form(request, application_id, service_http_id=None):
             service_http.service = service
             service_http.save()
 
-            return redirect(reverse('project', args=[application_id]))
+            return redirect(reverse('project_availability', args=[application_id]))
     else:
         if service_http and service_http.service:
             form = HTTPCodeServiceForm(instance=service_http)
@@ -222,7 +272,7 @@ def service_http_delete(request, application_id, service_http_id):
     service = get_object_or_404(HTTPCodeService, pk=service_http_id)
     service.service.delete()
 
-    return redirect(reverse('project', args=[application_id]))
+    return redirect(reverse('project_availability', args=[application_id]))
 
 @login_required
 def service_mockedhttp_form(request, application_id, service_http_id=None):
@@ -256,7 +306,7 @@ def service_mockedhttp_form(request, application_id, service_http_id=None):
             service_http.service = service
             service_http.save()
 
-            return redirect(reverse('project', args=[application_id]))
+            return redirect(reverse('project_availability', args=[application_id]))
     else:
         if service_http and service_http.service:
             form = MockedHTTPCodeServiceForm(instance=service_http)
@@ -286,7 +336,7 @@ def service_mockedhttp_delete(request, application_id, service_http_id):
     service = get_object_or_404(HTTPMockedCodeService, pk=service_http_id)
     service.service.delete()
 
-    return redirect(reverse('project', args=[application_id]))
+    return redirect(reverse('project_availability', args=[application_id]))
 
 @login_required
 def toggle_public_page(request, application_id):
@@ -295,6 +345,6 @@ def toggle_public_page(request, application_id):
     if request.POST:
         project.enable_public_page = not project.enable_public_page
         project.save()
-        return redirect(reverse('project', args=[project.id]))
+        return redirect(reverse('project_status_public', args=[project.id]))
     else:
-        redirect(reverse('project', args=[project.id]))
+        redirect(reverse('project_status_public', args=[project.id]))
