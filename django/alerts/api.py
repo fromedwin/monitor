@@ -45,7 +45,9 @@ def webhook(request):
 
                 if severity == INCIDENT_SEVERITY['CRITICAL']:
                     startsAt = startsAt - timedelta(minutes=settings.IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES)
-
+                elif severity == INCIDENT_SEVERITY['WARNING']:
+                    startsAt = startsAt - timedelta(minutes=2)
+                    
                 service = None
                 if alert["labels"]["service"]:
                     # If user delete a service while an alert is open, alertmanager still send a resolve
