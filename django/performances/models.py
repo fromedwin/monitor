@@ -13,5 +13,9 @@ class Performance(models.Model):
     url = models.URLField(max_length=512, blank=False, help_text="Should start with http:// or https://")
     creation_date = models.DateTimeField(auto_now_add=True, editable=False, help_text="Creation date")
 
+    @property
+    def status(self):
+        return 'Waiting for a worker '
+
     def __str__(self):
         return f'{self.url}'
