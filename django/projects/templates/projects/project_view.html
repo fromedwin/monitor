@@ -1,16 +1,6 @@
 {% extends 'application.html' %}
 {% load static socialaccount account tailwind_tags fromedwin_tags %}
 
-{% block javascript %}
-<script src="https://cdn.jsdelivr.net/npm/echarts@5.2.2/dist/echarts.min.js" integrity="sha256-iJxB0L7blNZTAFBu/ESTfVaVTqFrTeISeWk7RUEePFY=" crossorigin="anonymous"></script>
-
-<script src="{% static 'prismjs/prism.js' %}"></script>
-{% endblock %}
-
-{% block css %}
-<link rel="stylesheet" href="{% static 'prismjs/prism.css' %}">
-{% endblock %}
-
 {% block content %}
 <div class="p-4">
     <div class="pb-12">
