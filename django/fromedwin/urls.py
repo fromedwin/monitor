@@ -20,7 +20,7 @@ from django.urls import path, include
 
 from .views import public, restricted, badge
 from alerts.api import webhook
-from projects.views import healthy
+from availability.views import healthy
 from website.views import homepage
 from dashboard.views import dashboard
 
@@ -30,6 +30,8 @@ from allauth.account.views import login
 
 urlpatterns = [
     path('', homepage, name='homepage'),
+    path('', include('projects.urls')),
+    path('', include('availability.urls')),
     path('dashboard/', dashboard, name='dashboard'),
     path('login/', login, name='login'),
     path('status/<int:id>/', public, name='public'),
@@ -41,7 +43,6 @@ urlpatterns = [
 
     path('accounts/', include('allauth.urls')),
     path('clients/', include('workers.urls')),
-    path('', include('projects.urls')),
     path('settings/', include('settings.urls')),
     path('administration/', include('administration.urls')),
     path('api-auth/', include('rest_framework.urls')),
