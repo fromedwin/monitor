@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load socialaccount account tailwind_tags %}
 
+{% block favicon %}{% endblock %}
+
 {% block html_head_title %}
 {% if project.is_offline %}❌{% elif project.is_degraded or project.is_warning %}⚠️{% else %}✅{% endif %} Status {{ project.title }}
 {% endblock %}
