@@ -6,7 +6,6 @@ from django.conf import settings
 from django.urls import reverse
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.shortcuts import render
 from django.utils import timezone
 from django.utils.dateformat import format
 from django.db.models import Q
@@ -60,18 +59,6 @@ def project_performances(request, id):
     })
 
 @login_required
-def project_status_public(request, id):
-    """
-    Show current project status
-    """
-
-    project = get_object_or_404(Project, pk=id)
-
-    return render(request, 'projects/status_public/status_public.html', {
-        'project': project,
-    })
-
-@login_required
 def projects_form(request, id=None):
     """
         Create or edit project model
@@ -112,14 +99,4 @@ def projects_delete(request, id=None):
     project.delete()
 
     return redirect(reverse('projects'))
-
-@login_required
-def toggle_public_page(request, application_id):
-    project = get_object_or_404(Project, pk=application_id)
-
-    if request.POST:
-        project.enable_public_page = not project.enable_public_page
-        project.save()
-        return redirect(reverse('project_status_public', args=[project.id]))
-    else:
-        redirect(reverse('project_status_public', args=[project.id]))
+    

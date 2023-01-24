@@ -121,6 +121,7 @@ INSTALLED_APPS = [
     'settings',
     'projects',
     'website',
+    'status',
     'workers',
     # Statistics
     'django_prometheus',

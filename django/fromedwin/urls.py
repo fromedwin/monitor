@@ -18,7 +18,7 @@ from django.contrib.auth.views import LogoutView
 from django.conf import settings
 from django.urls import path, include
 
-from .views import public, restricted, badge
+from .views import restricted
 from alerts.api import webhook
 from availability.views import healthy
 from website.views import homepage
@@ -34,10 +34,9 @@ urlpatterns = [
     path('', include('availability.urls')),
     path('', include('notifications.urls')),
     path('', include('performances.urls')),
+    path('', include('status.urls')),
     path('dashboard/', dashboard, name='dashboard'),
     path('login/', login, name='login'),
-    path('status/<int:id>/', public, name='public'),
-    path('status/<int:id>/badge.svg', badge, name='badge'),
     path('healthy/<int:id>/', healthy, name='healthy'),
     path('alert/', webhook, name='alert'),
     path('restricted/', restricted, name='restricted'),
