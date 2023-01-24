@@ -33,6 +33,7 @@ urlpatterns = [
     path('', include('projects.urls')),
     path('', include('availability.urls')),
     path('', include('notifications.urls')),
+    path('', include('performances.urls')),
     path('dashboard/', dashboard, name='dashboard'),
     path('login/', login, name='login'),
     path('status/<int:id>/', public, name='public'),

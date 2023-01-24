@@ -117,6 +117,7 @@ INSTALLED_APPS = [
     'alerts',
     'fromedwin',
     'notifications',
+    'performances',
     'settings',
     'projects',
     'website',
