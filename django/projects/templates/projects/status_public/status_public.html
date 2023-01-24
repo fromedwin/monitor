@@ -1,6 +1,8 @@
 {% extends 'projects/project_view.html' %}
 {% load static socialaccount account tailwind_tags fromedwin_tags %}
 
+{% block html_head_title %}Public status - {{ project.title }} - FromEdwin{% endblock %}
+
 {% block javascript %}
 <script src="{% static 'prismjs/prism.js' %}"></script>
 {% endblock %}

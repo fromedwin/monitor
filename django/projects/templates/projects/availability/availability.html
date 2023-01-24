@@ -1,6 +1,8 @@
 {% extends 'projects/project_view.html' %}
 {% load static socialaccount account tailwind_tags fromedwin_tags %}
 
+{% block html_head_title %}Availability - {{ project.title }} - FromEdwin{% endblock %}
+
 {% block javascript %}
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.2.2/dist/echarts.min.js" integrity="sha256-iJxB0L7blNZTAFBu/ESTfVaVTqFrTeISeWk7RUEePFY=" crossorigin="anonymous"></script>
 {% endblock %}

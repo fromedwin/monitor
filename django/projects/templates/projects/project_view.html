@@ -1,6 +1,8 @@
 {% extends 'application.html' %}
 {% load static socialaccount account tailwind_tags fromedwin_tags %}
 
+{% block html_head_title %}Overview - {{ project.title }} - FromEdwin{% endblock %}
+
 {% block content %}
 <div class="p-4">
     <div class="pb-12">
@@ -34,7 +36,7 @@
             but preserve the same layout if the text wraps without making the image jump around.
           -->
           <div class="pt-1.5">
-            <h1 class="text-3xl flex font-bold text-gray-900 items-center">{{ project }}
+            <h1 class="text-3xl flex font-bold text-gray-900 items-center">{{ project.title }}
           </h1>
             <p class="text-sm font-medium text-gray-500">Service is fully online and works as expected</p>
           </div>
