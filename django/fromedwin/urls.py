@@ -32,6 +32,7 @@ urlpatterns = [
     path('', homepage, name='homepage'),
     path('', include('projects.urls')),
     path('', include('availability.urls')),
+    path('', include('notifications.urls')),
     path('dashboard/', dashboard, name='dashboard'),
     path('login/', login, name='login'),
     path('status/<int:id>/', public, name='public'),
@@ -46,7 +47,6 @@ urlpatterns = [
     path('settings/', include('settings.urls')),
     path('administration/', include('administration.urls')),
     path('api-auth/', include('rest_framework.urls')),
-    path('projects/<int:application_id>/notifications/', include('notifications.urls')),
 
     path('logout/', LogoutView.as_view(), {'next_page': settings.LOGOUT_REDIRECT_URL}, name='logout'),
     # Django prometheus, adding /metrics url

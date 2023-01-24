@@ -112,7 +112,7 @@ def service_list(request, application_id):
     """
     List of services
     """
-    return render(request, 'projects/services/service_list.html', {'application_id': application_id})
+    return render(request, 'project/services/service_list.html', {'application_id': application_id})
 
 @login_required
 def service_http_form(request, application_id, service_http_id=None):
@@ -155,7 +155,7 @@ def service_http_form(request, application_id, service_http_id=None):
             form = HTTPCodeServiceForm()
             formService = ServiceForm()
 
-    return render(request, 'projects/services/httpcode/httpcode_form.html', {
+    return render(request, 'project/services/httpcode/httpcode_form.html', {
         'project': project,
         'service_http': service_http,
         'form': form,
@@ -214,7 +214,7 @@ def service_mockedhttp_form(request, application_id, service_http_id=None):
             form = MockedHTTPCodeServiceForm()
             formService = ServiceForm()
 
-    return render(request, 'projects/services/mockedhttpcode/mockedhttpcode_form.html', {
+    return render(request, 'project/services/mockedhttpcode/mockedhttpcode_form.html', {
         'project': project,
         'service_http': service_http,
         'form': form,

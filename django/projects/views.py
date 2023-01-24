@@ -60,18 +60,6 @@ def project_performances(request, id):
     })
 
 @login_required
-def project_notifications(request, id):
-    """
-    Show current project status
-    """
-
-    project = get_object_or_404(Project, pk=id)
-
-    return render(request, 'projects/notifications/notifications.html', {
-        'project': project,
-    })
-
-@login_required
 def project_status_public(request, id):
     """
     Show current project status

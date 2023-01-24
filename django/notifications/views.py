@@ -13,6 +13,18 @@ from .forms import PagerDutyForm
 from projects.models import Project
 
 @login_required
+def project_notifications(request, id):
+    """
+    Show current project status
+    """
+
+    project = get_object_or_404(Project, pk=id)
+
+    return render(request, 'project/notifications.html', {
+        'project': project,
+    })
+
+@login_required
 def pagerduty_form(request, application_id, pagerduty_id=None):
 
     pagerduty = None
