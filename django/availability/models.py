@@ -7,7 +7,6 @@ from projects.models import Project
 
 from fromedwin.utils import is_private_ipv4
 
-# Create your models here.
 class Service(models.Model):
     """
     Each project run a list of services which will be monitor by the application.
