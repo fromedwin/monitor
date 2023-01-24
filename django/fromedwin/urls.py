@@ -20,7 +20,6 @@ from django.urls import path, include
 
 from .views import restricted
 from alerts.api import webhook
-from availability.views import healthy
 from website.views import homepage
 from dashboard.views import dashboard
 
@@ -29,25 +28,42 @@ from django.conf.urls.static import static
 from allauth.account.views import login
 
 urlpatterns = [
-    path('', homepage, name='homepage'),
+    # """
+    # Project URLs
+    # """
     path('', include('projects.urls')),
     path('', include('availability.urls')),
     path('', include('notifications.urls')),
     path('', include('performances.urls')),
     path('', include('status.urls')),
-    path('dashboard/', dashboard, name='dashboard'),
-    path('login/', login, name='login'),
-    path('healthy/<int:id>/', healthy, name='healthy'),
-    path('alert/', webhook, name='alert'),
-    path('restricted/', restricted, name='restricted'),
-    path('admin/', admin.site.urls),
-
-    path('accounts/', include('allauth.urls')),
+    path('', include('website.urls')),
+    # monitor-worker api
     path('clients/', include('workers.urls')),
+    # Settings URL
     path('settings/', include('settings.urls')),
+    # User dahsboard with feed
+    path('dashboard/', dashboard, name='dashboard'),
+    # Login page from allauth with github button
+    path('login/', login, name='login'),
+    # Webhook to receive alerts
+    path('alert/', webhook, name='alert'),
+    # Display restricted message for user trying to login
+    path('restricted/', restricted, name='restricted'),
+    # Administration panel for super user in app
     path('administration/', include('administration.urls')),
-    path('api-auth/', include('rest_framework.urls')),
 
+
+    # """
+    # Dependencies URLs
+    # """
+
+    # Django admin
+    path('admin/', admin.site.urls),
+    # Django allauth accounts
+    path('accounts/', include('allauth.urls')),
+    # Autentication API for rest_framework
+    path('api-auth/', include('rest_framework.urls')),
+    # Logout view
     path('logout/', LogoutView.as_view(), {'next_page': settings.LOGOUT_REDIRECT_URL}, name='logout'),
     # Django prometheus, adding /metrics url
     path('', include('django_prometheus.urls')),
