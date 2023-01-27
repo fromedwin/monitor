@@ -62,7 +62,7 @@ def performance_form(request, application_id, performance_id=None):
     })
 
 @login_required
-def performance_delete(request, application_id, performance_id):
+def performance_delete(request, server_id, performance_id):
     """
         Delete service model
     """

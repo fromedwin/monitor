@@ -35,3 +35,15 @@ INCIDENT_SEVERITY_CHOICES = [
     (INCIDENT_SEVERITY['WARNING'], 'warning'),
     (INCIDENT_SEVERITY['CRITICAL'], 'critical'),
 ]
+
+# Lighthouse formfactor choices
+LIGHTHOUSE_FORMFACTORS = {
+    'DESKTOP': 0,
+    'MOBILE': 1,
+}
+
+LIGHTHOUSE_FORMFACTOR_CHOICES = [
+    (LIGHTHOUSE_FORMFACTORS['DESKTOP'], 'Desktop'),
+    (LIGHTHOUSE_FORMFACTORS['MOBILE'], 'Mobile'),
+]
+
