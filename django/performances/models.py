@@ -32,15 +32,32 @@ class Report(models.Model):
         on_delete = models.CASCADE,
         related_name = "reports",
     )
+    screenshot = models.ImageField(upload_to='lighthouse_screenshots', blank=True, null=True, help_text="Lighthouse screenshot")
+    form_factor = models.IntegerField(choices=LIGHTHOUSE_FORMFACTOR_CHOICES, default=LIGHTHOUSE_FORMFACTOR_CHOICES[0][0], help_text="Lighthouse form factor")
+    score_performance = models.FloatField(blank=True, null=True, help_text="Lighthouse performance score")
+    score_accessibility = models.FloatField(blank=True, null=True, help_text="Lighthouse accessibility score")
+    score_best_practices = models.FloatField(blank=True, null=True, help_text="Lighthouse best practices score")
+    score_seo = models.FloatField(blank=True, null=True, help_text="Lighthouse seo score")
+    score_pwa = models.FloatField(blank=True, null=True, help_text="Lighthouse pwa score")
+    report_json_file = models.FileField(upload_to='lighthouse_reports', blank=True, null=True, help_text="Lighthouse report")
     creation_date = models.DateTimeField(auto_now_add=True, editable=False, help_text="Creation date")
-    lighthouse_formFactor = models.IntegerField(choices=LIGHTHOUSE_FORMFACTOR_CHOICES, default=LIGHTHOUSE_FORMFACTOR_CHOICES[0][0], help_text="Lighthouse form factor")
-    lighthouse_score_performance = models.IntegerField(blank=True, null=True, help_text="Lighthouse performance score")
-    lighthouse_score_accessibility = models.IntegerField(blank=True, null=True, help_text="Lighthouse accessibility score")
-    lighthouse_score_bestPractices = models.IntegerField(blank=True, null=True, help_text="Lighthouse best practices score")
-    lighthouse_score_seo = models.IntegerField(blank=True, null=True, help_text="Lighthouse seo score")
-    lighthouse_score_pwa = models.IntegerField(blank=True, null=True, help_text="Lighthouse pwa score")
-    # Lighthouse report
-    lighthouse_report = models.JSONField(blank=False, null=False, editable=False)
-
+    
     def __str__(self):
         return f'Performance {self.performance.id} - {self.creation_date}'
+
+class ReportScreenshots(models.Model):
+    """
+    A django model for a lighthouse report screenshot
+    """
+    report = models.ForeignKey(
+        Report,
+        on_delete = models.CASCADE,
+        related_name = "screenshots",
+    )
+    screenshot = models.ImageField(upload_to='lighthouse_screenshots', blank=True, null=True, help_text="Lighthouse screenshot")
+    timestamp = models.DateTimeField(blank=True, null=True, help_text="Screenshot")
+    timing = models.IntegerField(blank=True, null=True, help_text="Lighthouse timing")
+    creation_date = models.DateTimeField(auto_now_add=True, editable=False, help_text="Creation date")
+
+    def __str__(self):
+        return f'Report {self.report.id} - {self.creation_date}'

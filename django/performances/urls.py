@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .api import fetch_performance, publish_report
+from .api import fetch_performance, save_report
 from .views import project_performances, performance_form, performance_delete
 
 urlpatterns = [
@@ -14,6 +14,6 @@ urlpatterns = [
     # As a server, return the next performance url to run
     path('api/request/<uuid:server_id>/performance', fetch_performance, name='fetch_performance'),
     # Report lighthouse performance
-    path('api/publish/<uuid:server_id>/performance/<int:performance_id>', publish_report, name='fetch_performance'),
+    path('api/report/<uuid:server_id>/performance/<int:performance_id>', save_report, name='fetch_performance'),
     
 ]

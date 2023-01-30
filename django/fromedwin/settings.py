@@ -44,7 +44,7 @@ WEBAUTH_PASSWORD = os.environ.get('WEBAUTH_PASSWORD')
 IS_SERVICE_DOWN_SCRAPE_INTERVAL_MINUTE = 1
 IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES = 5
 # Run Lighthouse every 60 minutes
-LIGHTHOUSE_SCRAPE_INTERVAL_MINUTRES = 60
+LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES = 1
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ.get('DEBUG') == '1' else False
