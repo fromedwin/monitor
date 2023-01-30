@@ -42,8 +42,15 @@ def project(request, id):
 
     project = get_object_or_404(Project, pk=id)
 
+
+    activities = InstanceDownIncident\
+        .objects\
+        .filter(service__project=project, endsAt__isnull=False)\
+        .order_by('-startsAt', '-severity')[:20]
+
     return render(request, 'projects/project_view.html', {
         'project': project,
+        'activities': activities,
     })
 
 @login_required
