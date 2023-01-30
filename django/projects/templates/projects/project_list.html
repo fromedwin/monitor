@@ -57,7 +57,7 @@
                 <span class="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-white bg-yellow-400"></span>
                 {% endif %}
 							</div>
-							<div class="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
+							<div class="min-w-0 flex-1 px-4 md:grid md:grid-cols-3 md:gap-4">
 								<div>
 									<p class="flex text-sm font-medium text-gray-800 truncate">{{ application }}</p>
 									<p class="mt-2 flex flex-wrap items-center text-sm text-gray-500">
@@ -77,6 +77,14 @@
 							      </dt>
 							      <dd class="mt-1 text-xl font-semibold text-gray-900">
 							        {{ application.availability }} %
+							      </dd>
+								</div>
+								<div class="hidden md:block">
+							      <dt class="text-sm font-medium text-gray-500 truncate">
+							        Incidents
+							      </dt>
+							      <dd class="mt-1 text-xl font-semibold text-gray-900">
+							        {{ application.incidents_count }}
 							      </dd>
 								</div>
 							</div>

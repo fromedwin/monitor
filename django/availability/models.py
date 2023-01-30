@@ -57,6 +57,10 @@ class Service(models.Model):
             return False
         return self.instancedownincidents.filter(status=2, endsAt__isnull=True, severity=1)
 
+    def incidents_count(self):
+        from alerts.models import InstanceDownIncident
+        return InstanceDownIncident.objects.filter(service__in=self.services.all()).count()
+
     def __str__(self):
         return f'{self.project} - {self.title}'
 

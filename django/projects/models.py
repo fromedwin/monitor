@@ -47,5 +47,9 @@ class Project(models.Model):
 
         return round(100 - total_unavailability * 100 / total_second, 3)
 
+    def incidents_count(self):
+        from alerts.models import InstanceDownIncident, ProjectIncident
+        return InstanceDownIncident.objects.filter(service__in=self.services.all()).count() + ProjectIncident.objects.filter(project=self).count()
+
     def __str__(self):
         return self.title
