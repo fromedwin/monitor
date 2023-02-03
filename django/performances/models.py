@@ -1,5 +1,7 @@
+import os
 from django.db import models
 from projects.models import Project
+from django.conf import settings
 
 from constants import LIGHTHOUSE_FORMFACTOR_CHOICES
 
@@ -23,6 +25,9 @@ class Performance(models.Model):
     def __str__(self):
         return f'{self.url}'
 
+def user_directory_path(instance, filename):
+    return 'performance/reports/{0}/{1}'.format(instance.performance.pk, filename)
+
 class Report(models.Model):
     """
     A django model for a lighthouse report
@@ -32,7 +37,7 @@ class Report(models.Model):
         on_delete = models.CASCADE,
         related_name = "reports",
     )
-    screenshot = models.ImageField(upload_to='lighthouse_screenshots', blank=True, null=True, help_text="Lighthouse screenshot")
+    screenshot = models.ImageField(upload_to=user_directory_path, blank=True, null=True, help_text="Lighthouse screenshot")
     form_factor = models.IntegerField(choices=LIGHTHOUSE_FORMFACTOR_CHOICES, default=LIGHTHOUSE_FORMFACTOR_CHOICES[0][0], help_text="Lighthouse form factor")
     score_performance = models.FloatField(blank=True, null=True, help_text="Lighthouse performance score")
     score_accessibility = models.FloatField(blank=True, null=True, help_text="Lighthouse accessibility score")
@@ -41,7 +46,7 @@ class Report(models.Model):
     score_pwa = models.FloatField(blank=True, null=True, help_text="Lighthouse pwa score")
     report_json_file = models.FileField(upload_to='lighthouse_reports', blank=True, null=True, help_text="Lighthouse report")
     creation_date = models.DateTimeField(auto_now_add=True, editable=False, help_text="Creation date")
-    
+
     def __str__(self):
         return f'Performance {self.performance.id} - {self.creation_date}'
 
