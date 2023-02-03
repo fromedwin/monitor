@@ -28,6 +28,14 @@ class Performance(models.Model):
 def user_directory_path(instance, filename):
     return 'performance/reports/{0}/{1}'.format(instance.performance.pk, filename)
 
+def delete_old_reports(report):
+    reports = report.performance.reports.all().order_by('-creation_date')
+    print(reports)
+    if reports.count() > 4:
+        for r in reports[:4]:
+            r.delete()
+
+
 class Report(models.Model):
     """
     A django model for a lighthouse report
@@ -44,8 +52,12 @@ class Report(models.Model):
     score_best_practices = models.FloatField(blank=True, null=True, help_text="Lighthouse best practices score")
     score_seo = models.FloatField(blank=True, null=True, help_text="Lighthouse seo score")
     score_pwa = models.FloatField(blank=True, null=True, help_text="Lighthouse pwa score")
-    report_json_file = models.FileField(upload_to='lighthouse_reports', blank=True, null=True, help_text="Lighthouse report")
+    report_json_file = models.FileField(upload_to=user_directory_path, blank=True, null=True, help_text="Lighthouse report")
     creation_date = models.DateTimeField(auto_now_add=True, editable=False, help_text="Creation date")
+
+    def save(self, *args, **kwargs):
+        super(Report, self).save(*args, **kwargs)
+        delete_old_reports(self)
 
     def __str__(self):
         return f'Performance {self.performance.id} - {self.creation_date}'

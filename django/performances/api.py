@@ -1,5 +1,6 @@
 import json
 import datetime
+import base64
 from datetime import timedelta
 from django.shortcuts import render
 from django.utils import timezone
@@ -7,6 +8,10 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.conf import settings
+from django.template.defaultfilters import slugify
+
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 
 from rest_framework.decorators import api_view
 
@@ -52,9 +57,26 @@ def save_report(request, server_id, performance_id):
     # Get performance to update
     performance = get_object_or_404(Performance, id=performance_id)
 
-    # Get JSON from POST
+    # Load data from body as json
     data = json.loads(request.body.decode("utf-8"))
-    # form factor specify if lighthouse report is for desktop or mobile
+
+    # Generate metadata used for file storage
+    user = performance.project.user
+    slug = slugify(performance.url)
+    path = f'performance/{user}/{slug}'
+    filename = f'{data["audits"]["final-screenshot"]["details"]["timestamp"]}'
+
+    # Generate report.json file
+    json_file = json.dumps(data)
+    json_file = json_file.encode('utf-8')
+    report_json_file = default_storage.save(f'{path}/{filename}.json', ContentFile(json_file))
+
+    # Generate screenshot.jpg from report json base64 value
+    screenshot_as_a_string = data['audits']['final-screenshot']['details']['data']
+    screenshot_as_a_string = screenshot_as_a_string.replace('data:image/jpeg;base64,', '')
+    screenshot = default_storage.save(f'{path}/{filename}.jpg', ContentFile(base64.b64decode(screenshot_as_a_string)))
+
+    # Look for form factor as `desktop` or `mobile`
     formFactor = LIGHTHOUSE_FORMFACTOR_CHOICES[0][0]
     if data['configSettings']['formFactor'] == 'mobile':
         formFactor = LIGHTHOUSE_FORMFACTOR_CHOICES[1][0]
@@ -67,6 +89,8 @@ def save_report(request, server_id, performance_id):
         score_best_practices = data['categories']['best-practices']['score'],
         score_seo = data['categories']['seo']['score'],
         score_pwa = data['categories']['pwa']['score'],
+        screenshot = screenshot,
+        report_json_file = report_json_file,
     )
     report.save()
 

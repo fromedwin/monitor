@@ -46,7 +46,7 @@ WEBAUTH_PASSWORD = os.environ.get('WEBAUTH_PASSWORD')
 IS_SERVICE_DOWN_SCRAPE_INTERVAL_MINUTE = 1
 IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES = 5
 # Run Lighthouse every 60 minutes
-LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES = os.environ.get('LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES', 60)
+LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES = int(os.environ.get('LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES', 60))
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
@@ -93,6 +93,7 @@ if os.environ.get('STORAGE') == 'S3':
     # s3 static settings
     AWS_LOCATION = 'static'
     STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     STATIC_ROOT = os.path.join(BASE_DIR, 'collectstatic')
 
