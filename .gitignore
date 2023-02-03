@@ -139,3 +139,4 @@ docs/_templates
 
 .clever.json
 django/staticfiles
+django/media

@@ -12,7 +12,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from .models import GenericIncident, InstanceDownIncident, ProjectIncident
-from projects.models import Project, Service
+from projects.models import Project
+from availability.models import Service
 
 from constants import INCIDENT_SEVERITY
 

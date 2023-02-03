@@ -58,7 +58,7 @@ scrape_configs:
     {% endfor %}{% endif %}
 - job_name: is_service_down
   metrics_path: /probe
-  scrape_interval: {{ settings.IS_SERVICE_DOWN_SCRAPE_INTERVAL }}
+  scrape_interval: {{ settings.IS_SERVICE_DOWN_SCRAPE_INTERVAL_MINUTE }}m
   params:
     module:
     - http_2xx

@@ -33,16 +33,28 @@ if os.environ.get('SENTRY_DSN'):
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
+
 FORCE_HTTPS = False
 if os.environ.get('FORCE_HTTPS') == '1' or os.environ.get('FORCE_HTTPS', '').lower() == 'true':
     FORCE_HTTPS = True 
+
 DOMAIN = os.environ.get('DOMAIN')
 PORT = os.environ.get('PORT')
 WEBAUTH_USERNAME = os.environ.get('WEBAUTH_USERNAME')
 WEBAUTH_PASSWORD = os.environ.get('WEBAUTH_PASSWORD')
 
-IS_SERVICE_DOWN_SCRAPE_INTERVAL = '1m'
+IS_SERVICE_DOWN_SCRAPE_INTERVAL_MINUTE = 1
 IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES = 5
+# Run Lighthouse every 60 minutes
+LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES = int(os.environ.get('LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES', 60))
+
+# Absolute filesystem path to the directory that will hold user-uploaded files.
+# Example: "/home/media/media.lawrence.com/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# URL that handles the media served from MEDIA_ROOT. Make sure to use a
+# trailing slash.
+# Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
+MEDIA_URL = '/media/'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ.get('DEBUG') == '1' else False
@@ -81,6 +93,7 @@ if os.environ.get('STORAGE') == 'S3':
     # s3 static settings
     AWS_LOCATION = 'static'
     STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     STATIC_ROOT = os.path.join(BASE_DIR, 'collectstatic')
 
@@ -103,10 +116,6 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'rest_framework',
     'rest_framework.authtoken',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.github',
     'storages',
     # Tailwind
     'theme',
@@ -114,16 +123,26 @@ INSTALLED_APPS = [
     'django_browser_reload',
     # App
     'administration',
+    'availability',
     'dashboard',
     'alerts',
     'fromedwin',
     'notifications',
+    'performances',
     'settings',
     'projects',
     'website',
+    'status',
     'workers',
     # Statistics
     'django_prometheus',
+    # Authentication
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.github',
+    # Django cleanup needs to be last !
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = (
@@ -178,7 +197,8 @@ AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 )
-LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 # Password validation

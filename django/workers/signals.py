@@ -2,7 +2,8 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
 from .models import Alerts, Metrics, Server
-from projects.models import Project, Service
+from projects.models import Project
+from availability.models import Service
 from django.utils import timezone
 from notifications.models import Pager_Duty
 

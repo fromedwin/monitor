@@ -13,6 +13,18 @@ from .forms import PagerDutyForm
 from projects.models import Project
 
 @login_required
+def project_notifications(request, id):
+    """
+    Show current project status
+    """
+
+    project = get_object_or_404(Project, pk=id)
+
+    return render(request, 'project/notifications.html', {
+        'project': project,
+    })
+
+@login_required
 def pagerduty_form(request, application_id, pagerduty_id=None):
 
     pagerduty = None
@@ -32,7 +44,7 @@ def pagerduty_form(request, application_id, pagerduty_id=None):
             pagerduty.project = project
             pagerduty.save()
 
-            return redirect(reverse('project', args=[application_id]))
+            return redirect(reverse('project_notifications', args=[application_id]))
     else:
         if pagerduty:
             form = PagerDutyForm(instance=pagerduty)
@@ -51,4 +63,4 @@ def pagerduty_delete(request, application_id, pagerduty_id):
     pagerduty = get_object_or_404(Pager_Duty, pk=pagerduty_id)
     pagerduty.delete()
 
-    return redirect(reverse('project', args=[application_id]))
+    return redirect(reverse('project_notifications', args=[application_id]))

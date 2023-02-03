@@ -18,35 +18,58 @@ from django.contrib.auth.views import LogoutView
 from django.conf import settings
 from django.urls import path, include
 
-from .views import public, restricted, badge
+from .views import restricted
 from alerts.api import webhook
-from projects.views import healthy
 from website.views import homepage
 from dashboard.views import dashboard
 
 from django.conf.urls.static import static
 
+from allauth.account.views import login
+
 urlpatterns = [
-    path('', homepage, name='homepage'),
-    path('dashboard/', dashboard, name='dashboard'),
-    path('status/<int:id>/', public, name='public'),
-    path('status/<int:id>/badge.svg', badge, name='badge'),
-    path('healthy/<int:id>/', healthy, name='healthy'),
-    path('alert/', webhook, name='alert'),
-    path('restricted/', restricted, name='restricted'),
-    path('admin/', admin.site.urls),
-
-    path('accounts/', include('allauth.urls')),
+    # """
+    # Project URLs
+    # """
+    path('', include('projects.urls')),
+    path('', include('availability.urls')),
+    path('', include('notifications.urls')),
+    path('', include('performances.urls')),
+    path('', include('status.urls')),
+    path('', include('website.urls')),
+    # monitor-worker api
     path('clients/', include('workers.urls')),
-    path('projects/', include('projects.urls')),
+    # Settings URL
     path('settings/', include('settings.urls')),
+    # User dahsboard with feed
+    path('dashboard/', dashboard, name='dashboard'),
+    # Login page from allauth with github button
+    path('login/', login, name='login'),
+    # Webhook to receive alerts
+    path('alert/', webhook, name='alert'),
+    # Display restricted message for user trying to login
+    path('restricted/', restricted, name='restricted'),
+    # Administration panel for super user in app
     path('administration/', include('administration.urls')),
-    path('api-auth/', include('rest_framework.urls')),
-    path('projects/<int:application_id>/notifications/', include('notifications.urls')),
 
+
+    # """
+    # Dependencies URLs
+    # """
+
+    # Django admin
+    path('admin/', admin.site.urls),
+    # Django allauth accounts
+    path('accounts/', include('allauth.urls')),
+    # Autentication API for rest_framework
+    path('api-auth/', include('rest_framework.urls')),
+    # Logout view
     path('logout/', LogoutView.as_view(), {'next_page': settings.LOGOUT_REDIRECT_URL}, name='logout'),
     # Django prometheus, adding /metrics url
     path('', include('django_prometheus.urls')),
     # Tailwind reload event
     path("__reload__/", include("django_browser_reload.urls")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

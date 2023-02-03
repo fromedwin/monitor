@@ -52,6 +52,7 @@ jobs:
           DOMAIN=fromedwin.com
           ENABLE_GZIP_COMPRESSION=true
           FORCE_HTTPS=True
+          LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES=1440
           SECRET_KEY=${{ secrets.SECRET_KEY }}
           SENTRY_ENVIRONMENT=production
           SENTRY_DSN=${{ secrets.SENTRY_DSN }}

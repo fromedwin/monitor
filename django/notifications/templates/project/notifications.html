@@ -1,0 +1,57 @@
+{% extends 'projects/project_view.html' %}
+{% load static socialaccount account tailwind_tags fromedwin_tags %}
+
+{% block html_head_title %}Notifications - {{ project.title }} - FromEdwin{% endblock %}
+
+{% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.2.2/dist/echarts.min.js" integrity="sha256-iJxB0L7blNZTAFBu/ESTfVaVTqFrTeISeWk7RUEePFY=" crossorigin="anonymous"></script>
+
+<script src="{% static 'prismjs/prism.js' %}"></script>
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'prismjs/prism.css' %}">
+{% endblock %}
+
+{% block subsection %}
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 pt-4">
+
+  {% for notification in project.pager_duty.all %}
+  <div class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-green-500">
+    <div class="flex-shrink-0">
+      <span class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-green-500">
+          <span class="text-lg font-medium leading-none text-white">P</span>
+        </span>
+    </div>
+    <div class="flex-1 min-w-0">
+      <a href="{% url 'pagerduty_edit' project.id notification.id %}" class="focus:outline-none">
+        <span class="absolute inset-0" aria-hidden="true"></span>
+        <p class="text-sm font-medium text-gray-900">
+          PagerDuty
+        </p>
+        <p class="text-sm text-gray-500 truncate">
+          {{ notification.routing_key }}
+        </p>
+      </a>
+    </div>
+  </div>
+  {% empty %}
+    <div class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-green-500">
+    <div class="flex-shrink-0">
+        <span class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-gray-500">
+          <span class="text-lg font-medium leading-none text-white">+</span>
+        </span>
+    </div>
+    <div class="flex-1 min-w-0">
+      <a href="{% url 'pagerduty_add' project.id %}" class="focus:outline-none">
+        <span class="absolute inset-0" aria-hidden="true"></span>
+        <p class="text-sm font-medium text-gray-900">
+          Add PagerDuty
+        </p>
+      </a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

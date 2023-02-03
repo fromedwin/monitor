@@ -3,13 +3,13 @@ groups:
   rules:{% verbatim %}
   - alert: InstanceDown
     expr: probe_success == 0
-    for: 0m
+    for: 2m
     labels:
       severity: warning
     annotations:
       summary: Instance {{ $labels.instance }} down
       description: '{{ $labels.instance }} of job {{ $labels.job }} has been down
-        for more than {% endverbatim %}{{ settings.IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES }} minutes.{% verbatim %}'
+        between 2 and {% endverbatim %}{{ settings.IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES }} minutes.{% verbatim %}'
   - alert: InstanceDown
     expr: probe_success == 0
     {% endverbatim %}for: {{ settings.IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES }}m{% verbatim %}
@@ -18,7 +18,7 @@ groups:
     annotations:
       summary: Instance {{ $labels.instance }} down
       description: '{{ $labels.instance }} of job {{ $labels.job }} has been down
-        for more than {% endverbatim %}{{ settings.IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES }} minutes.{% verbatim %}'
+        for less than {% endverbatim %}{{ settings.IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES }} minutes.{% verbatim %}'
 {% endverbatim %}{% for alert in alerts %}
   - alert: {{ alert.alert }}
     expr: {{ alert.expr }}

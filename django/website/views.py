@@ -19,6 +19,8 @@ def homepage(request):
     Home Welcome page
     """
     socialapps = SocialApp.objects.all()
+
     return render(request, 'homepage.html', {
         'socialapps': socialapps,
+        'is_authenticated': request.user.is_authenticated
     })
