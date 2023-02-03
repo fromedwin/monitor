@@ -140,6 +140,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.github',
+    # Django cleanup needs to be last !
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = (
