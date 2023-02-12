@@ -127,5 +127,5 @@ class Metrics(models.Model):
         on_delete = models.CASCADE,
         related_name = "metrics",
     )
-    url = models.URLField(max_length=512, blank=False)
+    url = models.URLField(max_length=512, blank=False, help_text="No tailing slash, or will break prometheus config file")
     is_enabled = models.BooleanField(default=True)
