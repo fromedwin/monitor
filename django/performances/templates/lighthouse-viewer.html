@@ -1,26 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Lighthouse Viewer</title>
-    <style>
-      html, body {
-        margin: 0;
-        padding: 0;
-      }
-    </style>
-    <script src="/static/lighthouse-viewer/lighthouse-viewer.umd.js"></script>
-  </head>
-  <body>
-    <div>
-	  <main id="lighthouse-viewer-element"></main>
-	</div>
+{% extends 'projects/project_view.html' %}
+{% load static socialaccount account tailwind_tags fromedwin_tags %}
+
+{% block html_head_title %}Report - {{ project.title }} - FromEdwin{% endblock %}
+
+{% block javascript %}
+<!-- <script src="{% static 'lighthouse-viewer/lighthouse-viewer-no-dark-mode.umd.js' %}"></script> -->
+{% endblock %}
+
+{% block subsection %}
+
+<div class="p-4">
+    <div class="pb-5 border-b border-gray-200 sm:flex sm:items-center sm:justify-between">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">
+        Report
+      </h3>
+      <div class="mt-3 sm:mt-0 sm:ml-4">
+      </div>
+    </div>
+    
+    <main id="lighthouse-viewer-element"></main>
+
+    <script src="{% static 'lighthouse-viewer/lighthouse-viewer-no-dark-mode.umd.js' %}"></script>
     <script>
-	    var json = {{ json|safe }};
-	    const app = document.getElementById('lighthouse-viewer-element');
-		const reportHtml = LighthouseViewer.renderReport(json, {});
-		app.appendChild(reportHtml);
+      var json = {{ json|safe }};
+      const app = document.getElementById('lighthouse-viewer-element');
+      const reportHtml = LighthouseViewer.renderReport(json, { omitTopbar: true });
+      app.appendChild(reportHtml);
     </script>
-  </body>
-</html>
+</div>
+{% endblock %}

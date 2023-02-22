@@ -78,10 +78,13 @@ def project_performances_report_viewer(request, id, report_id):
     """
     Show current project status
     """
+    
+    project = get_object_or_404(Project, pk=id)
 
     report = get_object_or_404(Report, pk=report_id)
     report_json = json.loads(report.report_json_file.read())
 
     return render(request, 'lighthouse-viewer.html', {
+        'project': project,
         'json': json.dumps(report_json),
     })
