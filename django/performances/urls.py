@@ -1,11 +1,13 @@
 from django.urls import path
 
 from .api import fetch_performance, save_report
-from .views import project_performances, performance_form, performance_delete
+from .views import project_performances, performance_form, performance_delete, project_performances_report_viewer
 
 urlpatterns = [
     # Display performances panel
     path('project/<int:id>/performances/', project_performances, name='project_performances'),
+    # Display performances panel
+    path('project/<int:id>/performances/report/<int:report_id>', project_performances_report_viewer, name='project_performances_report_viewer'),
     # Manage httpcode object, aka url to track
     path('project/<int:application_id>/performance/add', performance_form, name='performance_add'),
     path('project/<int:application_id>/performance/<int:performance_id>/edit', performance_form, name='performance_edit'),

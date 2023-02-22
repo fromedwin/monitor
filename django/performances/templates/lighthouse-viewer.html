@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lighthouse Viewer</title>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script src="/static/lighthouse-viewer/lighthouse-viewer.umd.js"></script>
+  </head>
+  <body>
+    <div>
+	  <main id="lighthouse-viewer-element"></main>
+	</div>
+    <script>
+	    var json = {{ json|safe }};
+	    const app = document.getElementById('lighthouse-viewer-element');
+		const reportHtml = LighthouseViewer.renderReport(json, {});
+		app.appendChild(reportHtml);
+    </script>
+  </body>
+</html>

@@ -6,9 +6,10 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
+from django.utils.safestring import SafeString
 
 from projects.models import Project
-from .models import Performance
+from .models import Performance, Report
 from .forms import PerformanceForm
 
 @login_required
@@ -71,3 +72,16 @@ def performance_delete(request, application_id, performance_id):
     performance.delete()
 
     return redirect(reverse('project_performances', args=[application_id]))
+
+@login_required
+def project_performances_report_viewer(request, id, report_id):
+    """
+    Show current project status
+    """
+
+    report = get_object_or_404(Report, pk=report_id)
+    report_json = json.loads(report.report_json_file.read())
+
+    return render(request, 'lighthouse-viewer.html', {
+        'json': json.dumps(report_json),
+    })
