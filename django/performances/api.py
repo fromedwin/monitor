@@ -32,7 +32,7 @@ def fetch_performance(request, server_id):
     """
     get_object_or_404(Server, uuid=server_id)
 
-    performance = Performance.objects.filter(Q(last_request_date__isnull=True) | Q(last_request_date__lt=timezone.now()-timedelta(minutes=settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES))).order_by('-creation_date')
+    performance = Performance.objects.filter(Q(last_request_date__isnull=True) | Q(last_request_date__lt=timezone.now()-timedelta(minutes=settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES))).order_by('last_request_date')
 
     # If no performance to work on, we return empty json 
     if performance:
