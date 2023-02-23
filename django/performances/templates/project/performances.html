@@ -99,6 +99,12 @@
                       </td>
                       <td colspan="5" class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
 
+                        {% if performance.request_run %}
+                        <div disabled="disabled" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 opacity-40">Waiting</div>
+                        {% else %}
+                        <a href="{% url 'performance_rerun' project.id performance.id %}" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">Request new run</a>
+                        {% endif %}
+
                         <a href="{% url 'project_performances_report_viewer' project.id report.id %}" class="inline-flex items-center rounded-md border border-transparent bg-green-100 px-3 py-2 text-sm font-medium leading-4 text-green-700 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">See Report</a>
 
                         <a href="{{ report.report_json_file.url }}" class="inline-flex items-center rounded-md border border-transparent bg-green-100 px-3 py-2 text-sm font-medium leading-4 text-green-700 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">See JSON</a>

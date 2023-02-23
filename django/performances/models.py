@@ -16,6 +16,7 @@ class Performance(models.Model):
     )
     url = models.URLField(max_length=512, blank=False, help_text="Should start with http:// or https://")
     creation_date = models.DateTimeField(auto_now_add=True, editable=False, help_text="Creation date")
+    request_run = models.BooleanField(default=False, help_text="Request a run")
     last_request_date = models.DateTimeField(blank=True, null=True, help_text="Last request date")
 
     @property

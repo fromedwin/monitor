@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .api import fetch_performance, save_report
-from .views import project_performances, performance_form, performance_delete, project_performances_report_viewer
+from .views import project_performances, performance_form, performance_delete, project_performances_report_viewer, performance_rerun
 
 urlpatterns = [
     # Display performances panel
@@ -12,6 +12,7 @@ urlpatterns = [
     path('project/<int:application_id>/performance/add', performance_form, name='performance_add'),
     path('project/<int:application_id>/performance/<int:performance_id>/edit', performance_form, name='performance_edit'),
     path('project/<int:application_id>/performance/<int:performance_id>/delete', performance_delete, name='performance_delete'),
+    path('project/<int:application_id>/performance/<int:performance_id>/rerun', performance_rerun, name='performance_rerun'),
 
     # As a server, return the next performance url to run
     path('api/request/<uuid:server_id>/performance', fetch_performance, name='fetch_performance'),
