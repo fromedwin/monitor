@@ -97,5 +97,6 @@ def project_performances_report_viewer(request, id, report_id):
 
     return render(request, 'lighthouse-viewer.html', {
         'project': project,
+        'report': report,
         'json': json.dumps(report_json),
     })
