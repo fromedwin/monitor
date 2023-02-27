@@ -69,6 +69,7 @@ def performance_delete(request, application_id, performance_id):
     """
 
     performance = get_object_or_404(Performance, pk=performance_id)
+    performance.delete()
 
     return redirect(reverse('project_performances', args=[application_id]))
 
