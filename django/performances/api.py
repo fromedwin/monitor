@@ -39,7 +39,6 @@ def fetch_performance(request, server_id):
         performance = performance[0]
 
         performance.last_request_date = timezone.now()
-        performance.request_run = False
         performance.save()
 
         return JsonResponse({
@@ -94,5 +93,9 @@ def save_report(request, server_id, performance_id):
         report_json_file = report_json_file,
     )
     report.save()
+
+    # Set performance as not requested anymore
+    performance.request_run = False
+    performance.save()
 
     return JsonResponse({})
