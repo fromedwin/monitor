@@ -6,6 +6,80 @@
 {% block javascript %}
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.2.2/dist/echarts.min.js" integrity="sha256-iJxB0L7blNZTAFBu/ESTfVaVTqFrTeISeWk7RUEePFY=" crossorigin="anonymous"></script>
 <script src="{% static 'prismjs/prism.js' %}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    var gauges = document.getElementsByClassName('echartgauge');
+    [...gauges].forEach((element) => {
+      var score = parseFloat(element.getAttribute('data-score'));
+      // console.log(score);
+
+      if (isNaN(score)) {
+        console.log(element);
+      } else {
+        var value = Math.round(score*100);
+        var color = 'rgb(220, 38, 38)'; // red
+        if (value > 90) {
+          color = 'rgb(5, 150, 105)'; // green
+        } else if (value > 50) {
+          color = 'rgb(217, 119, 6)'; // orange
+        }
+
+        var option = {
+          series: [
+            {
+              startAngle: 90,
+              endAngle: -270,
+              type: 'gauge',
+              progress: {
+                show: true,
+                width: 3
+              },
+              axisLine: {
+                lineStyle: {
+                  width: 3,
+                }
+              },
+              axisTick: {
+                show: false
+              },
+              splitLine: {
+                show: false
+              },
+              axisLabel: {
+                show: false
+              },
+              pointer: {
+                show: false
+              },
+              anchor: {
+                show: false
+              },
+              title: {
+                show: false
+              },
+              detail: {
+                valueAnimation: true,
+                fontSize: 12,
+                color: color,
+                offsetCenter: [0, '0%']
+              },
+              itemStyle: {
+                color: color
+              },
+              data: [
+                {
+                  value: value
+                }
+              ]
+            }
+          ]
+        };
+        var myChart = echarts.init(element, null, {renderer: 'svg'});
+        option && myChart.setOption(option);
+      }
+    });
+  });
+</script>
 {% endblock %}
 
 {% block css %}
@@ -39,23 +113,8 @@
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Website
                     </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Performance
+                    <th colspan="7" scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Accessibility
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Best practices
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      SEO
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      PWA
-                    </th>
-                    <th></th>
-                    <th></th>
                   </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -75,25 +134,40 @@
                               </div>
                             </div>
                           </td>
-                          <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">{{ report.score_performance }}<div>
-                          </td>
-                          <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">{{ report.score_accessibility }}<div>
-                          </td>
-                          <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">{{ report.score_best_practices }}<div>
-                          </td>
-                          <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">{{ report.score_seo }}<div>
-                          </td>
-                          <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">{{ report.score_pwa }}<div>
-                          </td>
                           <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div class="inline mt-2 flex items-center text-sm text-gray-500">
                               {{ report.creation_date|timesince}} ago
                             </div>
+                          </td>
+                          <td class="whitespace-nowrap">
+                            <a href="{% url 'project_performances_report_viewer' project.id report.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+                              <div class="echartgauge" data-score="{{ report.score_performance }}"></div>
+                              <p class="text-xs">Performances</p>
+                            </a>
+                          </td>
+                          <td class="whitespace-nowrap">
+                            <a href="{% url 'project_performances_report_viewer' project.id report.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+                              <div class="echartgauge" data-score="{{ report.score_accessibility }}"></div>
+                              <p class="text-xs">Accessibility</p>
+                            <a>
+                          </td>
+                          <td class="whitespace-nowrap">
+                            <a href="{% url 'project_performances_report_viewer' project.id report.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+                              <div class="echartgauge" data-score="{{ report.score_best_practices }}"></div>
+                              <p class="text-xs">Best practices</p>
+                            </a>
+                          </td>
+                          <td class="whitespace-nowrap">
+                            <a href="{% url 'project_performances_report_viewer' project.id report.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+                              <div class="echartgauge" data-score="{{ report.score_seo }}"></div>
+                              <p class="text-xs">SEO</p>
+                            </a>
+                          </td>
+                          <td class="whitespace-nowrap">
+                            <a href="{% url 'project_performances_report_viewer' project.id report.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+                              <div class="echartgauge" data-score="{{ report.score_pwa }}"></div>
+                              <p class="text-xs">PWA</p>
+                            </a>
                           </td>
                           <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
 
