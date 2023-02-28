@@ -11,72 +11,99 @@
     var gauges = document.getElementsByClassName('echartgauge');
     [...gauges].forEach((element) => {
       var score = parseFloat(element.getAttribute('data-score'));
-      // console.log(score);
+      var red = 'rgb(220, 38, 38)';
+      var green = 'rgb(5, 150, 105)';
+      var orange = 'rgb(217, 119, 6)';
 
+      // Echarts options
+      var serie = {
+        startAngle: 90,
+        endAngle: -270,
+        type: 'gauge',
+        progress: {
+          show: true,
+          width: 3
+        },
+        axisLine: {
+          lineStyle: {
+            width: 3,
+          }
+        },
+        axisTick: {
+          show: false
+        },
+        splitLine: {
+          show: false
+        },
+        axisLabel: {
+          show: false
+        },
+        pointer: {
+          show: false
+        },
+        anchor: {
+          show: false
+        },
+        title: {
+          show: false
+        },
+      };
+
+      // Is lighthouse failed measuring score
       if (isNaN(score)) {
-        console.log(element);
-      } else {
-        var value = Math.round(score*100);
-        var color = 'rgb(220, 38, 38)'; // red
-        if (value > 90) {
-          color = 'rgb(5, 150, 105)'; // green
-        } else if (value > 50) {
-          color = 'rgb(217, 119, 6)'; // orange
-        }
-
-        var option = {
-          series: [
+        serie = Object.assign({}, serie, {
+          title: {
+            offsetCenter: [0, '0%'],
+            fontSize: 14,
+            color: red,
+          },
+          itemStyle: {
+            color: red,
+          },
+          detail: {
+            show: false,
+          },
+          data: [
             {
-              startAngle: 90,
-              endAngle: -270,
-              type: 'gauge',
-              progress: {
-                show: true,
-                width: 3
-              },
-              axisLine: {
-                lineStyle: {
-                  width: 3,
-                }
-              },
-              axisTick: {
-                show: false
-              },
-              splitLine: {
-                show: false
-              },
-              axisLabel: {
-                show: false
-              },
-              pointer: {
-                show: false
-              },
-              anchor: {
-                show: false
-              },
-              title: {
-                show: false
-              },
-              detail: {
-                valueAnimation: true,
-                fontSize: 12,
-                color: color,
-                offsetCenter: [0, '0%']
-              },
-              itemStyle: {
-                color: color
-              },
-              data: [
-                {
-                  value: value
-                }
-              ]
+              value: 100,
+              name: '--'
             }
           ]
-        };
-        var myChart = echarts.init(element, null, {renderer: 'svg'});
-        option && myChart.setOption(option);
+        });
+      } else {
+        // We read data-score attribute to get score
+        var value = Math.round(score*100);
+
+        var color = red;
+        if (value > 90) {
+          color = green;
+        } else if (value > 50) {
+          color = orange;
+        }
+
+        serie = Object.assign({}, serie, {
+          detail: {
+            valueAnimation: true,
+            fontSize: 12,
+            color: color,
+            offsetCenter: [0, '0%']
+          },
+          itemStyle: {
+            color: color
+          },
+          data: [
+            {
+              value: value
+            }
+          ]
+        });
       }
+
+      // Init echarts with options generated with serie data
+      var myChart = echarts.init(element, null, {renderer: 'svg'});
+      serie && myChart.setOption({
+        series: [ serie ]
+      });
     });
   });
 </script>
