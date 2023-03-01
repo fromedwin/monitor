@@ -9,7 +9,11 @@
 		    <div class="flex items-center">
 		      <div class="ml-4">
 		        <div class="text-sm font-medium text-gray-900">
-		          /{{ child.path }}
+		        	{% if child.depth == 0 %}
+		        		<a href="{{ child.performance.url }}">/</a>
+		        	{% else %}
+		          		<a href="{{ child.performance.url }}"><span class="text-gray-400 italic text-sm pr-1">/{{child.path_parent}}</span>{{ child.path_without_parent }}</a>
+		        	{% endif %}
 		        </div>
 		      </div>
 		    </div>

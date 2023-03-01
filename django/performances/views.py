@@ -35,10 +35,10 @@ def project_performances(request, id):
                 'tree': []
             }
 
-        # Recursive function parsing all pages at that level looking if it starts with path
-        # If yes it run on children array
-        # If none we create a new page at that level
-        def find_page(pages, performance, depth=0):
+        """
+            fund_page for each page will look for the proper depth to add it.
+        """
+        def find_page(pages, performance, depth=0, path_parent=''):
             # print('FIND_PAGE', pages, performance)
             path = '/'.join(performance.url.split('/')[3:])
 
@@ -47,17 +47,19 @@ def project_performances(request, id):
                     page_path = '/'.join(page['performance'].url.split('/')[3:])
                     # If root url is in pages, we go to children level directly
                     if page_path is '':
-                        find_page(page['children'], performance, depth+1)
+                        find_page(page['children'], performance, depth+1, page_path)
                         return
                     else:
                         if path.startswith(page_path):
                             if path != page_path:
-                                find_page(page['children'], performance, depth+1)
+                                find_page(page['children'], performance, depth+1, page_path)
                             return
 
             pages.append({
                 'performance': performance,
                 'path': path,
+                'path_parent': path_parent,
+                'path_without_parent': path.replace(path_parent, ''),
                 'depth': depth,
                 'children': [],
             })
