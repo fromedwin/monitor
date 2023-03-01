@@ -1,11 +1,10 @@
 <ul>
 {% for child in children %}
 	<li>
-	{% if child.performance.reports.all %}
-		{% with report=child.performance.reports.all.last %}
-
 		<div class="flex align-middle">
-			<div class="flex items-center"><img src="{{ report.screenshot.url }}" style="max-height: 4em" /></div>
+			{% if child.report %}
+			<div class="flex items-center"><img src="{{ child.report.screenshot.url }}" style="max-height: 4em" /></div>
+			{% endif %}
 			<div class="px-3 text-sm font-medium text-gray-900 flex-grow flex items-center">
 	        	<p>{% if child.depth == 0 %}
 	        		<a href="{{ child.performance.url }}">/</a>
@@ -15,30 +14,61 @@
 	        </div>
 
 		    <div class="inline mt-2 flex items-center text-sm text-gray-500 px-3">
-		      {{ report.creation_date|timesince}} ago
+	        	{% if child.performance.request_run %}
+	        	Waiting for a new run
+		    	{% elif child.report %}
+		      	{{ child.report.creation_date|timesince}} ago
+	        	{% else %}
+	        	Waiting for first report
+	        	{% endif %}
 		    </div>
 	        <div class="flex flex-row px-3 py-2">
-			    <a href="{% url 'project_performances_report_viewer' project.id report.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
-			      <div class="echartgauge" data-score="{{ report.score_performance }}"></div>
+	        	{% if child.report %}
+			    <a href="{% url 'project_performances_report_viewer' project.id child.report.id %}#performance" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			      <div class="echartgauge" data-score="{{ child.report.score_performance }}"></div>
 			      <p class="text-xs">Performances</p>
 			    </a>
 
-			    <a href="{% url 'project_performances_report_viewer' project.id report.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
-			      <div class="echartgauge" data-score="{{ report.score_accessibility }}"></div>
+			    <a href="{% url 'project_performances_report_viewer' project.id child.report.id %}#accessibility" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			      <div class="echartgauge" data-score="{{ child.report.score_accessibility }}"></div>
 			      <p class="text-xs">Accessibility</p>
 			    </a>
-			    <a href="{% url 'project_performances_report_viewer' project.id report.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
-			      <div class="echartgauge" data-score="{{ report.score_best_practices }}"></div>
+			    <a href="{% url 'project_performances_report_viewer' project.id child.report.id %}#best-practices" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			      <div class="echartgauge" data-score="{{ child.report.score_best_practices }}"></div>
 			      <p class="text-xs">Best practices</p>
 			    </a>
-			    <a href="{% url 'project_performances_report_viewer' project.id report.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
-			      <div class="echartgauge" data-score="{{ report.score_seo }}"></div>
+			    <a href="{% url 'project_performances_report_viewer' project.id child.report.id %}#seo" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			      <div class="echartgauge" data-score="{{ child.report.score_seo }}"></div>
 			      <p class="text-xs">SEO</p>
 			    </a>
-			    <a href="{% url 'project_performances_report_viewer' project.id report.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
-			      <div class="echartgauge" data-score="{{ report.score_pwa }}"></div>
+			    <a href="{% url 'project_performances_report_viewer' project.id child.report.id %}#pwa" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			      <div class="echartgauge" data-score="{{ child.report.score_pwa }}"></div>
 			      <p class="text-xs">PWA</p>
 			    </a>
+
+	        	{% else %}
+	        	<div class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			      <div class="echartgauge" data-score="--"></div>
+			      <p class="text-xs">Performances</p>
+			    </div>
+
+			    <div class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			      <div class="echartgauge" data-score="--"></div>
+			      <p class="text-xs">Accessibility</p>
+			    </div>
+			    <div class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			      <div class="echartgauge" data-score="--"></div>
+			      <p class="text-xs">Best practices</p>
+			    </div>
+			    <div class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			      <div class="echartgauge" data-score="--"></div>
+			      <p class="text-xs">SEO</p>
+			    </div>
+			    <div class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			      <div class="echartgauge" data-score="--"></div>
+			      <p class="text-xs">PWA</p>
+			    </div>
+	        	{% endif %}
 	        </div>
 	        <div class="flex items-center space-x-1">
 
@@ -54,12 +84,14 @@
 				  </div>
 				  <div id="performance-{{ child.performance.id }}-dropdown" class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
 				    <div class="py-1" role="none">
-				      <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
+				    {% if child.report %}
 				      {% if child.performance.request_run %}<a href="{% url 'performance_rerun' project.id child.performance.id %}" disabled="disabled" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-0">Waiting</a>
 				      {% else %}
 				      <a href="{% url 'performance_rerun' project.id child.performance.id %}" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-0">Request new run</a>
 				      {% endif %}
-				      <a href="{% url 'project_performances_report_viewer' project.id report.id %}" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-1">See Report</a>
+
+				      <a href="{% url 'project_performances_report_viewer' project.id child.report.id %}" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-1">See Report</a>
+				      {% endif %}
 				      <a href="{% url 'performance_edit' project.id child.performance.id %}" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-2">Edit</a>
 				    </div>
 				  </div>
@@ -80,26 +112,6 @@
 				</script>
 	        </div>
 		</div>
-		{% endwith %}
-
-	{% else %}
-		<div class="flex align-middle">
-			<div class="flex items-center"><img src="{{ report.screenshot.url }}" style="max-height: 4em" /></div>
-			<div class="px-3 text-sm font-medium text-gray-900 flex-grow flex items-center">
-	        	<p>{{ child.performance.url }}</p>
-	        </div>
-
-		    <div class="inline mt-2 flex items-center text-sm text-gray-500 px-3">
-		      {{ child.performance.status }}
-		    </div>
-	        <div class="flex flex-row px-3 py-2">
-			   
-	        </div>
-	        <div class="flex items-center space-x-1">
-			    <a href="{% url 'performance_edit' project.id child.performance.id %}" class="text-green-600 hover:text-green-900">Edit</a>
-	        </div>
-		</div>
-	{% endif %}
 
 	{% if child.children %}
 		{% include "project/performances_include.html" with children=child.children %}

@@ -14,6 +14,7 @@
       var red = 'rgb(220, 38, 38)';
       var green = 'rgb(5, 150, 105)';
       var orange = 'rgb(217, 119, 6)';
+      var grey = 'rgb(200, 200, 200)';
 
       // Echarts options
       var serie = {
@@ -51,25 +52,48 @@
 
       // Is lighthouse failed measuring score
       if (isNaN(score)) {
-        serie = Object.assign({}, serie, {
-          title: {
-            offsetCenter: [0, '0%'],
-            fontSize: 16,
-            color: red,
-          },
-          itemStyle: {
-            color: red,
-          },
-          detail: {
-            show: false,
-          },
-          data: [
-            {
-              value: 100,
-              name: '?'
-            }
-          ]
-        });
+        if (element.getAttribute('data-score') == '--') {
+          serie = Object.assign({}, serie, {
+            title: {
+              offsetCenter: [0, '0%'],
+              fontSize: 16,
+              color: grey,
+            },
+            itemStyle: {
+              color: grey,
+            },
+            detail: {
+              show: false,
+            },
+            data: [
+              {
+                value: 0,
+                name: '--'
+              }
+            ]
+          });
+        } else {
+
+          serie = Object.assign({}, serie, {
+            title: {
+              offsetCenter: [0, '0%'],
+              fontSize: 16,
+              color: red,
+            },
+            itemStyle: {
+              color: red,
+            },
+            detail: {
+              show: false,
+            },
+            data: [
+              {
+                value: 100,
+                name: '?'
+              }
+            ]
+          });
+        }
       } else {
         // We read data-score attribute to get score
         var value = Math.round(score*100);

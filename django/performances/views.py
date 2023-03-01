@@ -61,6 +61,7 @@ def project_performances(request, id):
                 'path_parent': path_parent,
                 'path_without_parent': path.replace(path_parent, ''),
                 'depth': depth,
+                'report': None if not performance.reports.all else performance.reports.all().last(),
                 'children': [],
             })
 
