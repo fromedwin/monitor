@@ -20,8 +20,55 @@ def project_performances(request, id):
 
     project = get_object_or_404(Project, pk=id)
 
+    domains = {} # List of all domains
+
+    # For each performance object we extract the url and index by domain 
+    for performance in project.performances.all().order_by('url'):
+        
+        # Extract domain from url
+        domain = performance.url.split('/')[2]
+
+        # if new domain, we create a default object
+        if not domains.get(domain):
+            domains[domain] = {
+                'url': domain,
+                'tree': []
+            }
+
+        # Recursive function parsing all pages at that level looking if it starts with path
+        # If yes it run on children array
+        # If none we create a new page at that level
+        def find_page(pages, performance, depth=0):
+            # print('FIND_PAGE', pages, performance)
+            path = '/'.join(performance.url.split('/')[3:])
+
+            if path is not '': #For root url we add directly
+                for page in pages:
+                    page_path = '/'.join(page['performance'].url.split('/')[3:])
+                    # If root url is in pages, we go to children level directly
+                    if page_path is '':
+                        find_page(page['children'], performance, depth+1)
+                        return
+                    else:
+                        if path.startswith(page_path):
+                            if path != page_path:
+                                find_page(page['children'], performance, depth+1)
+                            return
+
+            pages.append({
+                'performance': performance,
+                'path': path,
+                'depth': depth,
+                'children': [],
+            })
+
+        # We start with the root page
+        find_page(domains[domain]['tree'], performance)
+
+
     return render(request, 'project/performances.html', {
         'project': project,
+        'domains': domains,
     })
 
 

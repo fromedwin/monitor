@@ -1,0 +1,93 @@
+{% for child in children %}
+	{% if child.performance.reports.all %}
+		{% with report=child.performance.reports.all.last %}
+		<tr>
+		  <td class="px-6 py-4 whitespace-nowrap">
+		    <img src="{{ report.screenshot.url }}" style="max-height: 4em" />
+		  </td>
+		  <td class="px-6 py-4 whitespace-nowrap">
+		    <div class="flex items-center">
+		      <div class="ml-4">
+		        <div class="text-sm font-medium text-gray-900">
+		          /{{ child.path }}
+		        </div>
+		      </div>
+		    </div>
+		  </td>
+		  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+		    <div class="inline mt-2 flex items-center text-sm text-gray-500">
+		      {{ report.creation_date|timesince}} ago
+		    </div>
+		  </td>
+		  <td class="whitespace-nowrap">
+		    <a href="{% url 'project_performances_report_viewer' project.id report.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+		      <div class="echartgauge" data-score="{{ report.score_performance }}"></div>
+		      <p class="text-xs">Performances</p>
+		    </a>
+		  </td>
+		  <td class="whitespace-nowrap">
+		    <a href="{% url 'project_performances_report_viewer' project.id report.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+		      <div class="echartgauge" data-score="{{ report.score_accessibility }}"></div>
+		      <p class="text-xs">Accessibility</p>
+		    <a>
+		  </td>
+		  <td class="whitespace-nowrap">
+		    <a href="{% url 'project_performances_report_viewer' project.id report.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+		      <div class="echartgauge" data-score="{{ report.score_best_practices }}"></div>
+		      <p class="text-xs">Best practices</p>
+		    </a>
+		  </td>
+		  <td class="whitespace-nowrap">
+		    <a href="{% url 'project_performances_report_viewer' project.id report.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+		      <div class="echartgauge" data-score="{{ report.score_seo }}"></div>
+		      <p class="text-xs">SEO</p>
+		    </a>
+		  </td>
+		  <td class="whitespace-nowrap">
+		    <a href="{% url 'project_performances_report_viewer' project.id report.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+		      <div class="echartgauge" data-score="{{ report.score_pwa }}"></div>
+		      <p class="text-xs">PWA</p>
+		    </a>
+		  </td>
+		  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+
+		    {% if child.performance.request_run %}
+		    <div disabled="disabled" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 opacity-40">Waiting</div>
+		    {% else %}
+		    <a href="{% url 'performance_rerun' project.id child.performance.id %}" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">Request new run</a>
+		    {% endif %}
+
+		    <a href="{% url 'project_performances_report_viewer' project.id report.id %}" class="inline-flex items-center rounded-md border border-transparent bg-green-100 px-3 py-2 text-sm font-medium leading-4 text-green-700 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">See Report</a>
+
+		    <a href="{% url 'performance_edit' project.id child.performance.id %}"class="inline-flex items-center rounded-md border border-transparent bg-green-100 px-3 py-2 text-sm font-medium leading-4 text-green-700 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">Edit</a>
+		  </td>
+		</tr>
+		{% endwith %}
+
+	{% else %}
+	  <tr>
+	    <td></td>
+	    <td class="px-6 py-4 whitespace-nowrap">
+	      <div class="flex items-center">
+	        <div class="ml-4">
+	          <div class="text-sm font-medium text-gray-900">
+	            {{ child.performance.url }}
+	          </div>
+	        </div>
+	      </div>
+	    </td>
+	    <td colspan="5" class="px-6 py-4 whitespace-nowrap">
+	      <div class="text-sm text-gray-900">{{ child.performance.status }}<div>
+	    </td>
+	    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+	      <a href="{% url 'performance_edit' project.id child.performance.id %}" class="text-green-600 hover:text-green-900">Edit</a>
+	    </td>
+	  </tr>
+	{% endif %}
+
+	{% if child.children %}
+		{% include "project/performances_include.html" with children=child.children %}
+	{% endif %}
+{% endfor %}
+
+<!--  -->
