@@ -1,0 +1,43 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+.echartgauge {
+	height: 60px;
+	width: 60px;
+	margin: auto;
+}
+
+.performance_tree {
+	ul > li > ul {
+		padding-left: 40px;
+
+		li {
+			position: relative;
+			&:before {
+				content: '';
+				position: absolute;
+				left: -20px;
+				top: 0;
+				bottom: 0px;
+				border-left: solid 2px #dedede;
+			}
+			&:last-child:before {
+				bottom: auto;
+				height: 50px;
+			}
+			&:after {
+				content: '';
+				position: absolute;
+				left: -20px;
+				top: 50px;
+				width: 15px;
+				height: 2px;
+				border-top: solid 2px #dedede;
+			}
+		}
+	}
+	a .echartgauge * {
+		cursor: pointer;
+	}
+}

@@ -1,9 +1,0 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
-
-.echartgauge {
-	height: 60px;
-	width: 60px;
-	margin: auto;
-}
