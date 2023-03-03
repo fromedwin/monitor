@@ -133,7 +133,7 @@ def performance_rerun(request, application_id, performance_id):
     performance.request_run = True
     performance.save()
 
-    return redirect(reverse('project_performances', args=[application_id]))
+    return redirect(reverse('project_performances', args=[application_id])+'#noanimations')
 
 @login_required
 def project_performances_report_viewer(request, id, report_id):

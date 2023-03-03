@@ -15,6 +15,7 @@
       var green = 'rgb(5, 150, 105)';
       var orange = 'rgb(217, 119, 6)';
       var grey = 'rgb(200, 200, 200)';
+      var animation = window.location.hash !== '#noanimations';
 
       // Echarts options
       var serie = {
@@ -23,12 +24,12 @@
         type: 'gauge',
         progress: {
           show: true,
-          width: 3
+          width: 3,
         },
         axisLine: {
           lineStyle: {
             width: 3,
-          }
+          },
         },
         axisTick: {
           show: false
@@ -68,7 +69,7 @@
             data: [
               {
                 value: 0,
-                name: '--'
+                name: '--',
               }
             ]
           });
@@ -89,7 +90,7 @@
             data: [
               {
                 value: 100,
-                name: '?'
+                name: '?',
               }
             ]
           });
@@ -107,17 +108,17 @@
 
         serie = Object.assign({}, serie, {
           detail: {
-            valueAnimation: true,
+            valueAnimation: animation,
             fontSize: 12,
             color: color,
-            offsetCenter: [0, '0%']
+            offsetCenter: [0, '0%'],
           },
           itemStyle: {
-            color: color
+            color: color,
           },
           data: [
             {
-              value: value
+              value: value,
             }
           ]
         });
@@ -126,7 +127,8 @@
       // Init echarts with options generated with serie data
       var myChart = echarts.init(element, null, {renderer: 'svg'});
       serie && myChart.setOption({
-        series: [ serie ]
+        series: [ serie ],
+        animation: animation,
       });
     });
   });
