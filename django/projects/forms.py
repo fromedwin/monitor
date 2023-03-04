@@ -33,7 +33,6 @@ class ProjectCreateForm(ModelForm):
 
         url = self.cleaned_data['url'].replace('https://', '').replace('http://', '')
 
-        print(self.cleaned_data['scheme'], self.cleaned_data['scheme'] == 'https', url)
         if self.cleaned_data['scheme'] == 'https':
             url = 'https://' + url
         else:
