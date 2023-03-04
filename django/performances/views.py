@@ -25,6 +25,10 @@ def project_performances(request, id):
     # For each performance object we extract the url and index by domain 
     for performance in project.performances.all().order_by('url'):
         
+        # If performance.url does not start with http:// or https:// we add it at the beginning
+        if not performance.url.startswith('http://') and not performance.url.startswith('https://'):
+            performance.url = 'https://' + performance.url
+
         # Extract domain from url
         domain = performance.url.split('/')[2]
 
@@ -73,7 +77,6 @@ def project_performances(request, id):
         'project': project,
         'domains': domains,
     })
-
 
 @login_required
 def performance_form(request, application_id, performance_id=None):
