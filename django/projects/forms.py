@@ -32,19 +32,19 @@ class ProjectCreateForm(ModelForm):
             raise Exception('User is required')
 
         url = self.cleaned_data['url'].replace('https://', '').replace('http://', '')
-
+        domain = url
         if self.cleaned_data['scheme'] == 'https':
             url = 'https://' + url
         else:
             url = 'http://' + url
 
         project = super(ProjectCreateForm, self).save(commit=False)
-        project.title = url.replace('https://', '').replace('http://', '')
+        project.title = domain
         project.user = user
         project.save()
 
         performance = Performance.objects.create(url=url, project=project)
-        service = Service.objects.create(project=project, title="Website")
+        service = Service.objects.create(project=project, title=domain)
         availability = HTTPCodeService.objects.create(url=url, service=service)
 
         return project
