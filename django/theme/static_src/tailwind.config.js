@@ -14,7 +14,18 @@ module.exports = {
      * Set mode to "aot" if you want to generate the stylesheet in advance and purge later (aka legacy mode).
      */
     mode: "jit",
-
+    content: [
+        // Templates within theme app (e.g. base.html)
+        '../templates/**/*.html',
+        // Templates in other apps
+        '../../templates/**/*.html',
+        // Ignore files in node_modules
+        '!../../**/node_modules',
+        // Include JavaScript files that might contain Tailwind CSS classes
+        '../../**/*.js',
+        // Include Python files that might contain Tailwind CSS classes
+        '../../**/*.py'
+    ],
     purge: [
         /**
          * HTML. Paths to Django template files that will contain Tailwind CSS classes.

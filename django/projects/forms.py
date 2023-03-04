@@ -1,4 +1,4 @@
-from django.forms import ModelForm, URLField
+from django.forms import ModelForm, URLField, CharField
 from .models import Project
 from performances.models import Performance
 from availability.models import Service, HTTPCodeService 
@@ -11,17 +11,17 @@ class ProjectForm(ModelForm):
 class ProjectCreateForm(ModelForm):
 
     # Django form expecting a URLFirld
-    url = URLField()
+    url = URLField(help_text="URL must start with http:// or https://")
+    scheme = CharField(max_length=5, help_text="URL must start with http:// or https://")
 
     class Meta:
         model = Project
-        fields = ['url']
+        fields = ['url', 'scheme']
 
-    # Clean url value on submit form by checking and adding https:// if missing
     def clean_url(self):
         url = self.cleaned_data['url']
         if not url.startswith('http://') and not url.startswith('https://'):
-            url = 'https://' + url
+            raise forms.ValidationError('URL must start with http:// or https://')
         return url
 
     # Override save method to save the project title with the url value
@@ -31,7 +31,13 @@ class ProjectCreateForm(ModelForm):
         if not user:
             raise Exception('User is required')
 
-        url = self.cleaned_data['url']
+        url = self.cleaned_data['url'].replace('https://', '').replace('http://', '')
+
+        print(self.cleaned_data['scheme'], self.cleaned_data['scheme'] == 'https', url)
+        if self.cleaned_data['scheme'] == 'https':
+            url = 'https://' + url
+        else:
+            url = 'http://' + url
 
         project = super(ProjectCreateForm, self).save(commit=False)
         project.title = url.replace('https://', '').replace('http://', '')
