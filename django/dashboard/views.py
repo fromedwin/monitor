@@ -17,6 +17,10 @@ from alerts.models import GenericIncident, InstanceDownIncident, ProjectIncident
 @login_required
 def dashboard(request):
 
+    # If user has no project we redirect to /welcome/
+    if not request.user.applications.all():
+        return redirect('projects_welcome')
+
     activities = InstanceDownIncident\
         .objects\
         .filter(service__project__in=request.user.applications.all(), endsAt__isnull=False)\

@@ -5,7 +5,7 @@ from alerts.views import incidents
 
 urlpatterns = [
     # Welcome page
-    path('welcome', projects_welcome, name='projects_welcome'),
+    path('welcome/', projects_welcome, name='projects_welcome'),
     # List of all projects
     path('projects/', projects, name='projects'),
     # Add form to create a new project
