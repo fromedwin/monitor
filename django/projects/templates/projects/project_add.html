@@ -3,7 +3,7 @@
 {% block html_head_title %}Projects - FromEdwin{% endblock %}
 
 {% block content %}
-<form id="form" onSubmit="return onSubmit();" method="POST" class="space-y-8 divide-y divide-gray-200">
+<form method="POST" class="space-y-8 divide-y divide-gray-200">
   <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
     <div>
       <div>
@@ -44,10 +44,6 @@
     </div>
   </div>
 
-  <div id="loading"> 
-    
-  </div>
-
   <div class="pt-5 flex justify-between">
     <div class="flex justify-end">
       <a href="{% if application %}{% url 'project' application.id %}{% else %}{% url 'projects' %}{% endif %}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
@@ -62,85 +58,3 @@
 
 {% endblock %}
 
-
-{% block javascript %}
-<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.1/dist/echarts.min.js" crossorigin="anonymous"></script>
-<script>
-  function onSubmit() {
-
-    document.getElementById('form').classList.add('loading');
-    startLoadingAnimation();
-    // Show loading animation
-    setTimeout(() => {
-      window.location.href = '{% url 'projects' %}';
-    }, 3000);
-
-    // Disable default onSubmit event
-    // return false;
-  }
-
-  function startLoadingAnimation() {
-
-    var myChart = echarts.init(document.getElementById('loading'), null, {
-      renderer: 'svg'
-    });
-    myChart.setOption({
-      graphic: {
-        elements: [
-          {
-            type: 'group',
-            left: 'center',
-            top: 'center',
-            children: new Array(7).fill(0).map((val, i) => ({
-              type: 'rect',
-              x: i * 20,
-              shape: {
-                x: 0,
-                y: -40,
-                width: 10,
-                height: 80
-              },
-              style: {
-                fill: 'rgb(5, 150, 105)'
-              },
-              keyframeAnimation: {
-                duration: 1000,
-                delay: i * 200,
-                loop: true,
-                keyframes: [
-                  {
-                    percent: 0.5,
-                    scaleY: 0.3,
-                    easing: 'cubicIn'
-                  },
-                  {
-                    percent: 1,
-                    scaleY: 1,
-                    easing: 'cubicOut'
-                  }
-                ]
-              }
-            }))
-          }
-        ]
-      }});
-  }
-</script>
-{% endblock %}
-
-{% block css %}
-<style>
-  form {
-
-  }
-
-  #loading {
-    visibility: hidden;
-  }
-
-  form.loading #loading {
-    visibility: visible;
-    height: 200px;
-  }
-</style>
-{% endblock %}

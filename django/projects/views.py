@@ -129,3 +129,24 @@ def projects_add(request):
     return render(request, 'projects/project_add.html', {
         'form': form,
     })
+
+@login_required
+def projects_welcome(request):
+    """
+        Create or edit project model
+    """
+
+    if request.POST:
+
+        form = ProjectCreateForm(request.POST)
+
+        if form.is_valid():
+            project = form.save(user=request.user)
+            return redirect(reverse('project', args=[project.id]))
+    else:
+        form = ProjectCreateForm()
+
+    return render(request, 'projects/project_welcome.html', {
+        'form': form,
+    })
+
