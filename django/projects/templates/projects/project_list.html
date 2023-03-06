@@ -15,7 +15,7 @@
 	    </h2>
 	  </div>
 	  <div class="mt-4 flex md:mt-0 md:ml-4">
-	    <a href="{% url 'projects_add' %}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+	    <a href="{% url 'projects_add' %}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
           Create new project
         </a>
 	  </div>
@@ -47,7 +47,7 @@
 									<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
 								</div>
 								{% else %}
-								<div class="h-12 w-12 flex justify-center items-center rounded-full bg-green-600 text-white text-sm font-medium">
+								<div class="h-12 w-12 flex justify-center items-center rounded-full bg-emerald-600 text-white text-sm font-medium">
 									<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
 									</svg>
@@ -62,8 +62,8 @@
 									<p class="flex text-sm font-medium text-gray-800 truncate">{{ application }}</p>
 									<p class="mt-2 flex flex-wrap items-center text-sm text-gray-500">
 										{% for service in application.services.all %}
-										<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium mr-1 mb-1 {% if not service.is_enabled %}bg-gray-100 text-gray-800{% elif service.is_critical and service.is_offline %}bg-red-100 text-red-800{% elif service.is_degraded or service.is_warning %}bg-yellow-100 text-yellow-800{% else %}bg-green-100 text-green-800{% endif %}">
-											<svg class="mr-1.5 h-2 w-2 {% if not service.is_enabled %}text-gray-400{% elif service.is_critical and service.is_offline %}text-red-400{% elif service.is_degraded or service.is_warning %}text-yellow-400{% else %}text-green-400{% endif %}" fill="currentColor" viewBox="0 0 8 8">
+										<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium mr-1 mb-1 {% if not service.is_enabled %}bg-gray-100 text-gray-800{% elif service.is_critical and service.is_offline %}bg-red-100 text-red-800{% elif service.is_degraded or service.is_warning %}bg-yellow-100 text-yellow-800{% else %}bg-emerald-100 text-emerald-800{% endif %}">
+											<svg class="mr-1.5 h-2 w-2 {% if not service.is_enabled %}text-gray-400{% elif service.is_critical and service.is_offline %}text-red-400{% elif service.is_degraded or service.is_warning %}text-yellow-400{% else %}text-emerald-400{% endif %}" fill="currentColor" viewBox="0 0 8 8">
 												<circle cx="4" cy="4" r="3" />
 											</svg>
 											{{ service.title }}
