@@ -55,9 +55,9 @@ urlpatterns = [
     # """
     # Healthcheck APIs
     # """
-    path('healthcheck/database', healthcheck_database, name='healthcheck_database'),
-    path('healthcheck/availability', healthcheck_workers_availability, name='healthcheck_availability'),
-    path('healthcheck/lighthouse', healthcheck_workers_lighthouse, name='healthcheck_lighthouse'),
+    path('healthcheck/database/', healthcheck_database, name='healthcheck_database'),
+    path('healthcheck/availability/', healthcheck_workers_availability, name='healthcheck_availability'),
+    path('healthcheck/lighthouse/', healthcheck_workers_lighthouse, name='healthcheck_lighthouse'),
 
     # """
     # Dependencies URLs
