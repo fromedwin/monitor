@@ -15,12 +15,15 @@ from django.contrib.auth.decorators import login_required
 from rest_framework.authtoken.models import Token
 from allauth.socialaccount.models import SocialApp
 
+from .forms import ProjectForm, ProjectCreateForm
+
 from projects.models import Project
 from availability.models import Service, HTTPCodeService, HTTPMockedCodeService
 from workers.models import Server
 from alerts.models import InstanceDownIncident
-from projects.forms import ProjectForm
 from availability.forms import ServiceForm, HTTPCodeServiceForm, MockedHTTPCodeServiceForm
+
+from performances.models import Performance
 
 @login_required
 def projects(request):
@@ -107,3 +110,43 @@ def projects_delete(request, id=None):
 
     return redirect(reverse('projects'))
     
+@login_required
+def projects_add(request):
+    """
+        Create or edit project model
+    """
+
+    if request.POST:
+
+        form = ProjectCreateForm(request.POST)
+
+        if form.is_valid():
+            project = form.save(user=request.user)
+            return redirect(reverse('project', args=[project.id]))
+    else:
+        form = ProjectCreateForm()
+
+    return render(request, 'projects/project_add.html', {
+        'form': form,
+    })
+
+@login_required
+def projects_welcome(request):
+    """
+        Create or edit project model
+    """
+
+    if request.POST:
+
+        form = ProjectCreateForm(request.POST)
+
+        if form.is_valid():
+            project = form.save(user=request.user)
+            return redirect(reverse('project', args=[project.id]))
+    else:
+        form = ProjectCreateForm()
+
+    return render(request, 'projects/project_welcome.html', {
+        'form': form,
+    })
+

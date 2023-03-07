@@ -16,6 +16,7 @@ class Performance(models.Model):
     )
     url = models.URLField(max_length=512, blank=False, help_text="Should start with http:// or https://")
     creation_date = models.DateTimeField(auto_now_add=True, editable=False, help_text="Creation date")
+    request_run = models.BooleanField(default=False, help_text="Request a run")
     last_request_date = models.DateTimeField(blank=True, null=True, help_text="Last request date")
 
     @property
@@ -25,16 +26,18 @@ class Performance(models.Model):
     def __str__(self):
         return f'{self.url}'
 
+"""
+    REPORT MODEL
+"""
 def user_directory_path(instance, filename):
     return 'performance/reports/{0}/{1}'.format(instance.performance.pk, filename)
 
 def delete_old_reports(report):
-    reports = report.performance.reports.all().order_by('-creation_date')
-    print(reports)
+    # Select all reports order from recent to old and if more than 4 delete all older than the 4 more recent
+    reports = Report.objects.filter(performance=report.performance).order_by('-creation_date')
     if reports.count() > 4:
-        for r in reports[:4]:
+        for r in reports[4:]:
             r.delete()
-
 
 class Report(models.Model):
     """

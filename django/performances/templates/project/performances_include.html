@@ -1,0 +1,122 @@
+<ul>
+{% for child in children %}
+	<li>
+		<div class="flex align-middle">
+			{% if child.report %}
+			<div class="flex items-center"><img src="{{ child.report.screenshot.url }}" style="max-height: 4em" /></div>
+			{% endif %}
+			<div class="px-3 text-sm font-medium text-gray-900 flex-grow flex items-center">
+	        	<p>{% if child.depth == 0 %}
+	        		<a href="{{ child.performance.url }}">/</a>
+	        	{% else %}
+	          		<a href="{{ child.performance.url }}"><span class="text-gray-400 text-sm pr-1">/{{child.path_parent}}</span>{{ child.path_without_parent }}</a>
+	        	{% endif %}</p>
+	        </div>
+
+		    <div class="inline mt-2 flex items-center text-sm text-gray-500 px-3">
+	        	{% if child.performance.request_run %}
+	        	Waiting for a new run
+		    	{% elif child.report %}
+		      	{{ child.report.creation_date|timesince}} ago
+	        	{% else %}
+	        	Waiting for first report
+	        	{% endif %}
+		    </div>
+	        <div class="flex flex-row px-3 py-2 {% if child.performance.request_run %}opacity-40{% endif %}">
+	        	{% if child.report %}
+			    <a href="{% url 'project_performances_report_viewer' project.id child.report.id %}#performance" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			      <div class="echartgauge" data-score="{{ child.report.score_performance }}"></div>
+			      <p class="text-xs">Performances</p>
+			    </a>
+
+			    <a href="{% url 'project_performances_report_viewer' project.id child.report.id %}#accessibility" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			      <div class="echartgauge" data-score="{{ child.report.score_accessibility }}"></div>
+			      <p class="text-xs">Accessibility</p>
+			    </a>
+			    <a href="{% url 'project_performances_report_viewer' project.id child.report.id %}#best-practices" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			      <div class="echartgauge" data-score="{{ child.report.score_best_practices }}"></div>
+			      <p class="text-xs">Best practices</p>
+			    </a>
+			    <a href="{% url 'project_performances_report_viewer' project.id child.report.id %}#seo" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			      <div class="echartgauge" data-score="{{ child.report.score_seo }}"></div>
+			      <p class="text-xs">SEO</p>
+			    </a>
+			    <a href="{% url 'project_performances_report_viewer' project.id child.report.id %}#pwa" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			      <div class="echartgauge" data-score="{{ child.report.score_pwa }}"></div>
+			      <p class="text-xs">PWA</p>
+			    </a>
+
+	        	{% else %}
+	        	<div class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			      <div class="echartgauge" data-score="--"></div>
+			      <p class="text-xs">Performances</p>
+			    </div>
+
+			    <div class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			      <div class="echartgauge" data-score="--"></div>
+			      <p class="text-xs">Accessibility</p>
+			    </div>
+			    <div class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			      <div class="echartgauge" data-score="--"></div>
+			      <p class="text-xs">Best practices</p>
+			    </div>
+			    <div class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			      <div class="echartgauge" data-score="--"></div>
+			      <p class="text-xs">SEO</p>
+			    </div>
+			    <div class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			      <div class="echartgauge" data-score="--"></div>
+			      <p class="text-xs">PWA</p>
+			    </div>
+	        	{% endif %}
+	        </div>
+	        <div class="flex items-center space-x-1">
+
+	        	<!-- DROPDOWNM MENU-->
+	        	<div class="relative inline-block text-left">
+				  <div>
+				    <button id="performance-{{ child.performance.id }}-button" type="button" class="flex items-center rounded-full text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-gray-100 px-1 py-1" id="menu-button" aria-expanded="true" aria-haspopup="true">
+				      <span class="sr-only">Open options</span>
+				      <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+				        <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM11.5 15.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" />
+				      </svg>
+				    </button>
+				  </div>
+				  <div id="performance-{{ child.performance.id }}-dropdown" class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+				    <div class="py-1" role="none">
+				    {% if child.report %}
+				      {% if child.performance.request_run %}<a href="{% url 'performance_rerun' project.id child.performance.id %}" disabled="disabled" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-0">Waiting</a>
+				      {% else %}
+				      <a href="{% url 'performance_rerun' project.id child.performance.id %}" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-0">Request new run</a>
+				      {% endif %}
+
+				      <a href="{% url 'project_performances_report_viewer' project.id child.report.id %}" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-1">See Report</a>
+				      {% endif %}
+				      <a href="{% url 'performance_edit' project.id child.performance.id %}" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-2">Edit</a>
+				    </div>
+				  </div>
+				</div>
+				<script type="text/javascript">
+					document.getElementById('performance-{{ child.performance.id }}-dropdown').style.display = 'None';
+
+					var button = document.getElementById('performance-{{ child.performance.id }}-button');
+					button.onclick = function() {
+						document.getElementById('performance-{{ child.performance.id }}-dropdown').style.display = 'block';
+						setTimeout(function () {
+							document.onclick = function() {
+								document.getElementById('performance-{{ child.performance.id }}-dropdown').style.display = 'None';
+								document.onclick = null;
+							}
+						}, 100)
+					};
+				</script>
+	        </div>
+		</div>
+
+	{% if child.children %}
+		{% include "project/performances_include.html" with children=child.children %}
+	{% endif %}
+	</li>
+{% endfor %}
+</ul>
+<!--  -->

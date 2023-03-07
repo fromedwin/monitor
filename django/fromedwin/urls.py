@@ -18,7 +18,7 @@ from django.contrib.auth.views import LogoutView
 from django.conf import settings
 from django.urls import path, include
 
-from .views import restricted
+from .views import restricted, healthcheck_database, healthcheck_workers_availability, healthcheck_workers_lighthouse
 from alerts.api import webhook
 from website.views import homepage
 from dashboard.views import dashboard
@@ -52,6 +52,12 @@ urlpatterns = [
     # Administration panel for super user in app
     path('administration/', include('administration.urls')),
 
+    # """
+    # Healthcheck APIs
+    # """
+    path('healthcheck/database/', healthcheck_database, name='healthcheck_database'),
+    path('healthcheck/availability/', healthcheck_workers_availability, name='healthcheck_availability'),
+    path('healthcheck/lighthouse/', healthcheck_workers_lighthouse, name='healthcheck_lighthouse'),
 
     # """
     # Dependencies URLs
