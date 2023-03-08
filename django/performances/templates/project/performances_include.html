@@ -2,7 +2,7 @@
 {% for child in children %}
 	<li>
 		<div class="flex align-middle">
-			{% if child.report %}
+			{% if child.report and child.report.screenshot %}
 			<div class="flex items-center"><img src="{{ child.report.screenshot.url }}" style="max-height: 4em" /></div>
 			{% endif %}
 			<div class="px-3 text-sm font-medium text-gray-900 flex-grow flex items-center">

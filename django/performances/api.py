@@ -64,7 +64,10 @@ def save_report(request, server_id, performance_id):
     user = performance.project.user
     slug = slugify(performance.url)
     path = f'performance/{user}/{slug}'
-    filename = f'{data["audits"]["final-screenshot"]["details"]["timestamp"]}'
+    try:
+        filename = f'{data["audits"]["final-screenshot"]["details"]["timestamp"]}'
+    except:
+        filename = f'{datetime.datetime.now().timestamp()}'
 
     # Generate report.json file
     json_file = json.dumps(data)
@@ -72,9 +75,12 @@ def save_report(request, server_id, performance_id):
     report_json_file = default_storage.save(f'{path}/{filename}.json', ContentFile(json_file))
 
     # Generate screenshot.jpg from report json base64 value
-    screenshot_as_a_string = data['audits']['final-screenshot']['details']['data']
-    screenshot_as_a_string = screenshot_as_a_string.replace('data:image/jpeg;base64,', '')
-    screenshot = default_storage.save(f'{path}/{filename}.jpg', ContentFile(base64.b64decode(screenshot_as_a_string)))
+    try:
+        screenshot_as_a_string = data['audits']['final-screenshot']['details']['data']
+        screenshot_as_a_string = screenshot_as_a_string.replace('data:image/jpeg;base64,', '')
+        screenshot = default_storage.save(f'{path}/{filename}.jpg', ContentFile(base64.b64decode(screenshot_as_a_string)))
+    except:
+        screenshot = None
 
     # Look for form factor as `desktop` or `mobile`
     formFactor = LIGHTHOUSE_FORMFACTOR_CHOICES[0][0]
