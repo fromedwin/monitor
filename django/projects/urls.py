@@ -1,13 +1,11 @@
 from django.urls import path
 
-from .views import projects, project, projects_form, projects_delete, projects_add, projects_welcome
+from .views import project, projects_form, projects_delete, projects_add, projects_welcome
 from alerts.views import incidents
 
 urlpatterns = [
     # Welcome page
     path('welcome/', projects_welcome, name='projects_welcome'),
-    # List of all projects
-    path('projects/', projects, name='projects'),
     # Add form to create a new project
     path('project/add', projects_add, name='projects_add'),
     # Show project overview

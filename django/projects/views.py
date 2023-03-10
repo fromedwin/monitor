@@ -26,18 +26,6 @@ from availability.forms import ServiceForm, HTTPCodeServiceForm, MockedHTTPCodeS
 from performances.models import Performance
 
 @login_required
-def projects(request):
-    """
-    List of projects for current user
-    """
-
-    applications = request.user.applications.order_by('-is_favorite')
-
-    return render(request, 'projects/project_list.html', {
-        'applications': applications
-    })
-
-@login_required
 def project(request, id):
     """
     Show current project status

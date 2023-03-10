@@ -1,7 +1,7 @@
 {% load static socialaccount account tailwind_tags %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html class="{% block html_class %}{% endblock %}" lang="en">
 <head>
     <title>{% block html_head_title %}FromEdwin{% endblock %}</title>
 	<meta charset="UTF-8">
@@ -12,7 +12,7 @@
     {% tailwind_css %}
 	{% block css %}{% endblock %}
 </head>
-<body class="bg-gray-50 leading-normal tracking-normal">
+<body class="bg-gray-50 leading-normal tracking-normal {% block body_class %}{% endblock %}">
 {% block body %}{% endblock %}
 {% block javascript %}{% endblock %}
 </body>
