@@ -17,6 +17,6 @@ urlpatterns = [
     # List of all incidents
     path('project/<int:id>/incidents/', incidents, name='incidents'),
     # List of all incidents with date filter for a specific day
-    path('project/<int:id>/incidents/<int:year>/<int:month>/<int:day>/', incidents, name='incidents'),
+    path('project/<int:id>/incidents/<int:year>/<int:month>/<int:day>/', incidents, name='incidents_date'),
 
 ]

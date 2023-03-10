@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load socialaccount account tailwind_tags starts_with %}
+{% load socialaccount account tailwind_tags starts_with url_start_with %}
 
 {% block html_class %}h-full{% endblock %}
 {% block body_class %}h-full{% endblock %}
@@ -155,8 +155,17 @@
           </div>
           {% for app in user.applications.all %}
 
-          {% starts_with request.path app.url as is_selected %}
-          <a href="{% url 'project' app.id %}" class="{% if is_selected %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium{% endif %}">
+
+          {% url_is 'project' app.id as is_project_view %}
+          {% url_start_with 'project_availability' app.id as is_availability %}
+          {% url_start_with 'incidents' app.id as is_incident %}
+          {% url_start_with 'project_performances' app.id as is_performance %}
+          {% url_start_with 'project_notifications' app.id as is_notifications %}
+          {% url_start_with 'project_status_public' app.id as is_status_public %}
+
+          {% starts_with request.path app.url as is_project_selected %}
+
+          <a href="{% url 'project' app.id %}" class="{% if is_project_view %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium{% endif %}">
             <!-- <svg class="text-gray-400 group-hover:text-gray-500 mr-3 h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
             </svg> -->
@@ -179,18 +188,16 @@
             {% endif %}
             {{ app }}
           </a>
-            {% if is_selected %}
+
+            {% if is_project_selected %}
             <div class="flex flex-col">
+              <a href="{% url 'project_availability' app.id %}" class="{% if is_availability or is_incident %}bg-gray-100 text-gray-900  group flex w-full items-center rounded-md py-2 pl-11  text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900{% else %}group flex w-full items-center rounded-md py-2 pl-11  text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %}">Availability</a>
 
-              <a href="{% url 'project' app.id %}" class="group flex w-full items-center rounded-md py-2 pl-11  text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Overview</a>
+              <a href="{% url 'project_performances' app.id %}" class="{% if is_performance %}bg-gray-100 text-gray-900  group flex w-full items-center rounded-md py-2 pl-11  text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900{% else %}group flex w-full items-center rounded-md py-2 pl-11  text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %}">Performances</a>
 
-              <a href="{% url 'project_availability' app.id %}" class="group flex w-full items-center rounded-md py-2 pl-11  text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Availability</a>
+              <a href="{% url 'project_notifications' app.id %}" class="{% if is_notifications %}bg-gray-100 text-gray-900  group flex w-full items-center rounded-md py-2 pl-11  text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900{% else %}group flex w-full items-center rounded-md py-2 pl-11  text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %}">Notifications</a>
 
-              <a href="{% url 'project_performances' app.id %}" class="group flex w-full items-center rounded-md py-2 pl-11  text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Performances</a>
-
-              <a href="{% url 'project_notifications' app.id %}" class="group flex w-full items-center rounded-md py-2 pl-11  text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Notifications</a>
-
-              <a href="{% url 'project_status_public' app.id %}" class="group flex w-full items-center rounded-md py-2 pl-11  text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Public page</a>
+              <a href="{% url 'project_status_public' app.id %}" class="{% if is_status_public %}bg-gray-100 text-gray-900  group flex w-full items-center rounded-md py-2 pl-11  text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900{% else %}group flex w-full items-center rounded-md py-2 pl-11  text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %}">Public page</a>
             </div>
             {% endif %}
           {% endfor %}
@@ -199,7 +206,7 @@
           <div class="space-y-1" role="group" aria-labelledby="projects-headline">
             {% if user.is_staff %}
             {% starts_with request.path '/administration' as is_selected %}
-            <a href="{% url 'administration' %}" class="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+            <a href="{% url 'administration' %}" class="{% if is_selected %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-3 py-2 text-sm font-medium{% else %}group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %}">
               <span class="truncate">Administration</span>
             </a>
             {% endif %}
@@ -263,6 +270,7 @@
               <h1 class="text-3xl font-bold leading-tight text-gray-900">
                 {% block title %}{% endblock %}
               </h1>
+
             </div>
           </header>
           {% endblock %}
