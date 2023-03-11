@@ -48,53 +48,6 @@
         </div>
       </div>
     </div>
-
-    <div>
-      <nav class="flex space-x-4" aria-label="Tabs">
-        <!-- Current: "bg-indigo-100 text-indigo-700", Default: "text-gray-500 hover:text-gray-700" -->
-        <a href="{% url 'project' project.id %}" 
-          {% if request.resolver_match.view_name == 'project' %}
-          class="bg-emerald-100 text-emerald-700 px-3 py-2 font-medium text-sm rounded-md" aria-current="page"
-          {% else %}
-          class="text-gray-500 hover:text-gray-700 px-3 py-2 font-medium text-sm rounded-md"
-          {% endif %}>
-          Overview
-        </a>
-        <a href="{% url 'project_availability' project.id %}" 
-          {% if request.resolver_match.view_name == 'project_availability' %}
-          class="bg-emerald-100 text-emerald-700 px-3 py-2 font-medium text-sm rounded-md" aria-current="page"
-          {% else %}
-          class="text-gray-500 hover:text-gray-700 px-3 py-2 font-medium text-sm rounded-md"
-          {% endif %}>
-          Availability
-        </a>
-        <a href="{% url 'project_performances' project.id %}" 
-          {% if request.resolver_match.view_name == 'project_performances' or request.resolver_match.view_name == 'project_performances_report_viewer' %}
-          class="bg-emerald-100 text-emerald-700 px-3 py-2 font-medium text-sm rounded-md" aria-current="page"
-          {% else %}
-          class="text-gray-500 hover:text-gray-700 px-3 py-2 font-medium text-sm rounded-md"
-          {% endif %}>
-          Performances
-        </a>
-        <a href="{% url 'project_notifications' project.id %}" 
-          {% if request.resolver_match.view_name == 'project_notifications' %}
-          class="bg-emerald-100 text-emerald-700 px-3 py-2 font-medium text-sm rounded-md" aria-current="page"
-          {% else %}
-          class="text-gray-500 hover:text-gray-700 px-3 py-2 font-medium text-sm rounded-md"
-          {% endif %}>
-          Notifications
-        </a>
-        <a href="{% url 'project_status_public' project.id %}" 
-          {% if request.resolver_match.view_name == 'project_status_public' %}
-          class="bg-emerald-100 text-emerald-700 px-3 py-2 font-medium text-sm rounded-md" aria-current="page"
-          {% else %}
-          class="text-gray-500 hover:text-gray-700 px-3 py-2 font-medium text-sm rounded-md"
-          {% endif %}>
-          Public page
-        </a>
-      </nav>
-    </div>
-
 </div>
 
 {% block subsection %}

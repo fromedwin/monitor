@@ -51,5 +51,8 @@ class Project(models.Model):
         from alerts.models import InstanceDownIncident, ProjectIncident
         return InstanceDownIncident.objects.filter(service__in=self.services.all()).count() + ProjectIncident.objects.filter(project=self).count()
 
+    def url(self):
+        return f"/project/{self.id}"
+
     def __str__(self):
         return self.title
