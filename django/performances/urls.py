@@ -1,9 +1,11 @@
 from django.urls import path
 
 from .api import fetch_performance, save_report
-from .views import project_performances, performance_form, performance_delete, project_performances_report_viewer, performance_rerun
+from .views import performances_all, project_performances, performance_form, performance_delete, project_performances_report_viewer, performance_rerun
 
 urlpatterns = [
+    # Display performances panel
+    path('performances/', performances_all, name='performances_all'),
     # Display performances panel
     path('project/<int:id>/performances/', project_performances, name='project_performances'),
     # Display performances panel

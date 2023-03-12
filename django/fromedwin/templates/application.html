@@ -262,6 +262,12 @@
 
           <h3 class="px-3 py-2 text-sm font-medium text-gray-500 pt-6" id="projects-headline">More</h3>
           <div class="space-y-1" role="group" aria-labelledby="projects-headline">
+
+            {% starts_with request.path '/performances' as is_selected %}
+            <a href="{% url 'performances_all' %}" class="{% if is_selected %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-3 py-2 text-sm font-medium{% else %}group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %}">
+              <span class="truncate">All performances</span>
+            </a>
+
             {% if user.is_staff %}
             {% starts_with request.path '/administration' as is_selected %}
             <a href="{% url 'administration' %}" class="{% if is_selected %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-3 py-2 text-sm font-medium{% else %}group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %}">
@@ -269,7 +275,7 @@
             </a>
             {% endif %}
 
-            <a href="{% url 'logout' %}?next=/" class="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+            <a href="{% url 'logout' %}?next=/" class="pt-8 group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">
               <span class="truncate">Logout</span>
             </a>
           </div>

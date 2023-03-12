@@ -24,24 +24,24 @@
 		    </div>
 	        <div class="flex flex-row px-3 py-2 {% if child.performance.request_run %}opacity-40{% endif %}">
 	        	{% if child.report %}
-			    <a href="{% url 'project_performances_report_viewer' project.id child.report.id %}#performance" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			    <a href="{% url 'project_performances_report_viewer' child.performance.project.id child.report.id %}#performance" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
 			      <div class="echartgauge" data-score="{{ child.report.score_performance }}"></div>
 			      <p class="text-xs">Performances</p>
 			    </a>
 
-			    <a href="{% url 'project_performances_report_viewer' project.id child.report.id %}#accessibility" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			    <a href="{% url 'project_performances_report_viewer' child.performance.project.id child.report.id %}#accessibility" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
 			      <div class="echartgauge" data-score="{{ child.report.score_accessibility }}"></div>
 			      <p class="text-xs">Accessibility</p>
 			    </a>
-			    <a href="{% url 'project_performances_report_viewer' project.id child.report.id %}#best-practices" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			    <a href="{% url 'project_performances_report_viewer' child.performance.project.id child.report.id %}#best-practices" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
 			      <div class="echartgauge" data-score="{{ child.report.score_best_practices }}"></div>
 			      <p class="text-xs">Best practices</p>
 			    </a>
-			    <a href="{% url 'project_performances_report_viewer' project.id child.report.id %}#seo" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			    <a href="{% url 'project_performances_report_viewer' child.performance.project.id child.report.id %}#seo" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
 			      <div class="echartgauge" data-score="{{ child.report.score_seo }}"></div>
 			      <p class="text-xs">SEO</p>
 			    </a>
-			    <a href="{% url 'project_performances_report_viewer' project.id child.report.id %}#pwa" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			    <a href="{% url 'project_performances_report_viewer' child.performance.project.id child.report.id %}#pwa" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
 			      <div class="echartgauge" data-score="{{ child.report.score_pwa }}"></div>
 			      <p class="text-xs">PWA</p>
 			    </a>
@@ -85,14 +85,14 @@
 				  <div id="performance-{{ child.performance.id }}-dropdown" class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
 				    <div class="py-1" role="none">
 				    {% if child.report %}
-				      {% if child.performance.request_run %}<a href="{% url 'performance_rerun' project.id child.performance.id %}" disabled="disabled" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-0">Waiting</a>
+				      {% if child.performance.request_run %}<a href="{% url 'performance_rerun' child.performance.project.id child.performance.id %}" disabled="disabled" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-0">Waiting</a>
 				      {% else %}
-				      <a href="{% url 'performance_rerun' project.id child.performance.id %}" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-0">Request new run</a>
+				      <a href="{% url 'performance_rerun' child.performance.project.id child.performance.id %}" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-0">Request new run</a>
 				      {% endif %}
 
-				      <a href="{% url 'project_performances_report_viewer' project.id child.report.id %}" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-1">See Report</a>
+				      <a href="{% url 'project_performances_report_viewer' child.performance.project.id child.report.id %}" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-1">See Report</a>
 				      {% endif %}
-				      <a href="{% url 'performance_edit' project.id child.performance.id %}" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-2">Edit</a>
+				      <a href="{% url 'performance_edit' child.performance.project.id child.performance.id %}" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-2">Edit</a>
 				    </div>
 				  </div>
 				</div>
