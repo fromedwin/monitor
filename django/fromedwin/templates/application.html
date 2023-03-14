@@ -53,8 +53,8 @@
         </div>
 
         <div class="h-0 flex-1 overflow-y-auto pt-5 pb-4">
-          <div class="flex flex-shrink-0 items-center px-4 font-bold">
-            <a href="{% url 'dashboard' %}" class="flex items-center"><img class="h-8 w-auto pr-2" src="{% static 'favicon.svg' %}" alt="FromEdwin">  <span style="padding-right: 1px">from</span><span class="text-emerald-600">Edwin</span></a>
+          <div class="flex flex-shrink-0 items-center px-4 text-xl font-bold">
+            <a href="{% url 'dashboard' %}" class="flex items-center"><img class="h-10 w-auto pr-2" src="{% static 'favicon.svg' %}" alt="FromEdwin">  <span style="padding-right: 1px">from</span><span class="text-emerald-600">Edwin</span></a>
           </div>
           <nav class="mt-5 space-y-1 px-2">
             {% starts_with request.path '/dashboard' as is_selected %}
@@ -186,8 +186,8 @@
     <!-- Sidebar component, swap this element with another sidebar if you like -->
     <div class="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white">
       <div class="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
-        <div class="flex flex-shrink-0 items-center px-4 text-md font-bold">
-          <a href="{% url 'dashboard' %}" class="flex items-center"><img class="inline-block h-8 w-auto pr-2" src="{% static 'favicon.svg' %}" alt="FromEdwin"> <span style="padding-right: 1px">from</span><span class="text-emerald-600">Edwin</span></a>
+        <div class="flex flex-shrink-0 items-center px-4 text-lg font-bold">
+          <a href="{% url 'dashboard' %}" class="flex items-center"><img class="inline-block h-10 w-auto pr-2" src="{% static 'favicon.svg' %}" alt="FromEdwin"> <span style="padding-right: 1px">from</span><span class="text-emerald-600">Edwin</span></a>
         </div>
         <nav class="mt-5 flex-1 space-y-1 bg-white px-2">
           <!-- Current: "bg-gray-100 text-gray-900", Default: "text-gray-600 hover:bg-gray-50 hover:text-gray-900" -->
