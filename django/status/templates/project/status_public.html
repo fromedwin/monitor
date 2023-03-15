@@ -11,9 +11,10 @@
 <link rel="stylesheet" href="{% static 'prismjs/prism.css' %}">
 {% endblock %}
 
+{% block title %}Public page{% endblock %}
 {% block subsection %}
   {% if not project.enable_public_page %}
-  <div class="py-5 sm:p-6">
+  <div class="pt-5 sm:pt-6">
     <form method="POST" action="{% url 'toggle_public_page' project.id %}" class="mt-2 sm:flex sm:items-start sm:justify-between">
       <div class="max-w-xl text-sm text-gray-500">
         <p>
@@ -30,7 +31,7 @@
   {% else %}
 
 
-  <div class="py-5 sm:p-6">
+  <div class="pr-5 sm:pt-6">
     <form method="POST" action="{% url 'toggle_public_page' project.id %}" class="mt-2 sm:flex sm:items-start sm:justify-between">
       <div class="max-w-xl text-sm text-gray-500">
         <p>
@@ -45,7 +46,7 @@
     </form>
   </div>
 
-  <div class="py-5 sm:p-6">
+  <div class="pt-5 sm:pt-6">
     <div class="text-sm text-gray-500">
       <p>
         You can also embed your current status badge in third party application using the following code : <a class="inline" href="{{ url }}{% url 'public' project.id %}"><img class="inline" src="{% url 'badge' project.id %}" /></a>
