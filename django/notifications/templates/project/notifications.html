@@ -13,8 +13,12 @@
 <link rel="stylesheet" href="{% static 'prismjs/prism.css' %}">
 {% endblock %}
 
-{% block title %}Notifications{% endblock %}
 {% block subsection %}
+<header class="pb-4">
+  <h1 class="text-3xl font-bold leading-tight text-gray-900">
+    Notifications
+  </h1>
+</header>
 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 pt-4">
 
   {% for notification in project.pager_duty.all %}

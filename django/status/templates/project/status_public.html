@@ -11,8 +11,12 @@
 <link rel="stylesheet" href="{% static 'prismjs/prism.css' %}">
 {% endblock %}
 
-{% block title %}Public page{% endblock %}
 {% block subsection %}
+<header class="pb-4">
+  <h1 class="text-3xl font-bold leading-tight text-gray-900">
+    Public page
+  </h1>
+</header>
   {% if not project.enable_public_page %}
   <div class="pt-5 sm:pt-6">
     <form method="POST" action="{% url 'toggle_public_page' project.id %}" class="mt-2 sm:flex sm:items-start sm:justify-between">

@@ -328,18 +328,7 @@
     </div>
     <main class="flex-1">
       <div class="min-h-screen bg-white">
-
         <div class="py-10">
-          {% block title_header %}
-          <header class="pb-4">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h1 class="text-3xl font-bold leading-tight text-gray-900">
-                {% block title %}{% endblock %}
-              </h1>
-
-            </div>
-          </header>
-          {% endblock %}
           <main>
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
               {% block content %}{% endblock %}
@@ -351,9 +340,6 @@
   </div>
 </div>
 <script>
-
-
-
   // when page load is done we listen to manu button to toggle class hidden on id menu
   document.addEventListener("DOMContentLoaded", function () {
     function toggle_hidden() {
