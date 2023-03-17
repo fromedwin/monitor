@@ -96,7 +96,7 @@ def projects_delete(request, id=None):
     project = get_object_or_404(Project, pk=id)
     project.delete()
 
-    return redirect(reverse('projects'))
+    return redirect(reverse('dashboard'))
     
 @login_required
 def projects_add(request):
