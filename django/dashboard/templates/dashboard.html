@@ -6,6 +6,11 @@
 {% block html_head_title %}Dashboard - FromEdwin{% endblock %}
 
 {% block content %}
+<header class="pb-4">
+  <h1 class="text-3xl font-bold leading-tight text-gray-900">
+    Dashboard
+  </h1>
+</header>
 <div class="pt-4 pb-8">
   <ul role="list" class="mt-3 grid grid-cols-1 gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
     {% for application in user.applications.all %}

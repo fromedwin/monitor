@@ -1,7 +1,6 @@
 {% extends 'application.html' %}
 {% load static socialaccount account tailwind_tags fromedwin_tags %}
 
-{% block title %}All performances{% endblock %}
 {% block html_head_title %}All Performances - FromEdwin{% endblock %}
 
 {% block javascript %}
@@ -140,6 +139,11 @@
 {% endblock %}
 
 {% block content %}
+<header>
+  <h1 class="text-3xl font-bold leading-tight text-gray-900">
+    All performances
+  </h1>
+</header>
 <div class="pt-4">
   <div class="flex flex-col mt-4">
 
