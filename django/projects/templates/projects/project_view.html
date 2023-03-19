@@ -5,6 +5,138 @@
 
 {% block content %}
 
+
+{% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.1/dist/echarts.min.js" crossorigin="anonymous"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    var gauges = document.getElementsByClassName('echartgauge');
+    [...gauges].forEach((element) => {
+      var score = parseFloat(element.getAttribute('data-score'));
+      var red = 'rgb(220, 38, 38)';
+      var green = 'rgb(5, 150, 105)';
+      var orange = 'rgb(217, 119, 6)';
+      var grey = 'rgb(200, 200, 200)';
+      var animation = window.location.hash !== '#noanimations';
+
+      // Echarts options
+      var serie = {
+        startAngle: 90,
+        endAngle: -270,
+        type: 'gauge',
+        progress: {
+          show: true,
+          width: 3,
+        },
+        axisLine: {
+          lineStyle: {
+            width: 3,
+          },
+        },
+        axisTick: {
+          show: false
+        },
+        splitLine: {
+          show: false
+        },
+        axisLabel: {
+          show: false
+        },
+        pointer: {
+          show: false
+        },
+        anchor: {
+          show: false
+        },
+        title: {
+          show: false
+        },
+      };
+
+      // Is lighthouse failed measuring score
+      if (isNaN(score)) {
+        if (element.getAttribute('data-score') == '--') {
+          serie = Object.assign({}, serie, {
+            title: {
+              offsetCenter: [0, '0%'],
+              fontSize: 16,
+              color: grey,
+            },
+            itemStyle: {
+              color: grey,
+            },
+            detail: {
+              show: false,
+            },
+            data: [
+              {
+                value: 0,
+                name: '--',
+              }
+            ]
+          });
+        } else {
+
+          serie = Object.assign({}, serie, {
+            title: {
+              offsetCenter: [0, '0%'],
+              fontSize: 16,
+              color: red,
+            },
+            itemStyle: {
+              color: red,
+            },
+            detail: {
+              show: false,
+            },
+            data: [
+              {
+                value: 100,
+                name: '?',
+              }
+            ]
+          });
+        }
+      } else {
+        // We read data-score attribute to get score
+        var value = Math.round(score*100);
+
+        var color = red;
+        if (value >= 90) {
+          color = green;
+        } else if (value >= 50) {
+          color = orange;
+        }
+
+        serie = Object.assign({}, serie, {
+          detail: {
+            valueAnimation: animation,
+            fontSize: 12,
+            color: color,
+            offsetCenter: [0, '0%'],
+          },
+          itemStyle: {
+            color: color,
+          },
+          data: [
+            {
+              value: value,
+            }
+          ]
+        });
+      }
+
+      // Init echarts with options generated with serie data
+      var myChart = echarts.init(element, null, {renderer: 'svg'});
+      serie && myChart.setOption({
+        series: [ serie ],
+        animation: animation,
+      });
+    });
+  });
+</script>
+{% endblock %}
+
 {% block subsection %}
 
 <div class="pr-4 pl-4">
@@ -53,19 +185,70 @@
     </div>
 </div>
 
-<div class="p-4">
+<div class="mx-auto mt-4 mb-8">
+  <dl class="grid max-w-xl grid-cols-1 gap-y-10 gap-x-8 lg:max-w-none lg:grid-cols-2 lg:gap-y-16">
+    <div class="relative pl-16">
+      <dt class="text-base font-semibold leading-7 text-gray-900">
+        <div class="absolute top-0 left-0 flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-600">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-white">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+          </svg>
+        </div>
+        Availability
+      </dt>
+      <dd class="mt-2 text-base leading-7 text-gray-600">
+        {% for service in project.services.all %}
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium mr-1 mb-1 {% if not service.is_enabled %}bg-gray-100 text-gray-800{% elif service.is_critical and service.is_offline %}bg-red-100 text-red-800{% elif service.is_degraded or service.is_warning %}bg-yellow-100 text-yellow-800{% else %}bg-emerald-100 text-emerald-800{% endif %}">
+          <svg class="mr-1.5 h-2 w-2 {% if not service.is_enabled %}text-gray-400{% elif service.is_critical and service.is_offline %}text-red-400{% elif service.is_degraded or service.is_warning %}text-yellow-400{% else %}text-emerald-400{% endif %}" fill="currentColor" viewBox="0 0 8 8">
+            <circle cx="4" cy="4" r="3" />
+          </svg>
+          {{ service.title }}
+        </span>
+        {% endfor %}
+        <p class="mt-6">
+          <a href="{% url 'project_availability' project.id %}" class="text-sm font-semibold leading-6 text-emerald-600">More details <span aria-hidden="true">→</span></a>
+        </p>
+      </dd>
+    </div>
+    <div class="relative pl-16">
+      <dt class="text-base font-semibold leading-7 text-gray-900">
+        <div class="absolute top-0 left-0 flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-600">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-white">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
+          </svg>
+        </div>
+        Global performance
+      </dt>
+      <dd class="mt-2 text-base leading-7 text-gray-600">
+        <div class="flex ">
+          <a href="{% url 'project_performances' project.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+            <div class="echartgauge" data-score="{{ project.performance_score.score_performance }}"></div>
+            <p class="text-xs">Performances</p>
+          </a>
 
-  <h2 class="text-xl font-bold leading-tight text-gray-900">Services</h2>
-  <p class="mt-2 flex flex-wrap items-center text-sm text-gray-500">
-    {% for service in project.services.all %}
-    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium mr-1 mb-1 {% if not service.is_enabled %}bg-gray-100 text-gray-800{% elif service.is_critical and service.is_offline %}bg-red-100 text-red-800{% elif service.is_degraded or service.is_warning %}bg-yellow-100 text-yellow-800{% else %}bg-emerald-100 text-emerald-800{% endif %}">
-      <svg class="mr-1.5 h-2 w-2 {% if not service.is_enabled %}text-gray-400{% elif service.is_critical and service.is_offline %}text-red-400{% elif service.is_degraded or service.is_warning %}text-yellow-400{% else %}text-emerald-400{% endif %}" fill="currentColor" viewBox="0 0 8 8">
-        <circle cx="4" cy="4" r="3" />
-      </svg>
-      {{ service.title }}
-    </span>
-    {% endfor %}
-  </p>
+          <a href="{% url 'project_performances' project.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-3">
+            <div class="echartgauge" data-score="{{ project.performance_score.score_accessibility }}"></div>
+            <p class="text-xs">Accessibility</p>
+          </a>
+          <a href="{% url 'project_performances' project.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+            <div class="echartgauge" data-score="{{ project.performance_score.score_best_practices }}"></div>
+            <p class="text-xs">Best practices</p>
+          </a>
+          <a href="{% url 'project_performances' project.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+            <div class="echartgauge" data-score="{{ project.performance_score.score_seo }}"></div>
+            <p class="text-xs">SEO</p>
+          </a>
+          <a href="{% url 'project_performances' project.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+            <div class="echartgauge" data-score="{{ project.performance_score.score_pwa }}"></div>
+            <p class="text-xs">PWA</p>
+          </a>
+        </div>
+        <p class="mt-6">
+          <a href="{% url 'project_performances' project.id %}" class="text-sm font-semibold leading-6 text-emerald-600">More details <span aria-hidden="true">→</span></a>
+        </p>
+      </dd>
+    </div>
+  </dl>
 </div>
 
 <div class="p-4">
