@@ -33,14 +33,61 @@ def project(request, id):
 
     project = get_object_or_404(Project, pk=id)
 
-
     activities = InstanceDownIncident\
         .objects\
         .filter(service__project=project, endsAt__isnull=False)\
         .order_by('-startsAt', '-severity')[:20]
 
+    # Check last ping date
+    last_check = None
+
+    try:
+        servers = Server.objects.filter(
+            last_seen__gte=timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
+        ).order_by('-last_seen')
+
+        server = servers[0]
+        authbasic = server.authbasic.first()
+
+        headers = {
+            'User-Agent': 'FromEdwinBot Python Django',
+        }
+
+        start = int(format(timezone.now(), 'U'))
+
+        """
+            Fetch prometheus probe duration seconds data
+        """
+        response = requests.get(f'{server.href}/api/v1/query_range?query=probe_duration_seconds%7Bapplication="{id}"%7D&step=30&start={str(start-600)}&end={str(start)}', headers=headers, auth=(authbasic.username, authbasic.password))
+        response.raise_for_status()
+        content = json.loads(response.content)
+
+        for service in content['data']['result']:
+            values = service['values']
+            """
+                {'metric': 
+                    {'__name__': 'probe_duration_seconds', 
+                    'application': '50', 
+                    'instance': 'https://sebastienbarbier.com', 
+                    'job': 'is_service_down', 
+                    'service': '53'}, 
+                'values': [
+                    [1679226664, '0.228248501'], 
+                    [1679226694, '0.162575'], 
+                    ...
+                    [1679227234, '0.191770291'], 
+                    [1679227264, '0.191770291']]}
+            """
+            last_service_check = datetime.datetime.fromtimestamp(int(values[len(values)-1][0]))
+            # if last_check is None or last_check > last_service_check:
+            #     last_check = last_service_check
+            #     print(last_check)
+    except:
+        pass
+
     return render(request, 'projects/project_view.html', {
         'project': project,
+        'last_check': last_check,
         'activities': activities,
     })
 
@@ -92,7 +139,6 @@ def projects_delete(request, id=None):
     """
         Delete project model
     """
-
     project = get_object_or_404(Project, pk=id)
     project.delete()
 

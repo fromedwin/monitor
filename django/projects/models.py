@@ -62,6 +62,7 @@ class Project(models.Model):
             'score_seo': None,
             'score_pwa': None,
         }
+        last_run = None
         performances = self.performances.all()
 
         # If performances are available, we add all p=score for all page then divide by page number
@@ -70,12 +71,17 @@ class Project(models.Model):
                 if result[key] is None:
                     result[key] = 0
 
-            for performance in performances:
-                score = performance.last_score()
-                for key in score.keys():
-                    if score[key]:
-                        result[key] = result[key] + score[key]
-
+            try:
+                for performance in performances:
+                    score = performance.last_score()
+                    if performance.reports.last().creation_date:
+                        for key in score.keys():
+                            if score[key]:
+                                result[key] = result[key] + score[key]
+                        if last_run is None or last_run < performance.reports.last().creation_date:
+                            last_run = performance.reports.last().creation_date
+            except:
+                pass
             for key in score.keys():
                 result[key] = result[key] / len(performances)
 
@@ -84,6 +90,7 @@ class Project(models.Model):
             if result[key] is None:
                 result[key] = '--'
 
+        result['last_run'] = last_run
         return result
 
     def __str__(self):
