@@ -4,7 +4,7 @@
 {% block html_head_title %}Availability - {{ project.title }} - FromEdwin{% endblock %}
 
 {% block javascript %}
-<script src="https://cdn.jsdelivr.net/npm/echarts@5.2.2/dist/echarts.min.js" integrity="sha256-iJxB0L7blNZTAFBu/ESTfVaVTqFrTeISeWk7RUEePFY=" crossorigin="anonymous"></script>
+<script src="{% static 'echarts/echarts.min.js' %}" integrity="sha256-iJxB0L7blNZTAFBu/ESTfVaVTqFrTeISeWk7RUEePFY=" crossorigin="anonymous"></script>
 {% endblock %}
 {% block subsection %}
 <header class="pb-4">
@@ -20,7 +20,7 @@
             24 hours
           </dt>
           <dd class="mt-1 text-3xl font-semibold text-emerald-500">
-            {{ availability.1 }} %
+            {{ availability.1|floatformat:2 }} %
           </dd>
         </div>
         <div class="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6">
@@ -28,7 +28,7 @@
             7 days
           </dt>
           <dd class="mt-1 text-3xl font-semibold text-emerald-500">
-            {{ availability.7 }} %
+            {{ availability.7|floatformat:2 }} %
           </dd>
         </div>
         <div class="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6">
@@ -36,7 +36,7 @@
             30 days
           </dt>
           <dd class="mt-1 text-3xl font-semibold text-emerald-500">
-            {{ availability.30 }} %
+            {{ availability.30|floatformat:2 }} %
           </dd>
         </div>
       </dl>
@@ -151,7 +151,7 @@
                     </div>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm text-gray-900">{{ service.availability }} %</div>
+                    <div class="text-sm text-gray-900">{{ service.availability|floatformat:2 }} %</div>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
                     {% if not service.is_enabled %}
