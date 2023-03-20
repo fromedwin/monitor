@@ -4,7 +4,7 @@
 {% block html_head_title %}All Performances - FromEdwin{% endblock %}
 
 {% block javascript %}
-<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.1/dist/echarts.min.js" crossorigin="anonymous"></script>
+<script src="{% static 'echarts/echarts.min.js' %}" crossorigin="anonymous"></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     var gauges = document.getElementsByClassName('echartgauge');
