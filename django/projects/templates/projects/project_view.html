@@ -139,25 +139,25 @@
 
 {% block subsection %}
 
-<div class="pr-4 pl-4">
-    <div class="pb-12">
+<div class="pr-4 pt-4">
+    <div class="pb-8">
       <!-- This example requires Tailwind CSS v2.0+ -->
       <div class="md:flex md:items-center md:justify-between md:space-x-5">
         <div class="flex items-start space-x-5">
           <div class="flex-shrink-0 flex content-center relative">
               {% if project.is_offline %}
-                <div class="h-16 w-16 flex justify-center items-center rounded-full bg-red-600 text-white text-sm font-medium">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="h-12 w-12 flex justify-center items-center rounded-full bg-red-600 text-white text-sm font-medium">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </div>
                 {% elif project.is_degraded or project.is_warning %}
-                <div class="h-16 w-16 flex justify-center items-center rounded-full bg-yellow-600 text-white text-sm font-medium">
-                  <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <div class="h-12 w-12 flex justify-center items-center rounded-full bg-yellow-600 text-white text-sm font-medium">
+                  <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                 </div>
                 {% else %}
-                <div class="h-16 w-16 flex justify-center items-center rounded-full bg-emerald-600 text-white text-sm font-medium">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="h-12 w-12 flex justify-center items-center rounded-full bg-emerald-600 text-white text-sm font-medium">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
@@ -171,9 +171,7 @@
             but preserve the same layout if the text wraps without making the image jump around.
           -->
           <div class="pt-1.5">
-            <h1 class="text-3xl flex font-bold text-gray-900 items-center">{{ project.title }}
-          </h1>
-          <p class="text-sm font-medium text-gray-500">Service is fully online and working as expected</p>
+            <h1 class="text-3xl flex font-bold text-gray-900 items-center">{{ project.title }}</h1>
           </div>
         </div>
         <div class="mt-6 flex flex-col-reverse justify-stretch space-y-4 space-y-reverse sm:flex-row-reverse sm:justify-end sm:space-x-reverse sm:space-y-0 sm:space-x-3 md:mt-0 md:flex-row md:space-x-3">
@@ -184,8 +182,8 @@
       </div>
     </div>
 </div>
-
-<div class="mx-auto mt-4 mb-8">
+<hr />
+<div class="mx-auto mt-4 mb-8 pt-6">
   <dl class="grid max-w-xl grid-cols-1 gap-y-10 gap-x-8 lg:max-w-none lg:grid-cols-2 lg:gap-y-16">
     <div class="relative pl-16">
       <dt class="text-base font-semibold leading-7 text-gray-900">
@@ -254,8 +252,8 @@
 </div>
 
 
-<div class="mx-auto mt-4 mb-8">
-  <dl class="grid max-w-xl grid-cols-1 gap-y-10 gap-x-8 lg:max-w-none lg:gap-y-16">
+<div class="mx-auto mt-4 mb-8 lg:flex">
+  <dl class="w-4/6 grid max-w-xl grid-cols-1 gap-y-10 gap-x-8 lg:max-w-none lg:gap-y-16 mt-8">
     <div class="relative">
       <dt class="text-base font-semibold leading-7 text-gray-900">
         <div class="absolute top-0 left-0 flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-600">
@@ -290,9 +288,9 @@
                 <div class="flex-1 pl-10">
                   <div class="flex items-center justify-between">
                     <h3 class="text-sm font-medium">{{ activity.summary }}</h3>
-                    <p class="text-sm text-gray-500">{{ activity.startsAt|naturaltime }}</p>
+                    <p class="text-xs text-gray-400">{{ activity.startsAt|naturaltime }}</p>
                   </div>
-                  <p class="text-sm text-gray-500">
+                  <p class="text-xs text-gray-500 pt-2">
                     {{ activity.description }}<br />
                     Duration: {{ activity.startsAt|timesince:activity.endsAt }}
                   </p>
@@ -310,11 +308,26 @@
       </dd>
     </div>
   </dl>
-</div>
+  <div class="w-2/6 relative lg:ml-12 mt-8">
+    <div class="text-base font-semibold leading-7 text-gray-900 pl-16">
+      <div class="absolute top-0 left-0 flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-600">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-white">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 19.5v-.75a7.5 7.5 0 00-7.5-7.5H4.5m0-6.75h.75c7.87 0 14.25 6.38 14.25 14.25v.75M6 18.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+        </svg>
+      </div>
+      Public page
+    </div>
+    <div class="mt-2 ml-16 pt-4 text-sm leading-7 text-gray-600">
+      {% if project.enable_public_page %}
+      <p><span class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-emerald-700 bg-emerald-100">Enabled</span></p>
+      {% else %}
+      <p><span class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-gray-700 bg-gray-100">Disabled</span></p>
+      {% endif %}
+    </div>
 
-<div class="p-4">
-  <div>
-    
+    <p class="mt-6 pl-16">
+      <a href="{% url 'project_status_public' project.id %}" class="text-sm font-semibold leading-6 text-emerald-600">More details <span aria-hidden="true">→</span></a>
+    </p>
   </div>
 </div>
 {% endblock %}
