@@ -194,20 +194,30 @@
         </div>
         Availability
       </dt>
-      <dd class="mt-2 text-base leading-7 text-gray-600">
-        {% for service in project.services.all %}
-        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium mr-1 mb-1 {% if not service.is_enabled %}bg-gray-100 text-gray-800{% elif service.is_critical and service.is_offline %}bg-red-100 text-red-800{% elif service.is_degraded or service.is_warning %}bg-yellow-100 text-yellow-800{% else %}bg-emerald-100 text-emerald-800{% endif %}">
-          <svg class="mr-1.5 h-2 w-2 {% if not service.is_enabled %}text-gray-400{% elif service.is_critical and service.is_offline %}text-red-400{% elif service.is_degraded or service.is_warning %}text-yellow-400{% else %}text-emerald-400{% endif %}" fill="currentColor" viewBox="0 0 8 8">
-            <circle cx="4" cy="4" r="3" />
-          </svg>
-          {{ service.title }}
-        </span>
-        {% endfor %}
-        <p class="text-xs pt-4 text-gray-400 text-left">Each service will be checked every {{ settings.IS_SERVICE_DOWN_SCRAPE_INTERVAL_SECONDS }} seconds.</p>
-        <p class="mt-6">
-          <a href="{% url 'project_availability' project.id %}" class="text-sm font-semibold leading-6 text-emerald-600">More details <span aria-hidden="true">→</span></a>
-        </p>
-      </dd>
+      <div class="flex">
+        <dd class="text-base leading-7 text-gray-600">
+          <dl class="mt-4">
+            <div class="flex flex-col gap-y-1 border-r border-gray-900/10 pr-6">
+              <dt class="text-xs leading-6 text-gray-800">Past 30 days</dt>
+              <dd class="order-first text-3xl font-semibold tracking-tight text-emerald-500">{{ project.availability|floatformat:2 }}%</dd>
+            </div>
+          </dl>
+        </dd>
+        <div class="flex-grow pt-4 pl-4">
+          {% for service in project.services.all %}
+          <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium mr-1 mb-1 {% if not service.is_enabled %}bg-gray-100 text-gray-800{% elif service.is_critical and service.is_offline %}bg-red-100 text-red-800{% elif service.is_degraded or service.is_warning %}bg-yellow-100 text-yellow-800{% else %}bg-emerald-100 text-emerald-800{% endif %}">
+            <svg class="mr-1.5 h-2 w-2 {% if not service.is_enabled %}text-gray-400{% elif service.is_critical and service.is_offline %}text-red-400{% elif service.is_degraded or service.is_warning %}text-yellow-400{% else %}text-emerald-400{% endif %}" fill="currentColor" viewBox="0 0 8 8">
+              <circle cx="4" cy="4" r="3" />
+            </svg>
+            {{ service.title }}
+          </span>
+          {% endfor %}
+        </div>
+      </div>
+      <p class="text-xs pt-4 text-gray-400 text-left">Each service will be checked every {{ settings.IS_SERVICE_DOWN_SCRAPE_INTERVAL_SECONDS }} seconds.</p>
+      <p class="mt-6">
+        <a href="{% url 'project_availability' project.id %}" class="text-sm font-semibold leading-6 text-emerald-600">More details <span aria-hidden="true">→</span></a>
+      </p>
     </div>
     <div class="relative pl-16">
       <dt class="text-base font-semibold leading-7 text-gray-900">
