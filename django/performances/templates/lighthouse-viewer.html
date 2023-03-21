@@ -1,5 +1,5 @@
 {% extends 'projects/project_view.html' %}
-{% load static socialaccount account tailwind_tags fromedwin_tags %}
+{% load static socialaccount account tailwind_tags fromedwin_tags humanize %}
 
 {% block html_head_title %}Report - {{ project.title }} - FromEdwin{% endblock %}
 
@@ -28,7 +28,7 @@
         <div disabled="disabled" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 opacity-40">Waiting</div>
         {% else %}
         <div class="inline-flex mt-2 flex items-center text-sm text-gray-500 px-2">
-          {{ report.creation_date|timesince}} ago
+          {{ report.creation_date|naturaltime}}
         </div>
         <a href="{% url 'performance_rerun' project.id report.performance.id %}" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">Request new run</a>
         {% endif %}

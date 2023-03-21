@@ -54,5 +54,44 @@ class Project(models.Model):
     def url(self):
         return f"/project/{self.id}"
 
+    def performance_score(self):
+        result = {
+            'score_performance': None,
+            'score_accessibility': None,
+            'score_best_practices': None,
+            'score_seo': None,
+            'score_pwa': None,
+        }
+        last_run = None
+        performances = self.performances.all()
+
+        # If performances are available, we add all p=score for all page then divide by page number
+        if len(performances) > 0:
+            for key in result.keys():
+                if result[key] is None:
+                    result[key] = 0
+
+            try:
+                for performance in performances:
+                    score = performance.last_score()
+                    if performance.reports.last().creation_date:
+                        for key in score.keys():
+                            if score[key]:
+                                result[key] = result[key] + score[key]
+                        if last_run is None or last_run < performance.reports.last().creation_date:
+                            last_run = performance.reports.last().creation_date
+            except:
+                pass
+            for key in score.keys():
+                result[key] = result[key] / len(performances)
+
+        # If no report, we change None to '--' so eschart can display empty diagram
+        for key in result.keys():
+            if result[key] is None:
+                result[key] = '--'
+
+        result['last_run'] = last_run
+        return result
+
     def __str__(self):
         return self.title

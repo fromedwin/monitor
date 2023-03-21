@@ -51,7 +51,7 @@ def project_availability(request, id):
 
     content = {}
     graph = []
-    https = {}
+    https = None
 
     try:
         servers = Server.objects.filter(
@@ -83,7 +83,7 @@ def project_availability(request, id):
         response = requests.get(f'{server.href}/api/v1/query?query=probe_ssl_earliest_cert_expiry%7Bapplication="{id}"%7D&time={str(start)}', headers=headers, auth=(authbasic.username, authbasic.password))
         response.raise_for_status()
         content = json.loads(response.content)
-
+        https = {}
         for service in content['data']['result']:
             https[service['metric']['service']] = datetime.datetime.fromtimestamp(int(service['value'][1]))
 

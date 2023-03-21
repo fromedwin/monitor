@@ -1,3 +1,5 @@
+{% load humanize %}
+
 <ul>
 {% for child in children %}
 	<li>
@@ -21,7 +23,7 @@
 	        	{% if child.performance.request_run %}
 	        	Waiting for a new run
 		    	{% elif child.report %}
-		      	{{ child.report.creation_date|timesince}} ago
+		      	{{ child.report.creation_date|naturaltime }}
 	        	{% else %}
 	        	Waiting for first report
 	        	{% endif %}

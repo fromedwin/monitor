@@ -1,5 +1,5 @@
 {% extends 'application.html' %}
-{% load socialaccount account tailwind_tags %}
+{% load socialaccount account tailwind_tags humanize %}
 
 {% block title %}Dashboard{% endblock %}
 
@@ -71,7 +71,7 @@
             <div class="flex-1 space-y-1">
               <div class="flex items-center justify-between">
                 <h3 class="text-sm font-medium">{{ activity.summary }}</h3>
-                <p class="text-sm text-gray-500">{{ activity.startsAt|timesince }} ago</p>
+                <p class="text-sm text-gray-500">{{ activity.startsAt|naturaltime }}</p>
               </div>
               <p class="text-sm text-gray-500">
                 {{ activity.description }}<br />

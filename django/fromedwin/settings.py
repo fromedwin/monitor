@@ -42,7 +42,7 @@ PORT = os.environ.get('PORT')
 WEBAUTH_USERNAME = os.environ.get('WEBAUTH_USERNAME')
 WEBAUTH_PASSWORD = os.environ.get('WEBAUTH_PASSWORD')
 
-IS_SERVICE_DOWN_SCRAPE_INTERVAL_MINUTE = 1
+IS_SERVICE_DOWN_SCRAPE_INTERVAL_SECONDS = 60
 IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES = 5
 # Run Lighthouse every 60 minutes
 LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES = int(os.environ.get('LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES', 60))
@@ -109,6 +109,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.humanize',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',

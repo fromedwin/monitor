@@ -23,6 +23,25 @@ class Performance(models.Model):
     def status(self):
         return 'Waiting for a worker'
 
+    def last_score(self):
+        performance = self.reports.last()
+        if performance:
+            return {
+                'score_performance': performance.score_performance,
+                'score_accessibility': performance.score_accessibility,
+                'score_best_practices': performance.score_best_practices,
+                'score_seo': performance.score_seo,
+                'score_pwa': performance.score_pwa,
+            }
+        else:
+            return {
+                'score_performance': None,
+                'score_accessibility': None,
+                'score_best_practices': None,
+                'score_seo': None,
+                'score_pwa': None,
+            }
+
     def __str__(self):
         return f'{self.url}'
 

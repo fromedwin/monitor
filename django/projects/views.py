@@ -33,14 +33,15 @@ def project(request, id):
 
     project = get_object_or_404(Project, pk=id)
 
-
     activities = InstanceDownIncident\
         .objects\
         .filter(service__project=project, endsAt__isnull=False)\
         .order_by('-startsAt', '-severity')[:20]
 
+
     return render(request, 'projects/project_view.html', {
         'project': project,
+        'settings': settings,
         'activities': activities,
     })
 
@@ -92,7 +93,6 @@ def projects_delete(request, id=None):
     """
         Delete project model
     """
-
     project = get_object_or_404(Project, pk=id)
     project.delete()
 
