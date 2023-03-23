@@ -56,6 +56,8 @@ scrape_configs:
   - targets:
     {% for metric in metrics %}- {{ metric.url|remove_protocol }}
     {% endfor %}{% endif %}
+    
+# Parse http probe for service WITH TLS SECURE VERIFICATION
 - job_name: is_service_down
   metrics_path: /probe
   scrape_interval: {{ settings.IS_SERVICE_DOWN_SCRAPE_INTERVAL_SECONDS }}s
@@ -63,7 +65,38 @@ scrape_configs:
     module:
     - http_2xx
   static_configs:
-  {% for user in users %}{% for application in user.applications.all %}{% for service in application.services.all %}{% if service.is_enabled and service.httpcode %}
+  {% for user in users %}{% for application in user.applications.all %}{% for service in application.services.all %}{% if service.is_enabled and service.httpcode and not service.httpcode.tls_skip_verify %}
+  - labels:
+      application: {{ application.id }}
+      service: {{ service.id }}
+    targets:
+    - {{ service.httpcode.url }}
+    {% endif %}{% if service.is_enabled and service.httpmockedcode %}
+  - labels:
+      application: {{ application.id }}
+      service: {{ service.id }}
+    targets:
+    - {{ service.httpmockedcode.url }}
+    {% endif %}{% endfor %}{% endfor %}{% endfor %}
+  relabel_configs:
+  - source_labels:
+    - __address__
+    target_label: __param_target
+  - source_labels:
+    - __param_target
+    target_label: instance
+  - target_label: __address__
+    replacement: blackbox:9115
+
+# Parse http probe for service WITHOUT TLS SECURE VERIFICATION
+- job_name: is_service_down_and_insecure
+  metrics_path: /probe
+  scrape_interval: {{ settings.IS_SERVICE_DOWN_SCRAPE_INTERVAL_SECONDS }}s
+  params:
+    module:
+    - http_2xx_unsecure
+  static_configs:
+  {% for user in users %}{% for application in user.applications.all %}{% for service in application.services.all %}{% if service.is_enabled and service.httpcode and service.httpcode.tls_skip_verify %}
   - labels:
       application: {{ application.id }}
       service: {{ service.id }}

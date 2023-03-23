@@ -64,6 +64,40 @@
 						<div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-baseline">
 							<div>
 								<div class="text-base font-medium text-gray-900 sm:text-sm sm:text-gray-700" id="label-email">
+									Ignore insecure SSL
+								</div>
+							</div>
+							<div class="mt-4 sm:mt-0 sm:col-span-2">
+								<div class="max-w-lg space-y-4">
+									<div class="relative flex items-start">
+										<div class="flex items-center h-5">
+											<input id="{{ form.tls_skip_verify.id_for_label }}" name="{{ form.tls_skip_verify.html_name }}" {% if form.tls_skip_verify.value %}checked{% endif %} type="checkbox" class="focus:ring-emerald-500 h-4 w-4 text-emerald-600 border-gray-300 rounded">
+										</div>
+										<div class="ml-3 text-sm">
+											<label for="{{ form.tls_skip_verify.id_for_label }}" class="font-medium text-gray-700">{{ form.tls_skip_verify.label }}</label>
+											<p class="text-gray-500">{{ form.tls_skip_verify.help_text }}</p>
+										</div>
+									</div>
+								</div>
+						        <div class="mt-1 sm:mt-0 sm:col-span-2">
+						            {% if form.tls_skip_verify.errors %}
+						              {% for error in form.tls_skip_verify.errors %}
+						              <p class="block w-full max-w-md mt-2 text-left pl-2 text-sm text-red-500">{{ error|escape }}</p>
+						              {% endfor %}
+						            {% endif %}
+						        </div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="mt-6 sm:mt-5 space-y-6 sm:space-y-5">
+				<div class="pt-6 sm:pt-5 sm:border-t sm:border-gray-200">
+					<div role="group" aria-labelledby="label-email">
+						<div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-baseline">
+							<div>
+								<div class="text-base font-medium text-gray-900 sm:text-sm sm:text-gray-700" id="label-email">
 									Status
 								</div>
 							</div>
