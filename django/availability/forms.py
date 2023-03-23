@@ -10,7 +10,7 @@ class HTTPCodeServiceForm(ModelForm):
 
     url = URLField(help_text="URL must start with http:// or https://")
     scheme = CharField(max_length=5, help_text="URL must start with http:// or https://")
-    tls_skip_verify = BooleanField(required=False, help_text="Skip TLS certificate verification")
+    tls_skip_verify = BooleanField(label="Disable fail on unsecure SSL", required=False, help_text="Might be needed when you do not fully control the hosting (often cdn or object storage)")
 
     class Meta:
         model = HTTPCodeService
