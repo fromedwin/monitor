@@ -8,7 +8,6 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.shortcuts import render
 from django.utils import timezone
-from django.utils.dateformat import format
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -65,27 +64,26 @@ def project_availability(request, id):
             'User-Agent': 'FromEdwinBot Python Django',
         }
 
-        start = int(format(timezone.now(), 'U'))
-
         """
             Fetch prometheus probe duration seconds data
         """
-        response = requests.get(f'{server.href}/api/v1/query_range?query=probe_duration_seconds%7Bapplication="{id}"%7D&step=30&start={str(start-600)}&end={str(start)}', headers=headers, auth=(authbasic.username, authbasic.password))
+        response = requests.get(f'{server.href}/fastapi/availability/{id}', headers=headers, auth=(authbasic.username, authbasic.password))
         response.raise_for_status()
         content = json.loads(response.content)
-        for service in content['data']['result']:
+
+        graph = json.loads(content['graph'])
+
+        # Inject for each dataset the title to display within its legend
+        for service in graph['data']['result']:
             service['metric']['title'] = Service.objects.get(id=service['metric']['service']).title
 
-        graph = json.dumps(content)
+        graph = json.dumps(graph)
         """
             Fetch prometheus https expiration value
         """
-        response = requests.get(f'{server.href}/api/v1/query?query=probe_ssl_earliest_cert_expiry%7Bapplication="{id}"%7D&time={str(start)}', headers=headers, auth=(authbasic.username, authbasic.password))
-        response.raise_for_status()
-        content = json.loads(response.content)
-        https = {}
-        for service in content['data']['result']:
-            https[service['metric']['service']] = datetime.datetime.fromtimestamp(int(service['value'][1]))
+        https = content['https']
+        for obj in https:
+            https[obj] = datetime.datetime.fromtimestamp(https[obj])
 
     except Exception as err:
         content = {
