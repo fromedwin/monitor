@@ -132,6 +132,18 @@
                     Status
                   </th>
                   <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Http code
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    http_version
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    http_redirects
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    tls_version_info
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Https
                   </th>
                   <th></th>
@@ -139,6 +151,7 @@
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
                 {% for service in project.services.all %}
+                {% with services|get_obj_attr:service.id as data %}
                 <tr>
                   <td class="px-6 py-4 whitespace-nowrap">
                     <div class="flex items-center">
@@ -188,12 +201,27 @@
                     {% endif %}
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
+                    {{ data.http_code }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    {{ data.http_version }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    {{ data.http_redirects }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    {{ data.tls_version_info }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
                     {% if not service.is_enabled %}
                     <div class="text-sm text-gray-900"></div>
-                    {% elif https|get_obj_attr:service.id %}
-                    <div class="text-sm text-gray-900">Expires in:<br/>{{ https|get_obj_attr:service.id|timeuntil }}</div>
+                    {% elif data.ssl_earliest_cert_expiry %}
+                    <div class="text-sm text-gray-900">
+                      Expires in:<br/>
+                      {{ data.ssl_earliest_cert_expiry|timestamp_to_date|timeuntil }}
+                    </div>
                     {% elif https == None %}
-                    <div class="text-sm text-gray-900">Unknown</div>
+                    <div class="text-sm text-gray-900">{{ data.https }}</div>
                     {% else %}
                     <div class="text-sm text-gray-900">Not using https</div>
                     {% endif %}
@@ -207,6 +235,7 @@
                     <a href="{% url 'services_httpcode_edit' project.id service.id %}" class="text-emerald-600 hover:text-emerald-900">Edit</a>{% endif %}
                   </td>
                 </tr>
+                {% endwith %}
                 {% endfor %}
               </tbody>
             </table>
@@ -291,25 +320,26 @@
       <div class="pt-4 pb-6">
         <script>
           document.addEventListener('DOMContentLoaded', () => {
-            var data = {{ graph|safe }};
+            var data = {{ services|safe }};
 
-            if (data.data && data.data.result.length) {
+            if (data) {
 
               document.getElementById('probe_wrapper').style.display = 'block';
 
-              xAxis_data = data.data.result[0].values.map((value) => {
-                d = new Date(value[0]*1000);
+              xAxis_data = data[Object.keys(data)[0]].duration_seconds.map((value) => {
+                d = new Date(value[0]);
                 return d.toLocaleTimeString("en-us", {   
                     hour: "2-digit", minute: "2-digit"
                 });
               });
 
-              probes = data.data.result.map((instance => {
+              probes = Object.keys(data).map((index => {
+                let instance = data[index];
                 return {
-                  name: instance.metric.title,
+                  name: instance.title,
                   type: 'line',
                   step: 'start',
-                  data: instance.values.map(value => value[1].substring(0, 5))
+                  data: instance.duration_seconds.map(value => value[1])
                 };
               }));
 

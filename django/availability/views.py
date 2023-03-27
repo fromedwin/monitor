@@ -71,19 +71,10 @@ def project_availability(request, id):
         response.raise_for_status()
         content = json.loads(response.content)
 
-        graph = json.loads(content['graph'])
+        services = content['services']
 
-        # Inject for each dataset the title to display within its legend
-        for service in graph['data']['result']:
-            service['metric']['title'] = Service.objects.get(id=service['metric']['service']).title
-
-        graph = json.dumps(graph)
-        """
-            Fetch prometheus https expiration value
-        """
-        https = content['https']
-        for obj in https:
-            https[obj] = datetime.datetime.fromtimestamp(https[obj])
+        for service in services:
+            services[service]['title'] = Service.objects.get(id=service).title
 
     except Exception as err:
         content = {
@@ -95,13 +86,12 @@ def project_availability(request, id):
         'incidents': incidents,
         'days': days,
         'settings': settings,
+        'services': services,
         'availability': {
             '1': project.availability(days=1),
             '7': project.availability(days=7),
             '30': project.availability(days=30),
         },
-        'graph': graph,
-        'https': https,
         'url': f'{request.META["wsgi.url_scheme"]}://{request.META["HTTP_HOST"]}',
     })
 

@@ -1,4 +1,5 @@
 from django import template
+import datetime
 
 register = template.Library()
 
@@ -8,3 +9,7 @@ def get_obj_attr(obj, attr):
         return obj[str(attr)]
     except Exception as err:
         return None
+
+@register.filter()
+def timestamp_to_date(obj):
+    return datetime.datetime.fromtimestamp(int(obj))
