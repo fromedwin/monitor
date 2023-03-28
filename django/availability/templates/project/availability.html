@@ -339,7 +339,7 @@
                   name: instance.title,
                   type: 'line',
                   step: 'start',
-                  data: instance.duration_seconds.map(value => value[1])
+                  data: instance.duration_seconds ? instance.duration_seconds.map(value => value[1]) : []
                 };
               }));
 

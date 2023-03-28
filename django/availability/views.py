@@ -75,7 +75,11 @@ def project_availability(request, id):
         services = content['services']
 
         for service in services:
-            services[service]['title'] = Service.objects.get(id=service).title
+            try:
+                services[service]['title'] = Service.objects.get(id=service).title
+            except:
+                # Remove data from availability is Service no longer exist (jsut deleted use case)
+                services = {k: v for k, v in services.items() if k != service}
 
     except Exception as err:
         content = {
