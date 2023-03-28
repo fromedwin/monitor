@@ -49,6 +49,7 @@ def project_availability(request, id):
         })
 
     content = {}
+    services = {}
     graph = []
     https = None
 

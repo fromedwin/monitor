@@ -322,7 +322,7 @@
           document.addEventListener('DOMContentLoaded', () => {
             var data = {{ services|safe }};
 
-            if (data) {
+            if (data && Object.keys(data).length) {
 
               document.getElementById('probe_wrapper').style.display = 'block';
 
