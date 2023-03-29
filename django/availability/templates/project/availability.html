@@ -365,10 +365,10 @@
 
               options = {
                 tooltip: {
-                  trigger: 'axis'
+                  trigger: 'axis',
                 },
                 legend: {
-                  data: probes.map(value => value.name)
+                  data: probes.map(value => value.name),
                 },
                 grid: {
                   left: '3%',
@@ -378,19 +378,19 @@
                 },
                 xAxis: {
                   type: 'category',
-                  data: xAxis_data
+                  data: xAxis_data,
                 },
                 yAxis: {
                   type: 'value',
+                  axisLabel: {
+                    formatter: '{value} ms'
+                  },
                 },
                 series: probes
               };
               const chart = echarts.init(document.getElementById('probes'), null, {renderer: 'svg'});
               options && chart.setOption(options);
-            } else {
-
             }
-
           });
 
         </script>
