@@ -326,6 +326,10 @@
             type="button" 
             class="{% if duration == 3600 %}bg-emerald-50 text-emerald-600{% else %}text-gray-900 bg-white{% endif %} relative inline-flex items-center rounded-l-md px-3 py-2 text-xs font-semibold ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10">1h</a>
           <a 
+            href="{% url 'project_availability' project.id %}?duration=43200" 
+            type="button" 
+            class="{% if duration == 43200 %}bg-emerald-50 text-emerald-600{% else %}text-gray-900 bg-white{% endif %} relative -ml-px inline-flex items-center px-3 py-2 text-xs font-semibold ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10">12h</a>
+          <a 
             href="{% url 'project_availability' project.id %}?duration=86400" 
             type="button" 
             class="{% if duration == 86400 %}bg-emerald-50 text-emerald-600{% else %}text-gray-900 bg-white{% endif %} relative -ml-px inline-flex items-center px-3 py-2 text-xs font-semibold ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10">1d</a>
