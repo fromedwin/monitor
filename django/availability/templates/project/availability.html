@@ -115,6 +115,12 @@
     </div>
     {% endif %}
 
+    {% for service in project.services.all %}
+    {% with services|get_obj_attr:service.id as data %}
+
+    {% endwith %}
+    {% endfor %}
+
     <div class="flex flex-col mt-4">
       <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
@@ -155,10 +161,6 @@
                 <tr>
                   <td class="px-6 py-4 whitespace-nowrap">
                     <div class="flex items-center">
-                      <!--
-                      <div class="flex-shrink-0 h-10 w-10">
-                        <img class="h-10 w-10 rounded-full" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60" alt="">
-                      </div>-->
                       <div class="ml-4">
                         <div class="text-sm font-medium text-gray-900">
                           {{ service.title }}
@@ -316,6 +318,24 @@
           Probes
         </h3>
       </div>
+
+      <div class="flex mt-2">
+        <span class="isolate inline-flex rounded-md shadow-sm">
+          <a 
+            href="{% url 'project_availability' project.id %}?duration=3600" 
+            type="button" 
+            class="{% if duration == 3600 %}bg-emerald-50 text-emerald-600{% else %}text-gray-900 bg-white{% endif %} relative inline-flex items-center rounded-l-md px-3 py-2 text-xs font-semibold ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10">1h</a>
+          <a 
+            href="{% url 'project_availability' project.id %}?duration=86400" 
+            type="button" 
+            class="{% if duration == 86400 %}bg-emerald-50 text-emerald-600{% else %}text-gray-900 bg-white{% endif %} relative -ml-px inline-flex items-center px-3 py-2 text-xs font-semibold ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10">1d</a>
+          <a 
+            href="{% url 'project_availability' project.id %}?duration=604800" 
+            type="button" 
+            class="{% if duration == 604800 %}bg-emerald-50 text-emerald-600{% else %}text-gray-900 bg-white{% endif %} relative -ml-px inline-flex items-center rounded-r-md px-3 py-2 text-xs font-semibold ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10">7d</a>
+        </span>
+      </div>
+
 
       <div class="pt-4 pb-6">
         <script>

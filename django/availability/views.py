@@ -28,6 +28,14 @@ def project_availability(request, id):
     """
     Show current project status
     """
+    duration = 60*60
+    if 'duration' in request.GET:
+        duration = int(request.GET['duration'])
+
+    # Set a max value for duration to save some performance issues on backend
+    if duration > 604800:
+        duration = 604800
+
 
     project = get_object_or_404(Project, pk=id)
 
@@ -68,7 +76,7 @@ def project_availability(request, id):
         """
             Fetch prometheus probe duration seconds data
         """
-        response = requests.get(f'{server.href}/fastapi/availability/{id}', headers=headers, auth=(authbasic.username, authbasic.password))
+        response = requests.get(f'{server.href}/fastapi/availability/{id}?duration={duration}', headers=headers, auth=(authbasic.username, authbasic.password))
         response.raise_for_status()
         content = json.loads(response.content)
 
@@ -92,6 +100,7 @@ def project_availability(request, id):
         'days': days,
         'settings': settings,
         'services': services,
+        'duration': duration,
         'availability': {
             '1': project.availability(days=1),
             '7': project.availability(days=7),
