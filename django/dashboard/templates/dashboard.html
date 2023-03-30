@@ -6,86 +6,60 @@
 {% block html_head_title %}Dashboard - FromEdwin{% endblock %}
 
 {% block content %}
-<header class="pb-4">
-  <h1 class="text-3xl font-bold leading-tight text-gray-900">
-    Dashboard
-  </h1>
-</header>
-<div class="pt-4 pb-8">
-  <ul role="list" class="mt-3 grid grid-cols-1 gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
-    {% for application in user.applications.all %}
-    <li class="col-span-1 flex shadow-sm rounded-md">
-      {% if application.is_offline %}
-      <div class="flex-shrink-0 flex items-center justify-center w-16 bg-red-600 text-white text-sm font-medium rounded-l-md">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-      </svg>
-      </div>
-      {% elif application.is_degraded or application.is_warning %}
-      <div class="flex-shrink-0 flex items-center justify-center w-16 bg-yellow-600 text-white text-sm font-medium rounded-l-md">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-      </div>
-      {% else %}
-      <div class="flex-shrink-0 flex items-center justify-center w-16 bg-emerald-600 text-white text-sm font-medium rounded-l-md">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-      </svg>
-      </div>
-      {% endif %}
-      <div class="flex-1 flex items-center justify-between border-t border-r border-b border-gray-200 bg-white rounded-r-md truncate">
-      <div class="flex-1 px-4 py-2 text-sm truncate">
-        <a href="{% url 'project' application.id %}" class="text-gray-900 font-medium hover:text-gray-600">{{ application }}</a>
-        <p class="text-gray-500">{{ application.services.all|length }} services</p>
-      </div>
-      </div>
-    </li>
-    {% endfor %}
-  </ul>
-</div>
 
-<div>
-  <h2 class="text-3xl font-bold leading-tight text-gray-900">Latest incidents</h2>
-
-  <div>
-    <ul role="list" class="divide-y divide-gray-200">
-      {% for activity in activities %}
-        <li key={activityItem.id} class="py-4">
-          <div class="flex space-x-3">
-            {% if activity.severity == 2 %}
-            <div class="h-6 w-6 flex justify-center items-center rounded-full bg-red-600 text-white text-sm font-medium">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </div>
-            {% elif activity.severity == 1 %}
-            <div class="h-6 w-6 flex justify-center items-center rounded-full bg-yellow-600 text-white text-sm font-medium">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-            </div>
-            {% else %}
-            <div class="h-4 w-4 flex justify-center items-center rounded-full bg-emerald-600 text-white text-sm font-medium">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            {% endif %}
-            <div class="flex-1 space-y-1">
-              <div class="flex items-center justify-between">
-                <h3 class="text-sm font-medium">{{ activity.summary }}</h3>
-                <p class="text-sm text-gray-500">{{ activity.startsAt|naturaltime }}</p>
+<div class="mx-auto mb-8">
+  <dl class="w-6/6 grid max-w-xl grid-cols-1 gap-y-10 gap-x-8 lg:max-w-none lg:gap-y-16 mt-8">
+    <div class="relative">
+      <dt class="text-base font-semibold leading-7 text-gray-900">
+        <div class="absolute top-0 left-0 flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-600">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-white">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0M3.124 7.5A8.969 8.969 0 015.292 3m13.416 0a8.969 8.969 0 012.168 4.5" />
+          </svg>
+        </div>
+        <span class="pl-16">Latest incidents</span>
+      </dt>
+      <dd class="mt-2 pl-2 pt-4 text-base leading-7 text-gray-600">
+        <ul role="list" class="divide-y divide-gray-200">
+          {% for activity in activities %}
+            <li key={activityItem.id} class="py-4">
+              <div class="flex">
+                {% if activity.severity == 2 %}
+                <div class="absolute h-6 w-6 flex justify-center items-center rounded-full bg-red-600 text-white text-sm font-medium">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </div>
+                {% elif activity.severity == 1 %}
+                <div class="absolute h-6 w-6 flex justify-center items-center rounded-full bg-yellow-600 text-white text-sm font-medium">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                </div>
+                {% else %}
+                <div class="absolute h-4 w-4 flex justify-center items-center rounded-full bg-emerald-600 text-white text-sm font-medium">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                {% endif %}
+                <div class="flex-1 pl-10">
+                  <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-medium">{{ activity.summary }}</h3>
+                    <p class="text-xs text-gray-400">{{ activity.startsAt|naturaltime }}</p>
+                  </div>
+                  <p class="text-xs text-gray-500 pt-2">
+                    {{ activity.description }}<br />
+                    Duration: {{ activity.startsAt|timesince:activity.endsAt }}
+                  </p>
+                </div>
               </div>
-              <p class="text-sm text-gray-500">
-                {{ activity.description }}<br />
-                Duration: {{ activity.startsAt|timesince:activity.endsAt }}
-              </p>
-            </div>
-          </div>
-        </li>
+            </li>
 
-      {% empty %}
-      <p class="pt-4">No Events</p>
-      {% endfor %}
-    </ul>
-  </div>
+          {% empty %}
+          <p class="pt-4">No Events</p>
+          {% endfor %}
+        </ul>
+      </dd>
+    </div>
+  </dl>
 </div>
 
 {% endblock %}
