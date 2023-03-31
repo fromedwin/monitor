@@ -45,7 +45,11 @@ class Project(models.Model):
             else:
                 total_unavailability += alert.duration.seconds
 
-        return round(100 - total_unavailability * 100 / total_second, 3)
+        value = round(100 - total_unavailability * 100 / total_second, 3)
+
+        if value < 0:
+            return 0
+        return value
 
     def incidents_count(self):
         from alerts.models import InstanceDownIncident, ProjectIncident
