@@ -25,6 +25,47 @@
 </header>
 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 pt-4">
 
+  {% for email in project.emails.all %}
+  <div class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-emerald-500">
+    <div class="flex-shrink-0">
+      <span class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-emerald-500 text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+          </svg>
+        </span>
+    </div>
+    <div class="flex-1 min-w-0">
+      <a href="{% url 'email_edit' project.id email.id %}" class="focus:outline-none">
+        <span class="absolute inset-0" aria-hidden="true"></span>
+        <p class="text-sm font-medium text-gray-900">
+          Email
+        </p>
+        <p class="text-sm text-gray-500 truncate">
+          {{ email.email }}
+        </p>
+      </a>
+    </div>
+  </div>
+  {% empty %}
+    <div class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-emerald-500">
+    <div class="flex-shrink-0">
+        <span class="inline-flex items-center justify-center h-12 w-12 p-2 rounded-full bg-gray-500 text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-2 h-2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+        </span>
+    </div>
+    <div class="flex-1 min-w-0">
+      <a href="{% url 'email_add' project.id %}" class="focus:outline-none">
+        <span class="absolute inset-0" aria-hidden="true"></span>
+        <p class="text-sm font-medium text-gray-900">
+          Add Email
+        </p>
+      </a>
+    </div>
+  </div>
+  {% endfor %}
+
   {% for notification in project.pager_duty.all %}
   <div class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-emerald-500">
     <div class="flex-shrink-0">
@@ -47,8 +88,10 @@
   {% empty %}
     <div class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-emerald-500">
     <div class="flex-shrink-0">
-        <span class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-gray-500">
-          <span class="text-lg font-medium leading-none text-white">+</span>
+        <span class="text-white inline-flex items-center justify-center h-12 w-12 p-2 rounded-full bg-gray-500">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-2 h-2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
         </span>
     </div>
     <div class="flex-1 min-w-0">
