@@ -3,13 +3,14 @@ from django.dispatch import receiver
 
 from .models import Alerts, Metrics, Server
 from projects.models import Project
-from availability.models import Service
+from availability.models import Service, HTTPCodeService
 from django.utils import timezone
 from notifications.models import Pager_Duty
 
 @receiver(post_save, sender=Alerts)
 @receiver(post_delete, sender=Alerts)
 @receiver(post_delete, sender=Project)
+@receiver(post_save, sender=HTTPCodeService)
 @receiver(post_save, sender=Service)
 @receiver(post_delete, sender=Service)
 @receiver(post_save, sender=Metrics)

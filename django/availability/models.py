@@ -69,6 +69,7 @@ class Service(models.Model):
 
 class HTTPCodeService(models.Model):
     url = models.URLField(max_length=512, blank=False)
+    tls_skip_verify = models.BooleanField("Ignore unsecure SSL", default=False, help_text="Might be needed for monitoring some CDN or object storage directly.")
     service = models.OneToOneField(
         Service,
         on_delete = models.CASCADE,

@@ -1,6 +1,7 @@
 from django.forms import ModelForm, URLField, CharField
 from .models import Project
 from performances.models import Performance
+from notifications.models import Emails
 from availability.models import Service, HTTPCodeService 
 
 class ProjectForm(ModelForm):
@@ -46,6 +47,7 @@ class ProjectCreateForm(ModelForm):
         performance = Performance.objects.create(url=url, project=project)
         service = Service.objects.create(project=project, title=domain)
         availability = HTTPCodeService.objects.create(url=url, service=service)
+        email = Emails.objects.create(project=project, email=user.email)
 
         return project
 

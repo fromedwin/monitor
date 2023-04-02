@@ -1,4 +1,4 @@
-from django.forms import ModelForm, URLField, CharField
+from django.forms import ModelForm, URLField, CharField, BooleanField
 from .models import Service, HTTPCodeService, HTTPMockedCodeService
 
 class ServiceForm(ModelForm):
@@ -10,10 +10,11 @@ class HTTPCodeServiceForm(ModelForm):
 
     url = URLField(help_text="URL must start with http:// or https://")
     scheme = CharField(max_length=5, help_text="URL must start with http:// or https://")
+    tls_skip_verify = BooleanField(label="Disable fail on unsecure SSL", required=False, help_text="Might be needed when you do not fully control the hosting (often cdn or object storage)")
 
     class Meta:
         model = HTTPCodeService
-        fields = ['url', 'scheme']
+        fields = ['url', 'scheme', 'tls_skip_verify']
 
     # On init we set scheme value with http if url start with https or http if url start with url
     def __init__(self, *args, **kwargs):
@@ -37,6 +38,8 @@ class HTTPCodeServiceForm(ModelForm):
 
         obj = super(HTTPCodeServiceForm, self).save(commit=False)
         obj.url = url
+        if not self.cleaned_data['tls_skip_verify']:
+            obj.tls_skip_verify = False
         return obj
 
 class MockedHTTPCodeServiceForm(ModelForm):
