@@ -37,6 +37,7 @@ urlpatterns = [
     path('', include('performances.urls')),
     path('', include('status.urls')),
     path('', include('website.urls')),
+    path('', include('alerts.urls')),
     # monitor-worker api
     path('clients/', include('workers.urls')),
     # Settings URL
