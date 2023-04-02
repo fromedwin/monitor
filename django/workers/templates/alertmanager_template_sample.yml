@@ -41,28 +41,71 @@ route:
   # A default receiver
   receiver: webhook-only
 
+  # All the above attributes are inherited by all child routes and can 
+  # overwritten on each.
+
+  # # The child route trees.
+  # routes:
+  # # This routes performs a regular expression match on alert labels to
+  # # catch alerts that are related to a list of services.
+  # - match_re:
+  #     service: ^(foo1|foo2|baz)$
+  #   receiver: team-X-mails
+  #   # The service has a sub-route for critical alerts, any alerts
+  #   # that do not match, i.e. severity != critical, fall-back to the
+  #   # parent node and are sent to 'team-X-mails'
+  #   routes:
+  #   - match:
+  #       severity: critical
+  #     receiver: team-X-pager
+  # - match:
+  #     service: files
+  #   receiver: team-Y-mails
+
   routes:
-  {% for pager in pager_duty %}
+
+{% for pager in pager_duty %}
   - match:
       application: {{ pager.project.id }}
       severity: critical
     receiver: 'project-{{ pager.project.id }}-{{ pager.id }}'
-  {% endfor %}
+{% endfor %}
+
+  # # This route handles all alerts coming from a database service. If there's
+  # # no team to handle it, it defaults to the DB team.
+  # - match:
+  #     service: database
+  #   receiver: team-DB-pager
+  #   # Also group alerts by affected database.
+  #   group_by: [alertname, cluster, database]
+  #   routes:
+  #   - match:
+  #       owner: team-X
+  #     receiver: team-X-pager
+  #     continue: true
+  #   - match:
+  #       owner: team-Y
+  #     receiver: team-Y-pager
+
 
 # Inhibition rules allow to mute a set of alerts given that another alert is
-# firing, mute any warning-level notifications if the same alert is 
+# firing.
+# We use this to mute any warning-level notifications if the same alert is 
 # already critical.
 inhibit_rules:
 - source_match:
     severity: 'critical'
   target_match:
     severity: 'warning'
+  # Apply inhibition if the alertname is the same.
+  # CAUTION: 
+  #   If all label names listed in `equal` are missing 
+  #   from both the source and target alerts,
+  #   the inhibition rule will apply!
   equal: ['alertname', 'cluster', 'service']
 
-##
-# RECEIVERS
-##
 receivers:
+
 {% for pager in pager_duty %}
 - name: 'project-{{ pager.project.id }}-{{ pager.id }}'
   webhook_configs:
@@ -76,3 +119,26 @@ receivers:
   webhook_configs:
   - send_resolved: True
     url: {{ settings.ALERTMANAGER_WEBHOOK_URL }}
+
+# receivers:
+# - name: 'team-X-mails'
+#   email_configs:
+#   - to: 'team-X+alerts@example.org'
+
+# - name: 'team-X-pager'
+#   email_configs:
+#   - to: 'team-X+alerts-critical@example.org'
+#   pagerduty_configs:
+#   - service_key: <team-X-key>
+
+# - name: 'team-Y-mails'
+#   email_configs:
+#   - to: 'team-Y+alerts@example.org'
+
+# - name: 'team-Y-pager'
+#   pagerduty_configs:
+#   - service_key: <team-Y-key>
+
+# - name: 'team-DB-pager'
+#   pagerduty_configs:
+#   - service_key: <team-DB-key>
