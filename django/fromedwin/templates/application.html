@@ -58,7 +58,7 @@
           </div>
           <nav class="mt-5 space-y-1 px-2">
             {% starts_with request.path '/dashboard' as is_selected %}
-            <a href="{% url 'dashboard' %}" class="{% if is_selected %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% endif %}">
+            <a href="{% url 'dashboard' %}" class="{% if is_selected %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% else %}text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% endif %}">
               <!-- Current: "text-gray-500", Default: "text-gray-400 group-hover:text-gray-500" -->
               <svg class="text-gray-500 mr-4 h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
@@ -88,7 +88,7 @@
 
               {% starts_with request.path app.url as is_project_selected %}
 
-              <a href="{% url 'project' app.id %}" class="{% if is_project_view %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-2 py-2 text-md font-medium{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-md font-medium{% endif %}">
+              <a href="{% url 'project' app.id %}" class="{% if is_project_view %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-2 py-2 text-md font-medium{% else %}text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-md font-medium{% endif %}">
                 <!-- <svg class="text-gray-400 group-hover:text-gray-500 mr-3 h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
                 </svg> -->
@@ -114,25 +114,25 @@
 
                 {% if is_project_selected %}
                 <div class="flex flex-col">
-                  <a href="{% url 'project_availability' app.id %}" class="group flex w-full items-center rounded-md py-2 ml-2 pl-3 text-md font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 {% if is_availability or is_incident %}bg-gray-100 text-gray-900{% endif %}">
+                  <a href="{% url 'project_availability' app.id %}" class="group flex w-full items-center rounded-md py-2 ml-2 pl-3 text-md font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 {% if is_availability or is_incident %}bg-gray-100 text-gray-900{% endif %}">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-3">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
                     </svg> Availability
                   </a>
 
-                  <a href="{% url 'project_performances' app.id %}" class="group flex w-full items-center rounded-md py-2 ml-2 pl-3 text-md font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 {% if is_performance %}bg-gray-100 text-gray-900{% endif %}">
+                  <a href="{% url 'project_performances' app.id %}" class="group flex w-full items-center rounded-md py-2 ml-2 pl-3 text-md font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 {% if is_performance %}bg-gray-100 text-gray-900{% endif %}">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-3">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
                     </svg> Performances
                   </a>
 
-                  <a href="{% url 'project_notifications' app.id %}" class="group flex w-full items-center rounded-md py-2 ml-2 pl-3 text-md font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 {% if is_notifications %}bg-gray-100 text-gray-900{% endif %}">
+                  <a href="{% url 'project_notifications' app.id %}" class="group flex w-full items-center rounded-md py-2 ml-2 pl-3 text-md font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 {% if is_notifications %}bg-gray-100 text-gray-900{% endif %}">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-3">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0M3.124 7.5A8.969 8.969 0 015.292 3m13.416 0a8.969 8.969 0 012.168 4.5" />
                     </svg> Notifications
                   </a>
 
-                  <a href="{% url 'project_status_public' app.id %}" class="group flex w-full items-center rounded-md py-2 ml-2 pl-3 text-md font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 {% if is_status_public %}bg-gray-100 text-gray-900{% endif %}">
+                  <a href="{% url 'project_status_public' app.id %}" class="group flex w-full items-center rounded-md py-2 ml-2 pl-3 text-md font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 {% if is_status_public %}bg-gray-100 text-gray-900{% endif %}">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-3">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 19.5v-.75a7.5 7.5 0 00-7.5-7.5H4.5m0-6.75h.75c7.87 0 14.25 6.38 14.25 14.25v.75M6 18.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
                     </svg> Public page
@@ -144,19 +144,19 @@
             <h3 class="px-3 py-2 text-md font-medium text-gray-500 pt-6" id="projects-headline">More</h3>
             <div class="space-y-1" role="group" aria-labelledby="projects-headline">
               {% starts_with request.path '/performances' as is_selected %}
-              <a href="{% url 'performances_all' %}" class="{% if is_selected %}bg-gray-100 text-gray-900 hover:bg-gray-50 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% endif %}">
+              <a href="{% url 'performances_all' %}" class="{% if is_selected %}bg-gray-100 text-gray-900 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% else %}text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% endif %}">
                 <span class="truncate">All performances</span>
               </a>
 
               {% if user.is_staff %}
               {% starts_with request.path '/administration' as is_selected %}
-              <a href="{% url 'administration' %}" class="{% if is_selected %}bg-gray-100 text-gray-900 hover:bg-gray-50 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% endif %}">
+              <a href="{% url 'administration' %}" class="{% if is_selected %}bg-gray-100 text-gray-900 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% else %}text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% endif %}">
                 <span class="truncate">Administration</span>
               </a>
               {% endif %}
             </div>
 
-            <a href="{% url 'logout' %}?next=/" class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium">
+            <a href="{% url 'logout' %}?next=/" class="text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium">
               Logout
             </a>
 
@@ -203,18 +203,18 @@
   </div>
 
   <!-- Static sidebar for desktop -->
-  <div class="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
+  <div class="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col bg-white">
     <!-- Sidebar component, swap this element with another sidebar if you like -->
-    <div class="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white">
-      <div class="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
+    <div class="flex min-h-0 flex-1 flex-col border-r border-gray-200">
+      <div class="flex flex-1 flex-col overflow-y-auto pt-5 pb-4 bg-gray-50/75">
         <div class="flex flex-shrink-0 items-center px-4 text-lg font-bold">
           <a href="{% url 'dashboard' %}" class="flex items-center"><img class="inline-block h-10 w-auto pr-2" src="{% static 'favicon.svg' %}" alt="FromEdwin"> <span style="padding-right: 1px">from</span><span class="text-emerald-600">Edwin</span></a>
         </div>
-        <nav class="mt-5 flex-1 space-y-1 bg-white px-2">
-          <!-- Current: "bg-gray-100 text-gray-900", Default: "text-gray-600 hover:bg-gray-50 hover:text-gray-900" -->
+        <nav class="mt-5 flex-1 space-y-1 px-2">
+          <!-- Current: "bg-gray-100 text-gray-900", Default: "text-gray-600 hover:bg-gray-100 hover:text-gray-900" -->
 
           {% starts_with request.path '/dashboard' as is_selected %}
-          <a href="{% url 'dashboard' %}" class="{% if is_selected %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium{% endif %}">
+          <a href="{% url 'dashboard' %}" class="{% if is_selected %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium{% else %}text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium{% endif %}">
             <!-- Current: "text-gray-500", Default: "text-gray-400 group-hover:text-gray-500" -->
             <svg class="text-gray-500 mr-3 h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
@@ -244,7 +244,7 @@
 
           {% starts_with request.path app.url as is_project_selected %}
 
-          <a href="{% url 'project' app.id %}" class="{% if is_project_view %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium{% endif %}">
+          <a href="{% url 'project' app.id %}" class="{% if is_project_view %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium{% else %}text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium{% endif %}">
             <!-- <svg class="text-gray-400 group-hover:text-gray-500 mr-3 h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
             </svg> -->
@@ -270,26 +270,26 @@
 
             {% if is_project_selected %}
             <div class="flex flex-col pl-4">
-              <a href="{% url 'project_availability' app.id %}" class="py-2 pl-3 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex w-full items-center rounded-md {% if is_availability or is_incident %}bg-gray-100 text-gray-900{% endif %}">
+              <a href="{% url 'project_availability' app.id %}" class="py-2 pl-3 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex w-full items-center rounded-md {% if is_availability or is_incident %}bg-gray-100 text-gray-900{% endif %}">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-3">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
                 </svg>Availability
               </a>
 
-              <a href="{% url 'project_performances' app.id %}" class="py-2 pl-3 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex w-full items-center rounded-md {% if is_performance %}bg-gray-100 text-gray-900{% endif %}">
+              <a href="{% url 'project_performances' app.id %}" class="py-2 pl-3 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex w-full items-center rounded-md {% if is_performance %}bg-gray-100 text-gray-900{% endif %}">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-3">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
                 </svg>
                  Performances
               </a>
 
-              <a href="{% url 'project_notifications' app.id %}" class="py-2 pl-3 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex w-full items-center rounded-md {% if is_notifications %}bg-gray-100 text-gray-900{% endif %}">
+              <a href="{% url 'project_notifications' app.id %}" class="py-2 pl-3 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex w-full items-center rounded-md {% if is_notifications %}bg-gray-100 text-gray-900{% endif %}">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-3">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0M3.124 7.5A8.969 8.969 0 015.292 3m13.416 0a8.969 8.969 0 012.168 4.5" />
                 </svg> Notifications
               </a>
 
-              <a href="{% url 'project_status_public' app.id %}" class="py-2 pl-3 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex w-full items-center rounded-md {% if is_status_public %}bg-gray-100 text-gray-900{% endif %}">
+              <a href="{% url 'project_status_public' app.id %}" class="py-2 pl-3 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex w-full items-center rounded-md {% if is_status_public %}bg-gray-100 text-gray-900{% endif %}">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-3">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 19.5v-.75a7.5 7.5 0 00-7.5-7.5H4.5m0-6.75h.75c7.87 0 14.25 6.38 14.25 14.25v.75M6 18.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
                 </svg> Public page
@@ -302,26 +302,26 @@
           <div class="space-y-1" role="group" aria-labelledby="projects-headline">
 
             {% starts_with request.path '/performances' as is_selected %}
-            <a href="{% url 'performances_all' %}" class="{% if is_selected %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-3 py-2 text-sm font-medium{% else %}group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %}">
+            <a href="{% url 'performances_all' %}" class="{% if is_selected %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-3 py-2 text-sm font-medium{% else %}group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900{% endif %}">
               <span class="truncate">All performances</span>
             </a>
 
             {% if user.is_staff %}
             {% starts_with request.path '/administration' as is_selected %}
-            <a href="{% url 'administration' %}" class="{% if is_selected %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-3 py-2 text-sm font-medium{% else %}group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %}">
+            <a href="{% url 'administration' %}" class="{% if is_selected %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-3 py-2 text-sm font-medium{% else %}group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900{% endif %}">
               <span class="truncate">Administration</span>
             </a>
             {% endif %}
 
             <div class="pt-6">
-              <a href="{% url 'logout' %}?next=/" class="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+              <a href="{% url 'logout' %}?next=/" class="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900">
                 <span class="truncate">Logout</span>
               </a>
             </div>
           </div>
         </nav>
       </div>
-      <div class="flex flex-shrink-0 border-t border-gray-200 p-4">
+      <div class="flex flex-shrink-0 border-t border-gray-200 p-4 bg-gray-50/75">
         <a href="{% url 'settings' %}" class="group block w-full flex-shrink-0">
           <div class="flex items-center">
             <div>
