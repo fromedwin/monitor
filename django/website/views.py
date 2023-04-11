@@ -27,7 +27,8 @@ def homepage(request):
 
 def pricing(request):
     return render(request, 'pricing.html', {
-        'is_authenticated': request.user.is_authenticated
+        'is_authenticated': request.user.is_authenticated,
+        'settings': settings,
     })
 
 def features(request):
