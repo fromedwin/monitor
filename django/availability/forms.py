@@ -1,5 +1,6 @@
-from django.forms import ModelForm, URLField, CharField, BooleanField
+from django.forms import ModelForm, URLField, CharField, BooleanField, ValidationError
 from .models import Service, HTTPCodeService, HTTPMockedCodeService
+from django.conf import settings
 
 class ServiceForm(ModelForm):
     class Meta:
@@ -18,6 +19,7 @@ class HTTPCodeServiceForm(ModelForm):
 
     # On init we set scheme value with http if url start with https or http if url start with url
     def __init__(self, *args, **kwargs):
+        self.project = kwargs.pop('project', None)
         super(HTTPCodeServiceForm, self).__init__(*args, **kwargs)
         if self.instance.url:
             if self.instance.url.startswith('https://'):
@@ -26,6 +28,15 @@ class HTTPCodeServiceForm(ModelForm):
             else:
                 self.initial['scheme'] = 'http'
                 self.initial['url'] = self.instance.url.replace('http://', '')
+
+    # Define clean method to raise Validation error if user has more than 3 projects
+    def clean(self):
+        cleaned_data = super(HTTPCodeServiceForm, self).clean()
+        # If there is more HTTPCodeService with service.project equal to self.project
+        # we raise a validation error
+        if HTTPCodeService.objects.filter(service__in=self.project.services.all()).count() >= settings.FREEMIUM_AVAILABILITY:
+            raise ValidationError(f'You can only have {settings.FREEMIUM_AVAILABILITY} service(s)')
+        return cleaned_data
 
      # Override save method to save the project title with the url value
     def save(self, commit=True):

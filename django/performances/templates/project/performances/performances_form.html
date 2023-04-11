@@ -36,6 +36,11 @@
 				              <p class="block w-full max-w-md mt-2 text-left pl-2 text-sm text-red-500">{{ error|escape }}</p>
 				              {% endfor %}
 				            {% endif %}
+			                {% if form.non_field_errors %}
+				                {% for error in form.non_field_errors %}
+				                <p class="block w-full max-w-md mt-2 text-left pl-2 text-sm text-red-500">{{ error|escape }}</p>
+				                {% endfor %}
+			                {% endif %}
 				        </div>
 			        </div>
 				</div>
