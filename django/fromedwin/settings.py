@@ -155,7 +155,6 @@ MIDDLEWARE = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_prometheus.middleware.PrometheusAfterMiddleware',
-    'fromedwin.middleware.is_allowed_user',
     'fromedwin.middleware.project_required',
     'django_browser_reload.middleware.BrowserReloadMiddleware',
 )
