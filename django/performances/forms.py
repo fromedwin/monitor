@@ -26,7 +26,7 @@ class PerformanceForm(ModelForm):
     # Define clean method to raise Validation error if user has more than 3 projects
     def clean(self):
         cleaned_data = super(PerformanceForm, self).clean()
-        if self.project.performances.count() >= settings.FREEMIUM_PERFORMANCE:
+        if not self.project.user.is_superuser and not self.project.user.is_staff and not self.instance.pk and self.project.performances.count() >= settings.FREEMIUM_PERFORMANCE:
             raise ValidationError(f'You can only have {settings.FREEMIUM_PERFORMANCE} performance url(s)')
 
         return cleaned_data

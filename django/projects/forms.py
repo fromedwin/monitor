@@ -27,7 +27,8 @@ class ProjectCreateForm(ModelForm):
     # Define clean method to raise Validation error if user has more than 3 projects
     def clean(self):
         cleaned_data = super(ProjectCreateForm, self).clean()
-        if self.user.applications.count() >= settings.FREEMIUM_PROJECTS:
+
+        if not self.user.is_superuser and not self.user.is_staff and self.user.applications.count() >= settings.FREEMIUM_PROJECTS:
             raise ValidationError(f'You can only have {settings.FREEMIUM_PROJECTS} projects')
         return cleaned_data
 

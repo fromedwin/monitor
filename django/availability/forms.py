@@ -34,7 +34,7 @@ class HTTPCodeServiceForm(ModelForm):
         cleaned_data = super(HTTPCodeServiceForm, self).clean()
         # If there is more HTTPCodeService with service.project equal to self.project
         # we raise a validation error
-        if HTTPCodeService.objects.filter(service__in=self.project.services.all()).count() >= settings.FREEMIUM_AVAILABILITY:
+        if not self.project.user.is_superuser and not self.project.user.is_staff and not self.instance.pk and HTTPCodeService.objects.filter(service__in=self.project.services.all()).count() >= settings.FREEMIUM_AVAILABILITY:
             raise ValidationError(f'You can only have {settings.FREEMIUM_AVAILABILITY} service(s)')
         return cleaned_data
 
