@@ -155,7 +155,6 @@ MIDDLEWARE = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_prometheus.middleware.PrometheusAfterMiddleware',
-    'fromedwin.middleware.is_allowed_user',
     'fromedwin.middleware.project_required',
     'django_browser_reload.middleware.BrowserReloadMiddleware',
 )
@@ -273,3 +272,8 @@ else:
 if PORT and PORT != '80' and PORT != '443':
     ALERTMANAGER_WEBHOOK_URL += f':{PORT}'
 ALERTMANAGER_WEBHOOK_URL += '/alert/'
+
+# Define freemium specs
+FREEMIUM_PROJECTS = 3
+FREEMIUM_AVAILABILITY = 1
+FREEMIUM_PERFORMANCE = 3

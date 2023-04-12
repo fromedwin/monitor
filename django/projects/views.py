@@ -21,7 +21,6 @@ from projects.models import Project
 from availability.models import Service, HTTPCodeService, HTTPMockedCodeService
 from workers.models import Server
 from alerts.models import InstanceDownIncident
-from availability.forms import ServiceForm, HTTPCodeServiceForm, MockedHTTPCodeServiceForm
 
 from performances.models import Performance
 
@@ -105,8 +104,7 @@ def projects_add(request):
     """
 
     if request.POST:
-
-        form = ProjectCreateForm(request.POST)
+        form = ProjectCreateForm(request.POST, user=request.user)
 
         if form.is_valid():
             project = form.save(user=request.user)
@@ -126,7 +124,7 @@ def projects_welcome(request):
 
     if request.POST:
 
-        form = ProjectCreateForm(request.POST)
+        form = ProjectCreateForm(request.POST, user=request.user)
 
         if form.is_valid():
             project = form.save(user=request.user)

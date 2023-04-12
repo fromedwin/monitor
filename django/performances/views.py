@@ -97,7 +97,7 @@ def performance_form(request, application_id, performance_id=None):
 
     if request.POST:
 
-        form = PerformanceForm(request.POST, instance=performance)
+        form = PerformanceForm(request.POST, instance=performance, project=project)
 
         if form.is_valid():
 

@@ -40,6 +40,23 @@
 	    </div>
 	    <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
 	      <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+	        Subscription
+	      </label>
+	      <div class="mt-1 sm:mt-0 sm:col-span-2">
+	        <div class="mt-2 max-w-xl text-sm text-gray-500">
+					  <p>
+					    <strong>Hobby</strong>: {{ settings.FREEMIUM_PROJECTS }} projects, each with {{ settings.FREEMIUM_AVAILABILITY }} page for availability and {{ settings.FREEMIUM_PERFORMANCE }} pages for performances.
+					  </p>
+					</div>
+					<div class="mt-5">
+					  <a disabled class="inline-flex items-center justify-center px-4 py-2 border border-transparent font-medium rounded-md text-gray-400 bg-gray-100 sm:text-sm">
+					    Upgrade available soon
+					  </a>
+					</div>
+	      </div>
+	    </div>
+	    <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+	      <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
 	        Delete your account
 	      </label>
 	      <div class="mt-1 sm:mt-0 sm:col-span-2">

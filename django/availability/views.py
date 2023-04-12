@@ -132,7 +132,7 @@ def service_http_form(request, application_id, service_http_id=None):
 
     if request.POST:
 
-        form = HTTPCodeServiceForm(request.POST, instance=service_http)
+        form = HTTPCodeServiceForm(request.POST, instance=service_http, project=project)
         if service_http:
             formService = ServiceForm(request.POST, instance=service_http.service)
         else:
