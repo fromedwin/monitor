@@ -23,6 +23,13 @@ from projects.forms import ProjectForm
 from .models import Service, HTTPCodeService, HTTPMockedCodeService
 from .forms import ServiceForm, HTTPCodeServiceForm, MockedHTTPCodeServiceForm
 
+
+
+HEADERS = {
+    'User-Agent': 'FromEdwinBot Python Django',
+}
+
+
 @login_required
 def project_availability(request, id):
     """
@@ -59,7 +66,6 @@ def project_availability(request, id):
     content = {}
     services = {}
     graph = []
-    https = None
 
     try:
         servers = Server.objects.filter(
@@ -69,14 +75,10 @@ def project_availability(request, id):
         server = servers[0]
         authbasic = server.authbasic.first()
 
-        headers = {
-            'User-Agent': 'FromEdwinBot Python Django',
-        }
-
         """
             Fetch prometheus probe duration seconds data
         """
-        response = requests.get(f'{server.href}/fastapi/availability/{id}?duration={duration}', headers=headers, auth=(authbasic.username, authbasic.password))
+        response = requests.get(f'{server.href}/fastapi/availability/{id}?duration={duration}', headers=HEADERS, auth=(authbasic.username, authbasic.password))
         response.raise_for_status()
         content = json.loads(response.content)
 
@@ -238,3 +240,49 @@ def service_mockedhttp_delete(request, application_id, service_http_id):
     service.service.delete()
 
     return redirect(reverse('project_availability', args=[application_id]))
+
+@login_required
+def availabilities_all(request):
+    """
+    Show current project status
+    """
+    id = request.user.id
+
+    content = {}
+    services = {}
+
+    try:
+        servers = Server.objects.filter(
+            last_seen__gte=timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
+        ).order_by('-last_seen')
+
+        server = servers[0]
+        authbasic = server.authbasic.first()
+
+        """
+            Fetch prometheus probe duration seconds data
+        """
+        response = requests.get(f'{server.href}/fastapi/availabilities/{id}', headers=HEADERS, auth=(authbasic.username, authbasic.password))
+        response.raise_for_status()
+        content = json.loads(response.content)
+
+        services = content['services']
+
+        for service in services:
+            try:
+                services[service]['title'] = Service.objects.get(id=service).title
+            except:
+                # Remove data from availability is Service no longer exist (jsut deleted use case)
+                services = {k: v for k, v in services.items() if k != service}
+
+    except Exception as err:
+        content = {
+            'error': getattr(err, 'message', repr(err))
+        }
+
+    return render(request, 'project/availabilities.html', {
+        'projects': request.user.applications.all(),
+        'settings': settings,
+        'services': services,
+        'url': f'{request.META["wsgi.url_scheme"]}://{request.META["HTTP_HOST"]}',
+    })
