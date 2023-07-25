@@ -55,3 +55,7 @@ sphinx-reload ../docs
 ## Env variables
 
 `DATABASE_URL`: (optional) URL to access database
+
+## Dependencies
+
+- https://github.com/dvelasquez/lighthouse-viewer

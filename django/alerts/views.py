@@ -1,12 +1,13 @@
 import json
 import datetime
 from datetime import timedelta
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.conf import settings
+from django.http import HttpResponse
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -15,7 +16,7 @@ from .models import GenericIncident, InstanceDownIncident, ProjectIncident
 from projects.models import Project
 from availability.models import Service
 
-from constants import INCIDENT_SEVERITY
+from constants import INCIDENT_SEVERITY, INCIDENT_STATUS
 
 @login_required
 def incidents(request, id, year=None, month=None, day=None):
@@ -51,3 +52,26 @@ def incidents(request, id, year=None, month=None, day=None):
         'days': days,
         'date': date,
     })
+
+
+@login_required
+def incidents_force_online(request, service_id):
+
+    service = get_object_or_404(Service, pk=service_id)
+
+    # IF service.project.user is not same as request.use we return not authorized HTTP code
+    if service.project.user != request.user:
+        return HttpResponse(status=403)
+
+    incidents = InstanceDownIncident.objects.filter(service=service, status=INCIDENT_STATUS['FIRING'])
+    for incident in incidents:
+        # Check if path contains delete_incidents
+        if 'delete_incidents' in request.path:
+            incident.delete()
+        else:
+            incident.status = INCIDENT_STATUS['RESOLVED']
+            incident.endsAt = timezone.now()
+            incident.save()
+
+    # Redirect to project view
+    return redirect('project_availability', id=service.project.id)

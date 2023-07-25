@@ -8,7 +8,6 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.shortcuts import render
 from django.utils import timezone
-from django.utils.dateformat import format
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -29,6 +28,14 @@ def project_availability(request, id):
     """
     Show current project status
     """
+    duration = 60*60
+    if 'duration' in request.GET:
+        duration = int(request.GET['duration'])
+
+    # Set a max value for duration to save some performance issues on backend
+    if duration > 604800:
+        duration = 604800
+
 
     project = get_object_or_404(Project, pk=id)
 
@@ -50,8 +57,9 @@ def project_availability(request, id):
         })
 
     content = {}
+    services = {}
     graph = []
-    https = {}
+    https = None
 
     try:
         servers = Server.objects.filter(
@@ -65,27 +73,21 @@ def project_availability(request, id):
             'User-Agent': 'FromEdwinBot Python Django',
         }
 
-        start = int(format(timezone.now(), 'U'))
-
         """
             Fetch prometheus probe duration seconds data
         """
-        response = requests.get(f'{server.href}/api/v1/query_range?query=probe_duration_seconds%7Bapplication="{id}"%7D&step=30&start={str(start-600)}&end={str(start)}', headers=headers, auth=(authbasic.username, authbasic.password))
-        response.raise_for_status()
-        content = json.loads(response.content)
-        for service in content['data']['result']:
-            service['metric']['title'] = Service.objects.get(id=service['metric']['service']).title
-
-        graph = json.dumps(content)
-        """
-            Fetch prometheus https expiration value
-        """
-        response = requests.get(f'{server.href}/api/v1/query?query=probe_ssl_earliest_cert_expiry%7Bapplication="{id}"%7D&time={str(start)}', headers=headers, auth=(authbasic.username, authbasic.password))
+        response = requests.get(f'{server.href}/fastapi/availability/{id}?duration={duration}', headers=headers, auth=(authbasic.username, authbasic.password))
         response.raise_for_status()
         content = json.loads(response.content)
 
-        for service in content['data']['result']:
-            https[service['metric']['service']] = datetime.datetime.fromtimestamp(int(service['value'][1]))
+        services = content['services']
+
+        for service in services:
+            try:
+                services[service]['title'] = Service.objects.get(id=service).title
+            except:
+                # Remove data from availability is Service no longer exist (jsut deleted use case)
+                services = {k: v for k, v in services.items() if k != service}
 
     except Exception as err:
         content = {
@@ -97,13 +99,13 @@ def project_availability(request, id):
         'incidents': incidents,
         'days': days,
         'settings': settings,
+        'services': services,
+        'duration': duration,
         'availability': {
             '1': project.availability(days=1),
             '7': project.availability(days=7),
             '30': project.availability(days=30),
         },
-        'graph': graph,
-        'https': https,
         'url': f'{request.META["wsgi.url_scheme"]}://{request.META["HTTP_HOST"]}',
     })
 
@@ -130,7 +132,7 @@ def service_http_form(request, application_id, service_http_id=None):
 
     if request.POST:
 
-        form = HTTPCodeServiceForm(request.POST, instance=service_http)
+        form = HTTPCodeServiceForm(request.POST, instance=service_http, project=project)
         if service_http:
             formService = ServiceForm(request.POST, instance=service_http.service)
         else:

@@ -42,7 +42,7 @@ PORT = os.environ.get('PORT')
 WEBAUTH_USERNAME = os.environ.get('WEBAUTH_USERNAME')
 WEBAUTH_PASSWORD = os.environ.get('WEBAUTH_PASSWORD')
 
-IS_SERVICE_DOWN_SCRAPE_INTERVAL_MINUTE = 1
+IS_SERVICE_DOWN_SCRAPE_INTERVAL_SECONDS = 60
 IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES = 5
 # Run Lighthouse every 60 minutes
 LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES = int(os.environ.get('LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES', 60))
@@ -109,6 +109,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.humanize',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -154,7 +155,7 @@ MIDDLEWARE = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_prometheus.middleware.PrometheusAfterMiddleware',
-    'fromedwin.middleware.is_allowed_user',
+    'fromedwin.middleware.project_required',
     'django_browser_reload.middleware.BrowserReloadMiddleware',
 )
 
@@ -199,6 +200,15 @@ AUTHENTICATION_BACKENDS = (
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_PORT = os.environ.get('EMAIL_PORT')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'no-reply@fromedwin.com')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS')
+
+if os.environ.get('EMAIL_BACKEND_CONSOLE') == 'True' or not EMAIL_HOST:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -262,3 +272,8 @@ else:
 if PORT and PORT != '80' and PORT != '443':
     ALERTMANAGER_WEBHOOK_URL += f':{PORT}'
 ALERTMANAGER_WEBHOOK_URL += '/alert/'
+
+# Define freemium specs
+FREEMIUM_PROJECTS = 3
+FREEMIUM_AVAILABILITY = 1
+FREEMIUM_PERFORMANCE = 3

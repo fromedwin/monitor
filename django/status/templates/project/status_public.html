@@ -12,8 +12,18 @@
 {% endblock %}
 
 {% block subsection %}
+<header class="pb-4">
+  <h1 class="text-3xl font-bold leading-tight text-gray-900 relative pl-16 pt-2 pb-8">
+    <div class="absolute top-0 left-0 flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-600">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-8 w-8 text-white">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 19.5v-.75a7.5 7.5 0 00-7.5-7.5H4.5m0-6.75h.75c7.87 0 14.25 6.38 14.25 14.25v.75M6 18.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+      </svg>
+    </div>
+    Public page
+  </h1>
+</header>
   {% if not project.enable_public_page %}
-  <div class="py-5 sm:p-6">
+  <div class="pt-5 sm:pt-6">
     <form method="POST" action="{% url 'toggle_public_page' project.id %}" class="mt-2 sm:flex sm:items-start sm:justify-between">
       <div class="max-w-xl text-sm text-gray-500">
         <p>
@@ -30,7 +40,7 @@
   {% else %}
 
 
-  <div class="py-5 sm:p-6">
+  <div class="pr-5 sm:pt-6">
     <form method="POST" action="{% url 'toggle_public_page' project.id %}" class="mt-2 sm:flex sm:items-start sm:justify-between">
       <div class="max-w-xl text-sm text-gray-500">
         <p>
@@ -45,7 +55,7 @@
     </form>
   </div>
 
-  <div class="py-5 sm:p-6">
+  <div class="pt-5 sm:pt-6">
     <div class="text-sm text-gray-500">
       <p>
         You can also embed your current status badge in third party application using the following code : <a class="inline" href="{{ url }}{% url 'public' project.id %}"><img class="inline" src="{% url 'badge' project.id %}" /></a>

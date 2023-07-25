@@ -24,3 +24,24 @@ def homepage(request):
         'socialapps': socialapps,
         'is_authenticated': request.user.is_authenticated
     })
+
+def pricing(request):
+    return render(request, 'pricing.html', {
+        'is_authenticated': request.user.is_authenticated,
+        'settings': settings,
+    })
+
+def features(request):
+    return render(request, 'features.html', {
+        'is_authenticated': request.user.is_authenticated
+    })
+
+def legal(request):
+    return render(request, 'legal.html', {
+        'is_authenticated': request.user.is_authenticated
+    })
+
+def aboutus(request):
+    return render(request, 'about-us.html', {
+        'is_authenticated': request.user.is_authenticated
+    })

@@ -1,7 +1,9 @@
-from django.forms import ModelForm, URLField, CharField
+from django.forms import ModelForm, URLField, CharField, ValidationError
 from .models import Project
 from performances.models import Performance
+from notifications.models import Emails
 from availability.models import Service, HTTPCodeService 
+from django.conf import settings
 
 class ProjectForm(ModelForm):
 	class Meta:
@@ -18,10 +20,24 @@ class ProjectCreateForm(ModelForm):
         model = Project
         fields = ['url', 'scheme']
 
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(ProjectCreateForm, self).__init__(*args, **kwargs)
+
+    # Define clean method to raise Validation error if user has more than 3 projects
+    def clean(self):
+        cleaned_data = super(ProjectCreateForm, self).clean()
+
+        if not self.user.is_superuser and not self.user.is_staff and self.user.applications.count() >= settings.FREEMIUM_PROJECTS:
+            raise ValidationError(f'You can only have {settings.FREEMIUM_PROJECTS} projects')
+        return cleaned_data
+
+    # Define clean_url method to raise Validation error if url does not start with http:// or https://
+
     def clean_url(self):
         url = self.cleaned_data['url']
         if not url.startswith('http://') and not url.startswith('https://'):
-            raise forms.ValidationError('URL must start with http:// or https://')
+            raise ValidationError('URL must start with http:// or https://')
         return url
 
     # Override save method to save the project title with the url value
@@ -46,6 +62,7 @@ class ProjectCreateForm(ModelForm):
         performance = Performance.objects.create(url=url, project=project)
         service = Service.objects.create(project=project, title=domain)
         availability = HTTPCodeService.objects.create(url=url, service=service)
+        email = Emails.objects.create(project=project, email=user.email)
 
         return project
 

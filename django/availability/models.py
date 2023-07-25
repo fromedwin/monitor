@@ -57,6 +57,9 @@ class Service(models.Model):
             return False
         return self.instancedownincidents.filter(status=2, endsAt__isnull=True, severity=1)
 
+    def is_disabled(self):
+        return not self.is_enabled
+
     def incidents_count(self):
         from alerts.models import InstanceDownIncident
         return InstanceDownIncident.objects.filter(service__in=self.services.all()).count()
@@ -66,6 +69,7 @@ class Service(models.Model):
 
 class HTTPCodeService(models.Model):
     url = models.URLField(max_length=512, blank=False)
+    tls_skip_verify = models.BooleanField("Ignore unsecure SSL", default=False, help_text="Might be needed for monitoring some CDN or object storage directly.")
     service = models.OneToOneField(
         Service,
         on_delete = models.CASCADE,

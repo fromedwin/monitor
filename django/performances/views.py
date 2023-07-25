@@ -12,18 +12,10 @@ from projects.models import Project
 from .models import Performance, Report
 from .forms import PerformanceForm
 
-@login_required
-def project_performances(request, id):
-    """
-    Show current project status
-    """
-
-    project = get_object_or_404(Project, pk=id)
-
-    domains = {} # List of all domains
-
+def get_domaines_from_performances(performances_list):
+    domains = {}
     # For each performance object we extract the url and index by domain 
-    for performance in project.performances.all().order_by('url'):
+    for performance in performances_list:
         
         # If performance.url does not start with http:// or https:// we add it at the beginning
         if not performance.url.startswith('http://') and not performance.url.startswith('https://'):
@@ -72,6 +64,17 @@ def project_performances(request, id):
         # We start with the root page
         find_page(domains[domain]['tree'], performance)
 
+    return domains
+
+@login_required
+def project_performances(request, id):
+    """
+    Show current project status
+    """
+
+    project = get_object_or_404(Project, pk=id)
+
+    domains = get_domaines_from_performances(project.performances.all().order_by('url'))
 
     return render(request, 'project/performances.html', {
         'project': project,
@@ -94,7 +97,7 @@ def performance_form(request, application_id, performance_id=None):
 
     if request.POST:
 
-        form = PerformanceForm(request.POST, instance=performance)
+        form = PerformanceForm(request.POST, instance=performance, project=project)
 
         if form.is_valid():
 
@@ -153,4 +156,17 @@ def project_performances_report_viewer(request, id, report_id):
         'project': project,
         'report': report,
         'json': json.dumps(report_json),
+    })
+
+@login_required
+def performances_all(request):
+
+    domains = {}
+    for project in request.user.applications.all():
+        # Merge domain dict with a new dict
+        domains = {**domains, **get_domaines_from_performances(project.performances.all().order_by('url'))}
+
+    return render(request, 'project/performances_all.html', {
+        'user': request.user,
+        'domains': domains
     })

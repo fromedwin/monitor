@@ -21,21 +21,8 @@ from projects.models import Project
 from availability.models import Service, HTTPCodeService, HTTPMockedCodeService
 from workers.models import Server
 from alerts.models import InstanceDownIncident
-from availability.forms import ServiceForm, HTTPCodeServiceForm, MockedHTTPCodeServiceForm
 
 from performances.models import Performance
-
-@login_required
-def projects(request):
-    """
-    List of projects for current user
-    """
-
-    applications = request.user.applications.order_by('-is_favorite')
-
-    return render(request, 'projects/project_list.html', {
-        'applications': applications
-    })
 
 @login_required
 def project(request, id):
@@ -45,14 +32,15 @@ def project(request, id):
 
     project = get_object_or_404(Project, pk=id)
 
-
     activities = InstanceDownIncident\
         .objects\
         .filter(service__project=project, endsAt__isnull=False)\
         .order_by('-startsAt', '-severity')[:20]
 
+
     return render(request, 'projects/project_view.html', {
         'project': project,
+        'settings': settings,
         'activities': activities,
     })
 
@@ -104,11 +92,10 @@ def projects_delete(request, id=None):
     """
         Delete project model
     """
-
     project = get_object_or_404(Project, pk=id)
     project.delete()
 
-    return redirect(reverse('projects'))
+    return redirect(reverse('dashboard'))
     
 @login_required
 def projects_add(request):
@@ -117,8 +104,7 @@ def projects_add(request):
     """
 
     if request.POST:
-
-        form = ProjectCreateForm(request.POST)
+        form = ProjectCreateForm(request.POST, user=request.user)
 
         if form.is_valid():
             project = form.save(user=request.user)
@@ -138,7 +124,7 @@ def projects_welcome(request):
 
     if request.POST:
 
-        form = ProjectCreateForm(request.POST)
+        form = ProjectCreateForm(request.POST, user=request.user)
 
         if form.is_valid():
             project = form.save(user=request.user)
