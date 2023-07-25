@@ -69,6 +69,7 @@ def project_availability(request, id):
 
     try:
         servers = Server.objects.filter(
+            monitoring=True,
             last_seen__gte=timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
         ).order_by('-last_seen')
 
@@ -253,6 +254,7 @@ def availabilities_all(request):
 
     try:
         servers = Server.objects.filter(
+            monitoring=True,
             last_seen__gte=timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
         ).order_by('-last_seen')
 

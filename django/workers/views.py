@@ -107,6 +107,12 @@ def heartbeat(request, id):
     Require to be registered using register api.
     """
     server = get_object_or_404(Server, uuid=id)
+
+    # Default value is 1 as default worker enable lighthouse and prometheus
+    server.performance = request.GET.get('performance', '1') == '1'
+    server.monitoring = request.GET.get('monitoring', '1') == '1'
+
+    # Update last seen
     server.last_seen = timezone.now()
     server.save()
 
