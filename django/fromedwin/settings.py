@@ -79,7 +79,7 @@ STATICFILES_DIRS = [
 
 if os.environ.get('STORAGE') == 'S3':
     # aws settings
-    AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL', "https://cellar-c2.services.clever-cloud.com")
+    AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL')
     S3_USE_SIGV4 = False
     AWS_S3_SIGNATURE_VERSION = "s3"
     AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
@@ -87,7 +87,7 @@ if os.environ.get('STORAGE') == 'S3':
     AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
     AWS_DEFAULT_ACL = 'public-read'
     AWS_S3_CUSTOM_DOMAIN = os.getenv('AWS_S3_CUSTOM_DOMAIN')
-    AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=0'}
+    AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=3600'}
     AWS_S3_FILE_OVERWRITE = True
     # s3 static settings
     AWS_LOCATION = 'static'
