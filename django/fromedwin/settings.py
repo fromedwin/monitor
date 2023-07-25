@@ -77,6 +77,9 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'fromedwin', 'static'),
 ]
 
+# Was returning 413 on report upload.
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10*1024*1024 # (10Mb instead of default 2.5Mb)
+
 if os.environ.get('STORAGE') == 'S3':
     # aws settings
     AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL')
