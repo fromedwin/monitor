@@ -32,6 +32,7 @@ def healthcheck_database(request):
 def healthcheck_workers_availability(request):
 
     servers = Server.objects.filter(
+        monitoring=True,
         last_seen__gte=timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
     ).order_by('-last_seen')
 
@@ -45,6 +46,7 @@ def healthcheck_workers_availability(request):
 def healthcheck_workers_lighthouse(request):
 
     servers = Server.objects.filter(
+        monitoring=True,
         last_seen__gte=timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
     ).order_by('-last_seen')
 

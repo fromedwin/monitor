@@ -1,7 +1,3 @@
-> **Warning**  
-> 
-> This project is **alpha** quality. We don't yet guarantee stability, data integrity or a clean upgrade path. Only use this project if you are interested in experimenting with it.
-
 # Status From Edwin
 
 This project provide an **out of the box** **highly opinionated implementation** of open-source **monitoring tools**, unified as a **no code web interface**.

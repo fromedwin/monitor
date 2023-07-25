@@ -7,7 +7,7 @@ class AlertsAdmin(admin.ModelAdmin):
     list_display = ('alert', '__str__')
 
 class ServerAdmin(admin.ModelAdmin):
-    list_display = ('ip', 'user',  'is_public', 'uuid', 'has_auth_basic', 'is_active', 'last_seen_duration')
+    list_display = ('ip', 'user',  'is_public', 'uuid', 'has_auth_basic', 'is_active', 'performance', 'monitoring', 'last_seen_duration')
 
     @admin.display(boolean=True)
     def has_auth_basic(self, obj):

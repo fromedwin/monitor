@@ -56,7 +56,7 @@ class Project(models.Model):
         return InstanceDownIncident.objects.filter(service__in=self.services.all()).count() + ProjectIncident.objects.filter(project=self).count()
 
     def url(self):
-        return f"/project/{self.id}"
+        return f"/project/{self.id}/"
 
     def performance_score(self):
         result = {

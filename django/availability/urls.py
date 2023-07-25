@@ -1,10 +1,13 @@
 from django.urls import path
 
-from .views import project_availability, service_list, service_http_form, service_http_form, service_http_delete, service_mockedhttp_form, service_mockedhttp_form, service_mockedhttp_delete, healthy
+from .views import availabilities_all, project_availability, service_list, service_http_form, service_http_form, service_http_delete, service_mockedhttp_form, service_mockedhttp_form, service_mockedhttp_delete, healthy
 
 urlpatterns = [
     # Healthy API called by API to MockedHTTP
     path('healthy/<int:id>/', healthy, name='healthy'),
+    
+    path('availabilities/', availabilities_all, name='availabilities_all'),
+
     # Show availability overview for project
     path('project/<int:id>/availability/', project_availability, name='project_availability'),
     # List of service available for availability
