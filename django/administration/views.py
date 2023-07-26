@@ -27,7 +27,6 @@ def administration(request):
     servers = []
 
     servers = Server.objects.filter(
-        monitoring=True,
         last_seen__gte=timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
     ).order_by('-last_seen')
 
