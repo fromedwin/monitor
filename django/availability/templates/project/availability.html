@@ -240,8 +240,8 @@
 
     {% for service in project.services.all %}
     {% with services|get_obj_attr:service.id as data %}
-    {% if data.http_code == '200' %}
-      {% if service.is_offline or service.is_warning or service.is_degraded %}
+    {% if service.is_offline or service.is_warning or service.is_degraded %}
+      {% if data.http_code == '200' %}
       <div class="rounded-md bg-red-50 p-4 mt-4 mb-4">
         <div class="flex">
           <div class="flex-shrink-0">
