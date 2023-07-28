@@ -52,5 +52,8 @@ def handleInstanceDown(alert, status, severity, json_formated, startsAt, endsAt)
                 status=status,
                 json=json_formated)
     except Service.DoesNotExist:
+        # If user delete a service with an open alert then prometeheus close the alert,
+        # alert manager report the alert as close for deleted service and was returning 500.
+        # Now return 200.
         pass
 
