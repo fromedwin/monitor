@@ -20,34 +20,37 @@ from constants import INCIDENT_STATUS, INCIDENT_SEVERITY
 
 def handleInstanceDown(alert, status, severity, json_formated, startsAt, endsAt):
 
-    service = Service.objects.get(pk=alert["labels"]["service"])
-    # Try to get object with fingerprint
-    incident = InstanceDownIncident.objects.filter(service=service, startsAt=startsAt).first()
+    try:
+        service = Service.objects.get(pk=alert["labels"]["service"])
+        # Try to get object with fingerprint
+        incident = InstanceDownIncident.objects.filter(service=service, startsAt=startsAt).first()
 
-    if incident:
+        if incident:
 
-        # we decect if this is a repeat or a change of state.
-        if  incident.severity == INCIDENT_SEVERITY['WARNING'] and severity == INCIDENT_SEVERITY['CRITICAL'] or \
-            incident.status == INCIDENT_STATUS['FIRING'] and status == INCIDENT_STATUS['RESOLVED']:
+            # we decect if this is a repeat or a change of state.
+            if  incident.severity == INCIDENT_SEVERITY['WARNING'] and severity == INCIDENT_SEVERITY['CRITICAL'] or \
+                incident.status == INCIDENT_STATUS['FIRING'] and status == INCIDENT_STATUS['RESOLVED']:
 
-            incident.startsAt = startsAt
-            incident.endsAt = endsAt
-            incident.status = status
-            incident.severity = severity
-            incident.json_formated = json_formated
-            incident.save()
+                incident.startsAt = startsAt
+                incident.endsAt = endsAt
+                incident.status = status
+                incident.severity = severity
+                incident.json_formated = json_formated
+                incident.save()
 
-    else:
+        else:
 
-        InstanceDownIncident.objects.create(
-            service=service,
-            startsAt=startsAt,
-            endsAt=endsAt,
-            fingerprint=alert["fingerprint"],
-            instance=alert["labels"]["instance"],
-            summary=alert["annotations"]["summary"],
-            description=alert["annotations"]["description"],
-            severity=severity,
-            status=status,
-            json=json_formated)
+            InstanceDownIncident.objects.create(
+                service=service,
+                startsAt=startsAt,
+                endsAt=endsAt,
+                fingerprint=alert["fingerprint"],
+                instance=alert["labels"]["instance"],
+                summary=alert["annotations"]["summary"],
+                description=alert["annotations"]["description"],
+                severity=severity,
+                status=status,
+                json=json_formated)
+    except Service.DoesNotExist:
+        pass
 
