@@ -20,5 +20,6 @@ urlpatterns = [
     path('api/request/<uuid:server_id>/performance', fetch_performance, name='fetch_performance'),
     # Report lighthouse performance
     path('api/report/<uuid:server_id>/performance/<int:performance_id>', save_report, name='fetch_performance'),
+    # Report lighthouse performance
     
 ]

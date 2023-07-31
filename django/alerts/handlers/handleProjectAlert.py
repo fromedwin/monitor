@@ -20,6 +20,7 @@ from constants import INCIDENT_STATUS, INCIDENT_SEVERITY
 
 def handleProjectAlert(alert, status, severity, json_formated, startsAt, endsAt):
     project = None
+
     if alert["labels"]["project"]:
         # If user delete a project while an alert is open, alertmanager still send a resolve
         # This will ignore the resolve or new update
