@@ -39,11 +39,11 @@
     
     <main id="lighthouse-viewer-element"></main>
 
-    <script src="{% static 'lighthouse-viewer/lighthouse-viewer-no-dark-mode.umd.js' %}"></script>
+    <script src="{% static 'lighthouse-viewer/lighthouse-viewer.umd.js' %}"></script>
     <script>
       var json = {{ json|safe }};
       const app = document.getElementById('lighthouse-viewer-element');
-      const reportHtml = LighthouseViewer.renderReport(json, { omitTopbar: true });
+      const reportHtml = LighthouseViewer.renderReport(json, { omitTopbar: true, disableDarkMode: true });
       app.appendChild(reportHtml);
     </script>
 </div>
