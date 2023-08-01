@@ -7,10 +7,10 @@ from .utils import send_emails
 @receiver(pre_save, sender=InstanceDownIncident)
 def send_notifications(sender, instance=None, created=False, **kwargs):
 
-    is_created = instance.pk
+    is_created = not bool(instance.pk)
     is_modified = False
 
-    if is_created:
+    if not is_created:
         old_instance = sender.objects.get(pk=instance.pk)
         if old_instance.status != instance.status:
             is_modified = True

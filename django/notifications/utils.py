@@ -19,7 +19,7 @@ def send_emails(incident, email):
     subject = f'[{status}] {incident.summary}'
     html_message = render_to_string('notifications/emails/instance_down_email.html', {'incident': incident})
     plain_message = strip_tags(html_message)
-    from_email = settings.EMAIL_HOST_USER
+    from_email = settings.CONTACT_EMAIL
     to = [email]
 
     send_mail(
