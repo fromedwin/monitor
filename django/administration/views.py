@@ -65,7 +65,7 @@ def test_email(request):
         send_mail(
             'Test email',
             'This is a test email',
-            settings.CONTACT_EMAIL,
+            f"{settings.CONTACT_NAME} <{settings.CONTACT_EMAIL}>",
             [request.user.email],
             fail_silently=False,
         )

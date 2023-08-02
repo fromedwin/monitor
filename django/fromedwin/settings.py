@@ -204,6 +204,7 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
+CONTACT_NAME = os.environ.get('CONTACT_NAME', 'FromEdwin')
 CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL', 'no-reply@fromedwin.com')
 EMAIL_HOST = os.environ.get('EMAIL_HOST')
 EMAIL_PORT = os.environ.get('EMAIL_PORT')
