@@ -25,5 +25,5 @@ See for sample https://raw.githubusercontent.com/favoloso/conventional-changelog
 ### ✨ Feature
 - Login using Github single sign-on
 - Set url then start monitoring availability and performances
-- Notify incidents via email and PagerDuty
+- Notify incidents via email
 - Provide public status page for availability.

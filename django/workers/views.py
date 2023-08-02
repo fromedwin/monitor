@@ -16,8 +16,6 @@ from rest_framework.decorators import api_view
 from .models import Metrics, Alerts, Server, AuthBasic
 from alerts.models import INCIDENT_SEVERITY_CHOICES
 
-from notifications.models import Pager_Duty
-
 @api_view(['GET'])
 def alerts(request, id):
     """
@@ -67,10 +65,7 @@ def alertmanager(request, id):
     """
     get_object_or_404(Server, uuid=id)
 
-    pager_duty = Pager_Duty.objects.all()
-
     yaml = render_to_string('alertmanager_template.yml', {
-        'pager_duty': pager_duty,
         "settings": settings,
     })
 

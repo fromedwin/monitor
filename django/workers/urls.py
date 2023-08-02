@@ -15,7 +15,7 @@ urlpatterns = [
     # """"
     # Prometheus configuration file
     path('prometheus/<uuid:id>/', prometheus),
-    # Alertmanager with differet pagerDuty data
+    # Alertmanager configuration file
     path('alertmanager/<uuid:id>/', alertmanager),
     # Alerts triggered
     path('alerts/<uuid:id>/', alerts),

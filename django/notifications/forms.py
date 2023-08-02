@@ -1,10 +1,5 @@
 from django.forms import ModelForm
-from .models import Pager_Duty, Emails
-
-class PagerDutyForm(ModelForm):
-	class Meta:
-		model = Pager_Duty
-		fields = ['routing_key']
+from .models import Emails
 
 class EmailsForm(ModelForm):
     class Meta:
