@@ -32,16 +32,23 @@ def project(request, id):
 
     project = get_object_or_404(Project, pk=id)
 
-    activities = InstanceDownIncident\
+    incidents = InstanceDownIncident\
         .objects\
         .filter(service__project=project, endsAt__isnull=False)\
         .order_by('-startsAt', '-severity')[:20]
 
+            # Group incidents per date based on day month and year
+    dates = {}
+    for incident in incidents:
+        if incident.startsAt.date() in dates:
+            dates[incident.startsAt.date()].append(incident)
+        else:
+            dates[incident.startsAt.date()] = [incident]
 
     return render(request, 'projects/project_view.html', {
         'project': project,
         'settings': settings,
-        'activities': activities,
+        'dates': dates,
     })
 
 @login_required

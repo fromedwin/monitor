@@ -18,7 +18,7 @@
         </div>
         <span class="pl-16">Latest incidents</span>
       </dt>
-      <dd class="mt-2 pl-2 pt-4 text-base leading-7 text-gray-600">
+      <dd class="mt-2 pt-4 text-base leading-7 text-gray-600">
         <div>
           {% for date, incidents in dates.items %}
           <div class="flex justify-center pt-8 pb-2">
@@ -26,7 +26,7 @@
           </div>
           <div class="flex flex-row">
             <div>
-              <img src="{% static 'favicon.svg' %}" alt="Edwin's avatar" class="w-10 h-10 m-4" />
+              <img src="{% static 'favicon.svg' %}" alt="Edwin's avatar" class="w-10 h-10 mt-4 mr-2" />
             </div>
             <div class="flex flex-col grow">
               {% for incident in incidents %}
@@ -58,9 +58,24 @@
                   <div class="flex justify-end pl-8 pt-1">
                     <p class="text-xs text-gray-400">{{ incident.startsAt|time:"h:i a" }}</p>
                   </div>
-                {% empty %}
-                <p class="pt-4">No Events</p>
               {% endfor %}
+            </div>
+          </div>
+          {% empty %}
+          <div class="flex flex-row">
+            <div>
+              <img src="{% static 'favicon.svg' %}" alt="Edwin's avatar" class="w-10 h-10 mt-4 mr-2" />
+            </div>
+            <div class="flex flex-col grow">
+              <div key={activityItem.id} class="rounded-md bg-gray-50 p-4 mt-3">
+                    <div class="flex">
+                      <div class="ml-3">
+                        <div class="text-xs text-gray-700">
+                          <p>No incidents to report so far.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
             </div>
           </div>
           {% endfor %}
