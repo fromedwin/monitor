@@ -21,12 +21,20 @@ def dashboard(request):
     if not request.user.applications.all():
         return redirect('projects_welcome')
 
-    activities = InstanceDownIncident\
+    incidents = InstanceDownIncident\
         .objects\
         .filter(service__project__in=request.user.applications.all(), endsAt__isnull=False)\
         .order_by('-startsAt', '-severity')[:20]
 
+    # Group incidents per date based on day month and year
+    dates = {}
+    for incident in incidents:
+        if incident.startsAt.date() in dates:
+            dates[incident.startsAt.date()].append(incident)
+        else:
+            dates[incident.startsAt.date()] = [incident]
+
     return render(request, 'dashboard.html', {
         'settings': settings,
-        'activities': activities
+        'dates': dates,
     })

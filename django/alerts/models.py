@@ -1,3 +1,5 @@
+import humanize
+
 from django.db import models
 from django.contrib.auth.models import User
 from projects.models import Project
@@ -6,6 +8,9 @@ from django.template.defaultfilters import truncatechars
 from django.utils import timezone
 
 from constants import INCIDENT_STATUS_CHOICES, INCIDENT_SEVERITY_CHOICES
+
+# Import django duraiton to natural language
+from django.utils.timesince import timesince
 
 class AbstractIncident(models.Model):
     """
@@ -47,6 +52,10 @@ class AbstractIncident(models.Model):
     def short_json(self):
         return "%s..." % truncatechars(self.json, 70)
 
+    @property
+    def message(self):
+        return self.description
+
 class InstanceDownIncident(AbstractIncident):
     """
         This incident is trigger when a non HTTP_Code 200 is detected on
@@ -58,6 +67,11 @@ class InstanceDownIncident(AbstractIncident):
         on_delete = models.CASCADE,
         related_name = "instancedownincidents",
     )
+
+    @property
+    def message(self):
+        # get duration as natural language
+        return '%s' % humanize.precisedelta(self.duration)
 
     class Meta:
         verbose_name = "Service down incident"
