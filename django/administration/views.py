@@ -19,6 +19,9 @@ from django.db.models import Q
 from performances.models import Performance
 from constants import LIGHTHOUSE_FORMFACTOR_CHOICES
 
+# Improt django user model
+from django.contrib.auth.models import User
+
 
 @staff_member_required
 def administration(request):
@@ -50,6 +53,7 @@ def administration(request):
         'settings': settings,
         'email_success': email_success,
         'email_fail': email_fail,
+        'users_count': User.objects.count,
         'stats': {
             'inQueueLighthouse': inQueueLighthouse,
         }
