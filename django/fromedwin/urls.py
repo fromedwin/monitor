@@ -38,6 +38,7 @@ urlpatterns = [
     path('', include('status.urls')),
     path('', include('website.urls')),
     path('', include('alerts.urls')),
+    path('messages/', include('chat.urls')),
     # monitor-worker api
     path('clients/', include('workers.urls')),
     # Settings URL

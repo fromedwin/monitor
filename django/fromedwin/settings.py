@@ -127,6 +127,7 @@ INSTALLED_APPS = [
     # App
     'administration',
     'availability',
+    'chat',
     'dashboard',
     'alerts',
     'fromedwin',
