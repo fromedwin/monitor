@@ -129,18 +129,18 @@
     <div class="mx-auto max-w-2xl lg:max-w-none">
       <dl class="grid grid-cols-1 gap-0.5 overflow-hidden rounded-2xl text-center sm:grid-cols-2 lg:grid-cols-4">
         <div class="flex flex-col bg-gray-400/5 p-8">
-          <dt class="text-sm font-semibold leading-6 text-gray-600">Waiting for Lighthouse</dt>
-          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{{ stats.inQueueLighthouse }}</dd>
+          <dt class="text-sm font-semibold leading-6 text-gray-600">Performance in queue</dt>
+          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{{ stats.inQueueLighthouse }} %</dd>
         </div>
 
         <div class="flex flex-col bg-gray-400/5 p-8">
           <dt class="text-sm font-semibold leading-6 text-gray-600">Users</dt>
-          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{{ users_count }}</dd>
+          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{{ stats.users_count }}</dd>
         </div>
 
         <div class="flex flex-col bg-gray-400/5 p-8">
-          <dt class="text-sm font-semibold leading-6 text-gray-600"></dt>
-          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900"></dd>
+          <dt class="text-sm font-semibold leading-6 text-gray-600">Services</dt>
+          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{{ stats.url_count }}</dd>
         </div>
 
         <div class="flex flex-col bg-gray-400/5 p-8">

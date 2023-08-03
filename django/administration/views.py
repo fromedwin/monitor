@@ -6,22 +6,18 @@ from django.http import HttpResponse
 from django.conf import settings
 from django.urls import reverse
 from django.utils import timezone
-from datetime import timedelta
+from django.contrib.auth.models import User
 from django.contrib.admin.views.decorators import staff_member_required
+from django.core.mail import send_mail
 
 from allauth.socialaccount.models import SocialApp
 
 from workers.models import Server
 
-from django.core.mail import send_mail
-
 from django.db.models import Q
 from performances.models import Performance
+from availability.models import Service
 from constants import LIGHTHOUSE_FORMFACTOR_CHOICES
-
-# Improt django user model
-from django.contrib.auth.models import User
-
 
 @staff_member_required
 def administration(request):
@@ -46,16 +42,18 @@ def administration(request):
         last_seen__gte=timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
     ).order_by('-creation_date')
 
-    inQueueLighthouse = Performance.objects.filter(Q(request_run=True) | Q(last_request_date__isnull=True) | Q(last_request_date__lt=timezone.now()-timedelta(minutes=settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES))).count()
+    inQueueLighthouse = Performance.objects.filter(Q(request_run=True) | Q(last_request_date__isnull=True) | Q(last_request_date__lt=timezone.now()-datetime.timedelta(minutes=settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES))).count()
 
     return render(request, 'administration.html', {
         'servers': servers,
         'settings': settings,
         'email_success': email_success,
         'email_fail': email_fail,
-        'users_count': User.objects.count,
         'stats': {
             'inQueueLighthouse': inQueueLighthouse,
+            'users_count': User.objects.count,
+            'url_count': Service.objects.count,
+            'performance_count': inQueueLighthouse / Performance.objects.count() * 100,
         }
     })
 
