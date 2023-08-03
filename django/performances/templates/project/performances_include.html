@@ -30,7 +30,7 @@
 		    </div>
 	        <div class="flex flex-row px-3 py-2 {% if child.performance.request_run %}opacity-40{% endif %}">
 	        	{% if child.report %}
-			    <a href="{% url 'project_performances_report_viewer' child.performance.project.id child.report.id %}#performance" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
+			    <a href="{% url 'project_performances_report_viewer' child.performance.project.id child.report.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
 			      <div class="echartgauge" data-score="{{ child.report.score_performance }}"></div>
 			      <p class="text-xs">Performances</p>
 			    </a>
