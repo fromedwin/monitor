@@ -275,42 +275,26 @@
       <dd class="mt-2 pl-2 pt-4 text-base leading-7 text-gray-600">
         <div>
           {% for date, incidents in dates.items %}
-          <div class="flex justify-center pt-8 pb-2">
-            <span class="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600">{{ date }}</span>
-          </div>
+          
           <div class="flex flex-row">
-            <div>
-              <img src="{% static 'favicon.svg' %}" alt="Edwin's avatar" class="w-10 h-10 mt-4 mr-2" />
-            </div>
             <div class="flex flex-col grow">
-              {% for incident in incidents %}
-                  {% if incident.severity == 2 %}
-                  <div key={activityItem.id} class="rounded-md bg-red-50 p-4 mt-3">
+              <div class="flex justify-start pl-8 pt-4">
+                <p class="text-xs text-bold text-gray-800">{{ date }}</p>
+              </div>
+            {% for incident in incidents %}
+                  <div key={activityItem.id} class="rounded-md bg-gray-50 p-4 mt-2">
                     <div class="flex">
-                      <div class="ml-3">
-                        <div class="text-xs text-red-700">
-                  {% elif incident.severity == 1 %}
-
-                  <div key={activityItem.id} class="rounded-md bg-yellow-50 p-4 mt-3">
-                    <div class="flex">
-                      <div class="ml-3">
-                        <div class="text-xs text-yellow-700">
-                  {% else %}
-
-                  <div key={activityItem.id} class="rounded-md bg-yellow-50 p-4 mt-3">
-                    <div class="flex">
-                      <div class="ml-3">
-                        <div class="text-xs text-yellow-700">
-                  {% endif %}
+                      <div class="ml-3 grow">
+                        <div class="text-xs text-gray-700">
                         <p>
                           <a href="{% url 'project' incident.service.project.id %}" class="font-bold">{{ incident.service.project }}</a> has reported an incent about <a href="{% url 'project_availability' incident.service.project.id %}" class="font-bold">{{ incident.service.title }} url</a> being down for {{ incident.message }}
                         </p>
                         </div>
                       </div>
+                      <div class="flex justify-end pl-8 pt-1">
+                        <p class="text-xs text-gray-400">{{ incident.startsAt|time:"h:i a" }}</p>
+                      </div>
                     </div>
-                  </div>
-                  <div class="flex justify-end pl-8 pt-1">
-                    <p class="text-xs text-gray-400">{{ incident.startsAt|time:"h:i a" }}</p>
                   </div>
                 {% empty %}
               {% endfor %}
@@ -318,9 +302,6 @@
           </div>
           {% empty %}
           <div class="flex flex-row">
-            <div>
-              <img src="{% static 'favicon.svg' %}" alt="Edwin's avatar" class="w-10 h-10 mt-4 mr-2" />
-            </div>
             <div class="flex flex-col grow">
               <div key={activityItem.id} class="rounded-md bg-gray-50 p-4 mt-3">
                     <div class="flex">
