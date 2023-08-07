@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Emails
 from .forms import EmailsForm
 from projects.models import Project
+from alerts.models import InstanceDownIncident
 
 @login_required
 def project_notifications(request, id):
@@ -20,8 +21,22 @@ def project_notifications(request, id):
 
     project = get_object_or_404(Project, pk=id)
 
+    incidents = InstanceDownIncident\
+        .objects\
+        .filter(service__project=project, endsAt__isnull=False)\
+        .order_by('-startsAt', '-severity')[:40]
+
+    # Group incidents per date based on day month and year
+    dates = {}
+    for incident in incidents:
+        if incident.startsAt.date() in dates:
+            dates[incident.startsAt.date()].append(incident)
+        else:
+            dates[incident.startsAt.date()] = [incident]
+
     return render(request, 'project/notifications.html', {
         'project': project,
+        'dates': dates,
     })
 
 @login_required
