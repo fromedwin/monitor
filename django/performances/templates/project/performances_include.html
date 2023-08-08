@@ -9,7 +9,7 @@
 			{% endif %}
 			<div class="px-3 text-sm font-medium text-gray-900 flex-grow flex items-center">
 	        	<p><a href="{{ child.performance.url }}">{% if child.depth == 0 %}
-	        		/
+	        		/{{ child.path }}
 	        	{% else %}
 	          		<span class="text-gray-400 text-sm pr-1">/{{child.path_parent}}</span>{{ child.path_without_parent }}
 	        	{% endif %} 
