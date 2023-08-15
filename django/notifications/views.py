@@ -13,6 +13,8 @@ from .forms import EmailsForm
 from projects.models import Project
 from alerts.models import InstanceDownIncident
 
+from django.conf import settings
+
 @login_required
 def project_notifications(request, id):
     """
@@ -79,3 +81,28 @@ def email_delete(request, application_id, email_id):
     email.delete()
 
     return redirect(reverse('project_notifications', args=[application_id]))
+
+@login_required
+def messages(request):
+
+    # If user has no project we redirect to /welcome/
+    if not request.user.applications.all():
+        return redirect('projects_welcome')
+
+    incidents = InstanceDownIncident\
+        .objects\
+        .filter(service__project__in=request.user.applications.all(), endsAt__isnull=False)\
+        .order_by('-startsAt', '-severity')[:40]
+
+    # Group incidents per date based on day month and year
+    dates = {}
+    for incident in incidents:
+        if incident.startsAt.date() in dates:
+            dates[incident.startsAt.date()].append(incident)
+        else:
+            dates[incident.startsAt.date()] = [incident]
+
+    return render(request, 'chat.html', {
+        'settings': settings,
+        'dates': dates,
+    })

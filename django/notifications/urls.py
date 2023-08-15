@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import project_notifications, email_form, email_delete
+from .views import project_notifications, email_form, email_delete, messages
 
 urlpatterns = [
+    path('messages', messages, name='messages'),
     # Show notification panel for project id
     path('project/<int:id>/notifications/', project_notifications, name='project_notifications'),
     # manage pagerduty id for alerts and notifications
