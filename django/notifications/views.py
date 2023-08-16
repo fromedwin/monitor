@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Emails
 from .forms import EmailsForm
 from projects.models import Project
-from incidents.models import InstanceDownIncident, AbstractIncident
+from incidents.models import InstanceDownIncident
 
 from django.conf import settings
 
@@ -89,7 +89,7 @@ def messages(request):
     if not request.user.applications.all():
         return redirect('projects_welcome')
 
-    incidents = AbstractIncident\
+    incidents = InstanceDownIncident\
         .objects\
         .filter(service__project__in=request.user.applications.all(), endsAt__isnull=False)\
         .order_by('-startsAt', '-severity')[:40]
