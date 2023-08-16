@@ -4,7 +4,7 @@ from .models import Alerts, AlertsWarning, AlertsCritical, DisableAlerts
 
 # Register your models here.
 class AlertsAdmin(admin.ModelAdmin):
-    list_display = ('name', 'has_warning', 'has_critical')
+    list_display = ('name', 'is_critical',  'has_warning', 'has_critical')
 
     @admin.display(boolean=True)
     def has_warning(self, obj):
