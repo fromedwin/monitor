@@ -11,8 +11,8 @@ from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from alerts.utils import getStatus, getSeverity
-from alerts.models import ProjectIncident
+from incidents.utils import getStatus, getSeverity
+from incidents.models import ProjectIncident
 from projects.models import Project
 from availability.models import Service
 

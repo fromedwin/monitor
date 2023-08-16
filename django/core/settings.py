@@ -65,8 +65,8 @@ USE_X_FORWARDED_HOST = True
 CSRF_TRUSTED_ORIGINS = [
     f'https://{os.environ.get("DOMAIN")}',
     f'https://*.{os.environ.get("DOMAIN")}',
-    f'https://fromedwin.com',
-    f'https://*.fromedwin.com',
+    f'https://core.com',
+    f'https://*.core.com',
 ]
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
@@ -128,8 +128,8 @@ INSTALLED_APPS = [
     'administration',
     'availability',
     'dashboard',
-    'alerts',
-    'fromedwin',
+    'incidents',
+    'core',
     'notifications',
     'performances',
     'settings',
@@ -158,11 +158,11 @@ MIDDLEWARE = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_prometheus.middleware.PrometheusAfterMiddleware',
-    'fromedwin.middleware.project_required',
+    'core.middleware.project_required',
     'django_browser_reload.middleware.BrowserReloadMiddleware',
 )
 
-ROOT_URLCONF = 'fromedwin.urls'
+ROOT_URLCONF = 'core.urls'
 
 TEMPLATES = [
     {
@@ -180,7 +180,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'fromedwin.wsgi.application'
+WSGI_APPLICATION = 'core.wsgi.application'
 
 # Database confugration using environment variable DATABASES_URL
 DATABASE_URL = os.environ.get('DATABASE_URL')
@@ -204,7 +204,7 @@ LOGIN_REDIRECT_URL = '/dashboard/'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 CONTACT_NAME = os.environ.get('CONTACT_NAME', 'FromEdwin')
-CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL', 'no-reply@fromedwin.com')
+CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL', 'no-reply@core.com')
 EMAIL_HOST = os.environ.get('EMAIL_HOST')
 EMAIL_PORT = os.environ.get('EMAIL_PORT')
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')

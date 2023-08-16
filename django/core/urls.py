@@ -19,7 +19,7 @@ from django.conf import settings
 from django.urls import path, include
 
 from .views import restricted, healthcheck_database, healthcheck_workers_availability, healthcheck_workers_lighthouse
-from alerts.api import webhook
+from incidents.api import webhook
 from website.views import homepage
 from dashboard.views import dashboard
 
@@ -37,7 +37,7 @@ urlpatterns = [
     path('', include('performances.urls')),
     path('', include('status.urls')),
     path('', include('website.urls')),
-    path('', include('alerts.urls')),
+    path('', include('incidents.urls')),
     # monitor-worker api
     path('clients/', include('workers.urls')),
     # Settings URL

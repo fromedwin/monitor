@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Emails
 from .forms import EmailsForm
 from projects.models import Project
-from alerts.models import InstanceDownIncident
+from incidents.models import InstanceDownIncident
 
 from django.conf import settings
 

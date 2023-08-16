@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
 
-from fromedwin.utils import is_private_ipv4
+from core.utils import is_private_ipv4
 
 class Project(models.Model):
     """
@@ -29,7 +29,7 @@ class Project(models.Model):
 
     def availability(self, days=30):
 
-        from alerts.models import InstanceDownIncident
+        from incidents.models import InstanceDownIncident
 
         total_second = days * 24 * 60 * 60
         start_date = timezone.now() - timezone.timedelta(days=days)
@@ -52,7 +52,7 @@ class Project(models.Model):
         return value
 
     def incidents_count(self):
-        from alerts.models import InstanceDownIncident, ProjectIncident
+        from incidents.models import InstanceDownIncident, ProjectIncident
         return InstanceDownIncident.objects.filter(service__in=self.services.all()).count() + ProjectIncident.objects.filter(project=self).count()
 
     def url(self):

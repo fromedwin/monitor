@@ -5,4 +5,4 @@ class MyAppConfig(AppConfig):
     verbose_name = "FromEdwin"
 
     def ready(self):
-        import fromedwin.signals # Load signals
+        import core.signals # Load signals

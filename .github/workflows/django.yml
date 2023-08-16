@@ -47,7 +47,7 @@ jobs:
           AWS_STORAGE_BUCKET_NAME=fromedwin
           CC_PYTHON_BACKEND=gunicorn
           CC_PYTHON_MANAGE_TASKS=tailwind install, tailwind build, migrate, collectstatic --no-input
-          CC_PYTHON_MODULE=fromedwin.wsgi:application
+          CC_PYTHON_MODULE=core.wsgi:application
           CC_PYTHON_VERSION=3.9
           CONTACT_EMAIL=${{ secrets.CONTACT_EMAIL }}
           DATABASE_URL=${{ secrets.DATABASE_URL }}

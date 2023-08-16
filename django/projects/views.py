@@ -20,7 +20,7 @@ from .forms import ProjectForm, ProjectCreateForm
 from projects.models import Project
 from availability.models import Service, HTTPCodeService, HTTPMockedCodeService
 from workers.models import Server
-from alerts.models import InstanceDownIncident
+from incidents.models import InstanceDownIncident
 
 from performances.models import Performance
 

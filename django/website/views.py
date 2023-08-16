@@ -12,7 +12,7 @@ from allauth.socialaccount.models import SocialApp
 from rest_framework.authtoken.models import Token
 
 from workers.models import Server
-from alerts.models import GenericIncident, InstanceDownIncident, ProjectIncident
+from incidents.models import GenericIncident, InstanceDownIncident, ProjectIncident
 
 def homepage(request):
     """

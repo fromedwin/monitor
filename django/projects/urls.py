@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .views import project, projects_form, projects_delete, projects_add, projects_welcome
-from alerts.views import incidents
+from incidents.views import incidents
 
 urlpatterns = [
     # Welcome page

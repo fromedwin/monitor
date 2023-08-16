@@ -16,7 +16,7 @@ from rest_framework.authtoken.models import Token
 from allauth.socialaccount.models import SocialApp
 
 from workers.models import Server
-from alerts.models import InstanceDownIncident
+from incidents.models import InstanceDownIncident
 from projects.models import Project
 from projects.forms import ProjectForm
 

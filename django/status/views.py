@@ -14,7 +14,7 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.views.decorators.cache import never_cache
 
 from constants import INCIDENT_SEVERITY
-from alerts.models import InstanceDownIncident
+from incidents.models import InstanceDownIncident
 from projects.models import Project
 
 @login_required

@@ -21,10 +21,10 @@ python django/manage.py migrate
 python django/manage.py collectstatic --no-input
 ```
 
-Once these steps are completed, you can use a **production-ready web server** *like Gunicorn* to start the `fromedwin.wsgi:application` Python code and serve the application to users.
+Once these steps are completed, you can use a **production-ready web server** *like Gunicorn* to start the `core.wsgi:application` Python code and serve the application to users.
 
 ```bash
-gunicorn fromedwin.wsgi:application
+gunicorn core.wsgi:application
 ```
 
 It is also important to note that the environment variables should be set before running the web server.

@@ -5,7 +5,7 @@ from django.conf import settings
 
 from projects.models import Project
 
-from fromedwin.utils import is_private_ipv4
+from core.utils import is_private_ipv4
 
 class Service(models.Model):
     """
@@ -25,7 +25,7 @@ class Service(models.Model):
 
     def availability(self, days=30):
 
-        from alerts.models import InstanceDownIncident
+        from incidents.models import InstanceDownIncident
 
         total_second = days * 24 * 60 * 60
         start_date = timezone.now() - timezone.timedelta(days=days)
@@ -61,7 +61,7 @@ class Service(models.Model):
         return not self.is_enabled
 
     def incidents_count(self):
-        from alerts.models import InstanceDownIncident
+        from incidents.models import InstanceDownIncident
         return InstanceDownIncident.objects.filter(service__in=self.services.all()).count()
 
     def __str__(self):
