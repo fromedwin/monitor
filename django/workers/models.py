@@ -123,3 +123,8 @@ class Metrics(models.Model):
     )
     url = models.URLField(max_length=512, blank=False, help_text="No tailing slash, or will break prometheus config file")
     is_enabled = models.BooleanField(default=True)
+
+
+    class Meta:
+        verbose_name = "Metric"
+        verbose_name_plural = "Metrics"

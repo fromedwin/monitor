@@ -30,6 +30,7 @@ jobs:
     - name: Run Migrate
       run: |
         python django/manage.py migrate
+        python django/manage.py loaddata django/alerts/fixtures/initial_data.json
     - name: Install tailwind
       run: |
         python django/manage.py tailwind install

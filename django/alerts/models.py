@@ -1,14 +1,80 @@
 from django.db import models
 
+from projects.models import Project
 from constants import INCIDENT_SEVERITY_CHOICES
 
 class Alerts(models.Model):
     """
-        This model is straight export from prometheus alertmanager spec description
+        
     """
-    alert = models.CharField(max_length=128)
+    name = models.CharField(max_length=128, help_text="Alert name", unique=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Alert"
+        verbose_name_plural = "Alerts"
+
+class AlertsWarning(models.Model):
+    """
+        
+    """
+    alert = models.OneToOneField(
+        Alerts,
+        on_delete = models.CASCADE,
+        related_name = "warning",
+        unique = True,
+    )
     expr = models.CharField(max_length=128)
-    duration = models.CharField(max_length=8)
-    severity = models.IntegerField(choices=INCIDENT_SEVERITY_CHOICES)
+    duration = models.CharField(max_length=8, default='2m')
     summary = models.TextField()
     description = models.TextField()
+
+    def __str__(self):
+        return self.alert.name
+
+    class Meta:
+        verbose_name = "Warning"
+        verbose_name_plural = "Warnings"
+
+class AlertsCritical(models.Model):
+    """
+        
+    """
+    alert = models.OneToOneField(
+        Alerts,
+        on_delete = models.CASCADE,
+        related_name = "critical",
+        unique = True,
+    )
+    expr = models.CharField(max_length=128)
+    duration = models.CharField(max_length=8, default='5m')
+    summary = models.TextField()
+    description = models.TextField()
+
+    def __str__(self):
+        return self.alert.name
+
+    class Meta:
+        verbose_name = "Critical"
+        verbose_name_plural = "Criticals"
+
+class DisableAlerts(models.Model):
+    """
+        Specify disabled alerts
+    """
+    alert = models.ForeignKey(
+        Alerts,
+        on_delete = models.CASCADE,
+        related_name = "disablealert",
+    )
+    project = models.ForeignKey(
+        Project,
+        on_delete = models.CASCADE,
+        related_name = "disablealerts",
+    )
+
+    class Meta:
+        verbose_name = "Disable Alert"
+        verbose_name_plural = "Disable Alerts"
