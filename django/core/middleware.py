@@ -10,7 +10,7 @@ def project_required(get_response):
             and request.user.applications.count() == 0\
             and request.path != '/welcome/'\
             and request.path != '/logout/'\
-            and request.path != '/admin/'\
+            and not request.path.startswith('/admin/')\
             and request.path != '/restricted/':
             response = HttpResponseRedirect('/welcome/')
         else:
