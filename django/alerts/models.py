@@ -8,6 +8,7 @@ class Alerts(models.Model):
         
     """
     name = models.CharField(max_length=128, help_text="Alert name", unique=True)
+    is_critical = models.BooleanField(default=False, help_text="Trigger an outrage when critical alert is triggered")
 
     def __str__(self):
         return self.name
