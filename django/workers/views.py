@@ -13,7 +13,8 @@ from django.db.models import Q
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 
-from .models import Metrics, Alerts, Server, AuthBasic
+from .models import Metrics, Server, AuthBasic
+from alerts.models import Alerts
 from incidents.models import INCIDENT_SEVERITY_CHOICES
 
 @api_view(['GET'])

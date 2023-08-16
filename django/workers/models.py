@@ -12,14 +12,6 @@ from yamlfield.fields import YAMLField
 
 from incidents.models import INCIDENT_SEVERITY_CHOICES
 
-class Alerts(models.Model):
-    alert = models.CharField(max_length=128)
-    expr = models.CharField(max_length=128)
-    duration = models.CharField(max_length=8)
-    severity = models.IntegerField(choices=INCIDENT_SEVERITY_CHOICES)
-    summary = models.TextField()
-    description = models.TextField()
-
 class Server(models.Model):
     ip = models.CharField(max_length=128, blank=False)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)

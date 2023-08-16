@@ -1,7 +1,8 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
-from .models import Alerts, Metrics, Server
+from .models import Metrics, Server
+from alerts.models import Alerts
 from projects.models import Project
 from availability.models import Service, HTTPCodeService
 from django.utils import timezone

@@ -1,10 +1,7 @@
 from django.contrib import admin
-from .models import Server, Metrics, Alerts, AuthBasic
+from .models import Server, Metrics, AuthBasic
 from django.utils import timezone
 import math
-
-class AlertsAdmin(admin.ModelAdmin):
-    list_display = ('alert', '__str__')
 
 class ServerAdmin(admin.ModelAdmin):
     list_display = ('ip', 'user',  'is_public', 'uuid', 'has_auth_basic', 'is_active', 'performance', 'monitoring', 'last_seen_duration')
@@ -33,7 +30,6 @@ class AuthBasicAdmin(admin.ModelAdmin):
         return str(obj.server.id) + ' - ' + str(obj.server.ip) + ' - ' + str(obj.server.uuid)
     list_display = ('server_name', 'username', 'password')
 
-admin.site.register(Alerts, AlertsAdmin)
 admin.site.register(Server, ServerAdmin)
 admin.site.register(Metrics, MetricsAdmin)
 admin.site.register(AuthBasic, AuthBasicAdmin)
