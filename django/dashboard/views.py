@@ -12,7 +12,7 @@ from allauth.socialaccount.models import SocialApp
 from rest_framework.authtoken.models import Token
 
 from workers.models import Server
-from incidents.models import GenericIncident, InstanceDownIncident, ProjectIncident
+from incidents.models import ServiceIncident
 
 @login_required
 def dashboard(request):
@@ -21,18 +21,20 @@ def dashboard(request):
     if not request.user.applications.all():
         return redirect('projects_welcome')
 
-    incidents = InstanceDownIncident\
+    incidents = ServiceIncident\
         .objects\
-        .filter(service__project__in=request.user.applications.all(), endsAt__isnull=False)\
-        .order_by('-endsAt', '-severity')[:20]
+        .filter(
+            service__project__in = request.user.applications.all(), 
+            incident__ends_at__isnull = False)\
+        .order_by('-ends_at', '-severity')[:20]
 
     # Group incidents per date based on day month and year
     dates = {}
     for incident in incidents:
-        if incident.endsAt.date() in dates:
-            dates[incident.endsAt.date()].append(incident)
+        if incident.ends_at.date() in dates:
+            dates[incident.ends_at.date()].append(incident)
         else:
-            dates[incident.endsAt.date()] = [incident]
+            dates[incident.ends_at.date()] = [incident]
 
     return render(request, 'dashboard.html', {
         'settings': settings,

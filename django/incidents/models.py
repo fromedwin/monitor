@@ -7,40 +7,24 @@ from availability.models import Service
 from django.template.defaultfilters import truncatechars
 from django.utils import timezone
 
+from alerts.models import Alerts
+from projects.models import Project
+
 from constants import INCIDENT_STATUS_CHOICES, INCIDENT_SEVERITY_CHOICES
 
-# Import django duraiton to natural language
-from django.utils.timesince import timesince
-
-class AbstractIncident(models.Model):
+class Incident(models.Model):
     """
-        Dased on AlertManager model, an incident is received from alertmanager
+        Based on AlertManager model, an incident is received from alertmanager
         user the `webhook` function from `view.py`.
     """
-
-    instance = models.TextField(null=True)
-    summary = models.TextField(null=True)
-    description = models.TextField(null=True)
-
-    startsAt = models.DateTimeField(null=False)
-    endsAt = models.DateTimeField(null=True, blank=True)
+    starts_at = models.DateTimeField(null=False)
+    ends_at = models.DateTimeField(null=True, blank=True)
 
     status = models.IntegerField(choices=INCIDENT_STATUS_CHOICES)
     severity = models.IntegerField(choices=INCIDENT_SEVERITY_CHOICES)
 
-    # alerts have a unique identifier
-    fingerprint = models.CharField(
-        max_length=128,
-        null=False,
-        blank=False,
-        editable=False,
-        help_text="Fingerprint provided by prometheus"
-    )
     creation_date = models.DateTimeField(auto_now_add=True, editable=False, help_text="Creation date")
     json = models.TextField(blank=False, help_text="RAW json as received by the webhook")
-
-    class Meta:
-        abstract = True
 
     @property
     def duration(self):
@@ -56,57 +40,35 @@ class AbstractIncident(models.Model):
     def message(self):
         return self.description
 
-class InstanceDownIncident(AbstractIncident):
-    """
-        This incident is trigger when a non HTTP_Code 200 is detected on
-        service url.
-    """
+class ServiceIncident(models.Model):
+
+    incident = models.OneToOneField(
+        Incident,
+        on_delete = models.CASCADE,
+        related_name = "service_incidents",
+        unique = True,
+    )
     service = models.ForeignKey(
         Service,
-        null=True,
+        null = False,
         on_delete = models.CASCADE,
-        related_name = "instancedownincidents",
+        related_name = "incidents",
+    )
+    alert = models.ForeignKey(
+        Alerts,
+        null = False,
+        on_delete = models.CASCADE,
+        related_name = "service_incidents",
     )
 
-    @property
-    def message(self):
-        # get duration as natural language
-        return '%s' % humanize.precisedelta(self.duration)
+class UnknownIncident(models.Model):
 
-    class Meta:
-        verbose_name = "Service down incident"
-        verbose_name_plural = "Service down incidents"
-    
-class ProjectIncident(AbstractIncident):
-    """
-        If an Incident has a project id assigned to it, we separate it from GenericIncident
-        as it is assigned from a specific project.
-    """
-    project = models.ForeignKey(
-        Project,
-        null=True,
+    incident = models.OneToOneField(
+        Incident,
         on_delete = models.CASCADE,
-        related_name = "projectincident",
+        related_name = "unknown_incidents",
+        unique = True,
     )
-
-    class Meta:
-        verbose_name = "Project alert"
-        verbose_name_plural = "Project alerts"
-
-class GenericIncident(AbstractIncident):
-    """
-        This is a default incident, could be a server node_exporter alert
-        or a django one. It could be assigned to a user, or if not displayed
-        to all admins.
-    """
-    user = models.ForeignKey(
-        User,
-        on_delete = models.CASCADE,
-        related_name = "genericincidents",
-        blank = True,
-        null = True,
-    )
-    
-    class Meta:
-        verbose_name = "Unknown alert"
-        verbose_name_plural = "Unknown alerts"
+    alert_name = models.CharField(max_length=128, help_text="Alert name", unique=True)
+    summary = models.TextField(null=True)
+    description = models.TextField(null=True)

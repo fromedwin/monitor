@@ -14,7 +14,7 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.views.decorators.cache import never_cache
 
 from constants import INCIDENT_SEVERITY
-from incidents.models import InstanceDownIncident
+from incidents.models import ServiceIncident
 from projects.models import Project
 
 @login_required
@@ -83,7 +83,11 @@ def public(request, id):
     NUMBER_DAYS = 30
 
     start_date = timezone.now() - timezone.timedelta(days=NUMBER_DAYS)
-    incidents = InstanceDownIncident.objects.filter(service__project=project, startsAt__gte=start_date, severity=2)
+    incidents = ServiceIncident.objects.filter(
+        service__project = project, 
+        incident__starts_at__gte = start_date, 
+        severity=2
+    )
 
     days = []
     for day in range(NUMBER_DAYS):
@@ -93,9 +97,9 @@ def public(request, id):
 
         days.append({
             'day': start_of_day,
-            'incidents': InstanceDownIncident.objects.filter(service__project=project, severity=INCIDENT_SEVERITY['CRITICAL'], service__is_enabled=True).filter(Q(startsAt__gte=start_of_day, endsAt__lt=end_of_day)|Q(startsAt__lt=start_of_day, endsAt__gt=start_of_day)|Q(startsAt__lt=end_of_day, endsAt__gt=end_of_day)).order_by('startsAt'),
-            'outrage': InstanceDownIncident.objects.filter(service__project=project, severity=INCIDENT_SEVERITY['CRITICAL'], service__is_enabled=True, service__is_critical=True).filter(Q(startsAt__gte=start_of_day, endsAt__lt=end_of_day)|Q(startsAt__lt=start_of_day, endsAt__gt=start_of_day)|Q(startsAt__lt=end_of_day, endsAt__gt=end_of_day)),
-            'degradated': InstanceDownIncident.objects.filter(service__project=project, severity=INCIDENT_SEVERITY['CRITICAL'], service__is_enabled=True, service__is_critical=False).filter(Q(startsAt__gte=start_of_day, endsAt__lt=end_of_day)|Q(startsAt__lt=start_of_day, endsAt__gt=start_of_day)|Q(startsAt__lt=end_of_day, endsAt__gt=end_of_day)),
+            'incidents': ServiceIncident.objects.filter(service__project=project, severity=INCIDENT_SEVERITY['CRITICAL'], service__is_enabled=True).filter(Q(incident__starts_at__gte=start_of_day, incident__ends_at__lt=end_of_day)|Q(incident__starts_at__lt=start_of_day, incident__ends_at__gt=start_of_day)|Q(incident__starts_at__lt=end_of_day, incident__ends_at__gt=end_of_day)).order_by('incident__starts_at'),
+            'outrage': ServiceIncident.objects.filter(service__project=project, severity=INCIDENT_SEVERITY['CRITICAL'], service__is_enabled=True, service__is_critical=True).filter(Q(incident__starts_at__gte=start_of_day, incident__ends_at__lt=end_of_day)|Q(incident__starts_at__lt=start_of_day, incident__ends_at__gt=start_of_day)|Q(incident__starts_at__lt=end_of_day, incident__ends_at__gt=end_of_day)),
+            'degradated': ServiceIncident.objects.filter(service__project=project, severity=INCIDENT_SEVERITY['CRITICAL'], service__is_enabled=True, service__is_critical=False).filter(Q(incident__starts_at__gte=start_of_day, incident__ends_at__lt=end_of_day)|Q(incident__starts_at__lt=start_of_day, incident__ends_at__gt=start_of_day)|Q(incident__starts_at__lt=end_of_day, incident__ends_at__gt=end_of_day)),
         })
 
     return render(request, 'public.html', {

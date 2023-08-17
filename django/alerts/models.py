@@ -68,12 +68,12 @@ class DisableAlerts(models.Model):
     alert = models.ForeignKey(
         Alerts,
         on_delete = models.CASCADE,
-        related_name = "disablealert",
+        related_name = "disable_alert",
     )
     project = models.ForeignKey(
         Project,
         on_delete = models.CASCADE,
-        related_name = "disablealerts",
+        related_name = "disable_alerts",
     )
 
     class Meta:

@@ -25,12 +25,12 @@ class Service(models.Model):
 
     def availability(self, days=30):
 
-        from incidents.models import InstanceDownIncident
+        from incidents.models import Incident
 
         total_second = days * 24 * 60 * 60
         start_date = timezone.now() - timezone.timedelta(days=days)
 
-        alerts = InstanceDownIncident.objects.filter(service=self, severity=2, endsAt__gte=start_date) | InstanceDownIncident.objects.filter(service=self, severity=2, endsAt__isnull=True)
+        alerts = Incident.objects.filter(service=self, severity=2, ends_at__gte=start_date) | Incident.objects.filter(service=self, severity=2, ends_at__isnull=True)
 
         total_unavailability = 0
         for alert in alerts:
@@ -45,24 +45,24 @@ class Service(models.Model):
 
     @property
     def is_offline(self):
-        return self.instancedownincidents.filter(status=2, endsAt__isnull=True, severity=2)
+        return self.service_incidents.filter(status=2, endsAt__isnull=True, severity=2)
 
     @property
     def is_degraded(self):
-        return self.instancedownincidents.filter(status=2, endsAt__isnull=True, severity=2)
+        return self.service_incidents.filter(status=2, endsAt__isnull=True, severity=2)
 
     @property
     def is_warning(self):
         if not self.is_critical:
             return False
-        return self.instancedownincidents.filter(status=2, endsAt__isnull=True, severity=1)
+        return self.service_incidents.filter(status=2, endsAt__isnull=True, severity=1)
 
     def is_disabled(self):
         return not self.is_enabled
 
     def incidents_count(self):
-        from incidents.models import InstanceDownIncident
-        return InstanceDownIncident.objects.filter(service__in=self.services.all()).count()
+        from incidents.models import ServiceIncident
+        return ServiceIncident.objects.filter(service__in=self.services.all()).count()
 
     def __str__(self):
         return f'{self.project} - {self.title}'

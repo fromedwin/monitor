@@ -12,18 +12,18 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from incidents.utils import getStatus, getSeverity
-from incidents.models import InstanceDownIncident
+from incidents.models import ServiceIncident
 from projects.models import Project
 from availability.models import Service
 
 from constants import INCIDENT_STATUS, INCIDENT_SEVERITY
 
-def handleInstanceDown(alert, status, severity, json_formated, startsAt, endsAt):
+def handleServiceIncident(serviceIncident):
 
     try:
         service = Service.objects.get(pk=alert["labels"]["service"])
         # Try to get object with fingerprint
-        incident = InstanceDownIncident.objects.filter(service=service, startsAt=startsAt).first()
+        incident = ServiceIncident.objects.filter(service=service, incident__starts_at=startsAt).first()
 
         if incident:
 

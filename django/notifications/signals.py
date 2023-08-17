@@ -1,10 +1,10 @@
 from django.conf import settings
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-from incidents.models import InstanceDownIncident
+from incidents.models import Incident
 from .utils import send_emails
 
-@receiver(pre_save, sender=InstanceDownIncident)
+@receiver(pre_save, sender=Incident)
 def send_notifications(sender, instance=None, created=False, **kwargs):
 
     is_created = not bool(instance.pk)

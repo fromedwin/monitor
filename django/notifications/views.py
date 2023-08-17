@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Emails
 from .forms import EmailsForm
 from projects.models import Project
-from incidents.models import InstanceDownIncident
+from incidents.models import ServiceIncident
 
 from django.conf import settings
 
@@ -23,18 +23,18 @@ def project_notifications(request, id):
 
     project = get_object_or_404(Project, pk=id)
 
-    incidents = InstanceDownIncident\
+    incidents = ServiceIncident\
         .objects\
-        .filter(service__project=project, endsAt__isnull=False)\
-        .order_by('-startsAt', '-severity')[:40]
+        .filter(service__project=project, incident__ends_at__isnull=False)\
+        .order_by('-starts_at', '-severity')[:40]
 
     # Group incidents per date based on day month and year
     dates = {}
     for incident in incidents:
-        if incident.startsAt.date() in dates:
-            dates[incident.startsAt.date()].append(incident)
+        if incident.starts_at.date() in dates:
+            dates[incident.starts_at.date()].append(incident)
         else:
-            dates[incident.startsAt.date()] = [incident]
+            dates[incident.starts_at.date()] = [incident]
 
     return render(request, 'project/notifications.html', {
         'project': project,
@@ -89,18 +89,18 @@ def messages(request):
     if not request.user.applications.all():
         return redirect('projects_welcome')
 
-    incidents = InstanceDownIncident\
+    incidents = ServiceIncident\
         .objects\
-        .filter(service__project__in=request.user.applications.all(), endsAt__isnull=False)\
-        .order_by('-startsAt', '-severity')[:40]
+        .filter(service__project__in=request.user.applications.all(), incident__ends_at__isnull=False)\
+        .order_by('-starts_at', '-severity')[:40]
 
     # Group incidents per date based on day month and year
     dates = {}
     for incident in incidents:
-        if incident.startsAt.date() in dates:
-            dates[incident.startsAt.date()].append(incident)
+        if incident.starts_at.date() in dates:
+            dates[incident.starts_at.date()].append(incident)
         else:
-            dates[incident.startsAt.date()] = [incident]
+            dates[incident.starts_at.date()] = [incident]
 
     return render(request, 'chat.html', {
         'settings': settings,

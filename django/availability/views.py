@@ -16,7 +16,7 @@ from rest_framework.authtoken.models import Token
 from allauth.socialaccount.models import SocialApp
 
 from workers.models import Server
-from incidents.models import InstanceDownIncident
+from incidents.models import ServiceIncident
 from projects.models import Project
 from projects.forms import ProjectForm
 
@@ -49,7 +49,7 @@ def project_availability(request, id):
     number_days = 30
 
     start_date = timezone.now() - timezone.timedelta(days=number_days)
-    incidents = InstanceDownIncident.objects.filter(service__project=project, startsAt__gte=start_date, severity=2)
+    incidents = ServiceIncident.objects.filter(service__project=project, startsAt__gte=start_date, severity=2)
 
     days = []
     for day in reversed(range(number_days)):
@@ -59,8 +59,34 @@ def project_availability(request, id):
 
         days.append({
             'day': start_of_day,
-            'outrage': InstanceDownIncident.objects.filter(service__project=project, severity=2, service__is_critical=True).filter(Q(startsAt__gte=start_of_day, endsAt__lt=end_of_day)|Q(startsAt__lt=start_of_day, endsAt__gt=start_of_day)|Q(startsAt__lt=end_of_day, endsAt__gt=end_of_day)),
-            'degradated': InstanceDownIncident.objects.filter(service__project=project, severity=2, service__is_critical=False).filter(Q(startsAt__gte=start_of_day, endsAt__lt=end_of_day)|Q(startsAt__lt=start_of_day, endsAt__gt=start_of_day)|Q(startsAt__lt=end_of_day, endsAt__gt=end_of_day)),
+            'outrage': ServiceIncident.objects.filter(
+                service__project = project, 
+                incident__severity = 2,
+                service__is_critical = True).filter(
+                Q(
+                    starts_at__gte = start_of_day, 
+                    ends_at__lt = end_of_day)|
+                Q(
+                    starts_at__lt = start_of_day, 
+                    ends_at__gt = start_of_day)|
+                Q(
+                    starts_at__lt = end_of_day, 
+                    ends_at__gt = end_of_day)
+            ),
+            'degradated': ServiceIncident.objects.filter(
+                service__project = project, 
+                incident__severity = 2, 
+                service__is_critical = False).filter(
+                Q(
+                    starts_at__gte = start_of_day, 
+                    ends_at__lt = end_of_day)|
+                Q(
+                    starts_at__lt = start_of_day, 
+                    ends_at__gt = start_of_day)|
+                Q(
+                    starts_at__lt = end_of_day, 
+                    ends_at__gt = end_of_day)
+            ),
         })
 
     content = {}

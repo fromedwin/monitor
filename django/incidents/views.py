@@ -12,7 +12,7 @@ from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import GenericIncident, InstanceDownIncident, ProjectIncident
+from .models import ServiceIncident
 from projects.models import Project
 from availability.models import Service
 
@@ -42,9 +42,9 @@ def incidents(request, id, year=None, month=None, day=None):
 
         days.append({
             'day': start_of_day,
-            'incidents': InstanceDownIncident.objects.filter(service__project=project, severity=INCIDENT_SEVERITY['CRITICAL']).filter(Q(startsAt__gte=start_of_day, endsAt__lt=end_of_day)|Q(startsAt__lt=start_of_day, endsAt__gt=start_of_day)|Q(startsAt__lt=end_of_day, endsAt__gt=end_of_day)).order_by('startsAt'),
-            'outrage': InstanceDownIncident.objects.filter(service__project=project, severity=INCIDENT_SEVERITY['CRITICAL'], service__is_critical=True).filter(Q(startsAt__gte=start_of_day, endsAt__lt=end_of_day)|Q(startsAt__lt=start_of_day, endsAt__gt=start_of_day)|Q(startsAt__lt=end_of_day, endsAt__gt=end_of_day)),
-            'degradated': InstanceDownIncident.objects.filter(service__project=project, severity=INCIDENT_SEVERITY['CRITICAL'], service__is_critical=False).filter(Q(startsAt__gte=start_of_day, endsAt__lt=end_of_day)|Q(startsAt__lt=start_of_day, endsAt__gt=start_of_day)|Q(startsAt__lt=end_of_day, endsAt__gt=end_of_day)),
+            'incidents': ServiceIncident.objects.filter(service__project=project, incident__severity=INCIDENT_SEVERITY['CRITICAL']).filter(Q(startsAt__gte=start_of_day, endsAt__lt=end_of_day)|Q(incident__startsAt__lt=start_of_day, incident__endsAt__gt=start_of_day)|Q(incident__startsAt__lt=end_of_day, incident__endsAt__gt=end_of_day)).order_by('startsAt'),
+            'outrage': ServiceIncident.objects.filter(service__project=project, incident__severity=INCIDENT_SEVERITY['CRITICAL'], alert__is_critical=True).filter(Q(startsAt__gte=start_of_day, endsAt__lt=end_of_day)|Q(incident__startsAt__lt=start_of_day, incident__endsAt__gt=start_of_day)|Q(incident__startsAt__lt=end_of_day, incident__endsAt__gt=end_of_day)),
+            'degradated': ServiceIncident.objects.filter(service__project=project, incident__severity=INCIDENT_SEVERITY['CRITICAL'], alert__is_critical=False).filter(Q(startsAt__gte=start_of_day, endsAt__lt=end_of_day)|Q(incident__startsAt__lt=start_of_day, incident__endsAt__gt=start_of_day)|Q(incident__startsAt__lt=end_of_day, incident__endsAt__gt=end_of_day)),
         })
 
     return render(request, 'incidents.html', {
@@ -63,7 +63,7 @@ def incidents_force_online(request, service_id):
     if service.project.user != request.user:
         return HttpResponse(status=403)
 
-    incidents = InstanceDownIncident.objects.filter(service=service, status=INCIDENT_STATUS['FIRING'])
+    incidents = ServiceIncident.objects.filter(service=service, incident__status=INCIDENT_STATUS['FIRING'])
     for incident in incidents:
         # Check if path contains delete_incidents
         if 'delete_incidents' in request.path:

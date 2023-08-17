@@ -1,21 +1,16 @@
 from django.contrib import admin
-from .models import GenericIncident, ProjectIncident, InstanceDownIncident
+from .models import Incident, UnknownIncident, ServiceIncident
 
-class InstanceDownIncidentAdmin(admin.ModelAdmin):
-    list_display = ("instance", "severity", "status", "startsAt", "endsAt", "duration")
-    fields = ("service", "status", "severity", "instance", "startsAt", "endsAt", "json")
+class IncidentAdmin(admin.ModelAdmin):
+    list_display = ("starts_at", "ends_at", "status", "severity")
 
-admin.site.register(InstanceDownIncident,InstanceDownIncidentAdmin)
+class UnknownIncidentAdmin(admin.ModelAdmin):
+    list_display = ("alert_name", "summary", "description")
 
-class ProjectAlertAdmin(admin.ModelAdmin):
-    list_display = ("instance", "status", "startsAt", "endsAt", "duration")
-    fields = ("project", "status", "severity", "instance", "startsAt", "endsAt", "json")
+class ServiceIncidentAdmin(admin.ModelAdmin):
+    list_display = ("incident", "service", "alert")
 
-admin.site.register(ProjectIncident, ProjectAlertAdmin)
-
-class GenericIncidentAdmin(admin.ModelAdmin):
-    fields = ("status", "severity", "instance", "startsAt", "endsAt", "json")
-    list_display = ("summary", "status", "startsAt", "endsAt", "duration")
-
-admin.site.register(GenericIncident, GenericIncidentAdmin)
+admin.site.register(Incident,IncidentAdmin)
+admin.site.register(UnknownIncident, UnknownIncidentAdmin)
+admin.site.register(ServiceIncident, ServiceIncidentAdmin)
 

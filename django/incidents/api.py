@@ -11,7 +11,6 @@ from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import GenericIncident, InstanceDownIncident, ProjectIncident
 from .handler import handleAlert
 from projects.models import Project
 from availability.models import Service
