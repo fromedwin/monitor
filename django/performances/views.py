@@ -162,7 +162,7 @@ def project_performances_report_viewer(request, id, report_id):
 def performances_all(request):
 
     domains = {}
-    for project in request.user.applications.all():
+    for project in request.user.projects.all():
         # Merge domain dict with a new dict
         domains = {**domains, **get_domaines_from_performances(project.performances.all().order_by('url'))}
 

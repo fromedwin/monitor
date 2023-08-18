@@ -12,7 +12,7 @@ class Project(models.Model):
     user = models.ForeignKey(
         User,
         on_delete = models.CASCADE,
-        related_name = "applications",
+        related_name = "projects",
     )
     title = models.CharField(max_length=128, blank=False)
     is_favorite = models.BooleanField('Is favorite', default=False, help_text="Favorite project are highlighted and first shown when possible.")

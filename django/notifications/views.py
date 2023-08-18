@@ -86,12 +86,12 @@ def email_delete(request, application_id, email_id):
 def messages(request):
 
     # If user has no project we redirect to /welcome/
-    if not request.user.applications.all():
+    if not request.user.projects.all():
         return redirect('projects_welcome')
 
     incidents = ServiceIncident\
         .objects\
-        .filter(service__project__in=request.user.applications.all(), incident__ends_at__isnull=False)\
+        .filter(service__project__in=request.user.projects.all(), incident__ends_at__isnull=False)\
         .order_by('-starts_at', '-severity')[:40]
 
     # Group incidents per date based on day month and year

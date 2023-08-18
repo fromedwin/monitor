@@ -7,7 +7,7 @@ def project_required(get_response):
     """
     def middleware(request):
         if not request.user.is_anonymous\
-            and request.user.applications.count() == 0\
+            and request.user.projects.count() == 0\
             and request.path != '/welcome/'\
             and request.path != '/logout/'\
             and not request.path.startswith('/admin/')\

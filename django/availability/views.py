@@ -309,7 +309,7 @@ def availabilities_all(request):
         }
 
     return render(request, 'project/availabilities.html', {
-        'projects': request.user.applications.all(),
+        'projects': request.user.projects.all(),
         'settings': settings,
         'services': services,
         'url': f'{request.META["wsgi.url_scheme"]}://{request.META["HTTP_HOST"]}',

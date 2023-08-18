@@ -28,7 +28,7 @@ class ProjectCreateForm(ModelForm):
     def clean(self):
         cleaned_data = super(ProjectCreateForm, self).clean()
 
-        if not self.user.is_superuser and not self.user.is_staff and self.user.applications.count() >= settings.FREEMIUM_PROJECTS:
+        if not self.user.is_superuser and not self.user.is_staff and self.user.projects.count() >= settings.FREEMIUM_PROJECTS:
             raise ValidationError(f'You can only have {settings.FREEMIUM_PROJECTS} projects')
         return cleaned_data
 

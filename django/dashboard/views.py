@@ -18,13 +18,13 @@ from incidents.models import ServiceIncident
 def dashboard(request):
 
     # If user has no project we redirect to /welcome/
-    if not request.user.applications.all():
+    if not request.user.projects.all():
         return redirect('projects_welcome')
 
     incidents = ServiceIncident\
         .objects\
         .filter(
-            service__project__in = request.user.applications.all(), 
+            service__project__in = request.user.projects.all(), 
             incident__ends_at__isnull = False)\
         .order_by('-ends_at', '-severity')[:20]
 
