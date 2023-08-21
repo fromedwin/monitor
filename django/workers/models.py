@@ -13,6 +13,16 @@ from yamlfield.fields import YAMLField
 from incidents.models import INCIDENT_SEVERITY_CHOICES
 
 class Server(models.Model):
+    """
+    A server objectis a worker running specific engines like monitoring or performance
+    """
+    user = models.ForeignKey(
+        User,
+        on_delete = models.CASCADE,
+        related_name = "servers",
+        blank = True,
+        null = True,
+    )
     ip = models.CharField(max_length=128, blank=False)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     creation_date = models.DateTimeField(auto_now_add=True, editable=False)
@@ -23,14 +33,6 @@ class Server(models.Model):
     performance = models.BooleanField(default=False)
     # URL used to fetch server
     url = models.CharField(max_length=256, null=False, blank=False)
-
-    user = models.ForeignKey(
-        User,
-        on_delete = models.CASCADE,
-        related_name = "servers",
-        blank = True,
-        null = True,
-    )
 
     @property
     def href(self):
@@ -49,7 +51,7 @@ class Server(models.Model):
     @property
     def last_seen_from(self):
         now = timezone.now()
-        diff= now - self.last_seen
+        diff = now - self.last_seen
 
         if diff.days == 0 and diff.seconds >= 0 and diff.seconds < 60:
             seconds= diff.seconds
@@ -123,7 +125,6 @@ class Metrics(models.Model):
     )
     url = models.URLField(max_length=512, blank=False, help_text="No tailing slash, or will break prometheus config file")
     is_enabled = models.BooleanField(default=True)
-
 
     class Meta:
         verbose_name = "Metric"

@@ -19,22 +19,44 @@ class Project(models.Model):
     enable_public_page = models.BooleanField('Enable public page', default=False, help_text="Will enable the public page to share current project status")
 
     def is_offline(self):
-        return self.services.filter(instancedownincidents__status=2, is_critical=True, is_enabled=True, instancedownincidents__severity=2)
+        return self.services.filter(
+            incidents__incident__status = 2, 
+            is_critical = True, 
+            is_enabled = True, 
+            incidents__incident__severity = 2
+        )
 
     def is_degraded(self):
-        return self.services.filter(instancedownincidents__status=2, is_critical=False, is_enabled=True, instancedownincidents__severity=2)
+        return self.services.filter(
+            incidents__incident__status = 2, 
+            is_critical = False, 
+            is_enabled = True, 
+            incidents__incident__severity = 2
+        )
 
     def is_warning(self):
-        return self.services.filter(instancedownincidents__status=2, is_critical=True, is_enabled=True, instancedownincidents__severity=1)
+        return self.services.filter(
+            incidents__incident__status = 2, 
+            is_critical = True, 
+            is_enabled = True, 
+            incidents__incident__severity = 1
+        )
 
     def availability(self, days=30):
 
-        from incidents.models import InstanceDownIncident
+        from incidents.models import ServiceIncident
 
         total_second = days * 24 * 60 * 60
         start_date = timezone.now() - timezone.timedelta(days=days)
 
-        alerts = InstanceDownIncident.objects.filter(service__in=self.services.filter(is_critical=True), severity=2, endsAt__gte=start_date) | InstanceDownIncident.objects.filter(service__in=self.services.filter(is_critical=True), severity=2, endsAt__isnull=True)
+        alerts = ServiceIncident.objects.filter(
+            service__in=self.services.filter(is_critical=True), 
+            incident__severity=2, 
+            incident__ends_at__gte=start_date) | \
+            ServiceIncident.objects.filter(
+                service__in=self.services.filter(is_critical=True), 
+                incident__severity=2, 
+                incident__ends_at__isnull=True)
 
         total_unavailability = 0
         for alert in alerts:
@@ -52,8 +74,8 @@ class Project(models.Model):
         return value
 
     def incidents_count(self):
-        from incidents.models import InstanceDownIncident, ProjectIncident
-        return InstanceDownIncident.objects.filter(service__in=self.services.all()).count() + ProjectIncident.objects.filter(project=self).count()
+        from incidents.models import ServiceIncident
+        return ServiceIncident.objects.filter(service__in=self.services.all()).count()
 
     def url(self):
         return f"/project/{self.id}/"

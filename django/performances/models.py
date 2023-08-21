@@ -68,7 +68,7 @@ class Report(models.Model):
         related_name = "reports",
     )
     screenshot = models.ImageField(upload_to=user_directory_path, blank=True, null=True, help_text="Lighthouse screenshot")
-    form_factor = models.IntegerField(choices=LIGHTHOUSE_FORMFACTOR_CHOICES, default=LIGHTHOUSE_FORMFACTOR_CHOICES[0][0], help_text="Lighthouse form factor")
+    form_factor = models.IntegerField(choices=LIGHTHOUSE_FORMFACTOR_CHOICES, default=LIGHTHOUSE_FORMFACTOR_CHOICES[0][0], help_text="Lighthouse form factor, mobile or desktop")
     score_performance = models.FloatField(blank=True, null=True, help_text="Lighthouse performance score")
     score_accessibility = models.FloatField(blank=True, null=True, help_text="Lighthouse accessibility score")
     score_best_practices = models.FloatField(blank=True, null=True, help_text="Lighthouse best practices score")

@@ -23,18 +23,18 @@ def project_notifications(request, id):
 
     project = get_object_or_404(Project, pk=id)
 
-    incidents = ServiceIncident\
+    service_incidents = ServiceIncident\
         .objects\
         .filter(service__project=project, incident__ends_at__isnull=False)\
-        .order_by('-starts_at', '-severity')[:40]
+        .order_by('-incident__starts_at', '-incident__severity')[:40]
 
     # Group incidents per date based on day month and year
     dates = {}
-    for incident in incidents:
-        if incident.starts_at.date() in dates:
-            dates[incident.starts_at.date()].append(incident)
+    for service_incident in service_incidents:
+        if service_incident.incident.starts_at.date() in dates:
+            dates[service_incident.incident.starts_at.date()].append(service_incident)
         else:
-            dates[incident.starts_at.date()] = [incident]
+            dates[service_incident.incident.starts_at.date()] = [service_incident]
 
     return render(request, 'project/notifications.html', {
         'project': project,
@@ -92,7 +92,7 @@ def messages(request):
     incidents = ServiceIncident\
         .objects\
         .filter(service__project__in=request.user.projects.all(), incident__ends_at__isnull=False)\
-        .order_by('-starts_at', '-severity')[:40]
+        .order_by('-incident__starts_at', '-incident__severity')[:40]
 
     # Group incidents per date based on day month and year
     dates = {}

@@ -32,20 +32,20 @@ def project(request, id):
 
     project = get_object_or_404(Project, pk=id)
 
-    incidents = ServiceIncident\
+    service_incidents = ServiceIncident\
         .objects\
         .filter(
             service__project = project, 
             incident__ends_at__isnull = False)\
-        .order_by('-ends_at', '-severity')[:5]
+        .order_by('-incident__ends_at', '-incident__severity')[:5]
 
             # Group incidents per date based on day month and year
     dates = {}
-    for incident in incidents:
-        if incident.ends_at.date() in dates:
-            dates[incident.ends_at.date()].append(incident)
+    for service_incident in service_incidents:
+        if service_incident.incident.ends_at.date() in dates:
+            dates[service_incident.incident.ends_at.date()].append(service_incident)
         else:
-            dates[incident.ends_at.date()] = [incident]
+            dates[service_incident.incident.ends_at.date()] = [service_incident]
 
     return render(request, 'projects/project_view.html', {
         'project': project,
