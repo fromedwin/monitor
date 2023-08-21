@@ -114,7 +114,9 @@ def project_availability(request, id):
         for service in services:
             try:
                 services[service]['title'] = Service.objects.get(id=service).title
-            except:
+            except Exception as err:
+                if settings.DEBUG:
+                    print(err)
                 # Remove data from availability is Service no longer exist (jsut deleted use case)
                 services = {k: v for k, v in services.items() if k != service}
 
@@ -122,6 +124,8 @@ def project_availability(request, id):
         content = {
             'error': getattr(err, 'message', repr(err))
         }
+        if settings.DEBUG:
+            print(err)
 
     return render(request, 'project/availability.html', {
         'project': project,

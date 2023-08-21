@@ -34,7 +34,7 @@ def handleAlert(request, alert):
     )
 
     # We get db alert model for foreign key based on alert name
-    alert_object = Alerts.objets.get(name=alert["labels"]["alertname"])
+    alert_object = Alerts.objects.get(name=alert["labels"]["alertname"])
 
     if not alert_object:
         unknown_incident = UnknownIncident(

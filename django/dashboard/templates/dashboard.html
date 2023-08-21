@@ -33,12 +33,12 @@
                       <div class="ml-3 grow">
                         <div class="text-xs text-gray-700">
                         <p>
-                          <a href="{% url 'project' incident.service.project.id %}" class="font-bold">{{ incident.service.project }}</a> has reported an incent about <a href="{% url 'project_availability' incident.service.project.id %}" class="font-bold">{{ incident.service.title }} url</a> being down for {{ incident.message }}
+                          <a href="{% url 'project' incident.service_incidents.service.project.id %}" class="font-bold">{{ incident.service_incidents.service.project }}</a> has reported an incent about <a href="{% url 'project_availability' incident.service_incidents.service.project.id %}" class="font-bold">{{ incident.service_incidents.service.title }} url</a> being down for {{ incident.message }}
                         </p>
                         </div>
                       </div>
                       <div class="flex justify-end pl-8 pt-1">
-                        <p class="text-xs text-gray-400">{{ incident.endsAt|time:"h:i a" }}</p>
+                        <p class="text-xs text-gray-400">{{ incident.ends_at|time:"h:i a" }}</p>
                       </div>
                     </div>
                   </div>

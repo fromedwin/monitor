@@ -8,7 +8,7 @@ groups:
       severity: warning
     annotations:
       summary: {{ alert.warning.summary|safe }}
-      description: "{ alert.warning.description|safe }}"{% endif %}{% if alert.critical %}
+      description: "{{ alert.warning.description|safe }}"{% endif %}{% if alert.critical %}
   - alert: {{ alert.name }}
     expr: {{ alert.critical.expr|safe }}
     for: {{ alert.critical.duration }}

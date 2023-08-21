@@ -18,6 +18,8 @@ def send_notifications(sender, instance=None, created=False, **kwargs):
             is_modified = True
 
     if is_created or is_modified:
-        emails = instance.service.project.emails.all()
-        if len(emails) and emails[0]:
-            send_emails(instance, emails[0].email)
+        # Test if instance has related model service
+        if 'service_incidents' in instance.__dict__ and instance.service_incidents:
+            emails = instance.service_incidents.service.project.emails.all()
+            if len(emails) and emails[0]:
+                send_emails(instance, emails[0].email)

@@ -19,41 +19,33 @@ from availability.models import Service
 from constants import INCIDENT_STATUS, INCIDENT_SEVERITY
 
 def handleServiceIncident(serviceIncident):
-
+    # If we receive resolved, we delete firing with same start_at and fingerprint
     try:
-        service = Service.objects.get(pk=alert["labels"]["service"])
-        # Try to get object with fingerprint
-        incident = ServiceIncident.objects.filter(service=service, incident__starts_at=startsAt).first()
+        if  serviceIncident.incident.status == INCIDENT_STATUS['RESOLVED'] or \
+            serviceIncident.incident.status == INCIDENT_STATUS['FIRING']:
+            items = ServiceIncident.objects.filter(
+                incident__starts_at=serviceIncident.incident.starts_at,
+                incident__ends_at__isnull=True,
+                service=serviceIncident.service, 
+                alert=serviceIncident.alert)
 
-        if incident:
+            if len(items) >= 1:
+                for item in items:
+                    if item.incident.severity == INCIDENT_SEVERITY['WARNING'] and \
+                        serviceIncident.incident.severity == INCIDENT_SEVERITY['CRITICAL']:
+                        item.incident.severity = INCIDENT_SEVERITY['CRITICAL']
 
-            # we decect if this is a repeat or a change of state.
-            if  incident.severity == INCIDENT_SEVERITY['WARNING'] and severity == INCIDENT_SEVERITY['CRITICAL'] or \
-                incident.status == INCIDENT_STATUS['FIRING'] and status == INCIDENT_STATUS['RESOLVED']:
-
-                incident.startsAt = startsAt
-                incident.endsAt = endsAt
-                incident.status = status
-                incident.severity = severity
-                incident.json_formated = json_formated
-                incident.save()
-
+                    item.incident.status = serviceIncident.incident.status
+                    item.incident.starts_at = serviceIncident.incident.starts_at
+                    item.incident.ends_at = serviceIncident.incident.ends_at
+                    item.incident.save()
+            else:
+                serviceIncident.incident.save()
+                serviceIncident.save()
         else:
-
-            InstanceDownIncident.objects.create(
-                service=service,
-                startsAt=startsAt,
-                endsAt=endsAt,
-                fingerprint=alert["fingerprint"],
-                instance=alert["labels"]["instance"],
-                summary=alert["annotations"]["summary"],
-                description=alert["annotations"]["description"],
-                severity=severity,
-                status=status,
-                json=json_formated)
-    except Service.DoesNotExist:
-        # If user delete a service with an open alert then prometeheus close the alert,
-        # alert manager report the alert as close for deleted service and was returning 500.
-        # Now return 200.
-        pass
-
+            serviceIncident.incident.save()
+            serviceIncident.save()
+    except Exception as err:
+        if settings.DEBUG is True:
+            print(err)
+        raise err

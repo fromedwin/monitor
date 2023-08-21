@@ -10,7 +10,7 @@ class UnknownIncidentAdmin(admin.ModelAdmin):
 class ServiceIncidentAdmin(admin.ModelAdmin):
     list_display = ("incident", "service", "alert")
 
-admin.site.register(Incident,IncidentAdmin)
+admin.site.register(Incident, IncidentAdmin)
 admin.site.register(UnknownIncident, UnknownIncidentAdmin)
 admin.site.register(ServiceIncident, ServiceIncidentAdmin)
 

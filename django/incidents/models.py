@@ -28,9 +28,9 @@ class Incident(models.Model):
 
     @property
     def duration(self):
-        if self.endsAt:
-            return  self.endsAt - self.startsAt
-        return timezone.now() - self.startsAt
+        if self.ends_at:
+            return  self.ends_at - self.starts_at
+        return timezone.now() - self.starts_at
 
     @property
     def short_json(self):
@@ -38,7 +38,15 @@ class Incident(models.Model):
 
     @property
     def message(self):
-        return self.description
+
+        if self.service_incidents:
+            if self.service_incidents.alert.warning:
+                return self.service_incidents.alert.warning.description
+            if self.service_incidents.alert.critical:
+                return self.service_incidents.alert.critical.description
+        if self.unknown_incidents:
+            return self.unknown_incidents.description
+        return ''
 
 class ServiceIncident(models.Model):
 
