@@ -65,17 +65,13 @@ scrape_configs:
     module:
     - http_2xx
   static_configs:
-  {% for user in users %}{% for application in user.projects.all %}{% for service in application.services.all %}{% if service.is_enabled and service.httpcode and not service.httpcode.tls_skip_verify %}
+  {% for user in users %}{% for project in user.projects.all %}{% for service in project.services.all %}{% if service.is_enabled and service.httpcode and not service.httpcode.tls_skip_verify %}
   - labels:
-      user: {{ application.user.id }}
-      application: {{ application.id }}
       service: {{ service.id }}
     targets:
     - {{ service.httpcode.url }}
     {% endif %}{% if service.is_enabled and service.httpmockedcode %}
   - labels:
-      user: {{ application.user.id }}
-      application: {{ application.id }}
       service: {{ service.id }}
     targets:
     - {{ service.httpmockedcode.url }}
@@ -98,10 +94,8 @@ scrape_configs:
     module:
     - http_2xx_unsecure
   static_configs:
-  {% for user in users %}{% for application in user.projects.all %}{% for service in application.services.all %}{% if service.is_enabled and service.httpcode and service.httpcode.tls_skip_verify %}
+  {% for user in users %}{% for project in user.projects.all %}{% for service in project.services.all %}{% if service.is_enabled and service.httpcode and service.httpcode.tls_skip_verify %}
   - labels:
-      user: {{ application.user.id }}
-      application: {{ application.id }}
       service: {{ service.id }}
     targets:
     - {{ service.httpcode.url }}

@@ -24,7 +24,7 @@ def alerts(request, id):
     """
     get_object_or_404(Server, uuid=id)
 
-    users = User.objects.filter(Q(applications__isnull=False)).distinct()
+    users = User.objects.filter(Q(projects__isnull=False)).distinct()
 
     alerts = Alerts.objects.all()
 
@@ -44,7 +44,7 @@ def prometheus(request, id):
     """
     server = get_object_or_404(Server, uuid=id)
 
-    users = User.objects.filter(Q(applications__isnull=False)).distinct()
+    users = User.objects.filter(Q(projects__isnull=False)).distinct()
 
     metrics = Metrics.objects.all()
 
