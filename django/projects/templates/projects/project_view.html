@@ -279,7 +279,7 @@
           <div class="flex flex-row">
             <div class="flex flex-col grow">
               <div class="flex justify-start pl-8 pt-4">
-                <p class="text-xs text-bold text-gray-800">{{ date }}</p>
+                <p class="text-xs text-bold text-gray-800 capitalize">{{ date|naturalday }}</p>
               </div>
             {% for incident in incidents %}
                   <div key={activityItem.id} class="rounded-md bg-gray-50 p-4 mt-2">
@@ -287,12 +287,12 @@
                       <div class="ml-3 grow">
                         <div class="text-xs text-gray-700">
                         <p>
-                          <a href="{% url 'project' incident.service.project.id %}" class="font-bold">{{ incident.service.project }}</a> has reported an incent about <a href="{% url 'project_availability' incident.service.project.id %}" class="font-bold">{{ incident.service.title }} url</a> being down for {{ incident.message }}
+                          <a href="{% url 'project' incident.service.project.id %}" class="font-bold">{{ incident.service.project }}</a> has reported an incent about <a href="{% url 'project_availability' incident.service.project.id %}" class="font-bold">{{ incident.service.title }} url</a> being down for {{ incident.incident.duration }}
                         </p>
                         </div>
                       </div>
                       <div class="flex justify-end pl-8 pt-1">
-                        <p class="text-xs text-gray-400">{{ incident.ends_at|time:"h:i a" }}</p>
+                        <p class="text-xs text-gray-400">{{ incident.incident.ends_at|time:"h:i a" }}</p>
                       </div>
                     </div>
                   </div>

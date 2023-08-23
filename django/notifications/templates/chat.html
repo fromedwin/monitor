@@ -11,7 +11,7 @@
 	<div>
       {% for date, incidents in dates.items %}
       <div class="flex justify-center pt-8 pb-2">
-        <span class="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600">{{ date }}</span>
+        <span class="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 capitalize">{{ date|naturalday }}</span>
       </div>
       <div class="flex flex-row">
         <div>
