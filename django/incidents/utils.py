@@ -22,15 +22,6 @@ def getSeverity(alert):
 
 def getStartsAtWithDelay(alert):
     starts_at = timezone.make_aware(datetime.datetime.strptime(alert["startsAt"].split(".")[0], "%Y-%m-%dT%H:%M:%S"))
-
-    if alert["labels"]["alertname"] == "InstanceDown":
-
-        severity = getSeverity(alert)
-        if severity == INCIDENT_SEVERITY['CRITICAL']:
-            starts_at = starts_at - timedelta(minutes=settings.IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES)
-        elif severity == INCIDENT_SEVERITY['WARNING']:
-            starts_at = starts_at - timedelta(minutes=2)
-
     return starts_at
 
 def getEndsAt(alert):

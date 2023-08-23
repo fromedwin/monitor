@@ -19,32 +19,29 @@ from availability.models import Service
 from constants import INCIDENT_STATUS, INCIDENT_SEVERITY
 
 def handleServiceIncident(serviceIncident):
-    # If we receive resolved, we delete firing with same start_at and fingerprint
     try:
-        if  serviceIncident.incident.status == INCIDENT_STATUS['RESOLVED'] or \
-            serviceIncident.incident.status == INCIDENT_STATUS['FIRING']:
-            items = ServiceIncident.objects.filter(
-                incident__starts_at=serviceIncident.incident.starts_at,
-                incident__ends_at__isnull=True,
-                service=serviceIncident.service, 
-                alert=serviceIncident.alert)
+        items = ServiceIncident.objects.filter(
+            incident__ends_at__isnull=True,
+            service=serviceIncident.service, 
+            alert=serviceIncident.alert)
+        if len(items) >= 1:
+            for item in items:
 
-            if len(items) >= 1:
-                for item in items:
-                    if item.incident.severity == INCIDENT_SEVERITY['WARNING'] and \
-                        serviceIncident.incident.severity == INCIDENT_SEVERITY['CRITICAL']:
-                        item.incident.severity = INCIDENT_SEVERITY['CRITICAL']
+                if item.incident.severity == INCIDENT_SEVERITY['WARNING'] and \
+                    serviceIncident.incident.severity == INCIDENT_SEVERITY['CRITICAL']:
+                    item.incident.severity = INCIDENT_SEVERITY['CRITICAL']
+                item.incident.status = serviceIncident.incident.status
 
-                    item.incident.status = serviceIncident.incident.status
+                if serviceIncident.incident.starts_at < item.incident.starts_at:
                     item.incident.starts_at = serviceIncident.incident.starts_at
-                    item.incident.ends_at = serviceIncident.incident.ends_at
-                    item.incident.save()
-            else:
+
+                item.incident.ends_at = serviceIncident.incident.ends_at
+                item.incident.json = serviceIncident.incident.json
+                item.incident.save()
+        else:
+            if serviceIncident.incident.status != INCIDENT_STATUS['RESOLVED']:
                 serviceIncident.incident.save()
                 serviceIncident.save()
-        else:
-            serviceIncident.incident.save()
-            serviceIncident.save()
     except Exception as err:
         if settings.DEBUG is True:
             print(err)
