@@ -16,14 +16,13 @@ def send_emails(incident, email):
     if incident.status == INCIDENT_STATUS['RESOLVED']:
         status = 'Resolved'
 
-    summary = ''
-    if 'unknown_incidents' in incident:
-        summary = incident.unknown_incidents.summary
-    if 'service_incidents' in incident:
-        summary = incident.service_incidents.alert.summary
-
+    summary = incident.summary
+    description = incident.description
     subject = f'[{status}] {summary}'
-    html_message = render_to_string('notifications/emails/instance_down_email.html', {'incident': incident})
+    html_message = render_to_string('notifications/emails/instance_down_email.html', {
+        'summary': summary, 
+        'description': description
+    })
     plain_message = strip_tags(html_message)
     from_email = f"{settings.CONTACT_NAME} <{settings.CONTACT_EMAIL}>"
     to = [email]

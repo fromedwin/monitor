@@ -37,16 +37,24 @@ class Incident(models.Model):
         return "%s..." % truncatechars(self.json, 70)
 
     @property
-    def message(self):
+    def summary(self):
+        if self.service_incidents:
+            if self.service_incidents.alert.warning:
+                return self.service_incidents.alert.warning.summary
+            return self.service_incidents.alert.critical.summary
+        if self.unknown_incidents:
+            return self.unknown_incidents.summary
+        return 'No summary'
 
+    @property
+    def description(self):
         if self.service_incidents:
             if self.service_incidents.alert.warning:
                 return self.service_incidents.alert.warning.description
-            if self.service_incidents.alert.critical:
-                return self.service_incidents.alert.critical.description
+            return self.service_incidents.alert.critical.description
         if self.unknown_incidents:
             return self.unknown_incidents.description
-        return ''
+        return 'No description'
 
 class ServiceIncident(models.Model):
 

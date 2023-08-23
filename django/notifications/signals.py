@@ -5,7 +5,7 @@ from incidents.models import Incident
 from .utils import send_emails
 
 @receiver(pre_save, sender=Incident)
-def send_notifications(sender, instance=None, created=False, **kwargs):
+def send_notifications(sender, instance=None, **kwargs):
 
     is_created = not bool(instance.pk)
     is_modified = False
@@ -19,7 +19,11 @@ def send_notifications(sender, instance=None, created=False, **kwargs):
 
     if is_created or is_modified:
         # Test if instance has related model service
-        if 'service_incidents' in instance.__dict__ and instance.service_incidents:
-            emails = instance.service_incidents.service.project.emails.all()
-            if len(emails) and emails[0]:
-                send_emails(instance, emails[0].email)
+        try:
+            if instance.service_incidents:
+                emails = instance.service_incidents.service.project.emails.all()
+                if len(emails) and emails[0]:
+                    send_emails(instance, emails[0].email)
+        except Exception as e:
+            print(e)
+            pass
