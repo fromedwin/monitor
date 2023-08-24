@@ -1,11 +1,12 @@
 {% extends 'projects/project_view.html' %}
 {% load static socialaccount account tailwind_tags fromedwin_tags %}
 
-{% block html_head_title %}Availability - {{ project.title }} - FromEdwin{% endblock %}
+{% block html_head_title %}All vailabilities - FromEdwin{% endblock %}
 
 {% block javascript %}
 <script src="{% static 'echarts/echarts.min.js' %}"></script>
 {% endblock %}
+
 {% block subsection %}
 <header class="pb-4">
   <h1 class="text-3xl font-bold leading-tight text-gray-900 relative pl-16 pt-2 pb-8">
