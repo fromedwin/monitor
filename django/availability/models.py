@@ -25,12 +25,12 @@ class Service(models.Model):
 
     def availability(self, days=30):
 
-        from incidents.models import ServiceIncident
+        from incidents.models import Incident
 
         total_second = days * 24 * 60 * 60
         start_date = timezone.now() - timezone.timedelta(days=days)
 
-        alerts = ServiceIncident.objects.filter(service=self, severity=2, ends_at__gte=start_date) | ServiceIncident.objects.filter(service=self, severity=2, ends_at__isnull=True)
+        alerts = Incident.objects.filter(service=self, severity=2, ends_at__gte=start_date) | Incident.objects.filter(service=self, severity=2, ends_at__isnull=True)
 
         total_unavailability = 0
         for alert in alerts:
@@ -61,8 +61,8 @@ class Service(models.Model):
         return not self.is_enabled
 
     def incidents_count(self):
-        from incidents.models import ServiceIncident
-        return ServiceIncident.objects.filter(service__in=self.services.all()).count()
+        from incidents.models import Incident
+        return Incident.objects.filter(service__in=self.services.all()).count()
 
     def __str__(self):
         return f'{self.project} - {self.title}'
