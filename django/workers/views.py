@@ -14,7 +14,6 @@ from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 
 from .models import Metrics, Server, AuthBasic
-from alerts.models import Alerts
 from incidents.models import INCIDENT_SEVERITY_CHOICES
 
 @api_view(['GET'])
@@ -26,10 +25,7 @@ def alerts(request, id):
 
     users = User.objects.filter(Q(projects__isnull=False)).distinct()
 
-    alerts = Alerts.objects.all()
-
     yaml = render_to_string("alerts_template.yml", {
-        "alerts": alerts,
         "severity": INCIDENT_SEVERITY_CHOICES,
         "settings": settings,
     })

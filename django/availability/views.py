@@ -16,7 +16,7 @@ from rest_framework.authtoken.models import Token
 from allauth.socialaccount.models import SocialApp
 
 from workers.models import Server
-from incidents.models import ServiceIncident
+from incidents.models import Incident
 from projects.models import Project
 from projects.forms import ProjectForm
 
@@ -46,10 +46,10 @@ def project_availability(request, id):
     number_days = 30
 
     start_date = timezone.now() - timezone.timedelta(days=number_days)
-    incidents = ServiceIncident.objects.filter(
+    incidents = Incident.objects.filter(
         service__project = project, 
-        incident__starts_at__gte = start_date, 
-        incident__severity = 2)
+        starts_at__gte = start_date, 
+        severity = 2)
 
     days = []
     for day in reversed(range(number_days)):
@@ -59,33 +59,33 @@ def project_availability(request, id):
 
         days.append({
             'day': start_of_day,
-            'outrage': ServiceIncident.objects.filter(
+            'outrage': Incident.objects.filter(
                 service__project = project, 
-                incident__severity = 2,
+                severity = 2,
                 service__is_critical = True).filter(
                 Q(
-                    incident__starts_at__gte = start_of_day, 
-                    incident__ends_at__lt = end_of_day)|
+                    starts_at__gte = start_of_day, 
+                    ends_at__lt = end_of_day)|
                 Q(
-                    incident__starts_at__lt = start_of_day, 
-                    incident__ends_at__gt = start_of_day)|
+                    starts_at__lt = start_of_day, 
+                    ends_at__gt = start_of_day)|
                 Q(
-                    incident__starts_at__lt = end_of_day, 
-                    incident__ends_at__gt = end_of_day)
+                    starts_at__lt = end_of_day, 
+                    ends_at__gt = end_of_day)
             ),
-            'degradated': ServiceIncident.objects.filter(
+            'degradated': Incident.objects.filter(
                 service__project = project, 
-                incident__severity = 2, 
+                severity = 2, 
                 service__is_critical = False).filter(
                 Q(
-                    incident__starts_at__gte = start_of_day, 
-                    incident__ends_at__lt = end_of_day)|
+                    starts_at__gte = start_of_day, 
+                    ends_at__lt = end_of_day)|
                 Q(
-                    incident__starts_at__lt = start_of_day, 
-                    incident__ends_at__gt = start_of_day)|
+                    starts_at__lt = start_of_day, 
+                    ends_at__gt = start_of_day)|
                 Q(
-                    incident__starts_at__lt = end_of_day, 
-                    incident__ends_at__gt = end_of_day)
+                    starts_at__lt = end_of_day, 
+                    ends_at__gt = end_of_day)
             ),
         })
 

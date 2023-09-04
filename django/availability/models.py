@@ -30,7 +30,7 @@ class Service(models.Model):
         total_second = days * 24 * 60 * 60
         start_date = timezone.now() - timezone.timedelta(days=days)
 
-        alerts = ServiceIncident.objects.filter(service=self, incident__severity=2, incident__ends_at__gte=start_date) | ServiceIncident.objects.filter(service=self, incident__severity=2, incident__ends_at__isnull=True)
+        alerts = ServiceIncident.objects.filter(service=self, severity=2, ends_at__gte=start_date) | ServiceIncident.objects.filter(service=self, severity=2, ends_at__isnull=True)
 
         total_unavailability = 0
         for alert in alerts:
@@ -45,17 +45,17 @@ class Service(models.Model):
 
     @property
     def is_offline(self):
-        return self.incidents.filter(incident__status=2, incident__ends_at__isnull=True, incident__severity=2)
+        return self.incidents.filter(status=2, ends_at__isnull=True, severity=2)
 
     @property
     def is_degraded(self):
-        return self.incidents.filter(incident__status=2, incident__ends_at__isnull=True, incident__severity=2)
+        return self.incidents.filter(status=2, ends_at__isnull=True, severity=2)
 
     @property
     def is_warning(self):
         if not self.is_critical:
             return False
-        return self.incidents.filter(incident__status=2, incident__ends_at__isnull=True, incident__severity=1)
+        return self.incidents.filter(status=2, ends_at__isnull=True, severity=1)
 
     def is_disabled(self):
         return not self.is_enabled

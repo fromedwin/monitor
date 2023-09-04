@@ -125,7 +125,6 @@ INSTALLED_APPS = [
     'tailwind',
     'django_browser_reload',
     # App
-    'alerts',
     'administration',
     'availability',
     'dashboard',

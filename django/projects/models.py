@@ -20,43 +20,43 @@ class Project(models.Model):
 
     def is_offline(self):
         return self.services.filter(
-            incidents__incident__status = 2, 
+            incidents__status = 2, 
             is_critical = True, 
             is_enabled = True, 
-            incidents__incident__severity = 2
+            incidents__severity = 2
         )
 
     def is_degraded(self):
         return self.services.filter(
-            incidents__incident__status = 2, 
+            incidents__status = 2, 
             is_critical = False, 
             is_enabled = True, 
-            incidents__incident__severity = 2
+            incidents__severity = 2
         )
 
     def is_warning(self):
         return self.services.filter(
-            incidents__incident__status = 2, 
+            incidents__status = 2, 
             is_critical = True, 
             is_enabled = True, 
-            incidents__incident__severity = 1
+            incidents__severity = 1
         )
 
     def availability(self, days=30):
 
-        from incidents.models import ServiceIncident
+        from incidents.models import Incident
 
         total_second = days * 24 * 60 * 60
         start_date = timezone.now() - timezone.timedelta(days=days)
 
-        alerts = ServiceIncident.objects.filter(
+        alerts = Incident.objects.filter(
             service__in=self.services.filter(is_critical=True), 
-            incident__severity=2, 
-            incident__ends_at__gte=start_date) | \
-            ServiceIncident.objects.filter(
+            severity=2, 
+            ends_at__gte=start_date) | \
+            Incident.objects.filter(
                 service__in=self.services.filter(is_critical=True), 
-                incident__severity=2, 
-                incident__ends_at__isnull=True)
+                severity=2, 
+                ends_at__isnull=True)
 
         total_unavailability = 0
         for alert in alerts:
@@ -74,8 +74,8 @@ class Project(models.Model):
         return value
 
     def incidents_count(self):
-        from incidents.models import ServiceIncident
-        return ServiceIncident.objects.filter(service__in=self.services.all()).count()
+        from incidents.models import Incident
+        return Incident.objects.filter(service__in=self.services.all()).count()
 
     def url(self):
         return f"/project/{self.id}/"

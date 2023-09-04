@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Emails
 from .forms import EmailsForm
 from projects.models import Project
-from incidents.models import ServiceIncident
+from incidents.models import Incident
 
 from django.conf import settings
 
@@ -23,10 +23,10 @@ def project_notifications(request, id):
 
     project = get_object_or_404(Project, pk=id)
 
-    service_incidents = ServiceIncident\
+    service_incidents = Incident\
         .objects\
-        .filter(service__project=project, incident__ends_at__isnull=False)\
-        .order_by('-incident__starts_at', '-incident__severity')[:40]
+        .filter(service__project=project, ends_at__isnull=False)\
+        .order_by('-starts_at', '-severity')[:40]
 
     # Group incidents per date based on day month and year
     dates = {}
@@ -89,18 +89,18 @@ def messages(request):
     if not request.user.projects.all():
         return redirect('projects_welcome')
 
-    service_incidents = ServiceIncident\
+    service_incidents = Incident\
         .objects\
-        .filter(service__project__in=request.user.projects.all(), incident__ends_at__isnull=False)\
-        .order_by('-incident__starts_at', '-incident__severity')[:40]
+        .filter(service__project__in=request.user.projects.all(), ends_at__isnull=False)\
+        .order_by('-starts_at', '-severity')[:40]
 
     # Group incidents per date based on day month and year
     dates = {}
     for service_incident in service_incidents:
-        if service_incident.incident.starts_at.date() in dates:
-            dates[service_incident.incident.starts_at.date()].append(service_incident)
+        if service_incident.starts_at.date() in dates:
+            dates[service_incident.starts_at.date()].append(service_incident)
         else:
-            dates[service_incident.incident.starts_at.date()] = [service_incident]
+            dates[service_incident.starts_at.date()] = [service_incident]
 
     return render(request, 'chat.html', {
         'settings': settings,

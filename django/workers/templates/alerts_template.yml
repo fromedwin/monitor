@@ -1,23 +1,47 @@
-groups:
+{% verbatim %}groups:
 - name: Monitoring
-  rules:{% for alert in alerts %}{% if alert.warning %}
-  - alert: {{ alert.name }}
-    expr: {{ alert.warning.expr|safe }}
-    for: {{ alert.warning.duration }}
+  rules:
+  - alert: InstanceDown
+    expr: probe_success == 0
+    for: 0m
     labels:
       severity: warning
     annotations:
-      summary: {{ alert.warning.summary|safe }}
-      description: "{{ alert.warning.description|safe }}"{% endif %}{% if alert.critical %}
-  - alert: {{ alert.name }}
-    expr: {{ alert.critical.expr|safe }}
-    for: {{ alert.critical.duration }}
+      summary: Instance {{ $labels.instance }} down
+      description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for about 2 minutes."
+  - alert: InstanceDown
+    expr: probe_success == 0
+    for: 1m
     labels:
       severity: critical
     annotations:
-      summary: {{ alert.critical.summary|safe }}
-      description: "{{ alert.critical.description|safe }}"{% endif %}{% endfor %}
-{% verbatim %}
+      summary: Instance {{ $labels.instance }} down
+      description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for at least 5 minutes."
+  - alert: BlackboxSslCertificateWillExpireSoon
+    expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 30
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: Blackbox SSL certificate will expire soon (instance {{ $labels.instance }})
+      description: "SSL certificate expires in 30 days\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+  - alert: BlackboxSslCertificateWillExpireSoon
+    expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 3
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: Blackbox SSL certificate will expire soon (instance {{ $labels.instance }})
+      description: "SSL certificate expires in 3 days\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+  - alert: BlackboxSslCertificateExpired
+    expr: probe_ssl_earliest_cert_expiry - time() <= 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Blackbox SSL certificate expired (instance {{ $labels.instance }})
+      description: "SSL certificate has expired already\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+  # Legacy rules
   - alert: HostOutOfMemory
     expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
     for: 2m
@@ -292,6 +316,4 @@ groups:
       severity: info
     annotations:
       summary: Host requires reboot (instance {{ $labels.instance }})
-      description: "{{ $labels.instance }} requires a reboot.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
-{% endverbatim %}
-
+      description: "{{ $labels.instance }} requires a reboot.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"{% endverbatim %}

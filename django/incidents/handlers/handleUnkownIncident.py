@@ -26,8 +26,8 @@ def handleUnkownIncident(unknownIncident):
         if  unknownIncident.incident.status == INCIDENT_STATUS['RESOLVED'] or \
             unknownIncident.incident.status == INCIDENT_STATUS['FIRING']:
             items = UnknownIncident.objects.filter(
-                incident__starts_at=unknownIncident.incident.starts_at,
-                incident__ends_at__isnull=True,
+                starts_at=unknownIncident.incident.starts_at,
+                ends_at__isnull=True,
                 alert_name=unknownIncident.alert_name, 
                 summary=unknownIncident.summary, 
                 description=unknownIncident.description)

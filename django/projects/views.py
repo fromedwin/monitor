@@ -20,7 +20,7 @@ from .forms import ProjectForm, ProjectCreateForm
 from projects.models import Project
 from availability.models import Service, HTTPCodeService, HTTPMockedCodeService
 from workers.models import Server
-from incidents.models import ServiceIncident
+from incidents.models import Incident
 
 from performances.models import Performance
 
@@ -32,20 +32,20 @@ def project(request, id):
 
     project = get_object_or_404(Project, pk=id)
 
-    service_incidents = ServiceIncident\
+    incidents = Incident\
         .objects\
         .filter(
             service__project = project, 
-            incident__ends_at__isnull = False)\
-        .order_by('-incident__ends_at', '-incident__severity')[:5]
+            ends_at__isnull = False)\
+        .order_by('-ends_at', '-severity')[:5]
 
             # Group incidents per date based on day month and year
     dates = {}
-    for service_incident in service_incidents:
-        if service_incident.incident.ends_at.date() in dates:
-            dates[service_incident.incident.ends_at.date()].append(service_incident)
+    for incident in incidents:
+        if incident.ends_at.date() in dates:
+            dates[incident.ends_at.date()].append(incident)
         else:
-            dates[service_incident.incident.ends_at.date()] = [service_incident]
+            dates[incident.ends_at.date()] = [incident]
 
     return render(request, 'projects/project_view.html', {
         'project': project,

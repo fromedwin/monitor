@@ -20,7 +20,7 @@ def getSeverity(alert):
         return INCIDENT_SEVERITY['CRITICAL']
     return INCIDENT_SEVERITY['UNKNOWN'] 
 
-def getStartsAtWithDelay(alert):
+def getStartsAt(alert):
     starts_at = timezone.make_aware(datetime.datetime.strptime(alert["startsAt"].split(".")[0], "%Y-%m-%dT%H:%M:%S"))
     return starts_at
 

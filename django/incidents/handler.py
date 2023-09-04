@@ -11,51 +11,54 @@ from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from alerts.models import Alerts
 from availability.models import Service
 from projects.models import Project
 
-from .models import Incident, UnknownIncident, ServiceIncident
-from .handlers.handleUnkownIncident import handleUnkownIncident
-from .handlers.handleServiceIncident import handleServiceIncident
-from .utils import getStatus, getSeverity, getStartsAtWithDelay, getEndsAt
-
+from .models import Incident
+from .utils import getStatus, getSeverity, getStartsAt, getEndsAt
 
 from constants import INCIDENT_STATUS, INCIDENT_SEVERITY
 
 def handleAlert(request, alert):
 
     incident = Incident(
-        starts_at = getStartsAtWithDelay(alert),
+        alert_name = alert["labels"]["alertname"],
+        starts_at = getStartsAt(alert),
         ends_at = getEndsAt(alert),
         status = getStatus(alert),
         severity = getSeverity(alert),
+        summary = alert["annotations"]["summary"],
+        description = alert["annotations"]["description"],
         json = json.dumps(alert, indent=2, sort_keys=True),
+        service = Service.objects.get(pk=alert["labels"]["service"]) if alert["labels"]["service"] else None,
     )
 
-    # We get db alert model for foreign key based on alert name
-    alert_object = Alerts.objects.get(name=alert["labels"]["alertname"])
+    try:
+        if  incident.status == INCIDENT_STATUS['RESOLVED'] or \
+            incident.status == INCIDENT_STATUS['FIRING']:
+            items = Incident.objects.filter(
+                starts_at=incident.starts_at,
+                ends_at__isnull=True,
+                alert_name=incident.alert_name, 
+                summary=incident.summary, 
+                description=incident.description)
 
-    if not alert_object:
-        unknown_incident = UnknownIncident(
-            incident = incident,
-            alert_name = alert["labels"]["alertname"],
-            summary = alert["annotations"]["summary"],
-            description = alert["annotations"]["description"],
-        )
-        handleUnkownIncident(unknown_incident)
-        
-    elif alert["labels"]["service"]:
-        try:
-            service = Service.objects.get(pk=alert["labels"]["service"])
-            service_incident = ServiceIncident(
-                incident = incident,
-                alert = alert_object,
-                service = service,
-            )
-            handleServiceIncident(service_incident)
-        except Service.DoesNotExist:
-            # If user delete a service with an open alert then prometeheus close the alert,
-            # alert manager report the alert as close for deleted service and was returning 500.
-            # Now return 200.
-            pass
+            if len(items) >= 1:
+                for item in items:
+                    if item.severity == INCIDENT_SEVERITY['WARNING'] and \
+                        incident.severity == INCIDENT_SEVERITY['CRITICAL']:
+                        item.severity = INCIDENT_SEVERITY['CRITICAL']
+
+                    item.status = incident.status
+                    item.starts_at = incident.starts_at
+                    item.ends_at = incident.ends_at
+                    item.json = incident.json
+                    item.save()
+            else:
+                incident.save()
+        else:
+            incident.save()
+    except Exception as err:
+        if settings.DEBUG:
+            print(err)
+        raise err
