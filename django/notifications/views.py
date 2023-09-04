@@ -31,10 +31,10 @@ def project_notifications(request, id):
     # Group incidents per date based on day month and year
     dates = {}
     for service_incident in service_incidents:
-        if service_incident.incident.starts_at.date() in dates:
-            dates[service_incident.incident.starts_at.date()].append(service_incident)
+        if service_incident.starts_at.date() in dates:
+            dates[service_incident.starts_at.date()].append(service_incident)
         else:
-            dates[service_incident.incident.starts_at.date()] = [service_incident]
+            dates[service_incident.starts_at.date()] = [service_incident]
 
     return render(request, 'project/notifications.html', {
         'project': project,

@@ -21,6 +21,8 @@ from constants import INCIDENT_STATUS, INCIDENT_SEVERITY
 
 def handleAlert(request, alert):
 
+    service = Service.objects.get(pk=alert["labels"]["service"]) if alert["labels"]["service"] else None
+
     incident = Incident(
         alert_name = alert["labels"]["alertname"],
         starts_at = getStartsAt(alert),
@@ -30,18 +32,28 @@ def handleAlert(request, alert):
         summary = alert["annotations"]["summary"],
         description = alert["annotations"]["description"],
         json = json.dumps(alert, indent=2, sort_keys=True),
-        service = Service.objects.get(pk=alert["labels"]["service"]) if alert["labels"]["service"] else None,
+        service = service,
     )
 
     try:
+        # If we receive a wenring resolve issue, we look for a similar incident as critical
+        if  incident.severity == INCIDENT_SEVERITY['WARNING'] and \
+            incident.status == INCIDENT_STATUS['RESOLVED']:
+            items = Incident.objects.filter(
+                alert_name=incident.alert_name, 
+                service=service,
+                starts_at=incident.starts_at,
+                severity=INCIDENT_SEVERITY['CRITICAL'])
+
+            if len(items) >= 1:
+                return
+                
         if  incident.status == INCIDENT_STATUS['RESOLVED'] or \
             incident.status == INCIDENT_STATUS['FIRING']:
             items = Incident.objects.filter(
-                starts_at=incident.starts_at,
-                ends_at__isnull=True,
                 alert_name=incident.alert_name, 
-                summary=incident.summary, 
-                description=incident.description)
+                service=service,
+                ends_at__isnull=True)
 
             if len(items) >= 1:
                 for item in items:
@@ -50,7 +62,6 @@ def handleAlert(request, alert):
                         item.severity = INCIDENT_SEVERITY['CRITICAL']
 
                     item.status = incident.status
-                    item.starts_at = incident.starts_at
                     item.ends_at = incident.ends_at
                     item.json = incident.json
                     item.save()

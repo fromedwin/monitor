@@ -9,7 +9,7 @@ from django.utils import timezone
 
 from projects.models import Project
 
-from constants import INCIDENT_STATUS_CHOICES, INCIDENT_SEVERITY_CHOICES
+from constants import INCIDENT_STATUS_CHOICES, INCIDENT_SEVERITY_CHOICES, INCIDENT_SEVERITY
 
 class Incident(models.Model):
     """
@@ -46,3 +46,7 @@ class Incident(models.Model):
     @property
     def short_json(self):
         return "%s..." % truncatechars(self.json, 70)
+
+    @property
+    def is_critical(self):
+        return self.severity == INCIDENT_SEVERITY['CRITICAL']

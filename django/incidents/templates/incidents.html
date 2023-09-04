@@ -52,7 +52,7 @@
                 <span class="flex-shrink-0 inline-block px-2 py-0.5 text-yellow-800 text-xs font-medium bg-yellow-100 rounded-full">Degradated</span>
                 {% endif %}
               </div>
-              <p class="mt-1 text-gray-500 text-sm truncate">From {{ incident.incident.starts_at|date:'H:i' }} until {{ incident.incident.ends_at|date:'H:i' }}</p>
+              <p class="mt-1 text-gray-500 text-sm truncate">From {{ incident.starts_at|date:'H:i' }} until {{ incident.ends_at|date:'H:i' }}</p>
             </div>
             {% if incident.service.is_critical %}
             <div class="w-10 h-10 flex justify-center items-center rounded-full bg-red-600 text-white text-sm font-medium flex-shrink-0">

@@ -34,12 +34,12 @@ class Service(models.Model):
 
         total_unavailability = 0
         for alert in alerts:
-            if not alert.incident.ends_at:
-                total_unavailability += (timezone.now() - alert.incident.starts_at).seconds
-            elif alert.incident.starts_at < start_date:
-                total_unavailability += (alert.incident.ends_at - start_date).seconds
+            if not alert.ends_at:
+                total_unavailability += (timezone.now() - alert.starts_at).seconds
+            elif alert.starts_at < start_date:
+                total_unavailability += (alert.ends_at - start_date).seconds
             else:
-                total_unavailability += alert.incident.duration.seconds
+                total_unavailability += alert.duration.seconds
 
         return round(100 - total_unavailability * 100 / total_second, 3)
 
