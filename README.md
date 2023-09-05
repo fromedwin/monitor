@@ -21,7 +21,6 @@ echo "SECRET_KEY=$SECRET_KEY" >> .env
 python django/manage.py createsuperuser
 
 python django/manage.py migrate
-python django/manage.py loaddata django/alerts/fixtures/initial_data.json
 python django/manage.py tailwind install
 ```
 
