@@ -1,0 +1,4 @@
+{% load fromedwin_tags %}
+<p>
+  <a href="{% url 'project' incident.service.project.id %}" class="font-bold">{{ incident.service.project }}</a>, <a href="{% url 'project_availability' incident.service.project.id %}" class="font-bold">{{ incident.service.title }}</a> had its SSL certificate  expired for {{ incident.duration|naturaldelta }}
+</p>

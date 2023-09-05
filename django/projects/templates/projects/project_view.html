@@ -278,17 +278,20 @@
           
           <div class="flex flex-row">
             <div class="flex flex-col grow">
-              <div class="flex justify-start pl-8 pt-4">
-                <p class="text-xs text-bold text-gray-800 capitalize">{{ date|naturalday }}</p>
+              <div class="flex justify-start pl-4 pt-4">
+                <p class="text-xs font-bold text-gray-800 capitalize">{{ date|naturalday }}</p>
               </div>
                 {% for incident in incidents %}
-                  <div key={activityItem.id} class="rounded-r-md bg-gray-50 p-4 mt-2 {% if incident.is_critical %}border-red-500{% else %}border-yellow-500{% endif %} border-l-4">
-                    <div class="flex">
-                      <div class="ml-3 grow">
+                  <div key={activityItem.id} class="rounded-r-md bg-gray-50 p-4 mt-2">
+                    <div class="flex flex-row">
+                      {% if incident.is_critical %}
+                      <span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">Outrage</span>
+                      {% else %}
+                      <span class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">Warning</span>
+                      {% endif %}
+                      <div class="ml-3 grow pt-1">
                         <div class="text-xs text-gray-700">
-                        <p>
-                          <a href="{% url 'project' incident.service.project.id %}" class="font-bold">{{ incident.service.project }}</a> has reported an incent about <a href="{% url 'project_availability' incident.service.project.id %}" class="font-bold">{{ incident.service.title }} url</a> being down from {{ incident.starts_at|time:"h:i a" }} until {{ incident.ends_at|time:"h:i a" }}
-                        </p>
+                          {{ incident.html_summary|safe }}
                         </div>
                       </div>
                     </div>

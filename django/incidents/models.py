@@ -6,6 +6,7 @@ from projects.models import Project
 from availability.models import Service 
 from django.template.defaultfilters import truncatechars
 from django.utils import timezone
+from django.template.loader import render_to_string
 
 from projects.models import Project
 
@@ -50,3 +51,29 @@ class Incident(models.Model):
     @property
     def is_critical(self):
         return self.severity == INCIDENT_SEVERITY['CRITICAL']
+
+    # Templates related to 
+    @property  
+    def html_warning(self):
+        try:
+            return render_to_string('incidents/'+self.alert_name+'/warning.html', {'incident': self})
+        except:
+            return render_to_string('incidents/Unknown/warning.html', {'incident': self})
+    @property  
+    def html_critical(self):
+        try:
+            return render_to_string('incidents/'+self.alert_name+'/critical.html', {'incident': self})
+        except:
+            return render_to_string('incidents/Unknown/critical.html', {'incident': self})
+    @property  
+    def html_resolved(self):
+        try:
+            return render_to_string('incidents/'+self.alert_name+'/resolved.html', {'incident': self})
+        except:
+            return render_to_string('incidents/Unknown/resolved.html', {'incident': self})
+    @property  
+    def html_summary(self):
+        try:
+            return render_to_string('incidents/'+self.alert_name+'/summary.html', {'incident': self})
+        except:
+            return render_to_string('incidents/Unknown/summary.html', {'incident': self})

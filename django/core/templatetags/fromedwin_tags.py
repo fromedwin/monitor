@@ -1,5 +1,6 @@
-from django import template
 import datetime
+import humanize
+from django import template
 
 register = template.Library()
 
@@ -13,3 +14,7 @@ def get_obj_attr(obj, attr):
 @register.filter()
 def timestamp_to_date(obj):
     return datetime.datetime.fromtimestamp(int(obj))
+
+@register.filter()
+def naturaldelta(obj):
+    return humanize.naturaldelta(obj)
