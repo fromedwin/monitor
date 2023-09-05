@@ -14,12 +14,14 @@ class Notification(models.Model):
         Project,
         on_delete = models.CASCADE,
         related_name = "notifications",
+        blank = True,
         null = True
     )
     service = models.ForeignKey(
         Service,
         on_delete = models.CASCADE,
         related_name = "notifications",
+        blank = True,
         null = True
     )
     severity = models.IntegerField(
