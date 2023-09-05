@@ -18,9 +18,8 @@
 					</label>
 					<div class="mt-1 sm:mt-0 sm:col-span-2">
 						<select name="timezone" class="selectpicker" data-title="Select Timezone" data-style="btn-default btn-block" data-menu-style="dropdown-blue">
-							{{ form.fields.timezone.value }}
 					    {% for x,y in form.fields.timezone.choices %}
-					       <option value="{{ x }}"{% if form.fields.timezone.value == x %} selected{% endif %}>{{ y }}</option>
+					       <option value="{{ x }}"{% if profile.timezone == x %} selected="selected"{% endif %}>{{ y }}</option>
 					    {% endfor %}
 					    </select>
 						{% if form.timezone.errors %}

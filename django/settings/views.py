@@ -27,6 +27,8 @@ def user_timezone_form(request):
     """
     # Sort timeones by string value
 
+    profile = request.user.profile if hasattr(request.user, 'profile') else None
+
     if request.POST:
         form = TimeZoneForm(request.POST, instance=request.user.profile)
         form.fields['timezone'].choices.sort(key=lambda x: x[1])
@@ -37,9 +39,13 @@ def user_timezone_form(request):
 
         return render(request, 'user/timezone.html', {'form': form})
 
-    form = TimeZoneForm(instance=request.user.profile);
+    form = TimeZoneForm(instance=profile)
     form.fields['timezone'].choices.sort(key=lambda x: x[1])
-    return render(request, 'user/timezone.html', {'form': form})
+
+    return render(request, 'user/timezone.html', {
+        'form': form,
+        'profile': profile
+    })
 
 @login_required
 def user_delete(request):
