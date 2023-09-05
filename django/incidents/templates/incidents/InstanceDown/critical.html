@@ -1,1 +1,3 @@
-<p>{{ incident.summary }}</p>
+<p>
+  <a href="{% url 'project' incident.service.project.id %}" class="font-bold">{{ incident.service.project }}</a>, <a href="{% url 'project_availability' incident.service.project.id %}" class="font-bold">{{ incident.service.title }}</a> has not been responsing for 5 minutes and is now offline.
+</p>

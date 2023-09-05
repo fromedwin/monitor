@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 
 from django.contrib.auth.decorators import login_required
 
-from .models import Emails
+from .models import Notification, Emails
 from .forms import EmailsForm
 from projects.models import Project
 from incidents.models import Incident
@@ -30,11 +30,11 @@ def project_notifications(request, id):
 
     # Group incidents per date based on day month and year
     dates = {}
-    for service_incident in service_incidents:
-        if service_incident.starts_at.date() in dates:
-            dates[service_incident.starts_at.date()].append(service_incident)
+    for notification in notifications:
+        if notification.date.date() in dates:
+            dates[notification.date.date()].append(notification)
         else:
-            dates[service_incident.starts_at.date()] = [service_incident]
+            dates[notification.date.date()] = [notification]
 
     return render(request, 'project/notifications.html', {
         'project': project,
@@ -89,18 +89,16 @@ def messages(request):
     if not request.user.projects.all():
         return redirect('projects_welcome')
 
-    service_incidents = Incident\
-        .objects\
-        .filter(service__project__in=request.user.projects.all(), ends_at__isnull=False)\
-        .order_by('-starts_at', '-severity')[:40]
+    notifications = Notification.objects.filter(service__project__in=request.user.projects.all())\
+        .order_by('-date')[:40]
 
     # Group incidents per date based on day month and year
     dates = {}
-    for service_incident in service_incidents:
-        if service_incident.starts_at.date() in dates:
-            dates[service_incident.starts_at.date()].append(service_incident)
+    for notification in notifications:
+        if notification.date.date() in dates:
+            dates[notification.date.date()].append(notification)
         else:
-            dates[service_incident.starts_at.date()] = [service_incident]
+            dates[notification.date.date()] = [notification]
 
     return render(request, 'chat.html', {
         'settings': settings,
