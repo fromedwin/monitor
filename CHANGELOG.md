@@ -21,9 +21,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 See for sample https://raw.githubusercontent.com/favoloso/conventional-changelog-emoji/master/CHANGELOG.md
 -->
 
-## [1.0.0] - 2023-08-dd
+## [0.9.0] - 2023-09-05
 ### ✨ Feature
 - Login using Github single sign-on
-- Set url then start monitoring availability and performances
-- Notify incidents via email
-- Provide public status page for availability.
+- Availability for urls
+- Performances for urls
+- Public page to share current status and past outrages
+- Notification by email on warning and critical alerts
