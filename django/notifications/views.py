@@ -23,10 +23,8 @@ def project_notifications(request, id):
 
     project = get_object_or_404(Project, pk=id)
 
-    service_incidents = Incident\
-        .objects\
-        .filter(service__project=project, ends_at__isnull=False)\
-        .order_by('-starts_at', '-severity')[:40]
+    notifications = Notification.objects.filter(service__project=project)\
+        .order_by('-date')[:40]
 
     # Group incidents per date based on day month and year
     dates = {}
