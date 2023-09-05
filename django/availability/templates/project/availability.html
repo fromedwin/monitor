@@ -376,7 +376,7 @@
               document.getElementById('probe_wrapper').style.display = 'block';
 
               xAxis_data = data[Object.keys(data)[0]].duration_seconds.map((value) => {
-                d = new Date(value[0]);
+                d = new Date(value[0]+'.820Z'); // Force to UTC
                 return d.toLocaleTimeString("en-us", {   
                     hour: "2-digit", minute: "2-digit"
                 });

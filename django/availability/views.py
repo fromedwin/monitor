@@ -138,6 +138,7 @@ def project_availability(request, id):
             '7': project.availability(days=7),
             '30': project.availability(days=30),
         },
+        'timezone': 'Europe/Paris',
         'url': f'{request.META["wsgi.url_scheme"]}://{request.META["HTTP_HOST"]}',
     })
 

@@ -159,6 +159,7 @@ MIDDLEWARE = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_prometheus.middleware.PrometheusAfterMiddleware',
     'core.middleware.project_required',
+    'settings.middleware.set_timezone',
     'django_browser_reload.middleware.BrowserReloadMiddleware',
 )
 
