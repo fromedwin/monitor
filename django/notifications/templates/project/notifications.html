@@ -84,15 +84,14 @@
           {% for notification in notifications %}
             <div key="{{activityItem.id}}" class="pl-3 flex">
               <div class="">
-                {% if notification.severity == 1 %}
-                <div class="rounded-md bg-yellow-50 p-4 mt-3 text-xs text-yellow-700">
-                {% elif notification.severity == 2 %}
-                <div class="rounded-md bg-red-50 p-4 mt-3 text-xs text-red-700">
-                {% elif notification.severity == 3 %}
-                <div class="rounded-md bg-green-50 p-4 mt-3 text-xs text-green-700">
-                {% else %}
-                <div class="rounded-md bg-gray-50 p-4 mt-3 text-xs text-gray-700">
-                {% endif %}
+                 <div class="rounded-md bg-gray-50 p-4 mt-3 text-xs text-gray-700 flex">
+                  {% if notification.severity == 1 %}
+                  <span class="mr-2">⚠️</span>
+                  {% elif notification.severity == 2 %}
+                  <span class="mr-2">❌</span>
+                  {% elif notification.severity == 3 %}
+                  <span class="mr-2">✅</span>
+                  {% endif %}
                   {{ notification.message|safe }}
                 </div>
                 <p class="text-xs text-gray-400 text-right mt-1 mr-2">{{ notification.date|time:"H:i" }}</p>

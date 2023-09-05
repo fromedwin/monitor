@@ -40,6 +40,7 @@
                           {{ incident.html_summary|safe }}
                         </div>
                       </div>
+                      <div class="text-xs text-gray-500 pt-1 ml-2">{{ incident.starts_at|date:"H:i" }}</div>
                     </div>
                   </div>
               {% endfor %}
