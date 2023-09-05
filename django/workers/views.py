@@ -1,5 +1,4 @@
 import ipaddress
-import datetime
 from django.utils import timezone
 from django.http import HttpResponse
 from django.template.loader import render_to_string

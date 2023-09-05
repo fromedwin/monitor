@@ -1,6 +1,5 @@
 import requests
 import json
-import datetime
 
 from django.conf import settings
 from django.urls import reverse
@@ -54,7 +53,7 @@ def project_availability(request, id):
     days = []
     for day in reversed(range(number_days)):
         day = timezone.now() - timezone.timedelta(days=day)
-        start_of_day = timezone.datetime(day.year,day.month,day.day)
+        start_of_day = timezone.make_aware(timezone.datetime(day.year,day.month,day.day))
         end_of_day = start_of_day + timezone.timedelta(days=1)
 
         days.append({
@@ -96,7 +95,7 @@ def project_availability(request, id):
     try:
         servers = Server.objects.filter(
             monitoring=True,
-            last_seen__gte=timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
+            last_seen__gte=timezone.now() - timezone.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
         ).order_by('-last_seen')
 
         server = servers[0]
@@ -285,7 +284,7 @@ def availabilities_all(request):
     try:
         servers = Server.objects.filter(
             monitoring=True,
-            last_seen__gte=timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
+            last_seen__gte=timezone.now() - timezone.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
         ).order_by('-last_seen')
 
         server = servers[0]

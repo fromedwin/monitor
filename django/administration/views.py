@@ -1,5 +1,3 @@
-import datetime
-
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
@@ -39,10 +37,10 @@ def administration(request):
         email_success = True
 
     servers = Server.objects.filter(
-        last_seen__gte=timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
+        last_seen__gte=timezone.now() - timezone.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
     ).order_by('-creation_date')
 
-    inQueueLighthouse = Performance.objects.filter(Q(request_run=True) | Q(last_request_date__isnull=True) | Q(last_request_date__lt=timezone.now()-datetime.timedelta(minutes=settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES))).count()
+    inQueueLighthouse = Performance.objects.filter(Q(request_run=True) | Q(last_request_date__isnull=True) | Q(last_request_date__lt=timezone.now()-timezone.timedelta(minutes=settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES))).count()
 
     return render(request, 'administration.html', {
         'servers': servers,

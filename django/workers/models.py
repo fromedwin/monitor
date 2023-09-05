@@ -1,7 +1,6 @@
 import uuid
 import ipaddress
 import math
-import datetime
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -40,7 +39,7 @@ class Server(models.Model):
 
     @property
     def is_active(self):
-        return self.last_seen > (timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5))
+        return self.last_seen > (timezone.now() - timezone.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5))
 
     @property
     def is_public(self):

@@ -1,6 +1,5 @@
 import requests
 import json
-import datetime
 from pathlib import Path
 from django.urls import reverse
 from django.shortcuts import render, redirect

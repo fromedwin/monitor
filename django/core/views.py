@@ -1,5 +1,3 @@
-import datetime
-
 from django.shortcuts import render
 from django.http import HttpResponse
 
@@ -33,7 +31,7 @@ def healthcheck_workers_availability(request):
 
     servers = Server.objects.filter(
         monitoring=True,
-        last_seen__gte=timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
+        last_seen__gte=timezone.now() - timezone.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
     ).order_by('-last_seen')
 
     # If there is more than 1 server we retur
@@ -47,7 +45,7 @@ def healthcheck_workers_lighthouse(request):
 
     servers = Server.objects.filter(
         monitoring=True,
-        last_seen__gte=timezone.now() - datetime.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
+        last_seen__gte=timezone.now() - timezone.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
     ).order_by('-last_seen')
 
     # If there is more than 1 server we retur

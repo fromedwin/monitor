@@ -1,7 +1,5 @@
 import json
-import datetime
 import base64
-from datetime import timedelta
 from django.shortcuts import render
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
@@ -32,7 +30,7 @@ def fetch_performance(request, server_id):
     """
     get_object_or_404(Server, uuid=server_id)
 
-    performance = Performance.objects.filter(Q(request_run=True) | Q(last_request_date__isnull=True) | Q(last_request_date__lt=timezone.now()-timedelta(minutes=settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES))).order_by('last_request_date')
+    performance = Performance.objects.filter(Q(request_run=True) | Q(last_request_date__isnull=True) | Q(last_request_date__lt=timezone.now()-timezone.timedelta(minutes=settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES))).order_by('last_request_date')
 
     # If no performance to work on, we return empty json 
     if performance:
@@ -67,7 +65,7 @@ def save_report(request, server_id, performance_id):
     try:
         filename = f'{data["audits"]["final-screenshot"]["details"]["timestamp"]}'
     except:
-        filename = f'{datetime.datetime.now().timestamp()}'
+        filename = f'{timezone.now().timestamp()}'
 
     # Generate report.json file
     json_file = json.dumps(data)

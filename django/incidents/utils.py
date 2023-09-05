@@ -1,4 +1,3 @@
-import datetime
 from datetime import timedelta
 
 from django.conf import settings
@@ -21,11 +20,11 @@ def getSeverity(alert):
     return INCIDENT_SEVERITY['UNKNOWN'] 
 
 def getStartsAt(alert):
-    starts_at = timezone.make_aware(datetime.datetime.strptime(alert["startsAt"].split(".")[0], "%Y-%m-%dT%H:%M:%S"))
+    starts_at = timezone.make_aware(timezone.datetime.strptime(alert["startsAt"].split(".")[0], "%Y-%m-%dT%H:%M:%S"))
     return starts_at
 
 def getEndsAt(alert):
     ends_at = None
     if alert["endsAt"] and not alert["endsAt"].startswith("0001"):
-        ends_at = timezone.make_aware(datetime.datetime.strptime(alert["endsAt"].split(".")[0], "%Y-%m-%dT%H:%M:%S"))
+        ends_at = timezone.make_aware(timezone.datetime.strptime(alert["endsAt"].split(".")[0], "%Y-%m-%dT%H:%M:%S"))
     return ends_at
