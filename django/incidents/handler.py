@@ -20,7 +20,11 @@ from constants import INCIDENT_STATUS, INCIDENT_SEVERITY
 
 def handleAlert(request, alert):
 
-    service = Service.objects.get(pk=alert["labels"]["service"]) if hasattr(alert["labels"], 'service') else None
+    service = None
+    try:
+        service = Service.objects.get(pk=alert["labels"]["service"])
+    except:
+        pass
 
     incident = Incident(
         alert_name = alert["labels"]["alertname"],
