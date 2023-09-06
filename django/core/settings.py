@@ -31,6 +31,8 @@ if os.environ.get('SENTRY_DSN'):
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
+VERSION = [0, 9, 0]
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
 FORCE_HTTPS = False
