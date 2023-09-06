@@ -16,6 +16,8 @@ from constants import INCIDENT_SEVERITY
 from incidents.models import Incident
 from projects.models import Project
 
+from django.http import Http404
+
 @login_required
 def toggle_public_page(request, application_id):
     project = get_object_or_404(Project, pk=application_id)
