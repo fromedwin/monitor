@@ -11,16 +11,28 @@ Metrics are focused on **availability**, with future integration for **performan
 ```bash
 python3 -m venv apps
 source apps/bin/activate
+
+# psycopg2 lib Apple silicon specific
+# brew install openssl
+# export LIBRARY_PATH=$LIBRARY_PATH:/opt/homebrew/opt/openssl/lib
+
 pip install -r django/requirements.txt
 
 # Generate random SECRET_KEY and inject in .env file
 SECRET_KEY=$(LC_CTYPE=C tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 32)
+# Or 
+# SECRET_KEY=$(openssl rand -base64 64)
+
 echo "SECRET_KEY=$SECRET_KEY" >> .env
 
-# Create superuser to access django admin panel
+# For development, add DEBUG=1 in .env file
+# echo "DEBUG=1" >> .env
+
+# For a first setup, run migrate and createsuperuser
+python django/manage.py migrate
+# Create superuser to access django admin panel (migrate first for the first setup)
 python django/manage.py createsuperuser
 
-python django/manage.py migrate
 python django/manage.py tailwind install
 ```
 
