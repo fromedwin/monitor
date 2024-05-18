@@ -151,6 +151,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = (
+    'allauth.account.middleware.AccountMiddleware',
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
