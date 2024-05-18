@@ -55,9 +55,8 @@ def user_delete(request):
     """
         Create or edit service model
     """
-
     if request.POST:
-        #request.user.delete()
+        request.user.delete()
         logout(request)
         return render(request, 'user/delete_done.html', {})
 
