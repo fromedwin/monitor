@@ -13,9 +13,11 @@ from .forms import EmailsForm
 from projects.models import Project
 from incidents.models import Incident
 
+from core.decorators import waiting_list_approved_only
 from django.conf import settings
 
 @login_required
+@waiting_list_approved_only()
 def project_notifications(request, id):
     """
     Show current project status
@@ -40,6 +42,7 @@ def project_notifications(request, id):
     })
 
 @login_required
+@waiting_list_approved_only()
 def email_form(request, application_id, email_id=None):
 
     email = None
@@ -73,6 +76,7 @@ def email_form(request, application_id, email_id=None):
     })
 
 @login_required
+@waiting_list_approved_only()
 def email_delete(request, application_id, email_id):
 
     email = get_object_or_404(Emails, pk=email_id)
@@ -81,6 +85,7 @@ def email_delete(request, application_id, email_id):
     return redirect(reverse('project_notifications', args=[application_id]))
 
 @login_required
+@waiting_list_approved_only()
 def messages(request):
 
     # If user has no project we redirect to /welcome/

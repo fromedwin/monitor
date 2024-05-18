@@ -16,6 +16,7 @@ from allauth.socialaccount.models import SocialApp
 
 from .forms import ProjectForm, ProjectCreateForm
 
+from core.decorators import waiting_list_approved_only
 from projects.models import Project
 from availability.models import Service, HTTPCodeService, HTTPMockedCodeService
 from workers.models import Server
@@ -24,6 +25,7 @@ from incidents.models import Incident
 from performances.models import Performance
 
 @login_required
+@waiting_list_approved_only()
 def project(request, id):
     """
     Show current project status
@@ -53,6 +55,7 @@ def project(request, id):
     })
 
 @login_required
+@waiting_list_approved_only()
 def project_performances(request, id):
     """
     Show current project status
@@ -65,6 +68,7 @@ def project_performances(request, id):
     })
 
 @login_required
+@waiting_list_approved_only()
 def projects_form(request, id=None):
     """
         Create or edit project model
@@ -96,6 +100,7 @@ def projects_form(request, id=None):
     })
 
 @login_required
+@waiting_list_approved_only()
 def projects_delete(request, id=None):
     """
         Delete project model
@@ -106,6 +111,7 @@ def projects_delete(request, id=None):
     return redirect(reverse('dashboard'))
     
 @login_required
+@waiting_list_approved_only()
 def projects_add(request):
     """
         Create or edit project model
@@ -125,6 +131,7 @@ def projects_add(request):
     })
 
 @login_required
+@waiting_list_approved_only()
 def projects_welcome(request):
     """
         Create or edit project model
