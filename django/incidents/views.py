@@ -11,6 +11,7 @@ from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from core.decorators import waiting_list_approved_only
 from .models import Incident
 from projects.models import Project
 from availability.models import Service
@@ -18,6 +19,7 @@ from availability.models import Service
 from constants import INCIDENT_SEVERITY, INCIDENT_STATUS
 
 @login_required
+@waiting_list_approved_only()
 def incidents(request, id, year=None, month=None, day=None):
     """
     List of incidents for a specific projects
@@ -93,6 +95,7 @@ def incidents(request, id, year=None, month=None, day=None):
 
 
 @login_required
+@waiting_list_approved_only()
 def incidents_force_online(request, service_id):
 
     service = get_object_or_404(Service, pk=service_id)

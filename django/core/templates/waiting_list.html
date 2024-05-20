@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
-
-{% block title %}Delete your account{% endblock %}
+{% load socialaccount account tailwind_tags %}
 
 {% block body %}
+
 <div class="flex w-screen h-screen items-center justify-center">
   <form method="post" class="py-5 space-y-8 divide-y divide-gray-200">
     <div class="bg-white shadow sm:rounded-lg">
@@ -12,17 +12,19 @@
         </h3>
         <div class="mt-2 max-w-xl text-sm text-gray-500">
           <p>
-            Once you delete your account, you will lose all data associated with it. Are you sure you want to delete your account ?
+            You are currently on waiting list You can cancel at any time.
           </p>
         </div>
-        <div class="mt-5">
-          <input type="submit" value="I confirm deleting my account" class="whitespace-nowrap font-medium text-red-700 hover:text-red-600">
-          </input>
+        <div class="mt-5 flex justify-between gap-8">
+          <a href="{% url 'user_delete' %}" class="whitespace-nowrap font-medium text-red-700 hover:text-red-600">
+            Delete your account
+          </a>
+          <a href="{% url 'logout' %}?next=/" class="whitespace-nowrap font-medium text-black-700 hover:text-black-600">
+            Logout
+          </a>
         </div>
-        {% csrf_token %}
       </div>
     </div>
   </form>
 </div>
-
 {% endblock %}

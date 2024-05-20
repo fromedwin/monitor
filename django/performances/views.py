@@ -10,6 +10,7 @@ from django.utils.safestring import SafeString
 from projects.models import Project
 from .models import Performance, Report
 from .forms import PerformanceForm
+from core.decorators import waiting_list_approved_only
 
 def get_domaines_from_performances(performances_list):
     domains = {}
@@ -66,6 +67,7 @@ def get_domaines_from_performances(performances_list):
     return domains
 
 @login_required
+@waiting_list_approved_only()
 def project_performances(request, id):
     """
     Show current project status
@@ -81,6 +83,7 @@ def project_performances(request, id):
     })
 
 @login_required
+@waiting_list_approved_only()
 def performance_form(request, application_id, performance_id=None):
     """
         Create or edit service model
@@ -118,6 +121,7 @@ def performance_form(request, application_id, performance_id=None):
     })
 
 @login_required
+@waiting_list_approved_only()
 def performance_delete(request, application_id, performance_id):
     """
         Delete service model
@@ -129,6 +133,7 @@ def performance_delete(request, application_id, performance_id):
     return redirect(reverse('project_performances', args=[application_id]))
 
 @login_required
+@waiting_list_approved_only()
 def performance_rerun(request, application_id, performance_id):
     """
         Delete service model
@@ -141,6 +146,7 @@ def performance_rerun(request, application_id, performance_id):
     return redirect(reverse('project_performances', args=[application_id])+'#noanimations')
 
 @login_required
+@waiting_list_approved_only()
 def project_performances_report_viewer(request, id, report_id):
     """
     Show current project status
@@ -158,6 +164,7 @@ def project_performances_report_viewer(request, id, report_id):
     })
 
 @login_required
+@waiting_list_approved_only()
 def performances_all(request):
 
     domains = {}

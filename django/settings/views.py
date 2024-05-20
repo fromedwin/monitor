@@ -5,9 +5,11 @@ from django.conf import settings as django_settings
 from django.urls import reverse
 from django.shortcuts import redirect
 
+from core.decorators import waiting_list_approved_only
 from .forms import TimeZoneForm
 
 @login_required
+@waiting_list_approved_only()
 def settings(request):
     """
     Set user settings
@@ -21,6 +23,7 @@ def settings(request):
     })
 
 @login_required
+@waiting_list_approved_only()
 def user_timezone_form(request):
     """
         Create or edit service model
@@ -52,9 +55,8 @@ def user_delete(request):
     """
         Create or edit service model
     """
-
     if request.POST:
-        #request.user.delete()
+        request.user.delete()
         logout(request)
         return render(request, 'user/delete_done.html', {})
 

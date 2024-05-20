@@ -31,7 +31,7 @@ if os.environ.get('SENTRY_DSN'):
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
-VERSION = [0, 9, 1]
+VERSION = [0, 9, 2]
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
@@ -46,6 +46,7 @@ WEBAUTH_PASSWORD = os.environ.get('WEBAUTH_PASSWORD')
 
 IS_SERVICE_DOWN_SCRAPE_INTERVAL_SECONDS = 60
 IS_SERVICE_DOWN_TRIGGER_OUTRAGE_MINUTES = 5
+IS_SERVICE_DOWN_TRIGGER_WARNING_MINUTES = 2
 # Run Lighthouse every 60 minutes
 LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES = int(os.environ.get('LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES', 60))
 
@@ -151,6 +152,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = (
+    'allauth.account.middleware.AccountMiddleware',
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

@@ -28,7 +28,7 @@ def handleAlert(request, alert):
 
     incident = Incident(
         alert_name = alert["labels"]["alertname"],
-        starts_at = getStartsAt(alert),
+        starts_at = getStartsAt(alert, settings),
         ends_at = getEndsAt(alert),
         status = getStatus(alert),
         severity = getSeverity(alert),

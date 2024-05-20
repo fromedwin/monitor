@@ -9,10 +9,13 @@ from django.contrib.auth.decorators import login_required
 from allauth.socialaccount.models import SocialApp
 from rest_framework.authtoken.models import Token
 
+from core.decorators import waiting_list_approved_only
+
 from workers.models import Server
 from incidents.models import Incident
 
 @login_required
+@waiting_list_approved_only()
 def dashboard(request):
 
     # If user has no project we redirect to /welcome/
