@@ -41,6 +41,7 @@ def administration(request):
     ).order_by('-creation_date')
 
     inQueueLighthouse = Performance.objects.filter(Q(request_run=True) | Q(last_request_date__isnull=True) | Q(last_request_date__lt=timezone.now()-timezone.timedelta(minutes=settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES))).count()
+    totalLighthouse = Performance.objects.count()
 
     return render(request, 'administration.html', {
         'servers': servers,
@@ -48,7 +49,7 @@ def administration(request):
         'email_success': email_success,
         'email_fail': email_fail,
         'stats': {
-            'inQueueLighthouse': inQueueLighthouse,
+            'inQueueLighthouse': inQueueLighthouse / totalLighthouse * 100,
             'users_count': User.objects.count,
             'url_count': Service.objects.count,
             'performance_count': inQueueLighthouse / Performance.objects.count() * 100,
