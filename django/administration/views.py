@@ -49,7 +49,7 @@ def administration(request):
         'email_success': email_success,
         'email_fail': email_fail,
         'stats': {
-            'inQueueLighthouse': inQueueLighthouse / totalLighthouse * 100,
+            'inQueueLighthouse': round((inQueueLighthouse / totalLighthouse * 100), 2) if totalLighthouse else 0,
             'users_count': User.objects.count,
             'url_count': Service.objects.count,
             'performance_count': inQueueLighthouse / Performance.objects.count() * 100,
