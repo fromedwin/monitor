@@ -21,6 +21,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 See for sample https://raw.githubusercontent.com/favoloso/conventional-changelog-emoji/master/CHANGELOG.md
 -->
 
+
+## [0.10.0] - 2024-MM-DD
+### 🐛 Bug Fixes
+-  Fix admin % lighthouse inQueue value (#42)
+
 ## [0.9.2] - 2024-05-20
 ### Improvements
 - Fix incident duration calculation (#29)
