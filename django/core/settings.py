@@ -102,6 +102,9 @@ if os.environ.get('STORAGE') == 'S3':
     DEFAULT_FILE_STORAGE = 'core.storage_backends.MediaStorage'
     MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 
+    if not AWS_S3_CUSTOM_DOMAIN:
+        raise ValueError("AWS_S3_CUSTOM_DOMAIN must be set when using S3 storage")
+
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # Application definition
 

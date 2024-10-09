@@ -53,11 +53,11 @@ class Performance(models.Model):
         return f'/{user_pk}/{project_pk}/performances/{self.pk}'
 
     def delete(self):
-        # delete event will cascade to empty folder
         super().delete()
         if default_storage.exists(self.directory_path()):
             try:
-                # Deletes the folder and all its contents
+                # Deletes the performance folder.
+                # Content has already been deleted by cascading.
                 default_storage.delete(self.directory_path())
             except Exception as e:
                 print(f"Error deleting folder: {e}")
