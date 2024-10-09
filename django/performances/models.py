@@ -48,9 +48,7 @@ class Performance(models.Model):
         return f'{self.url}'
 
     def directory_path(self):
-        user_pk = self.project.user.pk
-        project_pk = self.project.pk
-        return f'/{user_pk}/{project_pk}/performances/{self.pk}'
+        return f'{self.project.directory_path()}/performances/{self.pk}'
 
     def delete(self):
         super().delete()
