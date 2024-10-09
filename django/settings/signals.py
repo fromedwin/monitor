@@ -6,24 +6,34 @@ from django.dispatch import receiver
 from django.core.files.storage import default_storage
 from .models import Profile
 
+logger = logging.getLogger(__name__)
+
+def delete_directory_contents(path):
+    if default_storage.exists(path):
+        dirs, files = default_storage.listdir(path)
+        for file in files:
+            file_path = os.path.join(path, file)
+            default_storage.delete(file_path)
+            logger.info(f"Deleted file: {file_path}")
+        for subdir in dirs:
+            subdir_path = os.path.join(path, subdir)
+            delete_directory_contents(subdir_path)
+        default_storage.delete(path)
+        logger.info(f"Deleted directory: {path}")
+
 @receiver(post_delete, sender=Profile)
 def delete_user_directory(sender, instance=None, **kwargs):
-    logger = logging.getLogger(__name__)
+    if instance is None:
+        logger.warning("delete_user_directory called with None instance")
+        return
+
     dir_path = instance.directory_path()
-    if default_storage.exists(dir_path):
-        try:
-            # List all files and directories within the directory
-            dirs, files = default_storage.listdir(dir_path)
-            # Recursively delete all subdirectories and files
-            for file in files:
-                file_path = os.path.join(dir_path, file)
-                default_storage.delete(file_path)
-            for subdir in dirs:
-                subdir_path = os.path.join(dir_path, subdir)
-                default_storage.delete(subdir_path)
-            # Delete the now-empty directory
-            default_storage.delete(dir_path)
-        except Exception as e:
-            logger.error(f"Error deleting folder: {e}")
-            # Optionally, re-raise the exception if you want to prevent deletion
-            # raise e
+    try:
+        delete_directory_contents(dir_path)
+        logger.info(f"Successfully deleted user directory: {dir_path}")
+    except PermissionError as e:
+        logger.error(f"Permission error deleting directory {dir_path}: {e}")
+    except FileNotFoundError as e:
+        logger.warning(f"Directory not found {dir_path}: {e}")
+    except Exception as e:
+        logger.error(f"Unexpected error deleting directory {dir_path}: {e}")
