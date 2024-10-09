@@ -1,9 +1,7 @@
 import os
 from django.db import models
 from projects.models import Project
-from django.conf import settings
 from django.core.files.storage import default_storage
-from django.template.defaultfilters import slugify
 
 from constants import LIGHTHOUSE_FORMFACTOR_CHOICES
 
