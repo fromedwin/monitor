@@ -40,7 +40,8 @@ def administration(request):
         last_seen__gte=timezone.now() - timezone.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
     ).order_by('-creation_date')
 
-    inQueueLighthouse = Performance.objects.filter(Q(request_run=True) | Q(last_request_date__isnull=True) | Q(last_request_date__lt=timezone.now()-timezone.timedelta(minutes=settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES))).count()
+    waiting_performance_count = Performance.objects.filter(Q(request_run=True) | Q(last_request_date__isnull=True) | Q(last_request_date__lt=timezone.now()-timezone.timedelta(minutes=settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES))).count()
+    performance_count = Performance.objects.count()
 
     return render(request, 'administration.html', {
         'servers': servers,
@@ -48,10 +49,9 @@ def administration(request):
         'email_success': email_success,
         'email_fail': email_fail,
         'stats': {
-            'inQueueLighthouse': inQueueLighthouse,
-            'users_count': User.objects.count,
-            'url_count': Service.objects.count,
-            'performance_count': inQueueLighthouse / Performance.objects.count() * 100,
+            'waiting_performance_count': round((waiting_performance_count / performance_count * 100), 2) if performance_count else 0,
+            'users_count': User.objects.count(),
+            'url_count': Service.objects.count(),
         }
     })
 
