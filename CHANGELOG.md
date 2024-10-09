@@ -24,7 +24,7 @@ See for sample https://raw.githubusercontent.com/favoloso/conventional-changelog
 ## [0.10.0] - 2024-MM-DD
 ### 🐛 Bug Fixes
 - Fix admin % lighthouse inQueue value (#42)
-- Performance folder is not deleted with model (#44)
+- Refactor media storage for scalability (#44)
 
 ## [0.9.2] - 2024-05-20
 ### Improvements

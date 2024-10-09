@@ -48,9 +48,9 @@ class Performance(models.Model):
         return f'{self.url}'
 
     def directory_path(self):
-        user = self.project.user
-        slug = slugify(self.url)
-        return f'performance/{user}/{slug}'
+        user_pk = self.project.user.pk
+        project_pk = self.project.pk
+        return f'/{user_pk}/{project_pk}/performances/{self.pk}'
 
     def delete(self):
         # delete event will cascade to empty folder
