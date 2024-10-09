@@ -120,7 +120,7 @@ class Project(models.Model):
         return result
 
     def directory_path(self):
-        return f'/{self.user.pk}/{self.pk}'
+        return f'user_{self.user.pk}/prjct_{self.pk}'
 
     def __str__(self):
         return self.title
