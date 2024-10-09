@@ -119,5 +119,8 @@ class Project(models.Model):
         result['last_run'] = last_run
         return result
 
+    def directory_path(self):
+        return f'user_{self.user.pk}/prjct_{self.pk}'
+
     def __str__(self):
         return self.title

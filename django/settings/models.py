@@ -10,3 +10,6 @@ class Profile(models.Model):
         related_name='profile'
     )
     timezone = TimeZoneField(null=True, choices_display="STANDARD")
+
+    def directory_path(self):
+        return f'user_{self.user.pk}'

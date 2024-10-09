@@ -59,9 +59,7 @@ def save_report(request, server_id, performance_id):
     data = json.loads(request.body.decode("utf-8"))
 
     # Generate metadata used for file storage
-    user = performance.project.user
-    slug = slugify(performance.url)
-    path = f'performance/{user}/{slug}'
+    path = performance.directory_path()
     try:
         filename = f'{data["audits"]["final-screenshot"]["details"]["timestamp"]}'
     except:

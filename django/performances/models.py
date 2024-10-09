@@ -1,7 +1,7 @@
 import os
 from django.db import models
 from projects.models import Project
-from django.conf import settings
+from django.core.files.storage import default_storage
 
 from constants import LIGHTHOUSE_FORMFACTOR_CHOICES
 
@@ -45,11 +45,24 @@ class Performance(models.Model):
     def __str__(self):
         return f'{self.url}'
 
+    def directory_path(self):
+        return f'{self.project.directory_path()}/performances/perf_{self.pk}'
+
+    def delete(self):
+        super().delete()
+        if default_storage.exists(self.directory_path()):
+            try:
+                # Deletes the performance folder.
+                # Content has already been deleted by cascading.
+                default_storage.delete(self.directory_path())
+            except Exception as e:
+                print(f"Error deleting folder: {e}")
+
 """
     REPORT MODEL
 """
 def user_directory_path(instance, filename):
-    return 'performance/reports/{0}/{1}'.format(instance.performance.pk, filename)
+    return '{0}/{1}'.format(instance.performance.directory_path(), filename)
 
 def delete_old_reports(report):
     # Select all reports order from recent to old and if more than 4 delete all older than the 4 more recent
