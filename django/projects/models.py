@@ -5,6 +5,9 @@ from django.conf import settings
 
 from core.utils import is_private_ipv4
 
+def project_favicon_path(self, filename):
+    return f'{self.directory_path()}/favicons/{filename}'
+
 class Project(models.Model):
     """
     A user own a project he want to monitor and work on.
@@ -15,6 +18,7 @@ class Project(models.Model):
         related_name = "projects",
     )
     title = models.CharField(max_length=128, blank=False)
+    favicon = models.ImageField(upload_to=project_favicon_path, blank=True, null=True, help_text="Application's favicon")
     is_favorite = models.BooleanField('Is favorite', default=False, help_text="Favorite project are highlighted and first shown when possible.")
     enable_public_page = models.BooleanField('Enable public page', default=False, help_text="Will enable the public page to share current project status")
 
