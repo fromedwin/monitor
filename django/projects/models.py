@@ -18,6 +18,7 @@ class Project(models.Model):
         related_name = "projects",
     )
     title = models.CharField(max_length=128, blank=False)
+    url = models.URLField(max_length=512, blank=True, null=True, help_text="Application's URL")
     favicon = models.ImageField(upload_to=project_favicon_path, blank=True, null=True, help_text="Application's favicon")
     is_favorite = models.BooleanField('Is favorite', default=False, help_text="Favorite project are highlighted and first shown when possible.")
     enable_public_page = models.BooleanField('Enable public page', default=False, help_text="Will enable the public page to share current project status")
@@ -76,13 +77,13 @@ class Project(models.Model):
         if value < 0:
             return 0
         return value
+    
+    def pathname(self):
+        return f"/project/{self.id}/"
 
     def incidents_count(self):
         from incidents.models import Incident
         return Incident.objects.filter(service__in=self.services.all()).count()
-
-    def url(self):
-        return f"/project/{self.id}/"
 
     def performance_score(self):
         result = {

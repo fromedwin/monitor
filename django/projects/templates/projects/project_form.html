@@ -30,6 +30,39 @@
           </div>
         </div>
       </div>
+
+      <div class="mt-6 sm:mt-5 space-y-6 sm:space-y-5">
+				<div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+					<label for="{{ form.url.id_for_label }}" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+						{{ form.url.label }}
+					</label>
+					<div class="mt-1 sm:mt-0 sm:col-span-2">
+						<div class="relative rounded-md shadow-sm sm:max-w-xs sm:text-sm">
+				            <div class="absolute inset-y-0 left-0 flex items-center">
+				              <label for="{{ form.scheme.id_for_label }}" class="sr-only">Scheme</label>
+				              <select id="{{ form.scheme.id_for_label }}" name="{{ form.scheme.html_name }}" autocomplete="scheme" class="h-full rounded-md border-0 bg-transparent py-0 pl-3 pr-7 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-emerald-600 sm:text-sm">
+				                <option {% if form.scheme.value == "https" %}selected{% endif %} value="https">https://</option>
+				                <option {% if form.scheme.value == "http" %}selected{% endif %} value="http">http://</option>
+				              </select>
+				            </div>
+				            <input type="text" name="{{ form.url.html_name }}" id="{{ form.url.id_for_label }}" class="block w-full rounded-md border-0 py-1.5 pl-24 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-emerald-600 sm:text-sm sm:leading-6" placeholder="example.com" {% if form.url.value %}value="{{ form.url.value }}"{% endif %}>
+				        </div>
+				        <div class="mt-1 sm:mt-0 sm:col-span-2">
+				            {% if form.url.errors %}
+				              {% for error in form.url.errors %}
+				              <p class="block w-full max-w-md mt-2 text-left pl-2 text-sm text-red-500">{{ error|escape }}</p>
+				              {% endfor %}
+				            {% endif %}
+
+			                {% if form.non_field_errors %}
+				                {% for error in form.non_field_errors %}
+				                <p class="block w-full max-w-md mt-2 text-left pl-2 text-sm text-red-500">{{ error|escape }}</p>
+				                {% endfor %}
+			                {% endif %}
+				        </div>
+              </div>
+            </div>
+        </div>
       {% csrf_token %}
     </div>
   </div>

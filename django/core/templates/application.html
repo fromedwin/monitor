@@ -86,7 +86,7 @@
               {% url_start_with 'project_notifications' app.id as is_notifications %}
               {% url_start_with 'project_status_public' app.id as is_status_public %}
 
-              {% starts_with request.path app.url as is_project_selected %}
+              {% starts_with request.path app.pathname as is_project_selected %}
 
               <a href="{% url 'project' app.id %}" class="{% if is_project_view %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-2 py-2 text-md font-medium{% else %}text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-md font-medium{% endif %}">
                 <!-- <svg class="text-gray-400 group-hover:text-gray-500 mr-3 h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
@@ -243,7 +243,6 @@
           </div>
           {% for app in user.projects.all %}
 
-
           {% url_is 'project' app.id as is_project_view %}
           {% url_start_with 'project_availability' app.id as is_availability %}
           {% url_start_with 'incidents' app.id as is_incident %}
@@ -251,7 +250,7 @@
           {% url_start_with 'project_notifications' app.id as is_notifications %}
           {% url_start_with 'project_status_public' app.id as is_status_public %}
 
-          {% starts_with request.path app.url as is_project_selected %}
+          {% starts_with request.path app.pathname as is_project_selected %}
 
           <a href="{% url 'project' app.id %}" class="{% if is_project_view %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium{% else %}text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium{% endif %}">
             <!-- <svg class="text-gray-400 group-hover:text-gray-500 mr-3 h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
