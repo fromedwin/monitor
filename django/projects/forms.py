@@ -92,6 +92,7 @@ class ProjectCreateForm(ModelForm):
 
         project = super(ProjectCreateForm, self).save(commit=False)
         project.title = domain
+        project.url = url
         project.user = user
         project.save()
 
