@@ -138,5 +138,5 @@ docs/_static
 docs/_templates
 
 .clever.json
-django/staticfiles
-django/media
+src/staticfiles
+src/media

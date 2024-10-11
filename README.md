@@ -52,6 +52,24 @@ To enable styling and hot-reload, run in parallel the following command:
 python src/manage.py tailwind start
 ```
 
+### Scheduler
+
+Scheduler will run periodical tasks and propagate to workers
+
+```
+cd src
+python ../scheduler/start_celery_beat.py
+```
+
+### Worker
+
+Worker will listen to tasks and run then individually 
+
+```
+cd src
+python ../scheduler/start_celery_worker.py
+```
+
 ## Running documentation
 
 ```bash

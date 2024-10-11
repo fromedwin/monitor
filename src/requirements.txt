@@ -19,12 +19,14 @@ click-didyoumean==0.3.1
 click-plugins==1.1.1
 click-repl==0.3.0
 cookiecutter==2.6.0
+cron-descriptor==1.4.5
 cryptography==42.0.7
 defusedxml==0.7.1
 dj-database-url==2.1.0
 Django==4.2.13
 django-allauth==0.63.1
 django-browser-reload==1.12.1
+django-celery-beat==2.7.0
 django-cleanup==8.1.0
 django-prometheus==2.3.1
 django-storages==1.14.3
@@ -71,6 +73,7 @@ pydantic==2.7.1
 pydantic_core==2.18.2
 Pygments==2.18.0
 PyJWT==2.8.0
+python-crontab==3.2.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 python-multipart==0.0.9

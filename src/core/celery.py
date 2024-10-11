@@ -4,15 +4,15 @@ from celery import Celery
 from celery.schedules import crontab
 from django.conf import settings
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'src.core.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 # monitor/celery.py
 app = Celery('src')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
-    'run-my-task-every-10-seconds': {
-        'task': 'app_name.tasks.my_periodic_task',
-        'schedule': 10.0,  # Run every 10 seconds
+    'run-my-task-every-4-seconds': {
+        'task': 'core.tasks.my_periodic_task',
+        'schedule': 4.0,  # Run every 4 seconds
     },
 }

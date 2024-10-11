@@ -1,12 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-from django.conf import settings
-
-from core.utils import is_private_ipv4
+from projects.tasks.fetch_favicon import fetch_favicon
 
 def project_favicon_path(self, filename):
     return f'{self.directory_path()}/favicons/{filename}'
+
+# List of status for favicon task
+FAVICON_TASK_STATUS = (
+    ('PENDING', 'Pending'),
+    ('SUCCESS', 'Success'),
+    ('FAILURE', 'Failure'),
+    ('UNKNOWN', 'Unknown'),
+)
 
 class Project(models.Model):
     """
@@ -19,9 +25,12 @@ class Project(models.Model):
     )
     title = models.CharField(max_length=128, blank=False)
     url = models.URLField(max_length=512, blank=True, null=True, help_text="Application's URL")
-    favicon = models.ImageField(upload_to=project_favicon_path, blank=True, null=True, help_text="Application's favicon")
     is_favorite = models.BooleanField('Is favorite', default=False, help_text="Favorite project are highlighted and first shown when possible.")
     enable_public_page = models.BooleanField('Enable public page', default=False, help_text="Will enable the public page to share current project status")
+    # Handle favicon
+    favicon = models.ImageField(upload_to=project_favicon_path, blank=True, null=True, help_text="Application's favicon")
+    favicon_task_status = models.CharField(max_length=16, choices=FAVICON_TASK_STATUS, default='UNKNOWN', help_text="Favicon task status")
+    favicon_last_edited = models.DateTimeField(editable=False, help_text="Last time favicon was edited", default=timezone.now)
 
     def is_offline(self):
         return self.services.filter(
@@ -129,3 +138,4 @@ class Project(models.Model):
 
     def __str__(self):
         return self.title
+
