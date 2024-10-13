@@ -140,3 +140,6 @@ docs/_templates
 .clever.json
 src/staticfiles
 src/media
+
+# Celery related
+src/celerybeat-schedule.db

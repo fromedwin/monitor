@@ -6,3 +6,4 @@ class MyAppConfig(AppConfig):
 
     def ready(self):
         import core.signals # Load signals
+        import django_celery_beat.schedulers
