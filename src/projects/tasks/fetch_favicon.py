@@ -6,7 +6,7 @@ from urllib.parse import urljoin, urlparse
 from PIL import Image
 from io import BytesIO
 
-@shared_task
+@shared_task()
 def fetch_favicon(pk, url):
     try:
         # Get the HTML content of the webpage
