@@ -21,3 +21,5 @@ RUN \
 
 USER fromedwin
 EXPOSE 8000
+
+ENTRYPOINT [ "/app/worker/entrypoint.sh" ]

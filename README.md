@@ -16,7 +16,7 @@ source apps/bin/activate
 # brew install openssl
 # export LIBRARY_PATH=$LIBRARY_PATH:/opt/homebrew/opt/openssl/lib
 
-pip install -r django/requirements.txt
+pip install -r src/requirements.txt
 
 # Generate random SECRET_KEY and inject in .env file
 SECRET_KEY=$(LC_CTYPE=C tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 32)
@@ -29,11 +29,11 @@ echo "SECRET_KEY=$SECRET_KEY" >> .env
 # echo "DEBUG=1" >> .env
 
 # For a first setup, run migrate and createsuperuser
-python django/manage.py migrate
+python src/manage.py migrate
 # Create superuser to access django admin panel (migrate first for the first setup)
-python django/manage.py createsuperuser
+python src/manage.py createsuperuser
 
-python django/manage.py tailwind install
+python src/manage.py tailwind install
 ```
 
 ## Developpment mode
@@ -43,13 +43,53 @@ python django/manage.py tailwind install
 Start the development server by running the following command:
 
 ```bash
-python django/manage.py runserver
+python src/manage.py runserver
 ```
 
 To enable styling and hot-reload, run in parallel the following command:
 
 ```bash
-python django/manage.py tailwind start
+python src/manage.py tailwind start
+```
+
+### Services
+
+Project need a set of services like rabbitmq to run in the background. 
+
+You can run them using the following:
+
+```
+docker-compose -f docker-compose-services.yaml up -d
+```
+
+### Scheduler
+
+Scheduler will run periodical tasks and propagate to workers
+
+```
+cd src
+python ../scheduler/start_celery_beat.py
+```
+
+or using docker
+
+```
+docker-compose -f docker-compose-scheduler.yaml --env-file=scheduler/.env up -d
+```
+
+### Worker
+
+Worker will listen to tasks and run then individually 
+
+```
+cd src
+python ../scheduler/start_celery_worker.py
+```
+
+or using docker
+
+```
+docker-compose -f docker-compose-worker.yaml --env-file=worker/.env up -d
 ```
 
 ## Running documentation

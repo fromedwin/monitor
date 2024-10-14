@@ -1,0 +1,169 @@
+  {% extends 'application.html' %}
+{% load socialaccount account tai
+
+{% block html_head_title %}Administration - FromEdwin{% endblock %}
+
+{% block content %}
+<header class="pb-4">
+  <h1 class="text-3xl font-bold leading-tight text-gray-900">
+    Administration
+  </h1>
+</header>
+
+
+{% if email_success %}
+<div class="rounded-md bg-green-50 p-4">
+  <div class="flex">
+    <div class="flex-shrink-0">
+      <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+      </svg>
+    </div>
+    <div class="ml-3">
+      <p class="text-sm font-medium text-green-800">The test email was successfully sent to {{ user.email }}</p>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="pt-8 pb-5 border-b border-gray-200 sm:flex sm:items-center sm:justify-between">
+  <h3 class="text-lg leading-6 font-medium text-gray-900">
+    Links
+  </h3>
+</div>
+
+<a href="/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-2">
+  Website
+</a>
+
+<a href="/admin/" target="_blank" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-2">
+  Django administration
+</a>
+
+<div class="pt-8 pb-5 border-b border-gray-200 sm:flex sm:items-center sm:justify-between">
+  <h3 class="text-lg leading-6 font-medium text-gray-900">
+    Workers
+  </h3>
+</div>
+
+<div class="flex flex-col pt-5">
+  <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+    <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+      <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                IP, UUID
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Last seen
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Features
+              </th>
+              <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Config
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+          	{% for server in servers %}
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900">
+                      <a href="{{ server.href }}">{{ server.href }}</a>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                      {{ server.uuid }}
+                    </div>
+                    {% if server.authbasic.all %}<div class="text-sm text-gray-500">
+                      {{ server.authbasic.all.0.username }} {{ server.authbasic.all.0.password }}
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">{{ server.last_seen_from }}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                {% if server.monitoring %}
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-100 text-emerald-800">
+                  Monitoring
+                </span>
+                {% else %}
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                  Monitoring
+                </span>
+                {% endif %}
+                {% if server.performance %}
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-100 text-emerald-800">
+                  Performance
+                </span>
+                {% else %}
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                  Performance
+                </span>
+                {% endif %}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <a href="/clients/prometheus/{{ server.uuid }}" class="text-indigo-600 hover:text-indigo-900">Prometheus</a> - 
+                <a href="/clients/alertmanager/{{ server.uuid }}" class="text-indigo-600 hover:text-indigo-900">Alertmanager</a> - 
+                <a href="/clients/alerts/{{ server.uuid }}" class="text-indigo-600 hover:text-indigo-900">Alerts</a> - 
+                <a href="/admin/workers/server/{{ server.id }}/change/" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bg-white py-6 sm:py-12">
+  <div class="mx-auto max-w-7xl px-1 lg:px-1">
+    <div class="mx-auto max-w-2xl lg:max-w-none">
+      <dl class="grid grid-cols-1 gap-0.5 overflow-hidden rounded-2xl text-center sm:grid-cols-2 lg:grid-cols-4">
+        <div class="flex flex-col bg-gray-400/5 p-8">
+          <dt class="text-sm font-semibold leading-6 text-gray-600">Performance in queue</dt>
+          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{{ stats.waiting_performance_count }} %</dd>
+        </div>
+
+        <div class="flex flex-col bg-gray-400/5 p-8">
+          <dt class="text-sm font-semibold leading-6 text-gray-600">Users</dt>
+          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{{ stats.users_count }}</dd>
+        </div>
+
+        <div class="flex flex-col bg-gray-400/5 p-8">
+          <dt class="text-sm font-semibold leading-6 text-gray-600">Services</dt>
+          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{{ stats.url_count }}</dd>
+        </div>
+
+        <div class="flex flex-col bg-gray-400/5 p-8">
+          <dt class="text-sm font-semibold leading-6 text-gray-600">Current version</dt>
+          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{{ settings.VERSION.0 }}.{{ settings.VERSION.1 }}.{{ settings.VERSION.2 }}</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</div>
+
+<div class="pt-8 pb-5 border-b border-gray-200 sm:flex sm:items-center sm:justify-between">
+  <h3 class="text-lg leading-6 font-medium text-gray-900">
+    Others
+  </h3>
+</div>
+
+<a href="{% url 'test_email' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-2">
+  Test Email
+</a>
+
+<a href="/metrics" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-2">
+  Prometheus django metrics
+</a>
+
+{% endblock %}
