@@ -97,7 +97,7 @@ if os.environ.get('STORAGE') == 'S3':
     AWS_S3_FILE_OVERWRITE = True
     STATIC_ROOT = os.path.join(BASE_DIR, 'collectstatic')
     # s3 static settings
-    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    STATICFILES_STORAGE = 'core.storage_backends.StaticStorage'
     STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
     DEFAULT_FILE_STORAGE = 'core.storage_backends.MediaStorage'
     MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
