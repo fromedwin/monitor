@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 See for sample https://raw.githubusercontent.com/favoloso/conventional-changelog-emoji/master/CHANGELOG.md
 -->
 
-## [0.10.0] - 2024-MM-DD
+## [0.10.0] - 2024-09-14
 ### ✨ Feature
 - Display Favicons (#38)
 - Auto redirect to dashboard with settings to disable (#47)
