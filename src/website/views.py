@@ -1,10 +1,6 @@
 from django.shortcuts import render, redirect
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
 from django.conf import settings
 from django.urls import reverse
-from django.utils import timezone
-from django.contrib.auth.decorators import login_required
 
 from allauth.socialaccount.models import SocialApp
 from rest_framework.authtoken.models import Token
@@ -15,6 +11,11 @@ def homepage(request):
     """
     Home Welcome page
     """
+
+    if request.user and request.user.is_authenticated:
+        if not request.user.profile.disable_auto_redirect:
+            return redirect(reverse('dashboard'))
+
     socialapps = SocialApp.objects.all()
 
     return render(request, 'homepage.html', {
