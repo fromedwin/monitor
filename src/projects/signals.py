@@ -27,9 +27,9 @@ def post_save_fetch_favicon(sender, instance=None, **kwargs):
 
     if instance.favicon_task_status == 'UNKNOWN':
         favicon_need_refresh = True
-    if (timezone.now() - instance.favicon_last_edited).seconds > DELAY_REFRESH_FAVICON_SECONDS:
+    if (timezone.now() - instance.favicon_last_edited).seconds > DELAY_REFRESH_FAVICON_SECONDS and instance.favicon_task_status != 'PENDING':
         favicon_need_refresh = True
 
     if favicon_need_refresh:
-        instance.favicon_task_status = 'QUEUED'
+        instance.favicon_task_status = 'PENDING'
         fetch_favicon.delay(instance.pk, instance.url)
