@@ -14,8 +14,12 @@ def settings(request):
     """
     Set user settings
     """
-
     profile = request.user.profile
+
+    if request.POST and 'disable_auto_redirect' in request.POST:
+        profile.disable_auto_redirect = not profile.disable_auto_redirect
+        profile.save()
+        return redirect(reverse('settings'))
 
     return render(request, 'settings.html', { 
         'settings': django_settings, 
@@ -34,7 +38,6 @@ def user_timezone_form(request):
 
     if request.POST:
         form = TimeZoneForm(request.POST, instance=request.user.profile)
-        form.fields['timezone'].choices.sort(key=lambda x: x[1])
 
         if form.is_valid():
             form.save()
@@ -43,7 +46,6 @@ def user_timezone_form(request):
         return render(request, 'user/timezone.html', {'form': form})
 
     form = TimeZoneForm(instance=profile)
-    form.fields['timezone'].choices.sort(key=lambda x: x[1])
 
     return render(request, 'user/timezone.html', {
         'form': form,
