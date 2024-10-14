@@ -1,5 +1,5 @@
 #Grab the latest alpine image
-FROM python:3.9.7-slim-buster
+FROM python:3.12-slim-buster
 
 RUN apt-get update \
   && apt-get install -y build-essential curl \

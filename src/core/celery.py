@@ -15,6 +15,6 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'refresh_favicon': {
         'task': 'projects.tasks.refresh_favicon.refresh_favicon',
-        'schedule': 4.0,  # Run every 4 seconds
+        'schedule': 60.0,  # Run every 60 seconds
     },
 }

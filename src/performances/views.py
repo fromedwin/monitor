@@ -38,11 +38,11 @@ def get_domaines_from_performances(performances_list):
             # print('FIND_PAGE', pages, performance)
             path = '/'.join(performance.url.split('/')[3:])
 
-            if path is not '': #For root url we add directly
+            if path != '': #For root url we add directly
                 for page in pages:
                     page_path = '/'.join(page['performance'].url.split('/')[3:])
                     # If root url is in pages, we go to children level directly
-                    if page_path is '':
+                    if page_path == '':
                         find_page(page['children'], performance, depth+1, page_path)
                         return
                     else:

@@ -52,6 +52,16 @@ To enable styling and hot-reload, run in parallel the following command:
 python src/manage.py tailwind start
 ```
 
+### Services
+
+Project need a set of services like rabbitmq to run in the background. 
+
+You can run them using the following:
+
+```
+docker-compose -f docker-compose-services.yaml up -d
+```
+
 ### Scheduler
 
 Scheduler will run periodical tasks and propagate to workers
