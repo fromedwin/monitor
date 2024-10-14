@@ -24,6 +24,7 @@ See for sample https://raw.githubusercontent.com/favoloso/conventional-changelog
 ## [0.10.0] - 2024-MM-DD
 ### ✨ Feature
 - Display Favicons (#38)
+- Auto redirect to dashboard with settings to disable (#47)
 ### 🛠 Improvements
 - Refactor media storage for scalability (#44)
 ### 🐛 Bug Fixes
