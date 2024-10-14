@@ -9,6 +9,7 @@ class Profile(models.Model):
         on_delete=models.CASCADE,
         related_name='profile'
     )
+    disable_auto_redirect = models.BooleanField(default=False, help_text="Disable auto-redirect from homepage to dashboard")
     timezone = TimeZoneField(null=True, choices_display="STANDARD")
 
     def directory_path(self):
