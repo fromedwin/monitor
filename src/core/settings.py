@@ -126,6 +126,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'storages',
+    'django_celery_beat',
     # Tailwind
     'theme',
     'tailwind',
@@ -289,3 +290,11 @@ ALERTMANAGER_WEBHOOK_URL += '/alert/'
 FREEMIUM_PROJECTS = 3
 FREEMIUM_AVAILABILITY = 1
 FREEMIUM_PERFORMANCE = 3
+
+# Celery settings
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'amqp://admin:admin@localhost')  # RabbitMQ URL
+CELERY_RESULT_BACKEND = 'rpc://'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'  # Adjust if needed

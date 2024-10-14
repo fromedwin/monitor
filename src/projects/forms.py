@@ -6,9 +6,45 @@ from availability.models import Service, HTTPCodeService
 from django.conf import settings
 
 class ProjectForm(ModelForm):
-	class Meta:
-		model = Project
-		fields = ['title', 'is_favorite']
+     
+    url = URLField(help_text="URL must start with http:// or https://")
+    scheme = CharField(max_length=5, help_text="URL must start with http:// or https://")
+
+    class Meta:
+        model = Project
+        fields = ['title', 'url', 'scheme']
+    
+
+    # On init we set scheme value with http if url start with https or http if url start with url
+    def __init__(self, *args, **kwargs):
+        super(ProjectForm, self).__init__(*args, **kwargs)
+        if self.instance.url:
+            if self.instance.url.startswith('https://'):
+                self.initial['scheme'] = 'https'
+                self.initial['url'] = self.instance.url.replace('https://', '')
+            else:
+                self.initial['scheme'] = 'http'
+                self.initial['url'] = self.instance.url.replace('http://', '')
+
+    def clean_url(self):
+        url = self.cleaned_data['url']
+        if not url.startswith('http://') and not url.startswith('https://'):
+            raise ValidationError('URL must start with http:// or https://')
+        return url
+    
+    def save(self, commit=True, user=None):
+        url = self.cleaned_data['url'].replace('https://', '').replace('http://', '')
+        domain = url
+        if self.cleaned_data['scheme'] == 'https':
+            url = 'https://' + url
+        else:
+            url = 'http://' + url
+
+        project = super(ProjectForm, self).save(commit=False)
+        project.url = url
+        project.save()
+
+        return project
 
 class ProjectCreateForm(ModelForm):
 
@@ -56,13 +92,14 @@ class ProjectCreateForm(ModelForm):
 
         project = super(ProjectCreateForm, self).save(commit=False)
         project.title = domain
+        project.url = url
         project.user = user
         project.save()
 
-        performance = Performance.objects.create(url=url, project=project)
+        Performance.objects.create(url=url, project=project)
         service = Service.objects.create(project=project, title=domain)
-        availability = HTTPCodeService.objects.create(url=url, service=service)
-        email = Emails.objects.create(project=project, email=user.email)
+        HTTPCodeService.objects.create(url=url, service=service)
+        Emails.objects.create(project=project, email=user.email)
 
         return project
 

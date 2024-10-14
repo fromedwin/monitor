@@ -138,5 +138,11 @@ docs/_static
 docs/_templates
 
 .clever.json
-django/staticfiles
-django/media
+src/staticfiles
+src/media
+
+# Docker-compose storage
+data
+
+# Celery related
+src/celerybeat-schedule.db
