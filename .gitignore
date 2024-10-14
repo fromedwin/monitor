@@ -141,5 +141,8 @@ docs/_templates
 src/staticfiles
 src/media
 
+# Docker-compose storage
+data
+
 # Celery related
 src/celerybeat-schedule.db

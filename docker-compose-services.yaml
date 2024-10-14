@@ -9,6 +9,13 @@ services:
     ports:
       - "5672:5672"   # RabbitMQ
       - "15672:15672" # RabbitMQ Management UI
+      - "15692:15692" # Prometheus metrics endpoint (default for rabbitmq_prometheus)
+    volumes:
+      - ./data/rabbitmq:/var/lib/rabbitmq  # Optional: persistent data storage
+    command: >
+      sh -c "rabbitmq-plugins enable rabbitmq_prometheus &&
+             rabbitmq-plugins enable rabbitmq_management &&
+             rabbitmq-server"
   # celery-beat:
   #   build:
   #     context: ./scheduler
