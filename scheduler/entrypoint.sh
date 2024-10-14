@@ -15,4 +15,4 @@ export COMPRESS_OFFLINE=True
 cd /app/src
 
 # gunicorn core.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 3
-python ../worker/start_celery_worker.py
+python ../scheduler/start_celery_beat.py
