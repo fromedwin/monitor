@@ -62,13 +62,15 @@
 			<div class="mt-1 sm:mt-0 sm:col-span-2">
 			  <div class="mt-2 max-w-xl text-sm text-gray-500">
 				<p class="flex">
-					<a href="{% url 'settings' %}?toggle_disable_auto_redirect">
-						<button type="button" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent {% if not profile.disable_auto_redirect %}bg-emerald-600{% else %}bg-gray-200{% endif %} transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2" role="switch" aria-checked="{{ profile.disable_auto_redirect }}">
-						<span class="sr-only">Use setting</span>
-						<!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
-						<span aria-hidden="true" class="pointer-events-none inline-block h-5 w-5 {% if not profile.disable_auto_redirect %}translate-x-5{% else %}translate-x-0{% endif %} transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+					<form action="{% url 'settings' %}" method="POST">
+						<input type="hidden" name="disable_auto_redirect" value="{{ profile.disable_auto_redirect }}" />
+						<button type="submit" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent {% if not profile.disable_auto_redirect %}bg-emerald-600{% else %}bg-gray-200{% endif %} transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2" role="switch" aria-checked="{{ profile.disable_auto_redirect }}">
+							<span class="sr-only">Use setting</span>
+							<!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
+							<span aria-hidden="true" class="pointer-events-none inline-block h-5 w-5 {% if not profile.disable_auto_redirect %}translate-x-5{% else %}translate-x-0{% endif %} transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
 						</button>
-					</a>
+						{% csrf_token %}
+					</form>
 				</p>
 				<p class="text-xs pt-1.5">Auto-redirect from homepage to dashboard</p>
 				</div>

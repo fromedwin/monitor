@@ -17,7 +17,9 @@ def settings(request):
 
     profile = request.user.profile
 
-    if 'toggle_disable_auto_redirect' in request.GET:
+    # if toggle_disable_auto_redirect is in URL
+
+    if request.POST and 'disable_auto_redirect' in request.POST:
         profile.disable_auto_redirect = not profile.disable_auto_redirect
         profile.save()
         return redirect(reverse('settings'))
