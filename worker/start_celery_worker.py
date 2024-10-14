@@ -1,6 +1,9 @@
 # start_celery_worker.py
 import os
 from subprocess import call
+from dotenv import load_dotenv
+
+load_dotenv()
 
 worker_hostname = os.getenv('CELERY_WORKER_HOSTNAME', 'fromedwin.worker')
 

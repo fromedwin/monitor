@@ -3,6 +3,7 @@ version: '3.8'
 services:
   rabbitmq:
     image: rabbitmq:3-management
+    privileged: true
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER-}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS-}
@@ -16,27 +17,3 @@ services:
       sh -c "rabbitmq-plugins enable rabbitmq_prometheus &&
              rabbitmq-plugins enable rabbitmq_management &&
              rabbitmq-server"
-  # celery-beat:
-  #   build:
-  #     context: ./scheduler
-  #   command: celery -A monitor beat --loglevel=info
-  #   volumes:
-  #     - ./django:/app
-  #   depends_on:
-  #     - rabbitmq
-  # fluxdb:
-  #   image: influxdb:2.0
-  #   ports:
-  #     - "8086:8086"
-  #   volumes:
-  #     - influxdb_data:/var/lib/influxdb2
-  #   environment:
-  #     DOCKER_INFLUXDB_INIT_MODE: setup
-  #     DOCKER_INFLUXDB_INIT_USERNAME: user
-  #     DOCKER_INFLUXDB_INIT_PASSWORD: password
-  #     DOCKER_INFLUXDB_INIT_ORG: org
-  #     DOCKER_INFLUXDB_INIT_BUCKET: bucket
-  #     DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: my-token
-
-volumes:
-  influxdb_data:

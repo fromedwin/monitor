@@ -71,6 +71,12 @@ cd src
 python ../scheduler/start_celery_beat.py
 ```
 
+or using docker
+
+```
+docker-compose -f docker-compose-scheduler.yaml --env-file=scheduler/.env up -d
+```
+
 ### Worker
 
 Worker will listen to tasks and run then individually 
@@ -78,6 +84,12 @@ Worker will listen to tasks and run then individually
 ```
 cd src
 python ../scheduler/start_celery_worker.py
+```
+
+or using docker
+
+```
+docker-compose -f docker-compose-worker.yaml --env-file=worker/.env up -d
 ```
 
 ## Running documentation
