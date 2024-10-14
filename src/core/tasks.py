@@ -16,7 +16,7 @@ def my_periodic_task(self):
         for worker, tasks_list in tasks.items():
             for task in tasks_list:
                 if task['name'] == task_name and task['id'] != task_id:
-                    current_app.control.revoke(task['id'], terminate=True)
+                    current_app.control.revoke(task['id'])
                     print(f"Revoked task {task['id']} on worker {worker}")
 
     # Revoke tasks that are currently active

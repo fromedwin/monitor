@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-from projects.tasks.fetch_favicon import fetch_favicon
 
 def project_favicon_path(self, filename):
     return f'{self.directory_path()}/favicons/{filename}'

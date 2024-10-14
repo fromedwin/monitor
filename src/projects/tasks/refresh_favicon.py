@@ -1,4 +1,4 @@
-# app_name/tasks.py
+# src/projects/tasks/refresh_favicon.py
 from celery import shared_task, current_app
 from django.utils import timezone
 from datetime import timedelta

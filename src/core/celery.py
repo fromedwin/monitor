@@ -2,9 +2,6 @@ from __future__ import absolute_import, unicode_literals
 import os
 from celery import Celery
 
-
-from projects.tasks.fetch_favicon import fetch_favicon
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 
 # monitor/celery.py

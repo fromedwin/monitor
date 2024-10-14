@@ -1,4 +1,4 @@
-# app_name/tasks.py
+# src/projects/tasks/fetch_favicon.py
 from celery import shared_task
 import requests
 from bs4 import BeautifulSoup
