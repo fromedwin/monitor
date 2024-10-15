@@ -5,6 +5,8 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 from PIL import Image
 from io import BytesIO
+from django.utils import timezone
+from projects.models import Project
 
 @shared_task()
 def fetch_favicon(pk, url):
@@ -64,23 +66,32 @@ def fetch_favicon(pk, url):
 
         if largest_favicon:
             print(f"Largest favicon found: {largest_favicon['url']} ({largest_favicon['width']}x{largest_favicon['height']})")
+            # Fetch the content of the favicon
+            response = requests.get(largest_favicon['url'])
+            response.raise_for_status()  # Ensure the request was successful
+
+            # Wrap the content in a BytesIO object
+            favicon_content = BytesIO(response.content)
+
+            # Get the Project instance
+            project = Project.objects.get(pk=pk)
+
+            # Save the favicon to the project's ImageField or FileField
+            project.favicon.save(largest_favicon['url'].split('/')[-1], favicon_content)
         else:
             print("No favicon found.")
-
-        from projects.models import Project
-
-        # Fetch the content of the favicon
-        response = requests.get(largest_favicon['url'])
-        response.raise_for_status()  # Ensure the request was successful
-
-        # Wrap the content in a BytesIO object
-        favicon_content = BytesIO(response.content)
-
-        # Get the Project instance
-        project = Project.objects.get(pk=pk)
-
-        # Save the favicon to the project's ImageField or FileField
-        project.favicon.save(largest_favicon['url'].split('/')[-1], favicon_content)
+            # Get the Project instance
+            project = Project.objects.get(pk=pk)
+            project.favicon_last_edited = timezone.now()
+            project.favicon_task_status = 'FAILED'
+            project.save()
 
     except requests.RequestException as e:
         print(f"Error fetching the webpage: {e}")
+
+        # Get the Project instance
+        project = Project.objects.get(pk=pk)
+        project.favicon_last_edited = timezone.now()
+        project.favicon_task_status = 'FAILED'
+        project.save()
+
