@@ -31,27 +31,36 @@ def fetch_favicon(pk, url):
         largest_favicon = None
         largest_size = (0, 0)
 
-        for favicon_url in favicons:
-            try:
-                # Fetch the favicon image
-                favicon_response = requests.get(favicon_url, timeout=10)
-                favicon_response.raise_for_status()
+        # If one url in favicon end with svg we keep this ad largest favicon
+        if any(favicon_url.endswith('.svg') for favicon_url in favicons):
+            largest_favicon = {
+                'url': next(favicon_url for favicon_url in favicons if favicon_url.endswith('.svg')),
+                'width': 0,
+                'height': 0,
+            }
+            print(f"Largest favicon found: {largest_favicon} (SVG)")
+        else:
+            for favicon_url in favicons:
+                try:
+                    # Fetch the favicon image
+                    favicon_response = requests.get(favicon_url, timeout=10)
+                    favicon_response.raise_for_status()
 
-                # Open the image and get its size
-                image = Image.open(BytesIO(favicon_response.content))
-                width, height = image.size
+                    # Open the image and get its size
+                    image = Image.open(BytesIO(favicon_response.content))
+                    width, height = image.size
 
-                # Update the largest favicon if this one is larger
-                if width * height > largest_size[0] * largest_size[1]:
-                    largest_size = (width, height)
-                    largest_favicon = {
-                        'url': favicon_url,
-                        'width': width,
-                        'height': height,
-                    }
+                    # Update the largest favicon if this one is larger
+                    if width * height > largest_size[0] * largest_size[1]:
+                        largest_size = (width, height)
+                        largest_favicon = {
+                            'url': favicon_url,
+                            'width': width,
+                            'height': height,
+                        }
 
-            except Exception as e:
-                print(f"Error fetching or processing {favicon_url}: {e}")
+                except Exception as e:
+                    print(f"Error fetching or processing {favicon_url}: {e}")
 
         if largest_favicon:
             print(f"Largest favicon found: {largest_favicon['url']} ({largest_favicon['width']}x{largest_favicon['height']})")

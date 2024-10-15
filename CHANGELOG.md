@@ -21,6 +21,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 See for sample https://raw.githubusercontent.com/favoloso/conventional-changelog-emoji/master/CHANGELOG.md
 -->
 
+## [0.10.1] - 2024-09-15
+### 🛠 Improvements
+- Improve side navigation (#55)
+- Improve favicon scrapper (#56) 
+
 ## [0.10.0] - 2024-09-14
 ### ✨ Feature
 - Display Favicons (#38)
