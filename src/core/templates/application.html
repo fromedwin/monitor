@@ -76,8 +76,7 @@
               </a>
             </div>
 
-
-            {% for app in user.projects.all %}
+            {% for app in user.projects.all|dictsort:"title" %}
 
               {% url_is 'project' app.id as is_project_view %}
               {% url_start_with 'project_availability' app.id as is_availability %}
@@ -241,7 +240,7 @@
               </svg>
             </a>
           </div>
-          {% for app in user.projects.all %}
+          {% for app in user.projects.all|dictsort:"title" %}
 
           {% url_is 'project' app.id as is_project_view %}
           {% url_start_with 'project_availability' app.id as is_availability %}
