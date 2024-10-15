@@ -10,6 +10,7 @@
 	{% block favicon %}<link rel="shortcut icon" type="image/svg" href="{% static 'favicon.svg' %}" />{% endblock %}
     {% tailwind_css %}
 	{% block css %}{% endblock %}
+	<script src="//unpkg.com/alpinejs"></script>
 </head>
 <body class="bg-gray-50 leading-normal tracking-normal {% block body_class %}{% endblock %}">
 {% block body %}{% endblock %}
