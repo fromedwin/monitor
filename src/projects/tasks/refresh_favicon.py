@@ -40,7 +40,7 @@ def refresh_favicon(self):
     projects = Project.objects.filter(
         favicon_last_edited__lt=six_hours_ago,
     ).exclude(
-        favicon_task_status='QUEUED'  # Exclude 'QUEUED' status
+        favicon_task_status='PENDING'  # Exclude 'PENDING' status
     )
     print(f'Found {projects.count()} projects to refresh favicon.')
     for project in projects:
