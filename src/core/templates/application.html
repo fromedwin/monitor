@@ -9,40 +9,10 @@
 <div>
   <!-- Off-canvas menu for mobile, show/hide based on off-canvas menu state. -->
   <div id="menu" class="hidden relative z-40 lg:hidden" role="dialog" aria-modal="true">
-    <!--
-      Off-canvas menu backdrop, show/hide based on off-canvas menu state.
-
-      Entering: "transition-opacity ease-linear duration-300"
-        From: "opacity-0"
-        To: "opacity-100"
-      Leaving: "transition-opacity ease-linear duration-300"
-        From: "opacity-100"
-        To: "opacity-0"
-    -->
     <div class="fixed inset-0 bg-gray-600 bg-opacity-75"></div>
 
     <div class="fixed inset-0 z-40 flex" id="menu-backdrop">
-      <!--
-        Off-canvas menu, show/hide based on off-canvas menu state.
-
-        Entering: "transition ease-in-out duration-300 transform"
-          From: "-translate-x-full"
-          To: "translate-x-0"
-        Leaving: "transition ease-in-out duration-300 transform"
-          From: "translate-x-0"
-          To: "-translate-x-full"
-      -->
       <div class="relative flex w-full max-w-xs flex-1 flex-col bg-white">
-        <!--
-          Close button, show/hide based on off-canvas menu state.
-
-          Entering: "ease-in-out duration-300"
-            From: "opacity-0"
-            To: "opacity-100"
-          Leaving: "ease-in-out duration-300"
-            From: "opacity-100"
-            To: "opacity-0"
-        -->
         <div class="absolute top-0 right-0 -mr-12 pt-2">
           <button id="menu-button-close" type="button" class="ml-1 flex h-12 w-12 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
             <span class="sr-only">Close sidebar</span>
@@ -76,8 +46,7 @@
               </a>
             </div>
 
-
-            {% for app in user.projects.all %}
+            {% for app in user.projects.all|dictsort:"title" %}
 
               {% url_is 'project' app.id as is_project_view %}
               {% url_start_with 'project_availability' app.id as is_availability %}
@@ -88,27 +57,43 @@
 
               {% starts_with request.path app.pathname as is_project_selected %}
 
-              <a href="{% url 'project' app.id %}" class="{% if is_project_view %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-2 py-2 text-md font-medium{% else %}text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-md font-medium{% endif %}">
+              <a href="{% url 'project' app.id %}" class="{% if is_project_view %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium{% else %}text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium{% endif %}">
                 <!-- <svg class="text-gray-400 group-hover:text-gray-500 mr-3 h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
                 </svg> -->
-                {% if app.is_offline %}
-                <div class="mr-3 h-5 w-5 flex justify-center items-center rounded-full bg-red-600 text-white text-md font-medium">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                <div class="relative w-6 h-6 mr-3">
+                  {% if app.favicon %}
+                  <img src="{{ app.favicon.url }}" alt="Favicon" class="w-full h-full rounded-md opacity-80"/>
+                  {% endif %}
+                  <div class="{% if app.favicon %}opacity-30{% endif %}">
+                    {% if app.is_offline %}
+                    <div class="absolute inset-0 w-full h-full flex justify-center items-center rounded-md bg-red-600 text-white text-sm font-medium">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </div>
+                    {% elif app.is_degraded or app.is_warning %}
+                    <div class="absolute inset-0 w-full h-full flex justify-center items-center rounded-md bg-yellow-600 text-white text-sm font-medium">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                    {% elif not app.favicon %}
+                    <div class="absolute inset-0 w-full h-full flex justify-center items-center rounded-md bg-emerald-600 text-white text-sm font-medium">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    {% endif %}
+                  </div>
+                  <div class="absolute inset-0 w-full h-full text-white flex justify-center items-center ">
+                    {% if app.is_offline %}
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    {% elif app.is_degraded or app.is_warning %}
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    {% endif %}
+                  </div>
                 </div>
-                {% elif app.is_degraded or app.is_warning %}
-                <div class="mr-3 h-6 w-6 flex justify-center items-center rounded-full bg-yellow-600 text-white text-sm font-medium">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                </div>
-                {% else %}
-                <div class="mr-3 h-5 w-5 flex justify-center items-center rounded-full bg-emerald-600 text-white text-sm font-medium">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                {% endif %}
                 {{ app }}
               </a>
 
@@ -232,7 +217,7 @@
             Dashboard
           </a>
 
-          <div class="px-3 py-2 text-sm font-medium text-gray-500 pt-6 group flex items-center">
+          <div class="pl-3 pr-2 py-2 text-sm font-medium text-gray-500 pt-6 group flex items-center">
             <h3 class="flex-1">Projects</h3>
             <a href="{% url 'projects_add' %}" type="button" class="flex items-center rounded-full text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-gray-100 px-1 py-1" id="menu-button" aria-expanded="true" aria-haspopup="true">
               <span class="sr-only">Open options</span>
@@ -241,9 +226,10 @@
               </svg>
             </a>
           </div>
-          {% for app in user.projects.all %}
+          {% for app in user.projects.all|dictsort:"title" %}
 
           {% url_is 'project' app.id as is_project_view %}
+          {% url_start_with 'project' app.id as is_open %}
           {% url_start_with 'project_availability' app.id as is_availability %}
           {% url_start_with 'incidents' app.id as is_incident %}
           {% url_start_with 'project_performances' app.id as is_performance %}
@@ -252,74 +238,82 @@
 
           {% starts_with request.path app.pathname as is_project_selected %}
 
-          <a href="{% url 'project' app.id %}" class="{% if is_project_view %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium{% else %}text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium{% endif %}">
-            <!-- <svg class="text-gray-400 group-hover:text-gray-500 mr-3 h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
-            </svg> -->
-            <div class="relative w-6 h-6 mr-3">
-              {% if app.favicon %}
-              <img src="{{ app.favicon.url }}" alt="Favicon" class="w-full h-full rounded-md opacity-80"/>
+          <div x-data="{ open: {% if is_open %}true{% else %}false{% endif %} }">
+            <a href="{% url 'project' app.id %}" class="{% if is_project_view %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium{% else %}text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium{% endif %} flex">
+              <div class="relative w-6 h-6 mr-3">
+                {% if app.favicon %}
+                <img src="{{ app.favicon.url }}" alt="Favicon" class="w-full h-full rounded-md opacity-80"/>
+                {% endif %}
+                <div class="{% if app.favicon %}opacity-30{% endif %}">
+                  {% if app.is_offline %}
+                  <div class="absolute inset-0 w-full h-full flex justify-center items-center rounded-md bg-red-600 text-white text-sm font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </div>
+                  {% elif app.is_degraded or app.is_warning %}
+                  <div class="absolute inset-0 w-full h-full flex justify-center items-center rounded-md bg-yellow-600 text-white text-sm font-medium">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                  </div>
+                  {% elif not app.favicon %}
+                  <div class="absolute inset-0 w-full h-full flex justify-center items-center rounded-md bg-emerald-600 text-white text-sm font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  {% endif %}
+                </div>
+                <div class="absolute inset-0 w-full h-full text-white flex justify-center items-center ">
+                  {% if app.is_offline %}
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  {% elif app.is_degraded or app.is_warning %}
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="flex-grow">{{ app }}</div>
+              {% if not is_open%}
+              <div class="relative w-6 h-6 ml-3">
+                <button class="transition-all duration-200" @click.prevent="open = ! open" x-bind:class="open ? '-rotate-180' : 'rotate-0'">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 p-1">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                  </svg>                
+                </button>
+              </div>
               {% endif %}
-              <div class="{% if app.favicon %}opacity-30{% endif %}">
-                {% if app.is_offline %}
-                <div class="absolute inset-0 w-full h-full flex justify-center items-center rounded-md bg-red-600 text-white text-sm font-medium">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </a>
+
+            <template x-if="open">
+              <div class="flex flex-col pl-4">
+                <a href="{% url 'project_availability' app.id %}" class="py-2 pl-3 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex w-full items-center rounded-md {% if is_availability or is_incident %}bg-gray-100 text-gray-900{% endif %}">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-3">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+                  </svg>Availability
+                </a>
+
+                <a href="{% url 'project_performances' app.id %}" class="py-2 pl-3 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex w-full items-center rounded-md {% if is_performance %}bg-gray-100 text-gray-900{% endif %}">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-3">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
                   </svg>
-                </div>
-                {% elif app.is_degraded or app.is_warning %}
-                <div class="absolute inset-0 w-full h-full flex justify-center items-center rounded-md bg-yellow-600 text-white text-sm font-medium">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                </div>
-                {% elif not app.favicon %}
-                <div class="absolute inset-0 w-full h-full flex justify-center items-center rounded-md bg-emerald-600 text-white text-sm font-medium">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                {% endif %}
+                    Performances
+                </a>
+
+                <a href="{% url 'project_notifications' app.id %}" class="py-2 pl-3 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex w-full items-center rounded-md {% if is_notifications %}bg-gray-100 text-gray-900{% endif %}">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-3">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0M3.124 7.5A8.969 8.969 0 015.292 3m13.416 0a8.969 8.969 0 012.168 4.5" />
+                  </svg> Notifications
+                </a>
+
+                <a href="{% url 'project_status_public' app.id %}" class="py-2 pl-3 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex w-full items-center rounded-md {% if is_status_public %}bg-gray-100 text-gray-900{% endif %}">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-3">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 19.5v-.75a7.5 7.5 0 00-7.5-7.5H4.5m0-6.75h.75c7.87 0 14.25 6.38 14.25 14.25v.75M6 18.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                  </svg> Public page
+                </a>
               </div>
-              <div class="absolute inset-0 w-full h-full text-white flex justify-center items-center ">
-                {% if app.is_offline %}
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                {% elif app.is_degraded or app.is_warning %}
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                {% endif %}
-              </div>
-            </div>
-            {{ app }}
-          </a>
-
-            {% if is_project_selected %}
-            <div class="flex flex-col pl-4">
-              <a href="{% url 'project_availability' app.id %}" class="py-2 pl-3 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex w-full items-center rounded-md {% if is_availability or is_incident %}bg-gray-100 text-gray-900{% endif %}">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-3">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
-                </svg>Availability
-              </a>
-
-              <a href="{% url 'project_performances' app.id %}" class="py-2 pl-3 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex w-full items-center rounded-md {% if is_performance %}bg-gray-100 text-gray-900{% endif %}">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-3">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
-                </svg>
-                 Performances
-              </a>
-
-              <a href="{% url 'project_notifications' app.id %}" class="py-2 pl-3 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex w-full items-center rounded-md {% if is_notifications %}bg-gray-100 text-gray-900{% endif %}">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-3">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0M3.124 7.5A8.969 8.969 0 015.292 3m13.416 0a8.969 8.969 0 012.168 4.5" />
-                </svg> Notifications
-              </a>
-
-              <a href="{% url 'project_status_public' app.id %}" class="py-2 pl-3 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex w-full items-center rounded-md {% if is_status_public %}bg-gray-100 text-gray-900{% endif %}">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-3">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 19.5v-.75a7.5 7.5 0 00-7.5-7.5H4.5m0-6.75h.75c7.87 0 14.25 6.38 14.25 14.25v.75M6 18.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
-                </svg> Public page
-              </a>
-            </div>
-            {% endif %}
+            </template>
+          </div>
           {% endfor %}
 
           <h3 class="px-3 py-2 text-sm font-medium text-gray-500 pt-6" id="projects-headline">More</h3>
