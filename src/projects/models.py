@@ -29,7 +29,7 @@ class Project(models.Model):
     # Handle favicon
     favicon = models.ImageField(upload_to=project_favicon_path, blank=True, null=True, help_text="Application's favicon")
     favicon_task_status = models.CharField(max_length=16, choices=FAVICON_TASK_STATUS, default='UNKNOWN', help_text="Favicon task status")
-    favicon_last_edited = models.DateTimeField(editable=False, help_text="Last time favicon was edited", default=timezone.now)
+    favicon_last_edited = models.DateTimeField(help_text="Last time favicon was edited", default=timezone.now)
 
     def is_offline(self):
         return self.services.filter(

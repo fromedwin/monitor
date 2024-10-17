@@ -5,7 +5,7 @@ from datetime import timedelta
 from .fetch_favicon import fetch_favicon
 
 @shared_task(bind=True)
-def refresh_favicon(self):
+def queue_deprecated_favicons(self):
 
     # Revoke all tasks with the same name currently queued
     inspector = current_app.control.inspect()
@@ -42,6 +42,8 @@ def refresh_favicon(self):
     ).exclude(
         favicon_task_status='PENDING'  # Exclude 'PENDING' status
     )
+    for project in projects:
+        print(f'Project {project.pk} has {project.favicon_task_status} status and {project.favicon_last_edited} value lower than {six_hours_ago}.')
     print(f'Found {projects.count()} projects to refresh favicon.')
     for project in projects:
         project.favicon_task_status = 'PENDING'

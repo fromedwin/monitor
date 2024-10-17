@@ -3,6 +3,8 @@ from django.urls import path
 from .views import project, projects_form, projects_delete, projects_add, projects_welcome
 from incidents.views import incidents
 
+from .api import fetch_deprecated_favicons, save_favicon
+
 urlpatterns = [
     # Welcome page
     path('welcome/', projects_welcome, name='projects_welcome'),
@@ -18,5 +20,14 @@ urlpatterns = [
     path('project/<int:id>/incidents/', incidents, name='incidents'),
     # List of all incidents with date filter for a specific day
     path('project/<int:id>/incidents/<int:year>/<int:month>/<int:day>/', incidents, name='incidents_date'),
-
 ]
+
+#
+# Add APIs URL
+#
+# urlpatterns += [
+#     # 
+#     path('api/fetch_deprecated_favicons/<str:secret_key>/', fetch_deprecated_favicons, name='fetch_deprecated_favicons'),
+#     # 
+#     path('api/save_favicon/<str:secret_key>/<int:project_id>/', save_favicon, name='save_favicon'),
+# ]

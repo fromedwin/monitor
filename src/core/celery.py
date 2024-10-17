@@ -10,8 +10,8 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
-    'refresh_favicon': {
-        'task': 'projects.tasks.refresh_favicon.refresh_favicon',
+    'queue_deprecated_favicons': {
+        'task': 'projects.tasks.queue_deprecated_favicons.queue_deprecated_favicons',
         'schedule': 60.0,  # Run every 60 seconds
     },
 }

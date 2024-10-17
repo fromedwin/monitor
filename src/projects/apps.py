@@ -7,4 +7,4 @@ class ProjectsConfig(AppConfig):
     def ready(self):
         import projects.signals # Load signals
         import projects.tasks.fetch_favicon
-        import projects.tasks.refresh_favicon
+        import projects.tasks.queue_deprecated_favicons
