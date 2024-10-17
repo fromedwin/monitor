@@ -3,7 +3,7 @@ from django.urls import path
 from .views import project, projects_form, projects_delete, projects_add, projects_welcome
 from incidents.views import incidents
 
-from .api import fetch_deprecated_favicons, save_favicon
+# from .api import fetch_deprecated_favicons, save_favicon
 
 urlpatterns = [
     # Welcome page
