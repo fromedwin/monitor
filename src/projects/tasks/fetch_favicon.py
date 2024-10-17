@@ -78,6 +78,7 @@ def fetch_favicon(pk, url):
             project = Project.objects.get(pk=pk)
             # Save the favicon to the project's ImageField or FileField
             project.favicon.save(largest_favicon['url'].split('/')[-1], favicon_content)
+            project.favicon_last_edited = timezone.now()
             project.favicon_task_status = 'SUCCESS'
             project.save()
         else:
