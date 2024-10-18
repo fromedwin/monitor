@@ -20,9 +20,9 @@ from django.urls import path, include
 
 from .views import restricted, healthcheck_database, healthcheck_workers_availability, healthcheck_workers_lighthouse
 from incidents.api import webhook
-from website.views import homepage
 from dashboard.views import dashboard
-
+from django.contrib.sitemaps.views import sitemap
+from .sitemaps import StaticViewSitemap
 from django.conf.urls.static import static
 
 from allauth.account.views import login
@@ -76,6 +76,17 @@ urlpatterns = [
     path('', include('django_prometheus.urls')),
     # Tailwind reload event
     path("__reload__/", include("django_browser_reload.urls")),
+
+    path(
+        "sitemap.xml",
+        sitemap,
+        {
+            "sitemaps": {
+                "static": StaticViewSitemap,
+            }
+        },
+        name="django.contrib.sitemaps.views.sitemap",
+    )
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:
