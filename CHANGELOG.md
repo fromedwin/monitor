@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 See for sample https://raw.githubusercontent.com/favoloso/conventional-changelog-emoji/master/CHANGELOG.md
 -->
 
+## [0.11.0] - 2024-09-DD
+### 🛠 Improvements
+- Add sitemap.xml to fromedwin website (#61)
+
 ## [0.10.1] - 2024-09-15
 ### 🛠 Improvements
 - Improve side navigation (#55)
