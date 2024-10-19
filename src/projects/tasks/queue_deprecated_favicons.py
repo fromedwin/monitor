@@ -39,8 +39,6 @@ def queue_deprecated_favicons(self):
     #
     response = requests.get(f'{settings.BACKEND_URL}/api/fetch_deprecated_favicons/{settings.SECRET_KEY}/')
     response.raise_for_status()
-    print(f'response: {response}')
-    print(f'response json: {response.json()}')
     projects = response.json().get('projects', [])
 
     print(f'Found {len(list(projects))} projects to refresh favicon.')
