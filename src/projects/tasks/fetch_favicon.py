@@ -5,11 +5,15 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 from PIL import Image
 from io import BytesIO
-from django.utils import timezone
-from projects.models import Project
+from django.conf import settings
+import logging
+import base64
 
 @shared_task()
 def fetch_favicon(pk, url):
+    largest_favicon = None
+    largest_size = (0, 0)
+    largest_content = None
     try:
         # Get the HTML content of the webpage
         response = requests.get(url, timeout=10)
@@ -30,8 +34,6 @@ def fetch_favicon(pk, url):
         default_favicon = f"{parsed_url.scheme}://{parsed_url.netloc}/favicon.ico"
         favicons.append(default_favicon)
 
-        largest_favicon = None
-        largest_size = (0, 0)
 
         # If one url in favicon end with svg we keep this ad largest favicon
         for favicon_url in favicons:
@@ -54,7 +56,7 @@ def fetch_favicon(pk, url):
                     }
 
             except Exception as e:
-                print(f"Error fetching or processing {favicon_url}: {e}")
+                logging.info(f"Error fetching or processing {favicon_url}: {e}")
 
         # If no image found, we try to get the first svg found
         if not largest_favicon:
@@ -66,37 +68,25 @@ def fetch_favicon(pk, url):
                 }
 
         if largest_favicon:
-            print(f"Largest favicon found: {largest_favicon['url']} ({largest_favicon['width']}x{largest_favicon['height']})")
+            logging.debug(f"Largest favicon found: {largest_favicon['url']} ({largest_favicon['width']}x{largest_favicon['height']})")
             # Fetch the content of the favicon
             response = requests.get(largest_favicon['url'])
             response.raise_for_status()  # Ensure the request was successful
 
             # Wrap the content in a BytesIO object
-            favicon_content = BytesIO(response.content)
-
-            # Get the Project instance
-            project = Project.objects.get(pk=pk)
-            # Save the favicon to the project's ImageField or FileField
-            project.favicon.save(largest_favicon['url'].split('/')[-1], favicon_content)
-            project.favicon_last_edited = timezone.now()
-            project.favicon_task_status = 'SUCCESS'
-            project.save()
-        else:
-            print("No favicon found.")
-            # Get the Project instance
-            project = Project.objects.get(pk=pk)
-            project.favicon_last_edited = timezone.now()
-            project.favicon_task_status = 'FAILURE'
-            project.save()
+            largest_content = base64.b64encode(response.content).decode('utf-8')
 
     except e:
-        print(f"Error fetching the webpage: {e}")
+        logging.error(f"Error fetching the webpage: {e}")
+    finally:
         try:
-            # Get the Project instance
-            project = Project.objects.get(pk=pk)
-            project.favicon_last_edited = timezone.now()
-            project.favicon_task_status = 'FAILURE'
-            project.save()
-        except e:
-            print(f"Error editing the project: {e}")
+            response = requests.post(f'{settings.BACKEND_URL}/api/save_favicon/{settings.SECRET_KEY}/{pk}/', json={
+                'favicon_url': largest_favicon['url'] if largest_favicon else None,
+                'favicon_content': largest_content,
+            })
+            response.raise_for_status()
+        except Exception as e:
+            logging.error(f"Error sending the result to the backend: {e}")
+        logging.info(f"Task completed for project {pk}")
+
 

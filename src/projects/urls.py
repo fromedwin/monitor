@@ -2,6 +2,7 @@ from django.urls import path
 
 from .views import project, projects_form, projects_delete, projects_add, projects_welcome
 from incidents.views import incidents
+from .api import fetch_deprecated_favicons, save_favicon
 
 # from .api import fetch_deprecated_favicons, save_favicon
 
@@ -25,9 +26,9 @@ urlpatterns = [
 #
 # Add APIs URL
 #
-# urlpatterns += [
-#     # 
-#     path('api/fetch_deprecated_favicons/<str:secret_key>/', fetch_deprecated_favicons, name='fetch_deprecated_favicons'),
-#     # 
-#     path('api/save_favicon/<str:secret_key>/<int:project_id>/', save_favicon, name='save_favicon'),
-# ]
+urlpatterns += [
+    # 
+    path('api/fetch_deprecated_favicons/<str:secret_key>/', fetch_deprecated_favicons, name='fetch_deprecated_favicons'),
+    # 
+    path('api/save_favicon/<str:secret_key>/<int:project_id>/', save_favicon, name='save_favicon'),
+]
