@@ -7,6 +7,10 @@ load_dotenv()
 
 beat_hostname = os.getenv('CELERY_BEAT_HOSTNAME', 'default_beat_name')
 
+# If CELERY_BROKER user is not define we set default value
+if not os.getenv('CELERY_BROKER_URL'):
+    os.environ['CELERY_BROKER_URL'] = 'amqp://admin:admin@localhost'
+
 # Start Celery Beat using the hostname defined
 call([
     'celery', '-A', 'core', 'beat',

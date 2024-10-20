@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   fromedwin_scheduler:
+    container_name: fromedwin_scheduler
     build: 
       context: .
       dockerfile: ./Dockerfile
@@ -13,7 +14,7 @@ services:
       AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME}
-      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
     volumes:
       - .:/app
     ports:

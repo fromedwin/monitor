@@ -146,3 +146,5 @@ data
 
 # Celery related
 src/celerybeat-schedule.db
+
+worker/lighthouse/node_modules

@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   rabbitmq:
+    container_name: fromedwin_rabbitmq
     image: rabbitmq:3-management
     privileged: true
     environment:

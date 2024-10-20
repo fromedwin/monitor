@@ -1,7 +1,8 @@
 version: '3.8'
 
 services:
-  fromedwin_worker:
+  fromedwin_celery:
+    container_name: fromedwin_celery
     build: 
       context: .
       dockerfile: ./Dockerfile
@@ -19,4 +20,18 @@ services:
       - .:/app
     ports:
       - "8011:8000"
-    entrypoint: ["/app/worker/entrypoint.sh"]
+    entrypoint: ["/app/worker/celery/entrypoint.sh"]
+  fromedwin_lighthouse:
+    container_name: fromedwin_lighthouse
+    build: ./worker/lighthouse
+    user: root
+    volumes:
+      - .:/etc/monitor
+    environment:
+      UUID: e10ac616-c881-40ae-9f90-3288c442580a
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
+      SERVER_URL: ${SERVER_URL-http://host.docker.internal:8000}
+      DISABLE_PERFORMANCE: ${DISABLE_PERFORMANCE-0}
+      CHROME_PATH: /usr/lib/chromium/chrome
+      SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
+    command: ['sh', '/etc/monitor/worker/lighthouse/entrypoint.sh']
