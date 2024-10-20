@@ -2,7 +2,10 @@
 from celery import shared_task, current_app
 from django.utils import timezone
 from datetime import timedelta
+from django.conf import settings
 from .fetch_favicon import fetch_favicon
+import requests
+import json
 
 @shared_task(bind=True)
 def queue_deprecated_favicons(self):
@@ -32,20 +35,12 @@ def queue_deprecated_favicons(self):
         revoke_tasks(reserved_tasks)
 
     #
-    # Fetch projects whih need to update favicons
+    # Fetch backend to queue deprecated favicons
     #
-    from projects.models import Project
+    response = requests.get(f'{settings.BACKEND_URL}/api/fetch_deprecated_favicons/{settings.SECRET_KEY}/')
+    response.raise_for_status()
+    projects = response.json().get('projects', [])
 
-    six_hours_ago = timezone.now() - timedelta(hours=6)
-    projects = Project.objects.filter(
-        favicon_last_edited__lt=six_hours_ago,
-    ).exclude(
-        favicon_task_status='PENDING'  # Exclude 'PENDING' status
-    )
+    print(f'Found {len(list(projects))} projects to refresh favicon.')
     for project in projects:
-        print(f'Project {project.pk} has {project.favicon_task_status} status and {project.favicon_last_edited} value lower than {six_hours_ago}.')
-    print(f'Found {projects.count()} projects to refresh favicon.')
-    for project in projects:
-        project.favicon_task_status = 'PENDING'
-        project.save()
-        fetch_favicon.delay(project.pk, project.url)
+        fetch_favicon.delay(project.get('id'), project.get('url'))

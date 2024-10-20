@@ -26,60 +26,62 @@ from django.conf import settings
 
 from constants import LIGHTHOUSE_FORMFACTOR_CHOICES
 
-# @api_view(["GET"])
-# def fetch_deprecated_favicons(request, secret_key):
-#     """
-#     Return projects id and url which need a refresh of the token
-#     """
+@api_view(["GET"])
+def fetch_deprecated_favicons(request, secret_key):
+    """
+    Return projects id and url which need a refresh of the token
+    """
 
-#     # Use django settings secret_key to authenticate django worker
-#     if secret_key != settings.WORKER_SECRET_KEY:
-#         # return http unauthorized if secret key doesn't match
-#         return JsonResponse({}, status=401)
+    # Use django settings secret_key to authenticate django worker
+    if secret_key != settings.SECRET_KEY:
+        # return http unauthorized if secret key doesn't match
+        return JsonResponse({}, status=401)
 
-#     six_hours_ago = timezone.now() - timedelta(hours=6)
-#     projects = Project.objects.filter(
-#         favicon_last_edited__lt=six_hours_ago,
-#     ).exclude(
-#         favicon_task_status='PENDING'  # Exclude 'PENDING' status
-#     )
-#     return JsonResponse({
-#         # List of ids and urls to fetch
-#         'projects': projects.map(lambda project: {'id': project.pk, 'url': project.url})
-#     })
+    six_hours_ago = timezone.now() - timedelta(hours=6)
+    projects = Project.objects.filter(
+        favicon_last_edited__lt=six_hours_ago,
+    )
 
-# @api_view(["POST"])
-# def save_favicon(request, secret_key, project_id):
+    for project in projects:
+        project.favicon_task_status = 'PENDING'
+        project.save()
 
-#     # Use django settings secret_key to authenticate django worker
-#     if secret_key != settings.WORKER_SECRET_KEY:
-#         # return http unauthorized
-#         return JsonResponse({}, status=401)
+    return JsonResponse({
+        # List of ids and urls to fetch
+        'projects': [{'id': project.pk, 'url': project.url} for project in projects]
+    })
 
-#     # Get performance to update
-#     project = get_object_or_404(Project, id=project_id)
+@api_view(["POST"])
+def save_favicon(request, secret_key, project_id):
 
-#     # Load data from body as json
-#     data = json.loads(request.body.decode("utf-8"))
-#     favicon_url = data.get('favicon_url')
+    # Use django settings secret_key to authenticate django worker
+    if secret_key != settings.SECRET_KEY:
+        # return http unauthorized
+        return JsonResponse({}, status=401)
 
-#     # If favicon_url is null or undefined, it means worker couldn't find a favicon
-#     # We then set the status to FAILURE so we can react and retry if needed
-#     if not favicon_url:
-#         project.favicon_task_status = 'FAILURE'
-#         project.favicon_last_edited = timezone.now()
-#         project.save()
-#         return JsonResponse({})
+    # Get performance to update
+    project = get_object_or_404(Project, id=project_id)
 
-#     # Generate metadata used for file storage
-#     response = requests.get(data.get('favicon_url'))
-#     response.raise_for_status()  # Ensure the request was successful
+    # Load data from body as json
+    data = json.loads(request.body.decode("utf-8"))
+    favicon_url = data.get('favicon_url')
 
-#     favicon_content = BytesIO(response.content)
+    # If favicon_url is null or undefined, it means worker couldn't find a favicon
+    # We then set the status to FAILURE so we can react and retry if needed
+    if not favicon_url:
+        project.favicon_task_status = 'FAILURE'
+        project.favicon_last_edited = timezone.now()
+        project.save()
+        return JsonResponse({})
+    
+    # Generate data for the favicon
+    favicon_content_base64 = data.get('favicon_content')
+    favicon_content = base64.b64decode(favicon_content_base64)
+    favicon_content = BytesIO(favicon_content)
 
-#     project.favicon.save(data.get('favicon_url').split('/')[-1], favicon_content)
-#     project.favicon_task_status = 'SUCCESS'
-#     project.favicon_last_edited = timezone.now()
-#     project.save()
+    project.favicon.save(data.get('favicon_url').split('/')[-1], favicon_content)
+    project.favicon_task_status = 'SUCCESS'
+    project.favicon_last_edited = timezone.now()
+    project.save()
 
-#     return JsonResponse({})
+    return JsonResponse({})
