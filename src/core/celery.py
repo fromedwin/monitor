@@ -14,4 +14,8 @@ app.conf.beat_schedule = {
         'task': 'projects.tasks.queue_deprecated_favicons.queue_deprecated_favicons',
         'schedule': 60.0,  # Run every 60 seconds
     },
+    'queue_deprecated_sitemaps': {
+        'task': 'projects.tasks.queue_deprecated_sitemaps.queue_deprecated_sitemaps',
+        'schedule': 60 #24 * 60 * 60,  # Run every 24 hours
+    },
 }

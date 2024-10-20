@@ -58,6 +58,11 @@ class Performance(models.Model):
             except Exception as e:
                 print(f"Error deleting folder: {e}")
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['project', 'url'], name='unique_project_url')
+        ]
+
 """
     REPORT MODEL
 """

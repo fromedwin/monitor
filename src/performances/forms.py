@@ -1,7 +1,7 @@
 from django.forms import ModelForm, URLField, CharField, ValidationError
 from .models import Performance
 from django.conf import settings
-
+import logging
 class PerformanceForm(ModelForm):
 
     url = URLField(help_text="URL must start with http:// or https://")
@@ -26,6 +26,17 @@ class PerformanceForm(ModelForm):
     # Define clean method to raise Validation error if user has more than 3 projects
     def clean(self):
         cleaned_data = super(PerformanceForm, self).clean()
+        url = self.cleaned_data['url'].replace('https://', '').replace('http://', '')
+        if self.cleaned_data['scheme'] == 'https':
+            url = 'https://' + url
+        else:
+            url = 'http://' + url
+
+        logging.warning(f'project: {self.project}, {url}]')
+
+        if Performance.objects.filter(project=self.project, url=url).exists():
+            raise ValidationError('An object with this URL already exists.')
+        
         if not self.project.user.is_superuser and not self.project.user.is_staff and not self.instance.pk and self.project.performances.count() >= settings.FREEMIUM_PERFORMANCE:
             raise ValidationError(f'You can only have {settings.FREEMIUM_PERFORMANCE} performance url(s)')
 

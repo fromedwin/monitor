@@ -9,3 +9,4 @@ class ProjectsConfig(AppConfig):
         import projects.tasks.fetch_favicon
         import projects.tasks.fetch_sitemap
         import projects.tasks.queue_deprecated_favicons
+        import projects.tasks.queue_deprecated_sitemaps
