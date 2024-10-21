@@ -4,6 +4,7 @@ import base64
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.conf import settings
+from django.db.models import Q
 
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
@@ -29,9 +30,9 @@ def fetch_deprecated_performances(request, secret_key):
         return JsonResponse({}, status=401)
 
     one_hour_ago = timezone.now() - timedelta(hours=1)
-    performances = Performance.objects.filter(
-        last_request_date__lt=one_hour_ago,
-    )
+    # Filter per last request date OR request_run true or last request date undefined
+
+    performances = Performance.objects.filter(Q(request_run=True) | Q(last_request_date__isnull=True) | Q(last_request_date__lt=timezone.now()-timezone.timedelta(minutes=settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES)))
 
     for performance in performances:
         performance.last_request_date = timezone.now()

@@ -37,10 +37,10 @@ def queue_deprecated_performance(self):
     #
     response = requests.get(f'{settings.BACKEND_URL}/api/fetch_deprecated_performances/{settings.SECRET_KEY}/')
     response.raise_for_status()
-    performances = response.json().get('projects', [])
+    performances = response.json().get('performances', [])
 
     logging.info(f'Found {len(list(performances))} performances to refresh after 1h.')
 
     for performance in performances:
-        task_kwargs = {'id': performance.id, 'url': performance.url}
-        current_app.send_task('fetch_lighthouse_report', kwargs=task_kwargs, queue=QUEUE_NAME, task_id=f'performance_{performance.id}')
+        task_kwargs = {'id': performance.get('id'), 'url': performance.get('url')}
+        current_app.send_task('fetch_lighthouse_report', kwargs=task_kwargs, queue=QUEUE_NAME, task_id=f'performance_{performance.get('id')}')
