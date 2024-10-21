@@ -23,9 +23,10 @@ services:
       - "8011:8000"
     entrypoint: ["/app/worker/celery/entrypoint.sh"]
   fromedwin_lighthouse:
-    container_name: fromedwin_lighthouse
     build: ./worker/lighthouse
     user: root
+    deploy:
+      replicas: ${LIGHTHOUSE_WORKER_REPLICA-1}
     volumes:
       - .:/etc/monitor
     environment:

@@ -39,8 +39,8 @@ FORCE_HTTPS = False
 if os.environ.get('FORCE_HTTPS') == '1' or os.environ.get('FORCE_HTTPS', '').lower() == 'true':
     FORCE_HTTPS = True 
 
-DOMAIN = os.environ.get('DOMAIN')
-PORT = os.environ.get('PORT')
+DOMAIN = os.environ.get('DOMAIN', 'localhost')
+PORT = os.environ.get('PORT', 8000)
 BACKEND_URL = os.environ.get('BACKEND_URL', f'http://{DOMAIN}:{PORT}')
 WEBAUTH_USERNAME = os.environ.get('WEBAUTH_USERNAME')
 WEBAUTH_PASSWORD = os.environ.get('WEBAUTH_PASSWORD')
