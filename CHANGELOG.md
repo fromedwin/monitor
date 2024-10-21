@@ -22,8 +22,12 @@ See for sample https://raw.githubusercontent.com/favoloso/conventional-changelog
 -->
 
 ## [0.11.0] - 2024-09-DD
+### ✨ Feature
+- 
 ### 🛠 Improvements
 - Add sitemap.xml to fromedwin website (#61)
+### 🏗 Chore
+-
 
 ## [0.10.1] - 2024-09-15
 ### 🛠 Improvements

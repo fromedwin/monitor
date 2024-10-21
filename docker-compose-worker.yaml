@@ -16,6 +16,7 @@ services:
       AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME}
       CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
       SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
+      BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
     volumes:
       - .:/app
     ports:
@@ -28,7 +29,6 @@ services:
     volumes:
       - .:/etc/monitor
     environment:
-      UUID: e10ac616-c881-40ae-9f90-3288c442580a
       CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
       SERVER_URL: ${SERVER_URL-http://host.docker.internal:8000}
       DISABLE_PERFORMANCE: ${DISABLE_PERFORMANCE-0}

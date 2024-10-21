@@ -23,35 +23,14 @@ from django.conf import settings
 
 from constants import LIGHTHOUSE_FORMFACTOR_CHOICES
 
-@api_view(["GET"])
-def fetch_performance(request, server_id):
-    """
-    Return the next performance to scrape. Should be used by a worker as soon as it is ready to scrape a url.
-    """
-    get_object_or_404(Server, uuid=server_id)
-
-    performance = Performance.objects.filter(Q(request_run=True) | Q(last_request_date__isnull=True) | Q(last_request_date__lt=timezone.now()-timezone.timedelta(minutes=settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES))).order_by('last_request_date')
-
-    # If no performance to work on, we return empty json 
-    if performance:
-        performance = performance[0]
-
-        performance.last_request_date = timezone.now()
-        performance.save()
-
-        return JsonResponse({
-            # Perfromance object using serializer from django
-            'performance': PerfromanceSerializer(performance).data
-        })
-    else:
-        return JsonResponse({})
-
-
 @api_view(["POST"])
-def save_report(request, server_id, performance_id):
+def save_report(request, secret_key, performance_id):
 
-    server = get_object_or_404(Server, uuid=server_id)
-
+    # Use django settings secret_key to authenticate django worker
+    if secret_key != settings.SECRET_KEY:
+        # return http unauthorized if secret key doesn't match
+        return JsonResponse({}, status=401)
+    
     # Get performance to update
     performance = get_object_or_404(Performance, id=performance_id)
 

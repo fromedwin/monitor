@@ -12,10 +12,14 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'queue_deprecated_favicons': {
         'task': 'projects.tasks.queue_deprecated_favicons.queue_deprecated_favicons',
-        'schedule': 60.0,  # Run every 60 seconds
+        'schedule': 360,  # Run every 60 seconds
     },
     'queue_deprecated_sitemaps': {
         'task': 'projects.tasks.queue_deprecated_sitemaps.queue_deprecated_sitemaps',
-        'schedule': 60 #24 * 60 * 60,  # Run every 24 hours
+        'schedule': 360, #24 * 60 * 60,  # Run every 24 hours
+    },
+    'queue_deprecated_performance': {
+        'task': 'performances.tasks.queue_deprecated_performance.queue_deprecated_performance',
+        'schedule': 30, #24 * 60 * 60,  # Run every 24 hours
     },
 }
