@@ -7,13 +7,6 @@ services:
       context: .
       dockerfile: ./Dockerfile
     environment:
-      DATABASE_URL: ${DATABASE_URL}
-      STORAGE: ${STORAGE}
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_S3_CUSTOM_DOMAIN: ${AWS_S3_CUSTOM_DOMAIN}
-      AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME}
       CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
       SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
       BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
@@ -31,8 +24,7 @@ services:
       - .:/etc/monitor
     environment:
       CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
-      SERVER_URL: ${SERVER_URL-http://host.docker.internal:8000}
-      DISABLE_PERFORMANCE: ${DISABLE_PERFORMANCE-0}
+      BACKEND_URL: ${SERVER_URL-http://host.docker.internal:8000}
       CHROME_PATH: /usr/lib/chromium/chrome
       SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
     command: ['sh', '/etc/monitor/worker/lighthouse/entrypoint.sh']

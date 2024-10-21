@@ -8,11 +8,10 @@ from .models import Project
 DELAY_REFRESH_FAVICON_SECONDS = 30 # Every 30 seconds
 
 @receiver(post_save, sender=Project)
-def post_save_fetch_favicon(sender, instance, created, **kwargs):
-
-    fetch_sitemap.delay(instance.pk, instance.url)
+def post_save_created(sender, instance, created, **kwargs):
 
     if created:
         instance.favicon_task_status = 'PENDING'
         instance.favicon_last_edited = timezone.now()
+        fetch_sitemap.delay(instance.pk, instance.url)
         fetch_favicon.delay(instance.pk, instance.url)

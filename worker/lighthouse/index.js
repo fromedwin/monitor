@@ -6,18 +6,13 @@ import lighthouse from 'lighthouse';
 import chromeLauncher from 'chrome-launcher';
 
 let UUID = process.env.UUID;
-let SERVER_URL = process.env.SERVER_URL;
+let BACKEND_URL = process.env.BACKEND_URL;
 const SECRET_KEY = process.env.SECRET_KEY;
 const CELERY_BROKER_URL = process.env.CELERY_BROKER_URL;
 const USER_AGENT = 'fromedwin bot lighthouse worker';
 
 // Request performance object entrypoint
-let url = `${SERVER_URL}/api/request/${UUID}/performance`
-
-if (process.env.DISABLE_PERFORMANCE == 1) {
-	console.log('❌  DISABLE_PERFORMANCE == 1, disabling lighthouse report');
-	process.exit(1);
-}
+let url = `${BACKEND_URL}/api/request/${UUID}/performance`
 
 // Constant copied from https://github.com/GoogleChrome/lighthouse/blob/main/core/config/constants.js
 const DESKTOP_EMULATION_METRICS = {
@@ -112,7 +107,7 @@ const QUEUE_NAME = 'fromedwin_lighthouse_queue';  // The same queue specified in
 
 			console.log(`Saving report for ${kwargs.url}`);
 			// Send report to server
-			const reportResponse = await fetch(`${SERVER_URL}/api/report/${SECRET_KEY}/performance/${kwargs.id}`, {
+			const reportResponse = await fetch(`${BACKEND_URL}/api/report/${SECRET_KEY}/performance/${kwargs.id}`, {
 				method: 'POST',
 				headers: {
 					'User-Agent': USER_AGENT,
@@ -141,79 +136,3 @@ const QUEUE_NAME = 'fromedwin_lighthouse_queue';  // The same queue specified in
 	  console.error('Error connecting to RabbitMQ:', err);
 	}
   })();
-
-
-// while(true) {
-// 	// Fetch url from docker
-// 	try {
-// 		// Fetch next performance object to evaluate
-// 		const response = await fetch(url, {
-// 			headers: {
-// 				'User-Agent': USER_AGENT,
-// 			}
-// 		});
-// 		const data = await response.json();
-
-// 		if (data && data.performance && data.performance.url) {
-
-// 			console.log(`Running test on ${data.performance.url}`);
-
-// 			// Start Chrome process
-// 			const chrome = await chromeLauncher.launch({
-// 				ignoreDefaultFlags: true,
-// 				chromeFlags: [
-// 						'--headless',
-// 						'--no-sandbox',
-// 						'--disable-dev-shm-usage',
-// 						'--allow-pre-commit-input',
-// 						'--in-process-gpu',
-// 					]
-// 				}); //  '--disable-gpu', '--disable-setuid-sandbox'
-
-// 			// Running Lighthouse by custom options
-// 			const options = {
-// 				logLevel: 'info', 
-// 				output: 'json', 
-// 				port: chrome.port,
-// 				formFactor: 'desktop', // 'desktop' or 'mobile'
-// 				screenEmulation: screenEmulationMetrics.desktop,
-// 				emulatedUserAgent: DESKTOP_USERAGENT, //MOTOG4_USERAGENT,
-// 				skipAudits: [
-// 					// Skip the h2 audit so it doesn't lie to us. See https://github.com/GoogleChrome/lighthouse/issues/6539
-// 					'uses-http2',
-// 					// There are always bf-cache failures when testing in headless. Reenable when headless can give us realistic bf-cache insights.
-// 					'bf-cache',
-// 				],
-// 			};
-// 			const runnerResult = await lighthouse(data.performance.url, options);
-
-// 			// Send report to server
-// 			const reportResponse = await fetch(`${SERVER_URL}/api/report/${UUID}/performance/${data.performance.pk}`, {
-// 				method: 'POST',
-// 				headers: {
-// 					'User-Agent': USER_AGENT,
-// 					'Content-Type': 'application/json'
-// 				},
-// 				body: runnerResult.report
-// 			}).then((returnedResponse) => {
-// 				console.log("Report has been forwarded http status", returnedResponse.status)
-// 			}).catch((error) => {
-// 				console.log(error)
-// 			});
-
-// 			// Kill chrome process
-// 			await chrome.kill();
-
-// 			// Wait 1 seconds before next request
-// 			await new Promise(resolve => setTimeout(resolve, 1000));
-// 		} else {
-// 			// Wait 5 seconds before next request
-// 			await new Promise(resolve => setTimeout(resolve, 10000));
-// 		}
-// 	} catch (error) {
-// 		console.error(error);
-// 		console.log('Wait for 10 seconds');
-// 		// Wait 5 seconds before next request
-// 		await new Promise(resolve => setTimeout(resolve, 10000));
-// 	}
-// }

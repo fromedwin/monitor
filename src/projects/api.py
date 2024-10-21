@@ -1,37 +1,20 @@
 from io import BytesIO
 import json
 import base64
-from django.shortcuts import render
+import logging
+from datetime import timedelta
 from django.utils import timezone
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.db.models import Q
 from django.conf import settings
-from django.template.defaultfilters import slugify
-
-from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
-
-import requests
+from django.http import JsonResponse
+from django.conf import settings
 from rest_framework.decorators import api_view
 
+from performances.models import Performance
 from .models import Project
-
-from datetime import timedelta
-from django.http import JsonResponse
-from django.core import serializers
-
-from workers.models import Server
-from django.conf import settings
-
-from constants import LIGHTHOUSE_FORMFACTOR_CHOICES
 
 @api_view(["GET"])
 def fetch_deprecated_favicons(request, secret_key):
-    """
-    Return projects id and url which need a refresh of the token
-    """
-
     # Use django settings secret_key to authenticate django worker
     if secret_key != settings.SECRET_KEY:
         # return http unauthorized if secret key doesn't match
@@ -44,6 +27,28 @@ def fetch_deprecated_favicons(request, secret_key):
 
     for project in projects:
         project.favicon_task_status = 'PENDING'
+        project.save()
+
+    return JsonResponse({
+        # List of ids and urls to fetch
+        'projects': [{'id': project.pk, 'url': project.url} for project in projects]
+    })
+
+@api_view(["GET"])
+def fetch_deprecated_sitemaps(request, secret_key):
+    # Use django settings secret_key to authenticate django worker
+    if secret_key != settings.SECRET_KEY:
+        # return http unauthorized if secret key doesn't match
+        return JsonResponse({}, status=401)
+
+    one_day_ago = timezone.now() - timedelta(hours=24)
+    projects = Project.objects.filter(
+        sitemap_last_edited__lt=one_day_ago,
+    )
+
+    for project in projects:
+        logging.debug(f'Project {project.pk} has {project.sitemap_task_status} status and {project.sitemap_last_edited} value lower than {one_day_ago}.')
+        project.sitemap_task_status = 'PENDING'
         project.save()
 
     return JsonResponse({
@@ -83,5 +88,37 @@ def save_favicon(request, secret_key, project_id):
     project.favicon_task_status = 'SUCCESS'
     project.favicon_last_edited = timezone.now()
     project.save()
+
+    return JsonResponse({})
+
+@api_view(["POST"])
+def save_sitemap(request, secret_key, project_id):
+
+    # Use django settings secret_key to authenticate django worker
+    if secret_key != settings.SECRET_KEY:
+        # return http unauthorized
+        return JsonResponse({}, status=401)
+
+    # Get performance to update
+    project = get_object_or_404(Project, id=project_id)
+
+    # Load data from body as json
+    data = json.loads(request.body.decode("utf-8"))
+    urls = data.get('urls')
+
+    # Update sitemap_last_edited to pause fetching until deprecated
+    project.sitemap_last_edited = timezone.now()
+    project.save()
+
+    if len(list(urls)) < 300:
+        logging.info(f'Project {project.url} has less than 300 pages in sitemap.')
+        Performance.objects.bulk_create(
+            [
+                Performance(project=project, url=url) for url in urls
+            ],
+            ignore_conflicts=True  # This avoids inserting rows that violate uniqueness constraints
+        )
+    else:
+        logging.warning(f'Project {project.url} has more than 300 pages in sitemap, ignored for now.')
 
     return JsonResponse({})

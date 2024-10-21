@@ -1,11 +1,8 @@
-# src/projects/tasks/refresh_favicon.py
+import logging
+import requests
 from celery import shared_task, current_app
-from django.utils import timezone
-from datetime import timedelta
 from django.conf import settings
 from .fetch_favicon import fetch_favicon
-import requests
-import json
 
 @shared_task(bind=True)
 def queue_deprecated_favicons(self):
@@ -40,7 +37,6 @@ def queue_deprecated_favicons(self):
     response = requests.get(f'{settings.BACKEND_URL}/api/fetch_deprecated_favicons/{settings.SECRET_KEY}/')
     response.raise_for_status()
     projects = response.json().get('projects', [])
-
-    print(f'Found {len(list(projects))} projects to refresh favicon.')
+    logging.info(f'Found {len(list(projects))} projects to refresh favicon.')
     for project in projects:
         fetch_favicon.delay(project.get('id'), project.get('url'))

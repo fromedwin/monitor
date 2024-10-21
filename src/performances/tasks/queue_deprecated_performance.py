@@ -1,10 +1,9 @@
-# src/projects/tasks/refresh_favicon.py
-from celery import shared_task, current_app
-from django.utils import timezone
-from datetime import timedelta
 import logging
-from performances.models import Performance
-from itertools import chain
+import requests
+from celery import shared_task, current_app
+from django.conf import settings
+
+QUEUE_NAME = 'fromedwin_lighthouse_queue'
 
 @shared_task(bind=True)
 def queue_deprecated_performance(self):
@@ -33,18 +32,15 @@ def queue_deprecated_performance(self):
     if reserved_tasks:
         revoke_tasks(reserved_tasks)
 
-    queue_name = 'fromedwin_lighthouse_queue'
+    #
+    # Fetch backend to queue deprecated favicons
+    #
+    response = requests.get(f'{settings.BACKEND_URL}/api/fetch_deprecated_performances/{settings.SECRET_KEY}/')
+    response.raise_for_status()
+    performances = response.json().get('projects', [])
 
-    # Fetch performances that are older than 1 hour
-    one_hour_ago = timezone.now() - timedelta(hours=1)
-    performances = Performance.objects.filter(
-        last_request_date__lt=one_hour_ago,
-    )
-    print(f'Found {performances.count()} performances to refresh after 1h.')
+    logging.info(f'Found {len(list(performances))} performances to refresh after 1h.')
 
     for performance in performances:
-        task_kwargs = {'id': performance.pk, 'url': performance.url}
-        performance.last_request_date = timezone.now()
-        performance.save()
-        # Using pre-defined task_id to avoid revoking duplicate tasks
-        current_app.send_task('fetch_lighthouse_report', kwargs=task_kwargs, queue=queue_name, task_id=f'performance_{performance.pk}')
+        task_kwargs = {'id': performance.id, 'url': performance.url}
+        current_app.send_task('fetch_lighthouse_report', kwargs=task_kwargs, queue=QUEUE_NAME, task_id=f'performance_{performance.id}')

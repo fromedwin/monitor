@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .api import save_report
+from .api import save_report, fetch_deprecated_performances
 from .views import performances_all, project_performances, performance_form, performance_delete, project_performances_report_viewer, performance_rerun
 
 urlpatterns = [
@@ -16,6 +16,14 @@ urlpatterns = [
     path('project/<int:application_id>/performances/<int:performance_id>/delete', performance_delete, name='performance_delete'),
     path('project/<int:application_id>/performances/<int:performance_id>/rerun', performance_rerun, name='performance_rerun'),
 
+]
+
+#
+# Add APIs URL
+#
+urlpatterns += [
+    # Return id and url for performances to fetch
+    path('api/fetch_deprecated_performances/<str:secret_key>/', fetch_deprecated_performances, name='fetch_deprecated_performances'),
     # Report lighthouse performance
     path('api/report/<str:secret_key>/performance/<int:performance_id>', save_report, name='save_report'),
 ]

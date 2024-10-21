@@ -1,13 +1,12 @@
-# src/projects/tasks/fetch_favicon.py
-from celery import shared_task
+import logging
+import base64
 import requests
+from celery import shared_task
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 from PIL import Image
 from io import BytesIO
 from django.conf import settings
-import logging
-import base64
 
 @shared_task()
 def fetch_favicon(pk, url):

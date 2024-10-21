@@ -1,12 +1,9 @@
+from datetime import timedelta
 import json
 import base64
-from django.shortcuts import render
 from django.utils import timezone
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.db.models import Q
 from django.conf import settings
-from django.template.defaultfilters import slugify
 
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
@@ -14,14 +11,36 @@ from django.core.files.storage import default_storage
 from rest_framework.decorators import api_view
 
 from .models import Performance, Report
-from .serializer import PerfromanceSerializer
 from django.http import JsonResponse
-from django.core import serializers
 
-from workers.models import Server
 from django.conf import settings
 
 from constants import LIGHTHOUSE_FORMFACTOR_CHOICES
+
+@api_view(["GET"])
+def fetch_deprecated_performances(request, secret_key):
+    """
+    Return projects id and url which need a refresh of the token
+    """
+
+    # Use django settings secret_key to authenticate django worker
+    if secret_key != settings.SECRET_KEY:
+        # return http unauthorized if secret key doesn't match
+        return JsonResponse({}, status=401)
+
+    one_hour_ago = timezone.now() - timedelta(hours=1)
+    performances = Performance.objects.filter(
+        last_request_date__lt=one_hour_ago,
+    )
+
+    for performance in performances:
+        performance.last_request_date = timezone.now()
+        performance.save()
+
+    return JsonResponse({
+        # List of ids and urls to fetch
+        'performances': [{'id': performance.pk, 'url': performance.url} for performance in performances]
+    })
 
 @api_view(["POST"])
 def save_report(request, secret_key, performance_id):

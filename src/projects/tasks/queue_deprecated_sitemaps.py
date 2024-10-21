@@ -1,9 +1,7 @@
-# src/projects/tasks/refresh_favicon.py
-from celery import shared_task, current_app
-from django.utils import timezone
-from datetime import timedelta
 import logging
-from projects.models import Project
+from celery import shared_task, current_app
+from django.conf import settings
+import requests
 from .fetch_sitemap import fetch_sitemap
 
 @shared_task(bind=True)
@@ -36,18 +34,11 @@ def queue_deprecated_sitemaps(self):
     #
     # Fetch projects whih need to update favicons
     #
-    # from projects.models import Project
+    response = requests.get(f'{settings.BACKEND_URL}/api/fetch_deprecated_sitemaps/{settings.SECRET_KEY}/')
+    response.raise_for_status()
+    projects = response.json().get('projects', [])
 
-    one_day_ago = timezone.now() - timedelta(hours=24)
-    projects = Project.objects.filter(
-        sitemap_last_edited__lt=one_day_ago,
-    )
-    for project in projects:
-        logging.debug(f'Project {project.pk} has {project.sitemap_task_status} status and {project.sitemap_last_edited} value lower than {one_day_ago}.')
-
-    print(f'Found {projects.count()} projects to refresh sitemaps.')
+    logging.info(f'Found {len(list(projects))} projects to refresh sitemap.')
 
     for project in projects:
-        project.sitemap_task_status = 'PENDING'
-        project.save()
-        fetch_sitemap.delay(project.pk, project.url)
+        fetch_sitemap.delay(project.get('id'), project.get('url'))
