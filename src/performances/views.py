@@ -79,6 +79,7 @@ def project_performances(request, id):
 
     return render(request, 'project/performances.html', {
         'project': project,
+        'performances_count': project.performances.count(),
         'domains': domains,
     })
 
