@@ -28,3 +28,39 @@ services:
       CHROME_PATH: /usr/lib/chromium/chrome
       SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
     command: ['sh', '/etc/monitor/worker/lighthouse/entrypoint.sh']
+  fromedwin_prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: fromedwin_prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus/data'
+      - '--web.enable-lifecycle' # Enable /-/reload entrypoint
+    volumes:
+      - ./data/prometheus:/prometheus
+      - ./worker/prometheus/alerts:/etc/prometheus/alerts
+      - ./worker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    links:
+      - fromedwin_blackbox
+  fromedwin_alertmanager:
+    image: quay.io/prometheus/alertmanager:v0.27.0
+    container_name: fromedwin_alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager/data'
+    volumes:
+      - ./data/alertmanager:/alertmanager
+      - ./worker/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+  fromedwin_blackbox:
+    image: prom/blackbox-exporter:v0.25.0
+    container_name: fromedwin_blackbox
+    command:
+      - '--config.file=/etc/prometheus/blackbox.yml'
+    user: "65534"
+    volumes:
+      - ./worker/blackbox/blackbox.yml:/etc/prometheus/blackbox.yml:ro
+
+networks:
+  monitoring:
+    driver: bridge
