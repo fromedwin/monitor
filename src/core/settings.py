@@ -300,3 +300,8 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'  # Adjust if needed
+
+INFLUXDB_URL = os.getenv('INFLUXDB_URL', 'http://localhost:8086')
+INFLUXDB_TOKEN = os.getenv('INFLUXDB_TOKEN')
+INFLUXDB_ORG = os.getenv('INFLUXDB_ORG', 'fromedwin')
+INFLUXDB_BUCKET = os.getenv('INFLUXDB_BUCKET', 'fromedwin')

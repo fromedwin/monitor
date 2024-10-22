@@ -1,30 +1,59 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 from django.shortcuts import render, redirect
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
 from django.conf import settings
 from django.urls import reverse
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.mail import send_mail
-
-from allauth.socialaccount.models import SocialApp
-
 from workers.models import Server
-
 from django.db.models import Q
 from performances.models import Performance
 from availability.models import Service
-from constants import LIGHTHOUSE_FORMFACTOR_CHOICES
+from influxdb_client import InfluxDBClient
+import logging
 
 @staff_member_required
 def administration(request):
     """
     Show administration data
     """
-    token = None
-    is_staff = False
+    # InfluxDB connection settings
+    url = settings.INFLUXDB_URL
+    token = settings.INFLUXDB_TOKEN
+    org = settings.INFLUXDB_ORG
+    bucket = settings.INFLUXDB_BUCKET
+
+    lighthouse_worker = None
+
+    # Connect to InfluxDB
+    with InfluxDBClient(url=url, token=token, org=org) as client:
+        query_api = client.query_api()
+
+        start_time = (datetime.utcnow() - timedelta(minutes=1)).isoformat() + "Z"
+        end_time = datetime.utcnow().isoformat() + "Z"
+        # Define your Flux query
+        flux_query = f'''
+        from(bucket: "{bucket}")
+            |> range(start: {start_time}, stop: {end_time})
+            |> filter(fn: (r) => r["_measurement"] == "rabbitmq_prometheus")
+            |> filter(fn: (r) => r["_field"] == "rabbitmq_queue_consumers")
+            |> filter(fn: (r) => r["queue"] == "fromedwin_lighthouse_queue")
+            |> aggregateWindow(every: 15m, fn: last, createEmpty: false)
+            |> yield(name: "last")
+        '''
+
+        try:
+            # Execute the query
+            result = query_api.query(org=org, query=flux_query)
+            for table in result:
+                for record in table.records:
+                    logging.error(record.get_value())
+                    lighthouse_worker = record.get_value()
+
+        except Exception as e:
+            logging.error(f'Error querying InfluxDB: {e}')
+
     servers = []
 
     # if get success exist boolean true
@@ -55,6 +84,7 @@ def administration(request):
             'waiting_performance_count': round((waiting_performance_count / performance_count * 100), 2) if performance_count else 0,
             'users_count': User.objects.count(),
             'url_count': Service.objects.count(),
+            'lighthouse_worker': lighthouse_worker,
         }
     })
 

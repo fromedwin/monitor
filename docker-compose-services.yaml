@@ -5,9 +5,12 @@ services:
     container_name: fromedwin_rabbitmq
     image: rabbitmq:3-management
     privileged: true
+    networks:
+      - monitoring
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER-}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS-}
+      prometheus.return_per_object_metrics: "true"  # Enable per-object metrics
     ports:
       - "5672:5672"   # RabbitMQ
       - "15672:15672" # RabbitMQ Management UI
@@ -18,3 +21,37 @@ services:
       sh -c "rabbitmq-plugins enable rabbitmq_prometheus &&
              rabbitmq-plugins enable rabbitmq_management &&
              rabbitmq-server"
+  influxdb:
+    image: influxdb:2.7
+    container_name: influxdb
+    networks:
+      - monitoring
+    ports:
+      - "8086:8086"  # Map InfluxDB port to host
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_DEFAULT_USER-}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_DEFAULT_PASS-}
+      - DOCKER_INFLUXDB_INIT_ORG=fromedwin
+      - DOCKER_INFLUXDB_INIT_BUCKET=fromedwin
+      - DOCKER_INFLUXDB_INIT_RETENTION=1w  # 1 week retention policy
+    volumes:
+      - ./data/influxdb:/var/lib/influxdb2
+  telegraf:
+    image: telegraf:latest
+    container_name: telegraf
+    networks:
+      - monitoring
+    environment:
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
+      - INFLUXDB_BUCKET=fromedwin
+      - INFLUXDB_ORG=fromedwin
+    ports:
+      - "9273:9273"  # Expose Telegraf Prometheus plugin metrics
+    volumes:
+      - ./services/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+
+networks:
+  monitoring:
+    driver: bridge
