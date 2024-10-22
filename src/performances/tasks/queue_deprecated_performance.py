@@ -3,8 +3,6 @@ import requests
 from celery import shared_task, current_app
 from django.conf import settings
 
-QUEUE_NAME = 'fromedwin_lighthouse_queue'
-
 @shared_task(bind=True)
 def queue_deprecated_performance(self):
 
@@ -43,4 +41,4 @@ def queue_deprecated_performance(self):
 
     for performance in performances:
         task_kwargs = {'id': performance.get('id'), 'url': performance.get('url')}
-        current_app.send_task('fetch_lighthouse_report', kwargs=task_kwargs, queue=QUEUE_NAME, task_id=f'performance_{performance.get('id')}')
+        current_app.send_task('fetch_lighthouse_report', kwargs=task_kwargs, queue=settings.CELERY_QUEUE_LIGHTHOUSE, task_id=f'performance_{performance.get('id')}')

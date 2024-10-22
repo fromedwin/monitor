@@ -301,6 +301,10 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'  # Adjust if needed
 
+# List of queue for messages
+CELERY_QUEUE = 'fromedwin_queue'
+CELERY_QUEUE_LIGHTHOUSE = 'fromedwin_lighthouse_queue'
+
 INFLUXDB_URL = os.getenv('INFLUXDB_URL', 'http://localhost:8086')
 INFLUXDB_TOKEN = os.getenv('INFLUXDB_TOKEN')
 INFLUXDB_ORG = os.getenv('INFLUXDB_ORG', 'fromedwin')

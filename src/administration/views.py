@@ -25,6 +25,7 @@ def administration(request):
     bucket = settings.INFLUXDB_BUCKET
 
     lighthouse_worker = None
+    celery_worker = None
 
     # Connect to InfluxDB
     with InfluxDBClient(url=url, token=token, org=org) as client:
@@ -38,8 +39,8 @@ def administration(request):
             |> range(start: {start_time}, stop: {end_time})
             |> filter(fn: (r) => r["_measurement"] == "rabbitmq_prometheus")
             |> filter(fn: (r) => r["_field"] == "rabbitmq_queue_consumers")
-            |> filter(fn: (r) => r["queue"] == "fromedwin_lighthouse_queue")
-            |> aggregateWindow(every: 15m, fn: last, createEmpty: false)
+            |> filter(fn: (r) => r["queue"] == "{settings.CELERY_QUEUE_LIGHTHOUSE}")
+            |> aggregateWindow(every: 1m, fn: last, createEmpty: false)
             |> yield(name: "last")
         '''
 
@@ -50,6 +51,28 @@ def administration(request):
                 for record in table.records:
                     logging.error(record.get_value())
                     lighthouse_worker = record.get_value()
+
+        except Exception as e:
+            logging.error(f'Error querying InfluxDB: {e}')
+
+        
+        # Define your Flux query
+        flux_query = f'''
+        from(bucket: "{bucket}")
+            |> range(start: {start_time}, stop: {end_time})
+            |> filter(fn: (r) => r["_measurement"] == "rabbitmq_prometheus")
+            |> filter(fn: (r) => r["_field"] == "rabbitmq_queue_consumers")
+            |> filter(fn: (r) => r["queue"] == "{settings.CELERY_QUEUE}")
+            |> aggregateWindow(every: 1m, fn: last, createEmpty: false)
+            |> yield(name: "last")
+        '''
+
+        try:
+            # Execute the query
+            result = query_api.query(org=org, query=flux_query)
+            for table in result:
+                for record in table.records:
+                    celery_worker = record.get_value()
 
         except Exception as e:
             logging.error(f'Error querying InfluxDB: {e}')
@@ -85,6 +108,7 @@ def administration(request):
             'users_count': User.objects.count(),
             'url_count': Service.objects.count(),
             'lighthouse_worker': lighthouse_worker,
+            'celery_worker': celery_worker,
         }
     })
 

@@ -153,7 +153,11 @@
           <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{% if stats.lighthouse_worker %}{{ stats.lighthouse_worker }}{% else %}Unknown{% endif %}</dd>
         </div>
 
-        
+        <div class="flex flex-col bg-gray-400/5 p-8">
+          <dt class="text-sm font-semibold leading-6 text-gray-600">Celery workers</dt>
+          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{% if stats.celery_worker %}{{ stats.celery_worker }}{% else %}Unknown{% endif %}</dd>
+        </div>
+
       </dl>
     </div>
   </div>
