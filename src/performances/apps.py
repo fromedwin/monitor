@@ -5,4 +5,5 @@ class PerformancesConfig(AppConfig):
     name = 'performances'
 
     def ready(self):
+        import performances.signals # Load signals
         import performances.tasks.queue_deprecated_performance

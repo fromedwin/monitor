@@ -13,5 +13,6 @@ def post_save_created(sender, instance, created, **kwargs):
     if created:
         instance.favicon_task_status = 'PENDING'
         instance.favicon_last_edited = timezone.now()
+        instance.save()
         fetch_sitemap.delay(instance.pk, instance.url)
         fetch_favicon.delay(instance.pk, instance.url)

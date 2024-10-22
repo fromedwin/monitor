@@ -29,10 +29,10 @@ def fetch_deprecated_performances(request, secret_key):
         # return http unauthorized if secret key doesn't match
         return JsonResponse({}, status=401)
 
-    one_hour_ago = timezone.now() - timedelta(hours=1)
+    deprecated_if_before = timezone.now() - timedelta(minutes=settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES)
     # Filter per last request date OR request_run true or last request date undefined
 
-    performances = Performance.objects.filter(Q(request_run=True) | Q(last_request_date__isnull=True) | Q(last_request_date__lt=timezone.now()-one_hour_ago))
+    performances = Performance.objects.filter(Q(request_run=True) | Q(last_request_date__isnull=True) | Q(last_request_date__lt=deprecated_if_before))
 
     for performance in performances:
         performance.last_request_date = timezone.now()
