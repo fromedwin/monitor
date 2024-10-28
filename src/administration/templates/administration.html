@@ -74,15 +74,10 @@
                 <div class="flex items-center">
                   <div class="ml-4">
                     <div class="text-sm font-medium text-gray-900">
-                      <a href="{{ server.href }}">{{ server.href }}</a>
                     </div>
                     <div class="text-sm text-gray-500">
                       {{ server.uuid }}
                     </div>
-                    {% if server.authbasic.all %}<div class="text-sm text-gray-500">
-                      {{ server.authbasic.all.0.username }} {{ server.authbasic.all.0.password }}
-                    </div>
-                    {% endif %}
                   </div>
                 </div>
               </td>
@@ -90,24 +85,9 @@
                 <div class="text-sm text-gray-900">{{ server.last_seen_from }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                {% if server.monitoring %}
                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-100 text-emerald-800">
-                  Monitoring
+                  Prometheus
                 </span>
-                {% else %}
-                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                  Monitoring
-                </span>
-                {% endif %}
-                {% if server.performance %}
-                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-100 text-emerald-800">
-                  Performance
-                </span>
-                {% else %}
-                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                  Performance
-                </span>
-                {% endif %}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <a href="/clients/prometheus/{{ server.uuid }}" class="text-indigo-600 hover:text-indigo-900">Prometheus</a> - 
@@ -150,12 +130,12 @@
 
         <div class="flex flex-col bg-gray-400/5 p-8">
           <dt class="text-sm font-semibold leading-6 text-gray-600">Lighthouse workers</dt>
-          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{% if stats.lighthouse_worker %}{{ stats.lighthouse_worker }}{% else %}Unknown{% endif %}</dd>
+          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{% if stats.lighthouse_worker is not None %}{{ stats.lighthouse_worker }}{% else %}Unknown{% endif %}</dd>
         </div>
 
         <div class="flex flex-col bg-gray-400/5 p-8">
           <dt class="text-sm font-semibold leading-6 text-gray-600">Celery workers</dt>
-          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{% if stats.celery_worker %}{{ stats.celery_worker }}{% else %}Unknown{% endif %}</dd>
+          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{% if stats.celery_worker is not None %}{{ stats.celery_worker }}{% else %}Unknown{% endif %}</dd>
         </div>
 
       </dl>

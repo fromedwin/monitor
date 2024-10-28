@@ -88,7 +88,7 @@ scrape_configs:
     - __param_target
     target_label: instance
   - target_label: __address__
-    replacement: blackbox:9115
+    replacement: fromedwin_blackbox:9115
 
 # Parse http probe for service WITHOUT TLS SECURE VERIFICATION
 - job_name: is_service_down_and_insecure
@@ -114,4 +114,7 @@ scrape_configs:
     - __param_target
     target_label: instance
   - target_label: __address__
-    replacement: blackbox:9115
+    replacement: fromedwin_blackbox:9115
+
+remote_write:
+ - url: "http://fromedwin_worker_telegraf:1234/receive"

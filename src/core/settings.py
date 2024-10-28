@@ -309,3 +309,9 @@ INFLUXDB_URL = os.getenv('INFLUXDB_URL', 'http://localhost:8086')
 INFLUXDB_TOKEN = os.getenv('INFLUXDB_TOKEN')
 INFLUXDB_ORG = os.getenv('INFLUXDB_ORG', 'fromedwin')
 INFLUXDB_BUCKET = os.getenv('INFLUXDB_BUCKET', 'fromedwin')
+
+
+INFLUXDB_URL_PROMETHEUS = INFLUXDB_URL
+# If starts with http://localhost we replace with docker host
+if INFLUXDB_URL_PROMETHEUS.startswith('http://localhost'):
+    INFLUXDB_URL_PROMETHEUS = INFLUXDB_URL_PROMETHEUS.replace('http://localhost', 'http://host.docker.internal')

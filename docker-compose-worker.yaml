@@ -24,7 +24,7 @@ services:
       - .:/etc/monitor
     environment:
       CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
-      BACKEND_URL: ${SERVER_URL-http://host.docker.internal:8000}
+      BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
       CHROME_PATH: /usr/lib/chromium/chrome
       SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
     command: ['sh', '/etc/monitor/worker/lighthouse/entrypoint.sh']
@@ -57,9 +57,31 @@ services:
     container_name: fromedwin_blackbox
     command:
       - '--config.file=/etc/prometheus/blackbox.yml'
-    user: "65534"
+    # user: "65534"
     volumes:
       - ./worker/blackbox/blackbox.yml:/etc/prometheus/blackbox.yml:ro
+  fromedwin_heartbeats:
+    container_name: fromedwin_heartbeats
+    build: 
+      context: .
+      dockerfile: ./worker/heartbeats/Dockerfile
+    volumes:
+      - .:/etc/fromedwin_heartbeats
+      - ./worker/heartbeats/requirements.txt:/etc/fromedwin_heartbeats/worker/heartbeats/requirements.txt:ro
+    environment:
+      BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
+      SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
+    entrypoint: /etc/fromedwin_heartbeats/worker/heartbeats/entrypoint.sh
+  fromedwin_worker_telegraf:
+    image: telegraf:latest
+    container_name: fromedwin_worker_telegraf
+    environment:
+      - INFLUXDB_URL=${INFLUXDB_URL-http://host.docker.internal:8086}
+      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
+      - INFLUXDB_BUCKET=fromedwin
+      - INFLUXDB_ORG=fromedwin
+    volumes:
+      - ./worker/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
 
 networks:
   monitoring:

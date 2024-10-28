@@ -24,8 +24,8 @@ def administration(request):
     org = settings.INFLUXDB_ORG
     bucket = settings.INFLUXDB_BUCKET
 
-    lighthouse_worker = None
-    celery_worker = None
+    lighthouse_worker = 0
+    celery_worker = 0
 
     # Connect to InfluxDB
     with InfluxDBClient(url=url, token=token, org=org) as client:
@@ -49,10 +49,10 @@ def administration(request):
             result = query_api.query(org=org, query=flux_query)
             for table in result:
                 for record in table.records:
-                    logging.error(record.get_value())
                     lighthouse_worker = record.get_value()
 
         except Exception as e:
+            lighthouse_worker = None
             logging.error(f'Error querying InfluxDB: {e}')
 
         
@@ -75,6 +75,7 @@ def administration(request):
                     celery_worker = record.get_value()
 
         except Exception as e:
+            celery_worker = None
             logging.error(f'Error querying InfluxDB: {e}')
 
     servers = []

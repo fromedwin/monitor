@@ -30,8 +30,6 @@ class Server(models.Model):
     # Enfine reported on heartbeat as running on it
     monitoring = models.BooleanField(default=False)
     performance = models.BooleanField(default=False)
-    # URL used to fetch server
-    url = models.CharField(max_length=256, null=False, blank=False)
 
     @property
     def href(self):
