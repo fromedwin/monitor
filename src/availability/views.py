@@ -22,7 +22,7 @@ from projects.forms import ProjectForm
 
 from .models import Service, HTTPCodeService, HTTPMockedCodeService
 from .forms import ServiceForm, HTTPCodeServiceForm, MockedHTTPCodeServiceForm
-from .utils import get_project_stats
+from .utils import get_project_stats, get_user_stats
 
 HEADERS = {
     'User-Agent': 'FromEdwinBot Python Django',
@@ -248,42 +248,11 @@ def availabilities_all(request):
     """
     id = request.user.id
 
-    content = {}
-    services = {}
-
-    try:
-        servers = Server.objects.filter(
-            monitoring=True,
-            last_seen__gte=timezone.now() - timezone.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
-        ).order_by('-last_seen')
-
-        server = servers[0]
-        authbasic = server.authbasic.first()
-
-        """
-            Fetch prometheus probe duration seconds data
-        """
-        response = requests.get(f'{server.href}/fastapi/availabilities/{id}', headers=HEADERS, auth=(authbasic.username, authbasic.password))
-        response.raise_for_status()
-        content = json.loads(response.content)
-
-        services = content['services']
-
-        for service in services:
-            try:
-                services[service]['title'] = Service.objects.get(id=service).title
-            except:
-                # Remove data from availability is Service no longer exist (jsut deleted use case)
-                services = {k: v for k, v in services.items() if k != service}
-
-    except Exception as err:
-        content = {
-            'error': getattr(err, 'message', repr(err))
-        }
+    stats = get_user_stats(id)
 
     return render(request, 'project/availabilities.html', {
         'projects': request.user.projects.all(),
         'settings': settings,
-        'services': services,
+        'services': stats['services'],
         'url': f'{request.META["wsgi.url_scheme"]}://{request.META["HTTP_HOST"]}',
     })

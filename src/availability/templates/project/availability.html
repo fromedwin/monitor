@@ -173,7 +173,7 @@
                           </span>
 
                           <span class="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 mb-2 mr-1">
-                            {{ data.probe_tls_version_info }}
+                            TLS {{ data.probe_tls_version_info }}
                           </span>
                           <span class="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 mb-2 mr-1">
                             SSL expiring in {{ data.probe_ssl_earliest_cert_expiry|timestamp_to_date|timeuntil }}
