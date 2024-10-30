@@ -1,5 +1,6 @@
 import requests
 import json
+import logging
 
 from django.conf import settings
 from django.urls import reverse
@@ -21,6 +22,7 @@ from projects.forms import ProjectForm
 
 from .models import Service, HTTPCodeService, HTTPMockedCodeService
 from .forms import ServiceForm, HTTPCodeServiceForm, MockedHTTPCodeServiceForm
+from .utils import get_project_stats
 
 HEADERS = {
     'User-Agent': 'FromEdwinBot Python Django',
@@ -90,48 +92,15 @@ def project_availability(request, id):
 
     content = {}
     services = {}
-    graph = []
 
-    try:
-        servers = Server.objects.filter(
-            monitoring=True,
-            last_seen__gte=timezone.now() - timezone.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
-        ).order_by('-last_seen')
-
-        server = servers[0]
-        authbasic = server.authbasic.first()
-
-        """
-            Fetch prometheus probe duration seconds data
-        """
-        response = requests.get(f'{server.href}/fastapi/availability/{id}?duration={duration}', headers=HEADERS, auth=(authbasic.username, authbasic.password))
-        response.raise_for_status()
-        content = json.loads(response.content)
-
-        services = content['services']
-
-        for service in services:
-            try:
-                services[service]['title'] = Service.objects.get(id=service).title
-            except Exception as err:
-                if settings.DEBUG:
-                    print(err)
-                # Remove data from availability is Service no longer exist (jsut deleted use case)
-                services = {k: v for k, v in services.items() if k != service}
-
-    except Exception as err:
-        content = {
-            'error': getattr(err, 'message', repr(err))
-        }
-        if settings.DEBUG:
-            print(err)
+    stats = get_project_stats(id, duration)
 
     return render(request, 'project/availability.html', {
         'project': project,
         'incidents': incidents,
         'days': days,
         'settings': settings,
-        'services': services,
+        'services': stats['services'],
         'duration': duration,
         'availability': {
             '1': project.availability(days=1),
@@ -145,7 +114,7 @@ def project_availability(request, id):
 @login_required
 def service_list(request, application_id):
     """
-    List of services
+        List of services
     """
     return render(request, 'project/services/service_list.html', {'application_id': application_id})
 
