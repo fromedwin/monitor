@@ -26,6 +26,7 @@ def administration(request):
 
     lighthouse_worker = 0
     celery_worker = 0
+    lighthouse_queue = None
 
     # Connect to InfluxDB
     with InfluxDBClient(url=url, token=token, org=org) as client:
@@ -73,11 +74,28 @@ def administration(request):
             for table in result:
                 for record in table.records:
                     celery_worker = record.get_value()
-
         except Exception as e:
             celery_worker = None
             logging.error(f'Error querying InfluxDB: {e}')
 
+        # Define your Flux query
+        flux_query = f'''
+        from(bucket: "{bucket}")
+            |> range(start: {start_time}, stop: {end_time})
+            |> filter(fn: (r) => r["_measurement"] == "rabbitmq_prometheus")
+            |> filter(fn: (r) => r["_field"] == "rabbitmq_queue_messages")
+            |> filter(fn: (r) => r["queue"] == "fromedwin_lighthouse_queue")
+            |> last()
+        '''
+
+        try:
+            # Execute the query
+            result = query_api.query(org=org, query=flux_query)
+            for table in result:
+                for record in table.records:
+                    lighthouse_queue = record.get_value()
+        except Exception as e:
+            logging.error(f'Error querying InfluxDB: {e}')
     servers = []
 
     # if get success exist boolean true
@@ -94,22 +112,17 @@ def administration(request):
         last_seen__gte=timezone.now() - timezone.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
     ).order_by('-creation_date')
 
-    deprecated_if_before = timezone.now() - timedelta(minutes=settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES)
-
-    waiting_performance_count = Performance.objects.filter(Q(request_run=True) | Q(last_request_date__isnull=True) | Q(last_request_date__lt=deprecated_if_before)).count()
-    performance_count = Performance.objects.count()
-
     return render(request, 'administration.html', {
         'servers': servers,
         'settings': settings,
         'email_success': email_success,
         'email_fail': email_fail,
         'stats': {
-            'waiting_performance_count': round((waiting_performance_count / performance_count * 100), 2) if performance_count else 0,
             'users_count': User.objects.count(),
             'url_count': Service.objects.count(),
             'lighthouse_worker': lighthouse_worker,
             'celery_worker': celery_worker,
+            'lighthouse_queue': lighthouse_queue,
         }
     })
 
