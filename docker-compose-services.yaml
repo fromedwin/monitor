@@ -61,8 +61,6 @@ services:
       CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
     volumes:
       - .:/app
-    ports:
-      - "8010:8000"
     entrypoint: ["/app/scheduler/entrypoint.sh"]
 
 networks:

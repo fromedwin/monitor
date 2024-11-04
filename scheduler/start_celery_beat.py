@@ -17,7 +17,6 @@ try:
         'celery', '-A', 'core', 'beat',
         '--loglevel=info',
         '--scheduler', 'django_celery_beat.schedulers:DatabaseScheduler',
-        '--hostname', beat_hostname,
     ])
 except Exception as e:
     print(f"Failed to start Celery Beat: {e}")

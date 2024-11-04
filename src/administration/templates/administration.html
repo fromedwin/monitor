@@ -118,12 +118,12 @@
       <dl class="grid grid-cols-1 gap-0.5 overflow-hidden rounded-2xl text-center sm:grid-cols-2 lg:grid-cols-4">
         <div class="flex flex-col bg-gray-400/5 p-8">
           <dt class="text-sm font-semibold leading-6 text-gray-600">General queue</dt>
-          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{{ stats.fromedwin_queue|floatformat:0 }}</dd>
+          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{% if stats.fromedwin_queue != None %}{{ stats.fromedwin_queue|floatformat:0 }}{% else %}No queue{% endif %}</dd>
         </div>
 
         <div class="flex flex-col bg-gray-400/5 p-8">
           <dt class="text-sm font-semibold leading-6 text-gray-600">Lightouse msg in queue</dt>
-          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{{ stats.lighthouse_queue|floatformat:0 }}</dd>
+          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{% if stats.lighthouse_queue != None %}{{ stats.lighthouse_queue|floatformat:0 }}{% else %}No queue{% endif %}</dd>
         </div>
         
         <div class="flex flex-col bg-gray-400/5 p-8">
