@@ -1,5 +1,5 @@
   {% extends 'application.html' %}
-{% load socialaccount account tai
+{% load static socialaccount account %}
 
 {% block html_head_title %}Administration - FromEdwin{% endblock %}
 
@@ -37,7 +37,15 @@
 </a>
 
 <a href="/admin/" target="_blank" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-2">
-  Django administration
+  <img src="{% static 'logos/django-icon.svg' %}" alt="" style="height: 1.2em; display: inline; margin-right: 8px;" /> Django administration
+</a>
+
+<a href="{{ settings.CELERY_BROKER_UI_URL }}" target="_blank" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-2">
+  <img src="{% static 'logos/rabbitmq-icon.svg' %}" alt="" style="height: 1.2em; display: inline; margin-right: 8px;" /> Rabbit MQ
+</a>
+
+<a href="{{ settings.INFLUXDB_URL }}" target="_blank" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-2">
+  <img src="{% static 'logos/influxdb-icon.svg' %}" alt="" style="height: 1.2em; display: inline; margin-right: 8px;" /> Influx DB
 </a>
 
 <div class="pt-8 pb-5 border-b border-gray-200 sm:flex sm:items-center sm:justify-between">

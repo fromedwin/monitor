@@ -295,6 +295,7 @@ FREEMIUM_PERFORMANCE = 3
 
 # Celery settings
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'amqp://admin:admin@localhost')  # RabbitMQ URL
+CELERY_BROKER_UI_URL = os.getenv('RABBITMQ_UI_URL', 'http://localhost:15672')
 CELERY_RESULT_BACKEND = 'rpc://'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
