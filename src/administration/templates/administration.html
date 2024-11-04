@@ -117,10 +117,15 @@
     <div class="mx-auto max-w-2xl lg:max-w-none">
       <dl class="grid grid-cols-1 gap-0.5 overflow-hidden rounded-2xl text-center sm:grid-cols-2 lg:grid-cols-4">
         <div class="flex flex-col bg-gray-400/5 p-8">
-          <dt class="text-sm font-semibold leading-6 text-gray-600">Lightouse msg in queue</dt>
-          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{{ stats.lighthouse_queue }}</dd>
+          <dt class="text-sm font-semibold leading-6 text-gray-600">General queue</dt>
+          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{{ stats.fromedwin_queue|floatformat:0 }}</dd>
         </div>
 
+        <div class="flex flex-col bg-gray-400/5 p-8">
+          <dt class="text-sm font-semibold leading-6 text-gray-600">Lightouse msg in queue</dt>
+          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{{ stats.lighthouse_queue|floatformat:0 }}</dd>
+        </div>
+        
         <div class="flex flex-col bg-gray-400/5 p-8">
           <dt class="text-sm font-semibold leading-6 text-gray-600">Users</dt>
           <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{{ stats.users_count }}</dd>
@@ -138,12 +143,12 @@
 
         <div class="flex flex-col bg-gray-400/5 p-8">
           <dt class="text-sm font-semibold leading-6 text-gray-600">Lighthouse workers</dt>
-          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{% if stats.lighthouse_worker is not None %}{{ stats.lighthouse_worker }}{% else %}Unknown{% endif %}</dd>
+          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{% if stats.lighthouse_worker is not None %}{{ stats.lighthouse_worker|floatformat:0 }}{% else %}Unknown{% endif %}</dd>
         </div>
 
         <div class="flex flex-col bg-gray-400/5 p-8">
           <dt class="text-sm font-semibold leading-6 text-gray-600">Celery workers</dt>
-          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{% if stats.celery_worker is not None %}{{ stats.celery_worker }}{% else %}Unknown{% endif %}</dd>
+          <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900">{% if stats.celery_worker is not None %}{{ stats.celery_worker|floatformat:0 }}{% else %}Unknown{% endif %}</dd>
         </div>
 
       </dl>

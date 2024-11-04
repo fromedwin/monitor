@@ -2,7 +2,6 @@ version: '3.8'
 
 services:
   fromedwin_celery:
-    container_name: fromedwin_celery
     build: 
       context: .
       dockerfile: ./Dockerfile
@@ -10,10 +9,10 @@ services:
       CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
       SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
       BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
+    deploy:
+      replicas: ${CELERY_WORKER_REPLICA-1}
     volumes:
       - .:/app
-    ports:
-      - "8011:8000"
     entrypoint: ["/app/worker/celery/entrypoint.sh"]
   fromedwin_lighthouse:
     build: ./worker/lighthouse

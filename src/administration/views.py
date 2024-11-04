@@ -26,6 +26,7 @@ def administration(request):
 
     lighthouse_worker = 0
     celery_worker = 0
+    fromedwin_queue = None
     lighthouse_queue = None
 
     # Connect to InfluxDB
@@ -96,6 +97,25 @@ def administration(request):
                     lighthouse_queue = record.get_value()
         except Exception as e:
             logging.error(f'Error querying InfluxDB: {e}')
+
+        # Define your Flux query
+        flux_query = f'''
+        from(bucket: "{bucket}")
+            |> range(start: {start_time}, stop: {end_time})
+            |> filter(fn: (r) => r["_measurement"] == "rabbitmq_prometheus")
+            |> filter(fn: (r) => r["_field"] == "rabbitmq_queue_messages")
+            |> filter(fn: (r) => r["queue"] == "fromedwin_queue")
+            |> last()
+        '''
+
+        try:
+            # Execute the query
+            result = query_api.query(org=org, query=flux_query)
+            for table in result:
+                for record in table.records:
+                    fromedwin_queue = record.get_value()
+        except Exception as e:
+            logging.error(f'Error querying InfluxDB: {e}')
     servers = []
 
     # if get success exist boolean true
@@ -123,6 +143,7 @@ def administration(request):
             'lighthouse_worker': lighthouse_worker,
             'celery_worker': celery_worker,
             'lighthouse_queue': lighthouse_queue,
+            'fromedwin_queue': fromedwin_queue,
         }
     })
 
