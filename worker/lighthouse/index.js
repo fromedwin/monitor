@@ -67,11 +67,47 @@ const QUEUE_NAME = 'fromedwin_lighthouse_queue';  // The same queue specified in
 		  console.log('received task', msg.properties?.headers?.task);
 		  if (msg.properties?.headers?.task === 'fetch_lighthouse_report') {
 			console.log('received message', message);
-			const args = message[0];
+			// const args = message[0];
 			const kwargs = message[1];
-			console.log(`Received task: ${msg.properties?.headers?.task}`);
-			console.log(`Args: ${args}`);
-			console.log(`Kwargs: ${kwargs}`);
+
+			// If message come from scheduler we verify if the report is still needed
+			// This avoid to run useless task if multiple message were queued
+			if (kwargs.source == 'scheduler') {
+
+				let skip_run = false;
+				console.log(`Checking if report is still needed for ${kwargs.url}`);
+				await fetch(`${BACKEND_URL}/api/report/${SECRET_KEY}/performance/${kwargs.id}`, {
+					method: 'GET',
+					headers: {
+						'User-Agent': USER_AGENT,
+					}
+				}).then(async (returnedResponse) => {
+					// Get body as json
+					const data = await returnedResponse.json();
+
+					console.log("Report has been fetched", data);
+					const now = new Date();
+					const goodIfBefore = new Date(now.getTime() - data.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES * 60000);
+					const lastReportDate = new Date(data.last_report_date);
+
+					if (lastReportDate > goodIfBefore) {
+						// Acknowledge the message as it is not needed
+						console.log(`No need to re-run ${kwargs.url}, a report is already available.`);
+						skip_run = true;
+						// wait 400 ms to avoid looping too fast
+						await new Promise(resolve => setTimeout(resolve, 400));
+						channel.ack(msg);
+					} else {
+						console.log(`Last report is too old (${lastReportDate}), re-running ${kwargs.url}`);
+					}
+				}).catch((error) => {
+					console.error(error)
+				});
+				if (skip_run) {
+					return;
+				}
+			}
+
 			// Process the task here
 
 			console.log(`Running test on ${kwargs.url}`);

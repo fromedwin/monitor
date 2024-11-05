@@ -1,4 +1,5 @@
 from datetime import timedelta
+import logging
 import json
 import base64
 from django.utils import timezone
@@ -30,8 +31,8 @@ def fetch_deprecated_performances(request, secret_key):
         return JsonResponse({}, status=401)
 
     deprecated_if_before = timezone.now() - timedelta(minutes=settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES)
-    # Filter per last request date OR request_run true or last request date undefined
 
+    # Filter per last request date OR request_run true or last request date undefined
     performances = Performance.objects.filter(Q(request_run=True) | Q(last_request_date__isnull=True) | Q(last_request_date__lt=deprecated_if_before))
 
     for performance in performances:
@@ -43,8 +44,26 @@ def fetch_deprecated_performances(request, secret_key):
         'performances': [{'id': performance.pk, 'url': performance.url} for performance in performances]
     })
 
-@api_view(["POST"])
-def save_report(request, secret_key, performance_id):
+
+@api_view(["GET", "POST"])
+def report_api(request, secret_key, performance_id):
+
+    if request.method == "GET":
+        # Use django settings secret_key to authenticate django worker
+        if secret_key != settings.SECRET_KEY:
+            # return http unauthorized if secret key doesn't match
+            return JsonResponse({}, status=401)
+
+        performance = get_object_or_404(Performance, id=performance_id)
+        last_report = performance.reports.last()
+
+        return JsonResponse({
+            # List of ids and urls to fetch
+            'id': performance.pk,
+            'url': performance.url,
+            'last_report_date': last_report.creation_date if last_report else None,
+            'LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES': settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES
+        })
 
     # Use django settings secret_key to authenticate django worker
     if secret_key != settings.SECRET_KEY:

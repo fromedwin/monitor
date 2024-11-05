@@ -37,8 +37,9 @@ def queue_deprecated_performance(self):
     response.raise_for_status()
     performances = response.json().get('performances', [])
 
-    logging.info(f'Found {len(list(performances))} performances to refresh after 1h.')
+    logging.info(f'Found {len(list(performances))} performances to refresh with the interval of {settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES} minutes.')
 
+    source = 'scheduler' # Specify this is a scheduled task so when workers fetch the report they can verify if still required based on scheduled interval
     for performance in performances:
-        task_kwargs = {'id': performance.get('id'), 'url': performance.get('url')}
+        task_kwargs = {'id': performance.get('id'), 'url': performance.get('url'), 'source': source}
         current_app.send_task('fetch_lighthouse_report', kwargs=task_kwargs, queue=settings.CELERY_QUEUE_LIGHTHOUSE, task_id=f'performance_{performance.get('id')}')
