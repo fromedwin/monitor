@@ -105,35 +105,7 @@ class Project(models.Model):
             'score_pwa': None,
         }
         last_run = None
-        performances = self.performances.all()
 
-        # If performances are available, we add all p=score for all page then divide by page number
-        if len(performances) > 0:
-            for key in result.keys():
-                if result[key] is None:
-                    result[key] = 0
-
-            try:
-                for performance in performances:
-                    score = performance.last_score()
-                    if performance.reports.last().creation_date:
-                        for key in score.keys():
-                            if score[key]:
-                                result[key] = result[key] + score[key]
-                        if last_run is None or last_run < performance.reports.last().creation_date:
-                            last_run = performance.reports.last().creation_date
-            except:
-                pass
-            for key in score.keys():
-                result[key] = result[key] / len(performances)
-
-        # If no report, we change None to '--' so eschart can display empty diagram
-        for key in result.keys():
-            if result[key] is None:
-                result[key] = '--'
-
-        result['last_run'] = last_run
-        return result
 
     def directory_path(self):
         return f'user_{self.user.pk}/prjct_{self.pk}'
@@ -141,3 +113,24 @@ class Project(models.Model):
     def __str__(self):
         return self.title
 
+
+class Pages(models.Model):
+    """
+    List of all urls identified for a project based on url value
+    """
+    project = models.ForeignKey(
+        Project,
+        on_delete = models.CASCADE,
+        related_name = "pages",
+    )
+    url = models.URLField(max_length=512, blank=False, help_text="URL to monitor")
+    title = models.CharField(max_length=128, blank=True, help_text="Page title")
+    description = models.TextField(blank=True, help_text="Page description")
+    created_at = models.DateTimeField(auto_now_add=True)
+    sitemap_last_seen = models.DateTimeField(help_text="Last time sitemap was reported", null=True, blank=True)
+    scraping_last_seen = models.DateTimeField(help_text="Last time scraping was run", null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['project', 'url'], name='unique_page_project_url')
+        ]

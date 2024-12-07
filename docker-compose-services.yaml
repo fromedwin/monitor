@@ -57,6 +57,7 @@ services:
       context: .
       dockerfile: ./Dockerfile
     environment:
+      SECRET_KEY: ${SECRET_KEY-}
       DATABASE_URL: ${DATABASE_URL-}
       CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
     volumes:

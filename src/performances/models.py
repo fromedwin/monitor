@@ -1,20 +1,20 @@
 import os
 from django.db import models
-from projects.models import Project
+from projects.models import Pages
 from django.core.files.storage import default_storage
 
 from constants import LIGHTHOUSE_FORMFACTOR_CHOICES
 
-class Performance(models.Model):
+class Lighthouse(models.Model):
     """
     A performance is a url to run google lighthouse on at regular intervals
     """
-    project = models.ForeignKey(
-        Project,
+    page = models.OneToOneField(
+        Pages,
         on_delete = models.CASCADE,
-        related_name = "performances",
+        related_name = "lighthouse",
+        primary_key=True,
     )
-    url = models.URLField(max_length=512, blank=False, help_text="Should start with http:// or https://")
     creation_date = models.DateTimeField(auto_now_add=True, editable=False, help_text="Creation date")
     request_run = models.BooleanField(default=False, help_text="Request a run")
     last_request_date = models.DateTimeField(blank=True, null=True, help_text="Last request date")
@@ -43,10 +43,10 @@ class Performance(models.Model):
             }
 
     def __str__(self):
-        return f'{self.url}'
+        return f'{self.page.url}'
 
     def directory_path(self):
-        return f'{self.project.directory_path()}/performances/perf_{self.pk}'
+        return f'{self.page.project.directory_path()}/performances/perf_{self.pk}'
 
     def delete(self):
         super().delete()
@@ -57,11 +57,6 @@ class Performance(models.Model):
                 default_storage.delete(self.directory_path())
             except Exception as e:
                 print(f"Error deleting folder: {e}")
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['project', 'url'], name='unique_project_url')
-        ]
 
 """
     REPORT MODEL
@@ -81,7 +76,7 @@ class Report(models.Model):
     A django model for a lighthouse report
     """
     performance = models.ForeignKey(
-        Performance,
+        Lighthouse,
         on_delete = models.CASCADE,
         related_name = "reports",
     )
@@ -101,20 +96,3 @@ class Report(models.Model):
 
     def __str__(self):
         return f'Performance {self.performance.id} - {self.creation_date}'
-
-class ReportScreenshots(models.Model):
-    """
-    A django model for a lighthouse report screenshot
-    """
-    report = models.ForeignKey(
-        Report,
-        on_delete = models.CASCADE,
-        related_name = "screenshots",
-    )
-    screenshot = models.ImageField(upload_to='lighthouse_screenshots', blank=True, null=True, help_text="Lighthouse screenshot")
-    timestamp = models.DateTimeField(blank=True, null=True, help_text="Screenshot")
-    timing = models.IntegerField(blank=True, null=True, help_text="Lighthouse timing")
-    creation_date = models.DateTimeField(auto_now_add=True, editable=False, help_text="Creation date")
-
-    def __str__(self):
-        return f'Report {self.report.id} - {self.creation_date}'

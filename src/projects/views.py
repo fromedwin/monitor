@@ -1,28 +1,14 @@
-import requests
-import json
-
 from django.conf import settings
 from django.urls import reverse
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.utils import timezone
-from django.utils.dateformat import format
-from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
-
-from rest_framework.authtoken.models import Token
-from allauth.socialaccount.models import SocialApp
 
 from .forms import ProjectForm, ProjectCreateForm
 
 from core.decorators import waiting_list_approved_only
 from projects.models import Project
-from availability.models import Service, HTTPCodeService, HTTPMockedCodeService
-from workers.models import Server
 from incidents.models import Incident
-
-from performances.models import Performance
 
 @login_required
 @waiting_list_approved_only()

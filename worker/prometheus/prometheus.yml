@@ -53,58 +53,9 @@ scrape_configs:
   static_configs:
   
   - labels:
-      service: 4
-      project: 3
+      service: 1
+      project: 1
       user: 1
-    targets:
-    - https://sebastienbarbier.com
-    
-  - labels:
-      service: 6
-      project: 3
-      user: 1
-    targets:
-    - http://host.docker.internal:8000/healthy/2/
-    
-  - labels:
-      service: 8
-      project: 6
-      user: 1
-    targets:
-    - https://seven23.io
-    
-  - labels:
-      service: 9
-      project: 6
-      user: 1
-    targets:
-    - http://host.docker.internal:8000/healthy/3/
-    
-  - labels:
-      service: 12
-      project: 8
-      user: 1
-    targets:
-    - https://fromedwin.com
-    
-  - labels:
-      service: 17
-      project: 13
-      user: 1
-    targets:
-    - https://fukurume.com
-    
-  - labels:
-      service: 18
-      project: 14
-      user: 1
-    targets:
-    - https://www.unique.ch
-    
-  - labels:
-      service: 11
-      project: 7
-      user: 30
     targets:
     - https://sebastienbarbier.com
     

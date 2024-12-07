@@ -3,6 +3,7 @@ from celery import shared_task, current_app
 from django.conf import settings
 import requests
 from .fetch_sitemap import fetch_sitemap
+from .scrape_page import scrape_page
 
 @shared_task(bind=True)
 def queue_deprecated_sitemaps(self):

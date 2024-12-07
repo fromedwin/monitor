@@ -62,21 +62,6 @@ You can run them using the following:
 docker-compose -f docker-compose-services.yaml up -d
 ```
 
-### Scheduler
-
-Scheduler will run periodical tasks and propagate to workers
-
-```
-cd src
-python ../scheduler/start_celery_beat.py
-```
-
-or using docker
-
-```
-docker-compose -f docker-compose-scheduler.yaml up -d
-```
-
 ### Worker
 
 Worker will listen to tasks and run then individually 

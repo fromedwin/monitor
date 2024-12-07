@@ -30,6 +30,7 @@ author = 'Sébastien Barbier'
 extensions = [
 	'myst_parser',
 	'sphinx_rtd_theme',
+    'sphinxcontrib.mermaid',
 ]
 
 # Add any paths that contain templates here, relative to this directory.

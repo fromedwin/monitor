@@ -2,7 +2,7 @@ from django.urls import path
 
 from .views import project, projects_form, projects_delete, projects_add, projects_welcome
 from incidents.views import incidents
-from .api import fetch_deprecated_favicons, fetch_deprecated_sitemaps, save_favicon, save_sitemap
+from .api import fetch_deprecated_favicons, fetch_deprecated_sitemaps, save_favicon, save_sitemap, save_scaping
 
 # from .api import fetch_deprecated_favicons, save_favicon
 
@@ -35,4 +35,7 @@ urlpatterns += [
     path('api/save_favicon/<str:secret_key>/<int:project_id>/', save_favicon, name='save_favicon'),
     # 
     path('api/save_sitemap/<str:secret_key>/<int:project_id>/', save_sitemap, name='save_sitemap'),
+    # 
+    path('api/save_scaping/<str:secret_key>/<int:page_id>/', save_scaping, name='save_scaping'),
 ]
+

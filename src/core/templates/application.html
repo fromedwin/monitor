@@ -133,11 +133,6 @@
                 <span class="truncate">All availabilities</span>
               </a>
 
-              {% starts_with request.path '/performances' as is_selected %}
-              <a href="{% url 'performances_all' %}" class="{% if is_selected %}bg-gray-100 text-gray-900 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% else %}text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% endif %}">
-                <span class="truncate">All performances</span>
-              </a>
-
               {% starts_with request.path '/notifications' as is_selected %}
               <a href="{% url 'messages' %}" class="{% if is_selected %}bg-gray-100 text-gray-900 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% else %}text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% endif %}">
                 <span class="truncate">All notifications</span>
@@ -322,11 +317,6 @@
             {% starts_with request.path '/availabilities' as is_selected %}
             <a href="{% url 'availabilities_all' %}" class="{% if is_selected %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-3 py-2 text-sm font-medium{% else %}group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900{% endif %}">
               <span class="truncate">All availabilities</span>
-            </a>
-
-            {% starts_with request.path '/performances' as is_selected %}
-            <a href="{% url 'performances_all' %}" class="{% if is_selected %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-3 py-2 text-sm font-medium{% else %}group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900{% endif %}">
-              <span class="truncate">All performances</span>
             </a>
 
             {% starts_with request.path '/messages' as is_selected %}

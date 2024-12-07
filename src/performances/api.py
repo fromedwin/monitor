@@ -1,5 +1,4 @@
 from datetime import timedelta
-import logging
 import json
 import base64
 from django.utils import timezone
@@ -12,7 +11,7 @@ from django.core.files.storage import default_storage
 
 from rest_framework.decorators import api_view
 
-from .models import Performance, Report
+from .models import Lighthouse, Report
 from django.http import JsonResponse
 
 from django.conf import settings
@@ -31,17 +30,17 @@ def fetch_deprecated_performances(request, secret_key):
         return JsonResponse({}, status=401)
 
     deprecated_if_before = timezone.now() - timedelta(minutes=settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES)
-
+    print(f"Deprecated if before: {deprecated_if_before}")
     # Filter per last request date OR request_run true or last request date undefined
-    performances = Performance.objects.filter(Q(request_run=True) | Q(last_request_date__isnull=True) | Q(last_request_date__lt=deprecated_if_before))
-
+    performances = Lighthouse.objects.filter(Q(request_run=True) | Q(last_request_date__isnull=True) | Q(last_request_date__lt=deprecated_if_before))
+    print(f"Found {len(list(performances))} performances to refresh with the interval of {settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES} minutes.")
     for performance in performances:
         performance.last_request_date = timezone.now()
         performance.save()
 
     return JsonResponse({
         # List of ids and urls to fetch
-        'performances': [{'id': performance.pk, 'url': performance.url} for performance in performances]
+        'performances': [{'id': performance.pk, 'url': performance.page.url} for performance in performances]
     })
 
 
@@ -54,7 +53,7 @@ def report_api(request, secret_key, performance_id):
             # return http unauthorized if secret key doesn't match
             return JsonResponse({}, status=401)
 
-        performance = get_object_or_404(Performance, id=performance_id)
+        performance = get_object_or_404(Lighthouse, id=performance_id)
         last_report = performance.reports.last()
 
         return JsonResponse({
@@ -71,7 +70,7 @@ def report_api(request, secret_key, performance_id):
         return JsonResponse({}, status=401)
     
     # Get performance to update
-    performance = get_object_or_404(Performance, id=performance_id)
+    performance = get_object_or_404(Lighthouse, id=performance_id)
 
     # Load data from body as json
     data = json.loads(request.body.decode("utf-8"))

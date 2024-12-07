@@ -3,7 +3,7 @@ from django.contrib.auth import logout
 
 def project_required(get_response):
     """
-        If a user access a page but has no applicaiton registered, we redirect to the welcome page
+    If a user access a page but has no applicaiton registered, we redirect to the welcome page
     """
     def middleware(request):
         if not request.user.is_anonymous\

@@ -5,11 +5,17 @@ from django.http import HttpResponse
 from django.shortcuts import render
  
 def user_approved_in_waiting_list(user):
+    """
+    Check if a user is approved in the waiting list.
+    """
     if user.is_staff:
         return True
     return False
 
 def waiting_list_approved_only():
+    """
+    Decorator to check if a user is approved in the waiting list.
+    """
     def decorator(view):
         @wraps(view)
         def _wrapped_view(request, *args, **kwargs):

@@ -9,9 +9,8 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.conf import settings
 from rest_framework.decorators import api_view
-
-from performances.models import Performance
-from .models import Project
+from .tasks.scrape_page import scrape_page
+from .models import Project, Pages
 
 @api_view(["GET"])
 def fetch_deprecated_favicons(request, secret_key):
@@ -41,7 +40,7 @@ def fetch_deprecated_sitemaps(request, secret_key):
         # return http unauthorized if secret key doesn't match
         return JsonResponse({}, status=401)
 
-    one_day_ago = timezone.now() - timedelta(hours=24)
+    one_day_ago = timezone.now() - timedelta(minutes=1)
     projects = Project.objects.filter(
         sitemap_last_edited__lt=one_day_ago,
     )
@@ -106,19 +105,55 @@ def save_sitemap(request, secret_key, project_id):
     data = json.loads(request.body.decode("utf-8"))
     urls = data.get('urls')
 
+    sitemap_last_edited = timezone.now()
+
+    # Only keep urls which have the same domain as the project url
+    project_domain = project.url.split('/')[2]
+    urls = [url for url in urls if project_domain in url]
     # Update sitemap_last_edited to pause fetching until deprecated
-    project.sitemap_last_edited = timezone.now()
+    project.sitemap_last_edited = sitemap_last_edited
     project.save()
 
-    if len(list(urls)) < 300:
-        logging.info(f'Project {project.url} has less than 300 pages in sitemap.')
-        Performance.objects.bulk_create(
-            [
-                Performance(project=project, url=url) for url in urls
-            ],
-            ignore_conflicts=True  # This avoids inserting rows that violate uniqueness constraints
-        )
-    else:
-        logging.warning(f'Project {project.url} has more than 300 pages in sitemap, ignored for now.')
+    logging.info(f'Project {project_domain} has {len(urls)} pages in sitemap.')
+    logging.info(f'{len(data.get('urls')) - len(list(urls))} urls got removed because they are not in the same domain.')
+
+    if project.url not in urls:
+        urls.append(project.url) # Add project url to the list of pages
+    
+    # Create new pages
+    Pages.objects.bulk_create(
+        [
+            Pages(project=project, url=url, sitemap_last_seen=sitemap_last_edited) for url in urls
+        ],
+        ignore_conflicts=True  # This avoids inserting rows that violate uniqueness constraints
+    )
+    # Update existing pages data
+    Pages.objects.filter(project=project, url__in=urls).update(sitemap_last_seen=sitemap_last_edited)
+
+    # Select all pages updates and trigger scraping
+    pages = Pages.objects.filter(sitemap_last_seen=sitemap_last_edited, project=project)
+    for page in pages:
+        scrape_page.delay(page.pk, page.url)
+
+    return JsonResponse({})
+
+
+@api_view(["POST"])
+def save_scaping(request, secret_key, page_id):
+
+    # Use django settings secret_key to authenticate django worker
+    if secret_key != settings.SECRET_KEY:
+        # return http unauthorized
+        return JsonResponse({}, status=401)
+
+    # Get performance to update
+    page = get_object_or_404(Pages, id=page_id)
+
+    # Load data from body as json
+    data = json.loads(request.body.decode("utf-8"))
+
+    page.title = data.get('title')
+    page.description = data.get('description')
+    page.save()
 
     return JsonResponse({})

@@ -7,8 +7,6 @@ from django.contrib.auth.models import User
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.mail import send_mail
 from workers.models import Server
-from django.db.models import Q
-from performances.models import Performance
 from availability.models import Service
 from influxdb_client import InfluxDBClient
 import logging

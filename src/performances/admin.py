@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import Performance, Report, ReportScreenshots
+from .models import Lighthouse, Report
 
-class PerformancesAdmin(admin.ModelAdmin):
-    list_display = ('project', 'url', 'last_request_date')
+class LighthouseAdmin(admin.ModelAdmin):
+    list_display = ('page', 'last_request_date')
 
 class ReportAdmin(admin.ModelAdmin):
     list_display = ('performance', 'score_performance', 'score_accessibility', 'score_best_practices', 'score_seo', 'score_pwa', 'has_screenshot', 'has_json', 'creation_date')
@@ -16,9 +16,5 @@ class ReportAdmin(admin.ModelAdmin):
     def has_json(self, obj):
         return obj.report_json_file is not None and obj.report_json_file != ""
 
-class ReportScreenshotsAdmin(admin.ModelAdmin):
-    list_display = ('report', 'timing', 'timestamp')
-
-admin.site.register(Performance, PerformancesAdmin)
+admin.site.register(Lighthouse, LighthouseAdmin)
 admin.site.register(Report, ReportAdmin)
-admin.site.register(ReportScreenshots, ReportScreenshotsAdmin)
