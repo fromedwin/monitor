@@ -153,7 +153,7 @@
           </nav>
         </div>
         <div class="flex flex-shrink-0 border-t border-gray-200 p-4">
-          <a href="{% url 'settings' %}" class="group block flex-shrink-0">
+          <a href="{% url 'profile' %}" class="group block flex-shrink-0">
             <div class="flex items-center">
               <div>
                 {% if user.socialaccount_set.all.0.get_avatar_url %}
@@ -341,7 +341,7 @@
         </nav>
       </div>
       <div class="flex flex-shrink-0 border-t border-gray-200 p-4 bg-gray-50/75">
-        <a href="{% url 'settings' %}" class="group block w-full flex-shrink-0">
+        <a href="{% url 'profile' %}" class="group block w-full flex-shrink-0">
           <div class="flex items-center">
             <div>
               {% if user.socialaccount_set.all.0.get_avatar_url %}

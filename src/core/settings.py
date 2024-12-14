@@ -246,6 +246,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 SOCIALACCOUNT_PROVIDERS = {
     'github': {
+        "APP": {
+            "client_id": os.getenv("GITHUB_OAUTH_CLIENT_ID"),
+            "secret": os.getenv("GITHUB_OAUTH_CLIENT_SECRET"),
+            "key": ""
+        },
         'SCOPE': [
             'user',
         ],
