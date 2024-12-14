@@ -141,7 +141,7 @@ INSTALLED_APPS = [
     'core',
     'notifications',
     'performances',
-    'settings',
+    'profile',
     'projects',
     'website',
     'status',
@@ -169,7 +169,7 @@ MIDDLEWARE = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_prometheus.middleware.PrometheusAfterMiddleware',
     'core.middleware.project_required',
-    'settings.middleware.set_timezone',
+    'profile.middleware.set_timezone',
     'django_browser_reload.middleware.BrowserReloadMiddleware',
 )
 

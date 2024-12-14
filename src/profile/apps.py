@@ -1,8 +1,8 @@
 from django.apps import AppConfig
 
-class SettingsConfig(AppConfig):
+class ProfileConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'settings'
+    name = 'profile'
 
     def ready(self):
-        import settings.signals # Load signals
+        import profile.signals # Load signals

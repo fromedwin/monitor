@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
-from django.conf import settings as django_settings
+from django.conf import settings
 from django.urls import reverse
 from django.shortcuts import redirect
 
@@ -10,19 +10,19 @@ from .forms import TimeZoneForm
 
 @login_required
 @waiting_list_approved_only()
-def settings(request):
+def profile(request):
     """
-    Set user settings
+    Set user profile
     """
     profile = request.user.profile
 
     if request.POST and 'disable_auto_redirect' in request.POST:
         profile.disable_auto_redirect = not profile.disable_auto_redirect
         profile.save()
-        return redirect(reverse('settings'))
+        return redirect(reverse('profile'))
 
-    return render(request, 'settings.html', { 
-        'settings': django_settings, 
+    return render(request, 'profile.html', { 
+        'settings': settings, 
         'profile': profile,
     })
 
@@ -41,7 +41,7 @@ def user_timezone_form(request):
 
         if form.is_valid():
             form.save()
-            return redirect(reverse('settings'))
+            return redirect(reverse('profile'))
 
         return render(request, 'user/timezone.html', {'form': form})
 

@@ -41,7 +41,7 @@ urlpatterns = [
     # monitor-worker api
     path('clients/', include('workers.urls')),
     # Settings URL
-    path('settings/', include('settings.urls')),
+    path('profile/', include('profile.urls')),
     # User dahsboard with feed
     path('dashboard/', dashboard, name='dashboard'),
     # Login page from allauth with github button
