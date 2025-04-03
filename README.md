@@ -59,7 +59,7 @@ Project need a set of services like rabbitmq to run in the background.
 You can run them using the following:
 
 ```
-docker-compose -f docker-compose-services.yaml up -d
+docker-compose up -d
 ```
 
 ### Worker
@@ -82,7 +82,8 @@ docker-compose -f docker-compose-worker.yaml up -d
 ```bash
 cd ./sphinx
 pip install -r requirements.txt
-sphinx-reload ../docs
+cd ..
+sphinx-autobuild ./docs ./docs/_build --port 8001
 ```
 
 ## Env variables

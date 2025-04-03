@@ -1,8 +1,7 @@
 from functools import wraps
-from django.contrib import messages
-from django.shortcuts import redirect
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.conf import settings
+from django.shortcuts import render, redirect
+from django.urls import reverse
  
 def user_approved_in_waiting_list(user):
     """
@@ -19,8 +18,21 @@ def waiting_list_approved_only():
     def decorator(view):
         @wraps(view)
         def _wrapped_view(request, *args, **kwargs):
-            if not user_approved_in_waiting_list(request.user):
+            if settings.SAAS and not user_approved_in_waiting_list(request.user):
                 return render(request, 'waiting_list.html')
+            return view(request, *args, **kwargs)
+        return _wrapped_view
+    return decorator
+
+def saas_only():
+    """
+    If settings.SAAS is False, redirect to login page. Otherwise render view as expected.
+    """
+    def decorator(view):
+        @wraps(view)
+        def _wrapped_view(request, *args, **kwargs):
+            if not settings.SAAS:
+                return redirect(reverse('login'))
             return view(request, *args, **kwargs)
         return _wrapped_view
     return decorator

@@ -54,7 +54,7 @@ scrape_configs:
   
   - labels:
       service: 1
-      project: 1
+      project: 2
       user: 1
     targets:
     - https://sebastienbarbier.com
@@ -67,7 +67,7 @@ scrape_configs:
     - __param_target
     target_label: instance
   - target_label: __address__
-    replacement: fromedwin_blackbox:9115
+    replacement: blackbox:9115
 
 # Parse http probe for service WITHOUT TLS SECURE VERIFICATION
 - job_name: is_service_down_and_insecure
@@ -86,10 +86,10 @@ scrape_configs:
     - __param_target
     target_label: instance
   - target_label: __address__
-    replacement: fromedwin_blackbox:9115
+    replacement: blackbox:9115
 
 remote_write:
- - url: "http://fromedwin_worker_telegraf:1234/receive"
+ - url: "http://worker_telegraf:1234/receive"
    write_relabel_configs:
      # Keep only specific metrics by name
      - source_labels: ["__name__"]

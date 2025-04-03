@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-beat_hostname = os.getenv('CELERY_BEAT_HOSTNAME', 'default_beat_name')
+beat_hostname = os.getenv('CELERY_BEAT_HOSTNAME', 'fromedwin.scheduler')
 
 # If CELERY_BROKER user is not define we set default value
 if not os.getenv('CELERY_BROKER_URL'):

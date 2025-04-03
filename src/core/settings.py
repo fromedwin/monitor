@@ -32,7 +32,7 @@ if os.environ.get('SENTRY_DSN'):
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 VERSION = [0, 11, 0]
-
+SAAS = os.environ.get('SAAS', 0) == 1
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
 FORCE_HTTPS = False
@@ -146,6 +146,7 @@ INSTALLED_APPS = [
     'website',
     'status',
     'workers',
+    'health',
     # Statistics
     'django_prometheus',
     # Authentication
@@ -300,7 +301,7 @@ FREEMIUM_PERFORMANCE = 3
 
 # Celery settings
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'amqp://admin:admin@localhost')  # RabbitMQ URL
-CELERY_BROKER_UI_URL = os.getenv('RABBITMQ_UI_URL', 'http://localhost:15672')
+CELERY_BROKER_UI_URL = os.getenv('CELERY_BROKER_UI_URL', 'http://localhost:15672')
 CELERY_RESULT_BACKEND = 'rpc://'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
@@ -312,6 +313,7 @@ CELERY_QUEUE = 'fromedwin_queue'
 CELERY_QUEUE_LIGHTHOUSE = 'fromedwin_lighthouse_queue'
 
 INFLUXDB_URL = os.getenv('INFLUXDB_URL', 'http://localhost:8086')
+INFLUXDB_UI_URL = os.getenv('INFLUXDB_UI_URL', 'http://localhost:8086')
 INFLUXDB_TOKEN = os.getenv('INFLUXDB_TOKEN')
 INFLUXDB_ORG = os.getenv('INFLUXDB_ORG', 'fromedwin')
 INFLUXDB_BUCKET = os.getenv('INFLUXDB_BUCKET', 'fromedwin')

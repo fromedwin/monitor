@@ -6,13 +6,14 @@
 FromEdwin
 =========
 
+Write when done
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
    introduction
-   architecture
    installation
    models
+   architecture
 

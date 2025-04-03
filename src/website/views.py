@@ -3,10 +3,10 @@ from django.conf import settings
 from django.urls import reverse
 
 from allauth.socialaccount.models import SocialApp
-from rest_framework.authtoken.models import Token
 
-from workers.models import Server
+from core.decorators import saas_only
 
+@saas_only()
 def homepage(request):
     """
     Home Welcome page
@@ -23,22 +23,26 @@ def homepage(request):
         'is_authenticated': request.user.is_authenticated
     })
 
+@saas_only()
 def pricing(request):
     return render(request, 'pricing.html', {
         'is_authenticated': request.user.is_authenticated,
         'settings': settings,
     })
 
+@saas_only()
 def features(request):
     return render(request, 'features.html', {
         'is_authenticated': request.user.is_authenticated
     })
 
+@saas_only()
 def legal(request):
     return render(request, 'legal.html', {
         'is_authenticated': request.user.is_authenticated
     })
 
+@saas_only()
 def aboutus(request):
     return render(request, 'about-us.html', {
         'is_authenticated': request.user.is_authenticated

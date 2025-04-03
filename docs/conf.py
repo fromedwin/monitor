@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'FromEdwin'
-copyright = '2024, Sébastien Barbier'
+copyright = '2025, Sébastien Barbier'
 author = 'Sébastien Barbier'
 
 
@@ -42,6 +42,10 @@ templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 
+html_theme_options = {
+    'collapse_navigation': False,  # Keeps the navigation expanded
+    'navigation_depth': 2,         # Allows up to 4 levels (you can set it to 2 or what you prefer)
+}
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for

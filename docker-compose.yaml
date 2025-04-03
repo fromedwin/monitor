@@ -1,0 +1,278 @@
+  version: '3.8'
+
+  services:
+    #
+    # RabbitMQ queue messages for celery between worke
+    #
+    rabbitmq:
+      container_name: fromedwin_rabbitmq
+      image: rabbitmq:3-management
+      privileged: true
+      networks:
+        - monitoring
+      environment:
+        RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER-}
+        RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS-}
+        prometheus.return_per_object_metrics: "true"  # Enable per-object metrics
+      ports:
+        - "5672:5672"   # RabbitMQ
+        - "15672:15672" # RabbitMQ Management UI
+        - "15692:15692" # Prometheus metrics endpoint (default for rabbitmq_prometheus)
+      volumes:
+        - ./data/rabbitmq:/var/lib/rabbitmq  # Optional: persistent data storage
+      command: >
+        sh -c "rabbitmq-plugins enable rabbitmq_prometheus &&
+              rabbitmq-plugins enable rabbitmq_management &&
+              rabbitmq-server"
+      healthcheck:
+        test: ["CMD", "rabbitmqctl", "status"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
+        start_period: 30s
+    #
+    # InfluxDB store time serie data from telegraf reading prometeheus metrics
+    #
+    influxdb:
+      image: influxdb:2.7
+      container_name: fromedwin_influxdb
+      networks:
+        - monitoring
+      ports:
+        - "8086:8086"  # Map InfluxDB port to host
+      environment:
+        - DOCKER_INFLUXDB_INIT_MODE=setup
+        - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_DEFAULT_USER-}
+        - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_DEFAULT_PASS-}
+        - DOCKER_INFLUXDB_INIT_ORG=fromedwin
+        - DOCKER_INFLUXDB_INIT_BUCKET=fromedwin
+        - DOCKER_INFLUXDB_INIT_RETENTION=1w  # 1 week retention policy
+      volumes:
+        - ./data/influxdb:/var/lib/influxdb2
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
+        start_period: 30s
+    #
+    # Telegraf read prometheus metrics and store them in InfluxDB
+    #
+    telegraf:
+      image: telegraf:latest
+      container_name: fromedwin_telegraf
+      depends_on:
+        influxdb:
+          condition: service_healthy
+      networks:
+        - monitoring
+      environment:
+        - INFLUXDB_URL=http://influxdb:8086
+        - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
+        - INFLUXDB_BUCKET=fromedwin
+        - INFLUXDB_ORG=fromedwin
+      ports:
+        - "9273:9273"  # Expose Telegraf Prometheus plugin metrics
+      volumes:
+        - ./services/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    #
+    # Scheduler run django within celery to dispatch scheduled tasks
+    #
+    scheduler:
+      container_name: fromedwin_scheduler
+      build: 
+        context: .
+        dockerfile: ./Dockerfile
+      depends_on:
+        rabbitmq:
+          condition: service_healthy
+      networks:
+        - monitoring
+      environment:
+        SECRET_KEY: ${SECRET_KEY-}
+        DATABASE_URL: ${DATABASE_URL-}
+        CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
+      volumes:
+        - .:/app
+      entrypoint: ["/app/scheduler/entrypoint.sh"]
+    #
+    # Lighthouse is a tool to check website performances
+    lighthouse:
+      build: ./worker/lighthouse
+      user: root
+      container_name: fromedwin_lighthouse
+      depends_on:
+        rabbitmq:
+          condition: service_healthy
+      networks:
+        - monitoring
+      deploy:
+        replicas: ${LIGHTHOUSE_WORKER_REPLICA-1}
+      volumes:
+        - .:/etc/monitor
+      environment:
+        CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
+        BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
+        CHROME_PATH: /usr/lib/chromium/chrome
+        SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
+      command: ['sh', '/etc/monitor/worker/lighthouse/entrypoint.sh']
+    
+    #
+    # Get Prometheus metrics from worker and store them in InfluxDB
+    #
+    worker_telegraf:
+      image: telegraf:latest
+      container_name: fromedwin_worker_telegraf
+      depends_on:
+        rabbitmq:
+          condition: service_healthy
+      networks:
+        - monitoring
+      environment:
+        - INFLUXDB_URL=http://influxdb:8086
+        - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
+        - INFLUXDB_BUCKET=fromedwin
+        - INFLUXDB_ORG=fromedwin
+      volumes:
+        - ./worker/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    #
+    # Run prometheus to fetch metrics from workers and alertmanager to send alerts
+    #
+    prometheus:
+      image: prom/prometheus:v2.54.1
+      container_name: fromedwin_prometheus
+      ports:
+        - "9090:9090"
+      networks:
+        - monitoring
+      command:
+        - '--config.file=/etc/prometheus/prometheus.yml'
+        - '--storage.tsdb.path=/prometheus/data'
+        - '--web.enable-lifecycle' # Enable /-/reload entrypoint
+      volumes:
+        - ./data/prometheus:/prometheus
+        - ./worker/prometheus/alerts:/etc/prometheus/alerts
+        - ./worker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      links:
+        - blackbox
+    #
+    # Run alertmanager to send alerts
+    # 
+    alertmanager:
+      image: quay.io/prometheus/alertmanager:v0.27.0
+      container_name: fromedwin_alertmanager
+      networks:
+        - monitoring
+      command:
+        - '--config.file=/etc/alertmanager/alertmanager.yml'
+        - '--storage.path=/alertmanager/data'
+      volumes:
+        - ./data/alertmanager:/alertmanager
+        - ./worker/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    #
+    # Run blackbox to fetch metrics from workers and alertmanager to send alerts
+    #
+    blackbox:
+      image: prom/blackbox-exporter:v0.25.0
+      container_name: fromedwin_blackbox
+      networks:
+        - monitoring
+      command:
+        - '--config.file=/etc/prometheus/blackbox.yml'
+      # user: "65534"
+      volumes:
+        - ./worker/blackbox/blackbox.yml:/etc/prometheus/blackbox.yml:ro
+
+    #
+    # Run celery as worker to get tasks from rabbitmq and run them
+    #
+    worker:
+      container_name: fromedwin_celery
+      build: 
+        context: .
+        dockerfile: ./Dockerfile
+      depends_on:
+        rabbitmq:
+          condition: service_healthy
+      networks:
+        - monitoring
+      environment:
+        CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
+        SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
+        BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
+      deploy:
+        replicas: ${CELERY_WORKER_REPLICA-1}
+      volumes:
+        - .:/app
+      entrypoint: ["/app/worker/celery/entrypoint.sh"]
+
+    heartbeats:
+      container_name: fromedwin_heartbeats
+      build: 
+        context: .
+        dockerfile: ./worker/heartbeats/Dockerfile
+      depends_on:
+        django:
+          condition: service_healthy
+      networks:
+        - monitoring
+      volumes:
+        - .:/etc/fromedwin_heartbeats
+        - ./worker/heartbeats/requirements.txt:/etc/fromedwin_heartbeats/worker/heartbeats/requirements.txt:ro
+      environment:
+        BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
+        SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
+      entrypoint: /etc/fromedwin_heartbeats/worker/heartbeats/entrypoint.sh
+
+    #
+    # Run django framework, backend front-end API ORM and database
+    #
+    django:
+      container_name: fromedwin_django
+      build: 
+        context: .
+        dockerfile: ./Dockerfile
+      ports:
+        - "8000:8000"
+      networks:
+        - monitoring
+      depends_on:
+        rabbitmq:
+          condition: service_healthy
+        influxdb:
+          condition: service_healthy
+      environment:
+        SECRET_KEY: ${SECRET_KEY}
+        DEBUG: ${DEBUG-0} # Use to authenticate worker queries
+        SAAS: ${SAAS-0}
+        GITHUB_OAUTH_CLIENT_ID: ${GITHUB_OAUTH_CLIENT_ID-a88dc4c15606cc0dd96f}
+        GITHUB_OAUTH_CLIENT_SECRET: ${GITHUB_OAUTH_CLIENT_SECRET-61a117434565f3c755927f8c5e1698f6bd9fad42}
+        DOMAIN: ${DOMAIN-localhost}
+        PORT: ${PORT-8000}
+        AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL-}
+        AWS_S3_CUSTOM_DOMAIN: ${AWS_S3_CUSTOM_DOMAIN-}
+        AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID-}
+        AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY-}
+        AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME-}
+        CONTACT_EMAIL: ${CONTACT_EMAIL-}
+        CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@rabbitmq}
+        RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER-}
+        RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS-}
+        INFLUXDB_URL: ${INFLUXDB_URL-http://influxdb:8086} # access parent container
+        INFLUXDB_DEFAULT_USER: ${INFLUXDB_DEFAULT_USER-}
+        INFLUXDB_DEFAULT_PASS: ${INFLUXDB_DEFAULT_PASS-}
+        INFLUXDB_TOKEN: ${INFLUXDB_TOKEN-}
+        CELERY_BEAT_HOSTNAME: ${CELERY_BEAT_HOSTNAME-}
+      volumes:
+        - .:/app
+      entrypoint: ["/app/src/entrypoint.sh"]
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+        interval: 30s
+        timeout: 10s
+        retries: 3
+        start_period: 30s
+
+  networks:
+    monitoring:
+      driver: bridge
