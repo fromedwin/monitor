@@ -78,16 +78,3 @@ graph TD
     
     Scheduler:::scheduler
 ```
-
-
-
-
-```{toctree}
-:maxdepth: 1
-:caption: Contents:
-
-architecture/backend
-architecture/tasks
-architecture/availability
-architecture/performances
-architecture/metrics

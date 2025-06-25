@@ -52,13 +52,6 @@ scrape_configs:
     - http_2xx
   static_configs:
   
-  - labels:
-      service: 1
-      project: 2
-      user: 1
-    targets:
-    - https://sebastienbarbier.com
-    
   relabel_configs:
   - source_labels:
     - __address__
