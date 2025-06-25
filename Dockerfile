@@ -12,7 +12,7 @@ VOLUME /app/collectstatic
 COPY --chown=fromedwin . .
 
 RUN \
- apk add --no-cache postgresql-libs libstdc++ tzdata && \
+ apk add --no-cache postgresql-libs libstdc++ tzdata nodejs npm curl && \
  apk add --no-cache --virtual .build-deps alpine-sdk postgresql-dev && \
  apk --update add build-base jpeg-dev zlib-dev libffi-dev && \
  python -m pip install --upgrade pip --no-cache-dir && \

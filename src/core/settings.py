@@ -32,7 +32,8 @@ if os.environ.get('SENTRY_DSN'):
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 VERSION = [0, 11, 0]
-SAAS = os.environ.get('SAAS', 0) == 1
+SAAS = os.environ.get('SAAS', '0') == '1'
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
 FORCE_HTTPS = False

@@ -12,7 +12,10 @@ python src/manage.py compilescss
 python src/manage.py collectstatic --noinput
 python src/manage.py migrate
 
+python src/manage.py tailwind install
+python src/manage.py tailwind start &
 cd /app/src
+
 
 # gunicorn core.wsgi:application --bind 0.0.0.0:${PORT:-8000}
 python manage.py runserver 0.0.0.0:${PORT:-8000}
