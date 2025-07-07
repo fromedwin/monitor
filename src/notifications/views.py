@@ -13,7 +13,7 @@ from .forms import EmailsForm
 from projects.models import Project
 from incidents.models import Incident
 
-from core.decorators import waiting_list_approved_only
+from fromedwin.decorators import waiting_list_approved_only
 from django.conf import settings
 
 @login_required

@@ -24,7 +24,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Development-specific static files
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'core', 'static'),
+    os.path.join(BASE_DIR, 'fromedwin', 'static'),
 ]
 
 # Development-specific middleware (keep django_browser_reload for dev)

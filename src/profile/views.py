@@ -5,7 +5,7 @@ from django.conf import settings
 from django.urls import reverse
 from django.shortcuts import redirect
 
-from core.decorators import waiting_list_approved_only
+from fromedwin.decorators import waiting_list_approved_only
 from .forms import TimeZoneForm
 
 @login_required

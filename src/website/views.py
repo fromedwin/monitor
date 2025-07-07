@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from allauth.socialaccount.models import SocialApp
 
-from core.decorators import saas_only
+from fromedwin.decorators import saas_only
 
 @saas_only()
 def homepage(request):

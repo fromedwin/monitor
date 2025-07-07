@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 
 from .forms import ProjectForm, ProjectCreateForm
 
-from core.decorators import waiting_list_approved_only
+from fromedwin.decorators import waiting_list_approved_only
 from projects.models import Project
 from incidents.models import Incident
 

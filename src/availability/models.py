@@ -5,7 +5,7 @@ from django.conf import settings
 
 from projects.models import Project
 
-from core.utils import is_private_ipv4
+from fromedwin.utils import is_private_ipv4
 
 class Service(models.Model):
     """

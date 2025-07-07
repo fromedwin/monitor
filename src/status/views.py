@@ -15,7 +15,7 @@ from django.views.decorators.cache import never_cache
 from constants import INCIDENT_SEVERITY
 from incidents.models import Incident
 from projects.models import Project
-from core.decorators import waiting_list_approved_only
+from fromedwin.decorators import waiting_list_approved_only
 from django.http import Http404
 
 @login_required

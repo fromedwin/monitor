@@ -14,7 +14,7 @@ if not os.getenv('CELERY_BROKER_URL'):
 # Start Celery Beat using the hostname defined
 try:
     call([
-        'celery', '-A', 'core', 'beat',
+        'celery', '-A', 'fromedwin', 'beat',
         '--loglevel=info',
         '--scheduler', 'django_celery_beat.schedulers:DatabaseScheduler',
     ])

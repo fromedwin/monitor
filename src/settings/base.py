@@ -71,7 +71,7 @@ MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'core', 'static'),
+    os.path.join(BASE_DIR, 'fromedwin', 'static'),
 ]
 
 # Upload size limit
@@ -90,9 +90,9 @@ if os.environ.get('STORAGE') == 'S3':
     AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=3600'}
     AWS_S3_FILE_OVERWRITE = True
     STATIC_ROOT = os.path.join(BASE_DIR, 'collectstatic')
-    STATICFILES_STORAGE = 'core.storage_backends.StaticStorage'
+    STATICFILES_STORAGE = 'fromedwin.storage_backends.StaticStorage'
     STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
-    DEFAULT_FILE_STORAGE = 'core.storage_backends.MediaStorage'
+    DEFAULT_FILE_STORAGE = 'fromedwin.storage_backends.MediaStorage'
     MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 
     if not AWS_S3_CUSTOM_DOMAIN:
@@ -132,7 +132,7 @@ INSTALLED_APPS = [
     'availability',
     'dashboard',
     'incidents',
-    'core',
+    'fromedwin',
     'notifications',
     'performances',
     'profile',
@@ -167,7 +167,7 @@ MIDDLEWARE = (
     'django_browser_reload.middleware.BrowserReloadMiddleware',
 )
 
-ROOT_URLCONF = 'core.urls'
+ROOT_URLCONF = 'fromedwin.urls'
 
 TEMPLATES = [
     {
@@ -185,7 +185,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'core.wsgi.application'
+WSGI_APPLICATION = 'fromedwin.wsgi.application'
 
 # Database configuration using environment variable DATABASES_URL
 DATABASE_URL = os.environ.get('DATABASE_URL')

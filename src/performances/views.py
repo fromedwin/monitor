@@ -9,7 +9,7 @@ from django.utils.safestring import SafeString
 
 from projects.models import Project
 from .models import Lighthouse, Report
-from core.decorators import waiting_list_approved_only
+from fromedwin.decorators import waiting_list_approved_only
 
 @login_required
 @waiting_list_approved_only()

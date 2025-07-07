@@ -3,4 +3,4 @@ from .celery import app as celery_app
 
 __all__ = ('celery_app',)
 
-default_app_config = 'core.apps.MyAppConfig'
+default_app_config = 'fromedwin.apps.MyAppConfig'

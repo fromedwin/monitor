@@ -17,5 +17,5 @@ python src/manage.py tailwind start &
 cd /app/src
 
 
-# gunicorn core.wsgi:application --bind 0.0.0.0:${PORT:-8000}
+# gunicorn fromedwin.wsgi:application --bind 0.0.0.0:${PORT:-8000}
 python manage.py runserver 0.0.0.0:${PORT:-8000}

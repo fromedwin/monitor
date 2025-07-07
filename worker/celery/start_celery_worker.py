@@ -9,7 +9,7 @@ worker_hostname = os.getenv('CELERY_WORKER_HOSTNAME', 'fromedwin.worker')
 
 # Start Celery Worker using the hostname defined
 call([
-    'celery', '-A', 'core', 'worker',
+    'celery', '-A', 'fromedwin', 'worker',
     '--loglevel=info',
     f'--hostname={worker_hostname}',
 ])
