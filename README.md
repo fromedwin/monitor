@@ -67,6 +67,29 @@ Comprehensive documentation is available at [fromedwin-monitor.readthedocs.io](h
 - [🏗️ Architecture Overview](https://fromedwin-monitor.readthedocs.io/en/latest/architecture.html)
 - [🔧 Configuration Guide](https://fromedwin-monitor.readthedocs.io/en/latest/models/)
 
+### Local Development
+
+To run the documentation locally for development:
+
+1. **Install sphinx-autobuild** (if not already installed):
+   ```bash
+   pip install sphinx-autobuild
+   ```
+
+2. **Navigate to the docs directory**:
+   ```bash
+   cd docs
+   ```
+
+3. **Start the local documentation server**:
+   ```bash
+   sphinx-autobuild ./docs ./docs/_build --port 8001
+   ```
+
+4. **Access local documentation** at `http://localhost:8001`
+
+The documentation will automatically rebuild when you make changes to the source files.
+
 ### Contributing
 
 We welcome contributions! Please see our [Contributing Guide](docs/contributing.md) for details.
