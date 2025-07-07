@@ -92,6 +92,7 @@
         SECRET_KEY: ${SECRET_KEY-}
         DATABASE_URL: ${DATABASE_URL-}
         CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
+        DJANGO_SETTINGS_MODULE: 'settings.dev'
       volumes:
         - .:/app
       entrypoint: ["/app/scheduler/entrypoint.sh"]
@@ -200,6 +201,7 @@
         CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
         SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
         BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
+        DJANGO_SETTINGS_MODULE: 'settings.dev'
       deploy:
         replicas: ${CELERY_WORKER_REPLICA-1}
       volumes:

@@ -8,7 +8,7 @@ from .base import *
 DEBUG = True
 
 # Development-specific allowed hosts
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'host.docker.internal']
 
 # Development database (if not using environment variable)
 if not DATABASE_URL:
