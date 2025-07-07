@@ -96,7 +96,7 @@ class ProjectCreateForm(ModelForm):
         project.user = user
         project.save()
 
-        Lighthouse.objects.create(url=url, project=project)
+        # Lighthouse.objects.create(url=url, project=project)
         service = Service.objects.create(project=project, title=domain)
         HTTPCodeService.objects.create(url=url, service=service)
         Emails.objects.create(project=project, email=user.email)

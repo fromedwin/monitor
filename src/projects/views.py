@@ -116,24 +116,3 @@ def projects_add(request):
         'form': form,
     })
 
-@login_required
-@waiting_list_approved_only()
-def projects_welcome(request):
-    """
-        Create or edit project model
-    """
-
-    if request.POST:
-
-        form = ProjectCreateForm(request.POST, user=request.user)
-
-        if form.is_valid():
-            project = form.save(user=request.user)
-            return redirect(reverse('project', args=[project.id]))
-    else:
-        form = ProjectCreateForm()
-
-    return render(request, 'projects/project_welcome.html', {
-        'form': form,
-    })
-

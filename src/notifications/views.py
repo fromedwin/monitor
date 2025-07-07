@@ -88,10 +88,6 @@ def email_delete(request, application_id, email_id):
 @waiting_list_approved_only()
 def messages(request):
 
-    # If user has no project we redirect to /welcome/
-    if not request.user.projects.all():
-        return redirect('projects_welcome')
-
     notifications = Notification.objects.filter(service__project__in=request.user.projects.all())\
         .order_by('-date')[:40]
 

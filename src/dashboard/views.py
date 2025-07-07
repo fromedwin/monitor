@@ -18,10 +18,6 @@ from incidents.models import Incident
 @waiting_list_approved_only()
 def dashboard(request):
 
-    # If user has no project we redirect to /welcome/
-    if not request.user.projects.all():
-        return redirect('projects_welcome')
-
     service_incidents = Incident\
         .objects\
         .filter(

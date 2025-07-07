@@ -1,14 +1,12 @@
 from django.urls import path
 
-from .views import project, projects_form, projects_delete, projects_add, projects_welcome
+from .views import project, projects_form, projects_delete, projects_add
 from incidents.views import incidents
 from .api import fetch_deprecated_favicons, fetch_deprecated_sitemaps, save_favicon, save_sitemap, save_scaping
 
 # from .api import fetch_deprecated_favicons, save_favicon
 
 urlpatterns = [
-    # Welcome page
-    path('welcome/', projects_welcome, name='projects_welcome'),
     # Add form to create a new project
     path('project/add', projects_add, name='projects_add'),
     # Show project overview
