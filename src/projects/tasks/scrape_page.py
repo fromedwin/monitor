@@ -9,7 +9,7 @@ def scrape_page(page_id, url):
     response = requests.get(url)
     if response.status_code == 200:
         # Step 2: Parse the HTML content
-        soup = BeautifulSoup(response.text, 'html.parser')
+        soup = BeautifulSoup(response.content, 'html.parser', from_encoding='utf-8')
         
         # Step 3: Extract the page title
         title = soup.title.string if soup.title else "No title found"
@@ -17,7 +17,7 @@ def scrape_page(page_id, url):
         
         # Step 4: Extract the meta description
         description_tag = soup.find("meta", attrs={"name": "description"})
-        description = description_tag["content"].encode('latin-1').decode('utf-8') if description_tag else "No description meta found"
+        description = description_tag["content"] if description_tag else "No description meta found"
         logging.info(f"Meta Description: {description}")
 
         data = {
