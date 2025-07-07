@@ -31,6 +31,9 @@ extensions = [
 	'myst_parser',
 	'sphinx_rtd_theme',
     'sphinxcontrib.mermaid',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.napoleon',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -41,10 +44,36 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
+# -- MyST Parser Configuration -----------------------------------------------
+
+# Enable additional MyST features for better documentation
+myst_enable_extensions = [
+    "colon_fence",
+    "deflist",
+    "html_image",
+    "linkify",
+    "replacements",
+    "smartquotes",
+    "substitution",
+    "tasklist",
+]
+
+# -- Code highlighting -------------------------------------------------------
+
+# The default language to highlight source code in
+highlight_language = 'python'
+
+# Pygments style for syntax highlighting
+pygments_style = 'default'
+
 
 html_theme_options = {
     'collapse_navigation': False,  # Keeps the navigation expanded
-    'navigation_depth': 2,         # Allows up to 4 levels (you can set it to 2 or what you prefer)
+    'navigation_depth': 2,         # Allows up to 3 levels for better settings documentation
+    'sticky_navigation': True,     # Make navigation sticky
+    'includehidden': True,         # Include hidden toctrees
+    'titles_only': False,          # Show full titles in navigation
+    'style_external_links': True,  # Style external links differently
 }
 # -- Options for HTML output -------------------------------------------------
 
@@ -73,4 +102,20 @@ release = '0.11.0'
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
 language = 'en'
+
+# -- Settings Documentation Support ------------------------------------------
+
+# Add custom CSS for better code blocks and admonitions
+html_css_files = [
+    'custom.css',
+]
+
+# Add source file suffix for better linking
+source_suffix = {
+    '.rst': None,
+    '.md': 'myst_parser',
+}
+
+# Add warning for missing references
+nitpicky = True
 

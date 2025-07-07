@@ -22,6 +22,7 @@ installation
 
 architecture
 models/index
+settings
 ```
 
 
