@@ -46,5 +46,5 @@ LOGGING = {
 }
 
 # Development-specific settings for faster development
-CELERY_TASK_ALWAYS_EAGER = True  # Execute tasks synchronously in development
-CELERY_TASK_EAGER_PROPAGATES = True 
+CELERY_TASK_ALWAYS_EAGER = False  # Execute tasks synchronously in development
+CELERY_TASK_EAGER_PROPAGATES = False 
