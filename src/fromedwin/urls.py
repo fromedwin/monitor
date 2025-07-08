@@ -36,7 +36,6 @@ urlpatterns = [
     path('', include('notifications.urls')),
     path('', include('performances.urls')),
     path('', include('status.urls')),
-    path('', include('website.urls')),
     path('', include('incidents.urls')),
     path('', include('health.urls')),
     # monitor-worker api
@@ -60,6 +59,11 @@ urlpatterns = [
     path('healthcheck/database/', healthcheck_database, name='healthcheck_database'),
     path('healthcheck/availability/', healthcheck_workers_availability, name='healthcheck_availability'),
     path('healthcheck/lighthouse/', healthcheck_workers_lighthouse, name='healthcheck_lighthouse'),
+
+    # """
+    # Public pages presenting features and pricing
+    # """
+    path('', include('website.urls')),
 
     # """
     # Dependencies URLs
