@@ -52,6 +52,27 @@ scrape_configs:
     - http_2xx
   static_configs:
   
+  - labels:
+      service: 13
+      project: 19
+      user: 1
+    targets:
+    - https://unique.ai
+    
+  - labels:
+      service: 14
+      project: 20
+      user: 1
+    targets:
+    - https://sebastienbarbier.com
+    
+  - labels:
+      service: 15
+      project: 21
+      user: 1
+    targets:
+    - https://www.irinabarbos.com
+    
   relabel_configs:
   - source_labels:
     - __address__

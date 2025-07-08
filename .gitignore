@@ -148,3 +148,6 @@ data
 src/celerybeat-schedule.db
 
 worker/lighthouse/node_modules
+worker/prometheus/prometheus.yml
+worker/prometheus/alerts/alerts.yml
+worker/alertmanager/alertmanager.yml

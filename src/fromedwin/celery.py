@@ -3,7 +3,7 @@ import os
 from celery import Celery
 from django.conf import settings
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.prod')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'fromedwin.settings.prod')
 
 # monitor/celery.py
 app = Celery('src')

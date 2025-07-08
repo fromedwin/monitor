@@ -137,7 +137,7 @@ AWS_S3_CUSTOM_DOMAIN=your-cdn-domain.com
 ### Development
 ```bash
 # Set environment variable
-export DJANGO_SETTINGS_MODULE=settings.dev
+export DJANGO_SETTINGS_MODULE=fromedwin.settings.dev
 
 # Run development server
 python manage.py runserver
@@ -149,7 +149,7 @@ python manage.py test
 ### Production
 ```bash
 # Set environment variable
-export DJANGO_SETTINGS_MODULE=settings.prod
+export DJANGO_SETTINGS_MODULE=fromedwin.settings.prod
 
 # Collect static files
 python manage.py collectstatic --noinput
@@ -164,21 +164,21 @@ gunicorn core.wsgi:application
 ### Docker Deployment
 ```dockerfile
 # In your Dockerfile
-ENV DJANGO_SETTINGS_MODULE=settings.prod
+ENV DJANGO_SETTINGS_MODULE=fromedwin.settings.prod
 
 # Or in docker-compose.yml
 environment:
-  - DJANGO_SETTINGS_MODULE=settings.prod
+  - DJANGO_SETTINGS_MODULE=fromedwin.settings.prod
 ```
 
 ## Entry Points Configuration
 
 Different Django entry points use appropriate settings:
 
-- **`manage.py`**: Uses `settings.dev` for development commands
-- **`core/wsgi.py`**: Uses `settings.prod` for production WSGI server
-- **`core/asgi.py`**: Uses `settings.prod` for production ASGI server
-- **`core/celery.py`**: Uses `settings.prod` for Celery workers
+- **`manage.py`**: Uses `fromedwin.settings.dev` for development commands
+- **`core/wsgi.py`**: Uses `fromedwin.settings.prod` for production WSGI server
+- **`core/asgi.py`**: Uses `fromedwin.settings.prod` for production ASGI server
+- **`core/celery.py`**: Uses `fromedwin.settings.prod` for Celery workers
 
 ## Migration from Legacy Settings
 
@@ -213,7 +213,7 @@ If you're upgrading from a previous version with a single `settings.py` file:
 ```bash
 # Ensure you're in the correct directory
 cd src/
-export DJANGO_SETTINGS_MODULE=settings.dev
+export DJANGO_SETTINGS_MODULE=fromedwin.settings.dev
 ```
 
 **Database Configuration Error**
@@ -242,10 +242,10 @@ python manage.py shell
 ### Custom Environment
 To create a custom environment (e.g., staging):
 
-1. Create `settings/staging.py`
+1. Create `fromedwin/settings/staging.py`
 2. Import from base settings
 3. Override specific configurations
-4. Set `DJANGO_SETTINGS_MODULE=settings.staging`
+4. Set `DJANGO_SETTINGS_MODULE=fromedwin.settings.staging`
 
 ### Configuration Validation
 ```python
