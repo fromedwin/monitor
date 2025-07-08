@@ -140,7 +140,6 @@ INSTALLED_APPS = [
     'website',
     'status',
     'workers',
-    'health',
     # Statistics
     'django_prometheus',
     # Authentication

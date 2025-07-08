@@ -18,7 +18,8 @@ from django.contrib.auth.views import LogoutView
 from django.conf import settings
 from django.urls import path, include
 
-from .views import restricted, healthcheck_database, healthcheck_workers_availability, healthcheck_workers_lighthouse
+from .views.redirected import restricted
+from .views.health import health_check, healthcheck_database, healthcheck_workers_availability, healthcheck_workers_lighthouse
 from incidents.api import webhook
 from dashboard.views import dashboard
 from django.contrib.sitemaps.views import sitemap
@@ -26,6 +27,7 @@ from .sitemaps import StaticViewSitemap
 from django.conf.urls.static import static
 
 from allauth.account.views import login
+
 
 urlpatterns = [
     # """
@@ -37,7 +39,6 @@ urlpatterns = [
     path('', include('performances.urls')),
     path('', include('status.urls')),
     path('', include('incidents.urls')),
-    path('', include('health.urls')),
     # monitor-worker api
     path('clients/', include('workers.urls')),
     # Settings URL
@@ -56,6 +57,8 @@ urlpatterns = [
     # """
     # Healthcheck APIs
     # """
+    path('health', health_check, name='health_check'),
+    path('health/', health_check, name='health_check_slash'), # For monitoring not accepting 301
     path('healthcheck/database/', healthcheck_database, name='healthcheck_database'),
     path('healthcheck/availability/', healthcheck_workers_availability, name='healthcheck_availability'),
     path('healthcheck/lighthouse/', healthcheck_workers_lighthouse, name='healthcheck_lighthouse'),
