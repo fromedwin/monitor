@@ -2,7 +2,6 @@
 
 import django.db.models.deletion
 import django.utils.timezone
-import projects.models
 from django.conf import settings
 from django.db import migrations, models
 
@@ -24,7 +23,7 @@ class Migration(migrations.Migration):
                 ('url', models.URLField(blank=True, help_text="Application's URL", max_length=512, null=True)),
                 ('is_favorite', models.BooleanField(default=False, help_text='Favorite project are highlighted and first shown when possible.', verbose_name='Is favorite')),
                 ('enable_public_page', models.BooleanField(default=False, help_text='Will enable the public page to share current project status', verbose_name='Enable public page')),
-                ('favicon', models.ImageField(blank=True, help_text="Application's favicon", null=True, upload_to=projects.models.project_favicon_path)),
+                ('favicon', models.ImageField(blank=True, help_text="Application's favicon", null=True, upload_to='favicons/')),
                 ('favicon_task_status', models.CharField(choices=[('PENDING', 'Pending'), ('SUCCESS', 'Success'), ('FAILURE', 'Failure'), ('UNKNOWN', 'Unknown')], default='UNKNOWN', help_text='Favicon task status', max_length=16)),
                 ('favicon_last_edited', models.DateTimeField(default=django.utils.timezone.now, help_text='Last time favicon was edited')),
                 ('sitemap_task_status', models.CharField(choices=[('PENDING', 'Pending'), ('SUCCESS', 'Success'), ('FAILURE', 'Failure'), ('UNKNOWN', 'Unknown')], default='UNKNOWN', help_text='Sitemap task status', max_length=16)),

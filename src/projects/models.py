@@ -2,11 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-def project_favicon_path(self, filename):
-    return f'{self.directory_path()}/favicons/{filename}'
-
-# List of status for favicon task
-FAVICON_TASK_STATUS = (
+# List of status for tasks
+TASK_STATUS = (
     ('PENDING', 'Pending'),
     ('SUCCESS', 'Success'),
     ('FAILURE', 'Failure'),
@@ -26,12 +23,8 @@ class Project(models.Model):
     url = models.URLField(max_length=512, blank=True, null=True, help_text="Application's URL")
     is_favorite = models.BooleanField('Is favorite', default=False, help_text="Favorite project are highlighted and first shown when possible.")
     enable_public_page = models.BooleanField('Enable public page', default=False, help_text="Will enable the public page to share current project status")
-    # Handle favicon
-    favicon = models.ImageField(upload_to=project_favicon_path, blank=True, null=True, help_text="Application's favicon")
-    favicon_task_status = models.CharField(max_length=16, choices=FAVICON_TASK_STATUS, default='UNKNOWN', help_text="Favicon task status")
-    favicon_last_edited = models.DateTimeField(help_text="Last time favicon was edited", default=timezone.now)
     # Handle sitemaps
-    sitemap_task_status = models.CharField(max_length=16, choices=FAVICON_TASK_STATUS, default='UNKNOWN', help_text="Sitemap task status")
+    sitemap_task_status = models.CharField(max_length=16, choices=TASK_STATUS, default='UNKNOWN', help_text="Sitemap task status")
     sitemap_last_edited = models.DateTimeField(help_text="Last time sitemap was edited", default=timezone.now)
 
     def is_offline(self):
