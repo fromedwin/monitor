@@ -21,13 +21,13 @@ from django.urls import path, include
 from .views.redirected import restricted
 from .views.health import health_check, healthcheck_database, healthcheck_workers_availability, healthcheck_workers_lighthouse
 from incidents.api import webhook
-from dashboard.views import dashboard
 from django.contrib.sitemaps.views import sitemap
 from .sitemaps import StaticViewSitemap
 from django.conf.urls.static import static
 
 from allauth.account.views import login
-
+from .views.administration import administration, test_email
+from .views.dashboard import dashboard
 
 urlpatterns = [
     # """
@@ -51,8 +51,12 @@ urlpatterns = [
     path('alert/', webhook, name='alert'),
     # Display restricted message for user trying to login
     path('restricted/', restricted, name='restricted'),
+
+    # """
     # Administration panel for super user in app
-    path('administration/', include('administration.urls')),
+    # """
+    path('', administration, name='administration'),
+    path('test_email/', test_email, name='test_email'),
 
     # """
     # Healthcheck APIs
