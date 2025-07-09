@@ -138,8 +138,10 @@ docs/_static
 docs/_templates
 
 .clever.json
-src/staticfiles
+src/fromedwin/staticfiles
+src/fromedwin/media
 src/media
+src/staticfiles
 
 # Docker-compose storage
 data
