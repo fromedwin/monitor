@@ -4,7 +4,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from performances.models import Lighthouse
-from .tasks.fetch_favicon import fetch_favicon
+from favicons.tasks import fetch_favicon
 from .tasks.fetch_sitemap import fetch_sitemap
 from .tasks.scrape_page import scrape_page
 from .models import Project, Pages

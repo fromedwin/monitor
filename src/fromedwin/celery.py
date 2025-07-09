@@ -16,7 +16,7 @@ app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
     'queue_deprecated_favicons': {
-        'task': 'projects.tasks.queue_deprecated_favicons.queue_deprecated_favicons',
+        'task': 'favicons.tasks.queue_deprecated_favicons',
         'schedule': 60,  # Run every 60 seconds
     },
     'queue_deprecated_sitemaps': {

@@ -2,9 +2,7 @@ from django.urls import path
 
 from .views import project, projects_form, projects_delete, projects_add
 from incidents.views import incidents
-from .api import fetch_deprecated_favicons, fetch_deprecated_sitemaps, save_favicon, save_sitemap, save_scaping
-
-# from .api import fetch_deprecated_favicons, save_favicon
+from .api import fetch_deprecated_sitemaps, save_sitemap, save_scaping
 
 urlpatterns = [
     # Add form to create a new project
@@ -26,11 +24,7 @@ urlpatterns = [
 #
 urlpatterns += [
     # 
-    path('api/fetch_deprecated_favicons/<str:secret_key>/', fetch_deprecated_favicons, name='fetch_deprecated_favicons'),
-    # 
     path('api/fetch_deprecated_sitemaps/<str:secret_key>/', fetch_deprecated_sitemaps, name='fetch_deprecated_sitemaps'),
-    # 
-    path('api/save_favicon/<str:secret_key>/<int:project_id>/', save_favicon, name='save_favicon'),
     # 
     path('api/save_sitemap/<str:secret_key>/<int:project_id>/', save_sitemap, name='save_sitemap'),
     # 
