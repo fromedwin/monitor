@@ -1,6 +1,7 @@
 import logging
 import base64
 import requests
+import time
 from celery import shared_task, current_app
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
@@ -13,6 +14,8 @@ def fetch_favicon(pk, url):
     largest_favicon = None
     largest_size = (0, 0)
     largest_content = None
+    duration = None
+    start_time = time.time()
     try:
         # Get the HTML content of the webpage
         response = requests.get(url, timeout=10)
@@ -78,10 +81,12 @@ def fetch_favicon(pk, url):
     except e:
         logging.error(f"Error fetching the webpage: {e}")
     finally:
+        duration = time.time() - start_time
         try:
             response = requests.post(f'{settings.BACKEND_URL}/api/save_favicon/{settings.SECRET_KEY}/{pk}/', json={
                 'favicon_url': largest_favicon['url'] if largest_favicon else None,
                 'favicon_content': largest_content,
+                'duration': duration,
             })
             response.raise_for_status()
         except Exception as e:

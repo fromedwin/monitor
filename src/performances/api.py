@@ -70,7 +70,7 @@ def report_api(request, secret_key, performance_id):
         return JsonResponse({}, status=401)
     
     # Get performance to update
-    performance = get_object_or_404(Lighthouse, id=performance_id)
+    performance = get_object_or_404(Lighthouse, pk=performance_id)
 
     # Load data from body as json
     data = json.loads(request.body.decode("utf-8"))

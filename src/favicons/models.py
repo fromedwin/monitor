@@ -44,6 +44,14 @@ class Favicon(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    celery_task_log = models.ForeignKey(
+        'logs.CeleryTaskLog',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='favicons',
+        help_text="Celery task log associated with this favicon (optional)"
+    )
 
     class Meta:
         verbose_name = "Favicon"

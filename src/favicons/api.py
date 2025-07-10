@@ -11,7 +11,7 @@ from django.db.models import Q
 from rest_framework.decorators import api_view
 from projects.models import Project
 from .models import Favicon
-
+from logs.models import CeleryTaskLog
 
 @api_view(["GET"])
 def fetch_deprecated_favicons(request, secret_key):
@@ -54,10 +54,17 @@ def save_favicon(request, secret_key, project_id):
     # Load data from body as json
     data = json.loads(request.body.decode("utf-8"))
     favicon_url = data.get('favicon_url')
+    duration = data.get('duration')
+
+    # Create celery task log
+    celery_task_log = CeleryTaskLog.objects.create(
+        project=project,
+        task_name='favicon_task',
+        duration=timedelta(seconds=duration) if duration else None
+    )
 
     # Get or create favicon record
     favicon, created = Favicon.objects.get_or_create(project=project)
-
     # If favicon_url is null or undefined, it means worker couldn't find a favicon
     # We then set the status to FAILURE so we can react and retry if needed
     if not favicon_url:
