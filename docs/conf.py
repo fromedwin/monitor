@@ -51,7 +51,6 @@ myst_enable_extensions = [
     "colon_fence",
     "deflist",
     "html_image",
-    "linkify",
     "replacements",
     "smartquotes",
     "substitution",
@@ -110,11 +109,8 @@ html_css_files = [
     'custom.css',
 ]
 
-# Add source file suffix for better linking
-source_suffix = {
-    '.rst': None,
-    '.md': 'myst_parser',
-}
+# MyST Parser automatically handles .md files when loaded as an extension
+# No need to manually configure source_suffix for .md files
 
 # Add warning for missing references
 nitpicky = True
