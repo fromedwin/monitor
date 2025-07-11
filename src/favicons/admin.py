@@ -2,7 +2,6 @@ from django.contrib import admin
 from .models import Favicon
 from logs.models import CeleryTaskLog
 
-
 @admin.register(Favicon)
 class FaviconAdmin(admin.ModelAdmin):
     """Admin configuration for Favicon model"""
