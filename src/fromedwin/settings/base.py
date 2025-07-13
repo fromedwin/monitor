@@ -130,6 +130,7 @@ INSTALLED_APPS = [
     # App
     'availability',
     'incidents',
+    'lighthouse',
     'logs',
     'favicons',
     'fromedwin',

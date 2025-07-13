@@ -27,5 +27,5 @@ def post_save_created_page(sender, instance, created, **kwargs):
     if created:
         # Fetch title and description
         scrape_page.delay(instance.pk, instance.url)
-        # Create Performance model
-        Lighthouse.objects.create(page=instance)
+
+        

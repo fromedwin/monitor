@@ -90,14 +90,26 @@ class Project(models.Model):
         return Incident.objects.filter(service__in=self.services.all()).count()
 
     def performance_score(self):
-        result = {
-            'score_performance': None,
-            'score_accessibility': None,
-            'score_best_practices': None,
-            'score_seo': None,
-            'score_pwa': None,
-        }
-        last_run = None
+        from lighthouse.models import LighthouseReport
+        from django.db.models import Avg
+        
+        reports = LighthouseReport.objects.filter(page__project=self)
+        if reports.exists():
+            averages = reports.aggregate(
+                avg_performance=Avg('score_performance'),
+                avg_accessibility=Avg('score_accessibility'),
+                avg_best_practices=Avg('score_best_practices'),
+                avg_seo=Avg('score_seo'),
+                avg_pwa=Avg('score_pwa'),
+            )
+            return {
+                'score_performance': averages['avg_performance'],
+                'score_accessibility': averages['avg_accessibility'],
+                'score_best_practices': averages['avg_best_practices'],
+                'score_seo': averages['avg_seo'],
+                'score_pwa': averages['avg_pwa'],
+            }
+        return None
 
 
     def directory_path(self):
@@ -122,6 +134,7 @@ class Pages(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     sitemap_last_seen = models.DateTimeField(help_text="Last time sitemap was reported", null=True, blank=True)
     scraping_last_seen = models.DateTimeField(help_text="Last time scraping was run", null=True, blank=True)
+    lighthouse_last_request = models.DateTimeField(help_text="Last time lighthouse was requested", null=True, blank=True)
 
     class Meta:
         constraints = [

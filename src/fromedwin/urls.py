@@ -37,6 +37,7 @@ urlpatterns = [
     path('', include('availability.urls')),
     path('', include('notifications.urls')),
     path('', include('performances.urls')),
+    path('', include('lighthouse.urls')),
     path('', include('status.urls')),
     path('', include('incidents.urls')),
     path('', include('favicons.urls')),

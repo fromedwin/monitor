@@ -7,6 +7,6 @@ class ProjectAdmin(admin.ModelAdmin):
 admin.site.register(Project, ProjectAdmin)
 
 class PagesAdmin(admin.ModelAdmin):
-    list_display = ('project', 'title', 'url', 'sitemap_last_seen', 'scraping_last_seen')
+    list_display = ('project', 'title', 'url', 'sitemap_last_seen', 'scraping_last_seen', 'lighthouse_last_request')
 
 admin.site.register(Pages, PagesAdmin)

@@ -54,7 +54,7 @@
 
       // Is lighthouse failed measuring score
       if (isNaN(score)) {
-        if (element.getAttribute('data-score') == '--') {
+        if (element.getAttribute('data-score') == '--' || element.getAttribute('data-score') == '') {
           serie = Object.assign({}, serie, {
             title: {
               offsetCenter: [0, '0%'],
