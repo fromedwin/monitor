@@ -11,6 +11,7 @@ from django.conf import settings
 from rest_framework.decorators import api_view
 from .tasks.scrape_page import scrape_page
 from .models import Project, Pages
+from logs.models import CeleryTaskLog
 
 @api_view(["GET"])
 def fetch_deprecated_sitemaps(request, secret_key):
@@ -19,7 +20,7 @@ def fetch_deprecated_sitemaps(request, secret_key):
         # return http unauthorized if secret key doesn't match
         return JsonResponse({}, status=401)
 
-    one_day_ago = timezone.now() - timedelta(minutes=1)
+    one_day_ago = timezone.now() - timedelta(days=1)
     projects = Project.objects.filter(
         sitemap_last_edited__lt=one_day_ago,
     )
@@ -75,6 +76,13 @@ def save_sitemap(request, secret_key, project_id):
     )
     # Update existing pages data
     Pages.objects.filter(project=project, url__in=urls).update(sitemap_last_seen=sitemap_last_edited)
+
+    duration = data.get('duration')
+    CeleryTaskLog.objects.create(
+        project=project,
+        task_name='sitemap_task',
+        duration=timedelta(seconds=duration) if duration else None,
+    )
 
     # Select all pages updates and trigger scraping
     pages = Pages.objects.filter(sitemap_last_seen=sitemap_last_edited, project=project)

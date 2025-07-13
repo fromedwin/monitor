@@ -57,7 +57,7 @@ def save_favicon(request, secret_key, project_id):
     duration = data.get('duration')
 
     # Create celery task log
-    celery_task_log = CeleryTaskLog.objects.create(
+    CeleryTaskLog.objects.create(
         project=project,
         task_name='favicon_task',
         duration=timedelta(seconds=duration) if duration else None
