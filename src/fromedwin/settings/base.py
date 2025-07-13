@@ -135,7 +135,6 @@ INSTALLED_APPS = [
     'favicons',
     'fromedwin',
     'notifications',
-    'performances',
     'profile',
     'projects',
     'website',

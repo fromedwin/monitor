@@ -24,7 +24,7 @@ app.conf.beat_schedule = {
         'schedule': 60, #24 * 60 * 60,  # Run every 24 hours
     },
     'queue_deprecated_performance': {
-        'task': 'performances.tasks.queue_deprecated_performance.queue_deprecated_performance',
+        'task': 'lighthouse.tasks.queue_deprecated_performance.queue_deprecated_performance',
         'schedule': 30, #24 * 60 * 60,  # Run every 24 hours
     },
 }

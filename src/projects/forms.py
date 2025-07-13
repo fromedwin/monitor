@@ -1,6 +1,5 @@
 from django.forms import ModelForm, URLField, CharField, ValidationError
 from .models import Project
-from performances.models import Lighthouse
 from notifications.models import Emails
 from availability.models import Service, HTTPCodeService 
 from django.conf import settings

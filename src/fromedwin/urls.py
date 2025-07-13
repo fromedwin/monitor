@@ -28,6 +28,7 @@ from django.conf.urls.static import static
 from allauth.account.views import login
 from .views.administration import administration, test_email
 from .views.dashboard import dashboard
+from .views.pages import project_pages
 
 urlpatterns = [
     # """
@@ -36,7 +37,6 @@ urlpatterns = [
     path('', include('projects.urls')),
     path('', include('availability.urls')),
     path('', include('notifications.urls')),
-    path('', include('performances.urls')),
     path('', include('lighthouse.urls')),
     path('', include('status.urls')),
     path('', include('incidents.urls')),
@@ -53,6 +53,9 @@ urlpatterns = [
     path('alert/', webhook, name='alert'),
     # Display restricted message for user trying to login
     path('restricted/', restricted, name='restricted'),
+
+
+    path('project/<int:id>/performances/', project_pages, name='project_performances'),
 
     # """
     # Administration panel for super user in app
