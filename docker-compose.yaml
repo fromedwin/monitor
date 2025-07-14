@@ -94,7 +94,7 @@
         CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
         DJANGO_SETTINGS_MODULE: 'fromedwin.settings.dev'
       volumes:
-        - .:/app
+        - ./src:/app/src
       entrypoint: ["/app/scheduler/entrypoint.sh"]
     #
     # Lighthouse is a tool to check website performances
@@ -110,7 +110,7 @@
       deploy:
         replicas: ${LIGHTHOUSE_WORKER_REPLICA-1}
       volumes:
-        - .:/etc/monitor
+        - ./worker:/etc/monitor/worker
       environment:
         CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
         BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
@@ -205,7 +205,7 @@
       deploy:
         replicas: ${CELERY_WORKER_REPLICA-1}
       volumes:
-        - .:/app
+        - ./src:/app/src
       entrypoint: ["/app/worker/celery/entrypoint.sh"]
 
     heartbeats:
@@ -219,7 +219,7 @@
       networks:
         - monitoring
       volumes:
-        - .:/etc/fromedwin_heartbeats
+        - ./worker:/etc/fromedwin_heartbeats/worker
         - ./worker/heartbeats/requirements.txt:/etc/fromedwin_heartbeats/worker/heartbeats/requirements.txt:ro
       environment:
         BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
@@ -266,7 +266,7 @@
         INFLUXDB_TOKEN: ${INFLUXDB_TOKEN-}
         CELERY_BEAT_HOSTNAME: ${CELERY_BEAT_HOSTNAME-}
       volumes:
-        - .:/app
+        - ./src:/app/src
       entrypoint: ["/app/src/entrypoint.sh"]
       healthcheck:
         test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/')"]

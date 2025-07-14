@@ -121,12 +121,35 @@ const QUEUE_NAME = 'fromedwin_lighthouse_queue';  // The same queue specified in
 						'--disable-dev-shm-usage',
 						'--allow-pre-commit-input',
 						'--in-process-gpu',
+						// Add these for better CPU performance:
+						'--disable-background-timer-throttling',
+						'--disable-backgrounding-occluded-windows',
+						'--disable-renderer-backgrounding',
+						'--disable-features=TranslateUI',
+						'--disable-ipc-flooding-protection',
+						'--disable-extensions',
+						'--disable-plugins',
+						'--disable-default-apps',
+						'--disable-sync',
+						'--disable-web-security',
+						'--disable-component-extensions-with-background-pages',
+						'--disable-background-media-suspend',
+						'--disable-client-side-phishing-detection',
+						'--disable-hang-monitor',
+						'--disable-prompt-on-repost',
+						'--disable-features=VizDisplayCompositor',
+						'--max_old_space_size=2048',
+						'--memory-pressure-off',
+						'--no-first-run',
+						'--no-default-browser-check',
+						'--disable-gpu-sandbox',
+						'--single-process', // Be careful with this one - can reduce overhead but may be less stable
 					]
-				}); //  '--disable-gpu', '--disable-setuid-sandbox'
+				});
 
 			// Running Lighthouse by custom options
 			const options = {
-				logLevel: 'info', 
+				logLevel: 'error', // Reduce logging overhead
 				output: 'json', 
 				port: chrome.port,
 				formFactor: 'desktop', // 'desktop' or 'mobile'
@@ -159,6 +182,10 @@ const QUEUE_NAME = 'fromedwin_lighthouse_queue';  // The same queue specified in
 
 			// Kill chrome process
 			await chrome.kill();
+
+			// Add 5 second pause to prevent Docker from crashing
+			console.log('Waiting 5 seconds before next report...');
+			await new Promise(resolve => setTimeout(resolve, 5000));
 
 			// Acknowledge the message
 			channel.ack(msg);
