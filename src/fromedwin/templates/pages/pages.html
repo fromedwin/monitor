@@ -174,7 +174,15 @@
         {% with report=page.lighthouse_report.first %}
         <div class="flex align-middle">
           {% if report and report.screenshot %}
-          <div class="flex items-center"><img src="{{ report.screenshot.url }}" style="max-height: 4em" /></div>
+          <div class="flex items-center">
+            <img
+              x-data="{ visible: false }"
+              x-intersect="visible = true"
+              :src="visible ? '{{ report.screenshot.url }}' : ''"
+              style="max-height: 4em"
+              alt="Page screenshot"
+            />
+          </div>
           {% endif %}
           <div class="px-3 text-sm font-medium text-gray-900 flex-grow flex items-center">
             <p><a href="{{ app }}">{% if child.depth == 0 %}
