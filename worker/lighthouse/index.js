@@ -46,8 +46,61 @@ const DESKTOP_USERAGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Apple
  **/
 const QUEUE_NAME = 'fromedwin_lighthouse_queue';  // The same queue specified in Python
 
+// Global Chrome instance
+let chrome = null;
+let requestCount = 0;
+const MAX_REQUESTS_PER_CHROME = 100; // Restart Chrome after this many requests to prevent memory leaks
+
+async function startChrome() {
+	console.log('Starting Chrome instance...');
+	chrome = await chromeLauncher.launch({
+		ignoreDefaultFlags: true,
+		chromeFlags: [
+				'--headless',
+				'--no-sandbox',
+				'--disable-dev-shm-usage',
+				'--allow-pre-commit-input',
+				// Add these for better CPU performance:
+				'--disable-background-timer-throttling',
+				'--disable-backgrounding-occluded-windows',
+				'--disable-renderer-backgrounding',
+				'--disable-features=TranslateUI',
+				'--disable-ipc-flooding-protection',
+				'--disable-extensions',
+				'--disable-plugins',
+				'--disable-default-apps',
+				'--disable-sync',
+				'--disable-web-security',
+				'--disable-component-extensions-with-background-pages',
+				'--disable-background-media-suspend',
+				'--disable-client-side-phishing-detection',
+				'--disable-hang-monitor',
+				'--disable-prompt-on-repost',
+				'--max_old_space_size=2048',
+				'--memory-pressure-off',
+				'--no-first-run',
+				'--no-default-browser-check',
+			]
+		});
+	console.log(`Chrome started on port ${chrome.port}`);
+}
+
+async function restartChromeIfNeeded() {
+	if (requestCount >= MAX_REQUESTS_PER_CHROME) {
+		console.log(`Restarting Chrome after ${requestCount} requests to prevent memory leaks...`);
+		if (chrome) {
+			await chrome.kill();
+		}
+		await startChrome();
+		requestCount = 0;
+	}
+}
+
 (async () => {
 	try {
+	  // Start Chrome once at startup
+	  await startChrome();
+
 	  const connection = await amqp.connect(CELERY_BROKER_URL);
 	  const channel = await connection.createChannel();
 
@@ -84,13 +137,14 @@ const QUEUE_NAME = 'fromedwin_lighthouse_queue';  // The same queue specified in
 				}).then(async (returnedResponse) => {
 					// Get body as json
 					const data = await returnedResponse.json();
+					console.log("Report data", data);
 
 					console.log("Report has been fetched", data);
 					const now = new Date();
 					const goodIfBefore = new Date(now.getTime() - data.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES * 60000);
 					const lastReportDate = new Date(data.last_report_date);
 
-					if (lastReportDate > goodIfBefore) {
+					if (lastReportDate > goodIfBefore || !data.id) {
 						// Acknowledge the message as it is not needed
 						console.log(`No need to re-run ${kwargs.url}, a report is already available.`);
 						skip_run = true;
@@ -109,83 +163,71 @@ const QUEUE_NAME = 'fromedwin_lighthouse_queue';  // The same queue specified in
 			}
 
 			// Process the task here
+			try {
+				console.log(`Running test on ${kwargs.url}`);
 
-			console.log(`Running test on ${kwargs.url}`);
+				// Check if Chrome needs to be restarted periodically
+				await restartChromeIfNeeded();
 
-			// Start Chrome process
-			const chrome = await chromeLauncher.launch({
-				ignoreDefaultFlags: true,
-				chromeFlags: [
-						'--headless',
-						'--no-sandbox',
-						'--disable-dev-shm-usage',
-						'--allow-pre-commit-input',
-						'--in-process-gpu',
-						// Add these for better CPU performance:
-						'--disable-background-timer-throttling',
-						'--disable-backgrounding-occluded-windows',
-						'--disable-renderer-backgrounding',
-						'--disable-features=TranslateUI',
-						'--disable-ipc-flooding-protection',
-						'--disable-extensions',
-						'--disable-plugins',
-						'--disable-default-apps',
-						'--disable-sync',
-						'--disable-web-security',
-						'--disable-component-extensions-with-background-pages',
-						'--disable-background-media-suspend',
-						'--disable-client-side-phishing-detection',
-						'--disable-hang-monitor',
-						'--disable-prompt-on-repost',
-						'--disable-features=VizDisplayCompositor',
-						'--max_old_space_size=2048',
-						'--memory-pressure-off',
-						'--no-first-run',
-						'--no-default-browser-check',
-						'--disable-gpu-sandbox',
-						'--single-process', // Be careful with this one - can reduce overhead but may be less stable
-					]
+				// Ensure Chrome is still running (restart if crashed)
+				if (!chrome || !chrome.port) {
+					console.log('Chrome instance not available, restarting...');
+					await startChrome();
+				}
+
+				// Running Lighthouse by custom options
+				const options = {
+					logLevel: 'error', // Reduce logging overhead
+					output: 'json', 
+					port: chrome.port,
+					formFactor: 'desktop', // 'desktop' or 'mobile'
+					screenEmulation: screenEmulationMetrics.desktop,
+					emulatedUserAgent: DESKTOP_USERAGENT, //MOTOG4_USERAGENT,
+					skipAudits: [
+						// Skip the h2 audit so it doesn't lie to us. See https://github.com/GoogleChrome/lighthouse/issues/6539
+						'uses-http2',
+						// There are always bf-cache failures when testing in headless. Reenable when headless can give us realistic bf-cache insights.
+						'bf-cache',
+					],
+				};
+
+				const runnerResult = await lighthouse(kwargs.url, options);
+				requestCount++;
+
+				console.log(`Saving report for ${kwargs.url}`);
+				// Send report to server
+				const reportResponse = await fetch(`${BACKEND_URL}/api/report/${SECRET_KEY}/performance/${kwargs.id}`, {
+					method: 'POST',
+					headers: {
+						'User-Agent': USER_AGENT,
+						'Content-Type': 'application/json'
+					},
+					body: runnerResult.report
+				}).then((returnedResponse) => {
+					console.log("Report has been forwarded http status", returnedResponse.status)
+				}).catch((error) => {
+					console.error(error)
 				});
+				console.log(`Test is done for ${kwargs.url} (total requests: ${requestCount})`);
 
-			// Running Lighthouse by custom options
-			const options = {
-				logLevel: 'error', // Reduce logging overhead
-				output: 'json', 
-				port: chrome.port,
-				formFactor: 'desktop', // 'desktop' or 'mobile'
-				screenEmulation: screenEmulationMetrics.desktop,
-				emulatedUserAgent: DESKTOP_USERAGENT, //MOTOG4_USERAGENT,
-				skipAudits: [
-					// Skip the h2 audit so it doesn't lie to us. See https://github.com/GoogleChrome/lighthouse/issues/6539
-					'uses-http2',
-					// There are always bf-cache failures when testing in headless. Reenable when headless can give us realistic bf-cache insights.
-					'bf-cache',
-				],
-			};
-			const runnerResult = await lighthouse(kwargs.url, options);
+			} catch (error) {
+				console.error(`Error running lighthouse for ${kwargs.url}:`, error);
+				
+				// If there's an error, try to restart Chrome for the next request
+				if (chrome) {
+					try {
+						await chrome.kill();
+					} catch (killError) {
+						console.error('Error killing Chrome:', killError);
+					}
+				}
+				await startChrome();
+				requestCount = 0;
+			}
 
-			console.log(`Saving report for ${kwargs.url}`);
-			// Send report to server
-			const reportResponse = await fetch(`${BACKEND_URL}/api/report/${SECRET_KEY}/performance/${kwargs.id}`, {
-				method: 'POST',
-				headers: {
-					'User-Agent': USER_AGENT,
-					'Content-Type': 'application/json'
-				},
-				body: runnerResult.report
-			}).then((returnedResponse) => {
-				console.log("Report has been forwarded http status", returnedResponse.status)
-			}).catch((error) => {
-				console.error(error)
-			});
-			console.log(`Test is done for ${kwargs.url}`);
-
-			// Kill chrome process
-			await chrome.kill();
-
-			// Add 5 second pause to prevent Docker from crashing
-			console.log('Waiting 5 seconds before next report...');
-			await new Promise(resolve => setTimeout(resolve, 5000));
+			// Short pause between requests (reduced from 5 seconds since we're not restarting Chrome)
+			console.log('Waiting 1 second before next report...');
+			await new Promise(resolve => setTimeout(resolve, 1000));
 
 			// Acknowledge the message
 			channel.ack(msg);
@@ -199,3 +241,20 @@ const QUEUE_NAME = 'fromedwin_lighthouse_queue';  // The same queue specified in
 	  console.error('Error connecting to RabbitMQ:', err);
 	}
   })();
+
+// Graceful shutdown - kill Chrome when process exits
+process.on('SIGINT', async () => {
+	console.log('Received SIGINT, shutting down gracefully...');
+	if (chrome) {
+		await chrome.kill();
+	}
+	process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+	console.log('Received SIGTERM, shutting down gracefully...');
+	if (chrome) {
+		await chrome.kill();
+	}
+	process.exit(0);
+});

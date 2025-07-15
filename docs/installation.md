@@ -18,7 +18,7 @@ To start the application:
 2. Clone the repository and navigate to the project directory
 3. Run the following command:
    ```bash
-   docker-compose up
+   docker compose up
    ```
 4. Wait for all services to start (this may take a few minutes on first run)
 5. Access the application at `http://localhost:8000`

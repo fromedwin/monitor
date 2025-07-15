@@ -47,7 +47,7 @@ FromEdwin Monitor is a highly opinionated implementation of open-source monitori
 
 3. **Start all services**
    ```bash
-   docker-compose up -d
+   docker compose up -d
    ```
 
 4. **Access the application**

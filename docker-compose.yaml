@@ -1,6 +1,6 @@
-  version: '3.8'
+# No version needed in modern Docker Compose
 
-  services:
+services:
     #
     # RabbitMQ queue messages for celery between worke
     #
@@ -275,8 +275,6 @@
         retries: 3
         start_period: 30s
 
-  
-
-  networks:
-    monitoring:
-      driver: bridge
+networks:
+  monitoring:
+    driver: bridge

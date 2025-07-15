@@ -26,7 +26,7 @@ We love your input! We want to make contributing to FromEdwin Monitor as easy an
    ```
 4. **Run the development server**:
    ```bash
-   docker-compose up -d
+   docker compose up -d
    ```
 
 ### Development Workflow
