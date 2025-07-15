@@ -137,14 +137,19 @@ async function restartChromeIfNeeded() {
 				}).then(async (returnedResponse) => {
 					// Get body as json
 					const data = await returnedResponse.json();
-					console.log("Report data", data);
-
-					console.log("Report has been fetched", data);
 					const now = new Date();
 					const goodIfBefore = new Date(now.getTime() - data.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES * 60000);
 					const lastReportDate = new Date(data.last_report_date);
 
 					if (lastReportDate > goodIfBefore || !data.id) {
+						
+						if (!data.id) {
+							console.log(`No page found for ${kwargs.url}`);
+						} else {
+							console.log(`No need to re-run ${kwargs.url}, a report is already available.`);
+							skip_run = true;
+						}
+
 						// Acknowledge the message as it is not needed
 						console.log(`No need to re-run ${kwargs.url}, a report is already available.`);
 						skip_run = true;
@@ -152,7 +157,11 @@ async function restartChromeIfNeeded() {
 						await new Promise(resolve => setTimeout(resolve, 400));
 						channel.ack(msg);
 					} else {
-						console.log(`Last report is too old (${lastReportDate}), re-running ${kwargs.url}`);
+						if (data.last_report_date === null) {
+							console.log(`No report found, running ${kwargs.url}`);
+						} else {
+							console.log(`Last report is too old (${lastReportDate}), re-running ${kwargs.url}`);
+						}
 					}
 				}).catch((error) => {
 					console.error(error)
@@ -179,6 +188,10 @@ async function restartChromeIfNeeded() {
 				const options = {
 					logLevel: 'error', // Reduce logging overhead
 					output: 'json', 
+					throttlingMethod: 'provided',
+					disableDeviceEmulation: true,
+					disableCpuThrottling: true,
+					disableNetworkThrottling: true,
 					port: chrome.port,
 					formFactor: 'desktop', // 'desktop' or 'mobile'
 					screenEmulation: screenEmulationMetrics.desktop,
