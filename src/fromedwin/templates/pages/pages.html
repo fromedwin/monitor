@@ -6,15 +6,13 @@
 {% block javascript %}
 <script src="{% static 'echarts/echarts.min.js' %}"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    var gauges = document.getElementsByClassName('echartgauge');
-    [...gauges].forEach((element) => {
-      var score = parseFloat(element.getAttribute('data-score'));
-      var red = 'rgb(220, 38, 38)';
-      var green = 'rgb(5, 150, 105)';
-      var orange = 'rgb(217, 119, 6)';
-      var grey = 'rgb(200, 200, 200)';
-      var animation = window.location.hash !== '#noanimations';
+  function initEchartGauge(element) {
+    var score = parseFloat(element.getAttribute('data-score'));
+    var red = 'rgb(220, 38, 38)';
+    var green = 'rgb(5, 150, 105)';
+    var orange = 'rgb(217, 119, 6)';
+    var grey = 'rgb(200, 200, 200)';
+    var animation = window.location.hash !== '#noanimations';
 
       // Echarts options
       var serie = {
@@ -129,6 +127,21 @@
         series: [ serie ],
         animation: animation,
       });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    var gauges = document.getElementsByClassName('echartgauge');
+    [...gauges].forEach((element) => {
+      // Only initialize when element is visible on screen
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            initEchartGauge(element);
+            obs.unobserve(element); // Only trigger once per element
+          }
+        });
+      }, { threshold: 0.1 });
+      observer.observe(element);
     });
   });
 </script>
