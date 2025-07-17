@@ -33,6 +33,7 @@ class LighthouseReport(models.Model):
     score_pwa = models.FloatField(blank=True, null=True, help_text="Lighthouse pwa score")
     report_json_file = models.FileField(upload_to=user_directory_path, blank=True, null=True, help_text="Lighthouse report")
     creation_date = models.DateTimeField(auto_now_add=True, editable=False, help_text="Creation date")
+    duration = models.IntegerField(blank=True, null=True, help_text="Lighthouse duration")
 
     def save(self, *args, **kwargs):
         super(LighthouseReport, self).save(*args, **kwargs)

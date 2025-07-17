@@ -72,25 +72,29 @@ def report_api(request, secret_key, page_id):
     
     # Get performance to update
     page = get_object_or_404(Pages, pk=page_id)
-
     # Load data from body as json
     data = json.loads(request.body.decode("utf-8"))
+    
+    # Parse the report JSON string if it's a string (lighthouse returns JSON as string)
+    if isinstance(data['report'], str):
+        data['report'] = json.loads(data['report'])
+        print("Parsed report from JSON string")
 
     # Generate metadata used for file storage
     path = page.project.directory_path()
     try:
-        filename = f'{data["audits"]["final-screenshot"]["details"]["timestamp"]}'
+        filename = f'{data["report"]["audits"]["final-screenshot"]["details"]["timestamp"]}'
     except:
         filename = f'{timezone.now().timestamp()}'
 
     # Generate report.json file
-    json_file = json.dumps(data)
+    json_file = json.dumps(data['report'])
     json_file = json_file.encode('utf-8')
     report_json_file = default_storage.save(f'{path}/{filename}.json', ContentFile(json_file))
 
     # Generate screenshot.jpg from report json base64 value
     try:
-        screenshot_as_a_string = data['audits']['final-screenshot']['details']['data']
+        screenshot_as_a_string = data['report']['audits']['final-screenshot']['details']['data']
         screenshot_as_a_string = screenshot_as_a_string.replace('data:image/jpeg;base64,', '')
         screenshot = default_storage.save(f'{path}/{filename}.jpg', ContentFile(base64.b64decode(screenshot_as_a_string)))
     except:
@@ -98,19 +102,20 @@ def report_api(request, secret_key, page_id):
 
     # Look for form factor as `desktop` or `mobile`
     formFactor = LIGHTHOUSE_FORMFACTOR_CHOICES[0][0]
-    if data['configSettings']['formFactor'] == 'mobile':
+    if data['report']['configSettings']['formFactor'] == 'mobile':
         formFactor = LIGHTHOUSE_FORMFACTOR_CHOICES[1][0]
 
     report = LighthouseReport.objects.create(
         page = page,
         form_factor = formFactor,
-        score_performance = data['categories']['performance']['score'],
-        score_accessibility = data['categories']['accessibility']['score'],
-        score_best_practices = data['categories']['best-practices']['score'],
-        score_seo = data['categories']['seo']['score'],
-        score_pwa = data['categories']['pwa']['score'],
+        score_performance = data['report']['categories']['performance']['score'],
+        score_accessibility = data['report']['categories']['accessibility']['score'],
+        score_best_practices = data['report']['categories']['best-practices']['score'],
+        score_seo = data['report']['categories']['seo']['score'],
+        score_pwa = data['report']['categories']['pwa']['score'],
         screenshot = screenshot,
         report_json_file = report_json_file,
+        duration = data['duration']
     )
     report.save()
 

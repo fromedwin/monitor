@@ -115,7 +115,9 @@ async function restartChromeIfNeeded() {
 	  // Consume messages from the specified queue
 	  channel.consume(QUEUE_NAME, async (msg) => {
 		if (msg !== null) {
+		  const start_time = Date.now();
 		  const message = JSON.parse(msg.content.toString());
+		  
   
 		  console.log('received task', msg.properties?.headers?.task);
 		  if (msg.properties?.headers?.task === 'fetch_lighthouse_report') {
@@ -208,14 +210,31 @@ async function restartChromeIfNeeded() {
 				requestCount++;
 
 				console.log(`Saving report for ${kwargs.url}`);
+				
+				// Validate the report before sending
+				if (!runnerResult || !runnerResult.report) {
+					console.error(`No valid report generated for ${kwargs.url}`);
+					console.error('runnerResult:', runnerResult);
+					throw new Error('No valid lighthouse report generated');
+				}
+				
+				const reportData = {
+					report: runnerResult.report,
+					duration: Date.now() - start_time
+				};
+				
+				console.log(`Report data keys:`, Object.keys(reportData));
+				console.log(`Report type:`, typeof reportData.report);
+				console.log(`Report length:`, typeof reportData.report === 'string' ? reportData.report.length : 'not a string');
+				
 				// Send report to server
-				const reportResponse = await fetch(`${BACKEND_URL}/api/report/${SECRET_KEY}/performance/${kwargs.id}`, {
+				await fetch(`${BACKEND_URL}/api/report/${SECRET_KEY}/performance/${kwargs.id}`, {
 					method: 'POST',
 					headers: {
 						'User-Agent': USER_AGENT,
 						'Content-Type': 'application/json'
 					},
-					body: runnerResult.report
+					body: JSON.stringify(reportData)
 				}).then((returnedResponse) => {
 					console.log("Report has been forwarded http status", returnedResponse.status)
 				}).catch((error) => {
