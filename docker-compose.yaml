@@ -101,7 +101,6 @@ services:
     lighthouse:
       build: ./worker/lighthouse
       user: root
-      container_name: fromedwin_lighthouse
       depends_on:
         rabbitmq:
           condition: service_healthy
@@ -188,7 +187,6 @@ services:
     # Run celery as worker to get tasks from rabbitmq and run them
     #
     worker:
-      container_name: fromedwin_celery
       build: 
         context: .
         dockerfile: ./Dockerfile
