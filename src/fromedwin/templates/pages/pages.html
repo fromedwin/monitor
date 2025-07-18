@@ -147,10 +147,6 @@
 </script>
 {% endblock %}
 
-{% block css %}
-<link rel="stylesheet" href="{% static 'prismjs/prism.css' %}">
-{% endblock %}
-
 {% block subsection %}
 <header class="pb-4">
   <h1 class="text-3xl font-bold leading-tight text-gray-900 relative pl-16 pt-2 pb-8">
@@ -181,6 +177,17 @@
           <p class="text-sm">
             {{ page.description }}</page>
           </p>
+          <p class="text-xs text-gray-500 mt-2">
+            Duration: 
+            {% with duration=page.lighthouse_report.first.celery_task_log.duration %}
+              {% if duration %}
+                {{ duration.total_seconds|floatformat:0 }}s
+              {% else %}
+                N/A
+              {% endif %}
+            {% endwith %}
+            - {{ page.lighthouse_report.first.creation_date|naturaltime }}
+          </p>
         </div>
 
         
@@ -201,14 +208,7 @@
             <p><a href="{{ app }}">{% if child.depth == 0 %}
               /
           <div class="inline mt-2 flex items-center text-sm text-gray-500 px-3">
-            {% if app %}
-            Waiting for a new run
-            {% elif report %}
-            {{ report.creation_date|naturaltime }}
-            {% else %}
-            Waiting for first report
-            {% endif %}
-          </div>.path }}
+          </div>
             {% else %}
               <span class="text-gray-400 text-sm pr-1">/{{child.path_parent}}</span>{{ child.path_without_parent }}
             {% endif %} 
