@@ -33,7 +33,14 @@ class LighthouseReport(models.Model):
     score_pwa = models.FloatField(blank=True, null=True, help_text="Lighthouse pwa score")
     report_json_file = models.FileField(upload_to=user_directory_path, blank=True, null=True, help_text="Lighthouse report")
     creation_date = models.DateTimeField(auto_now_add=True, editable=False, help_text="Creation date")
-    duration = models.IntegerField(blank=True, null=True, help_text="Lighthouse duration")
+    celery_task_log = models.ForeignKey(
+        'logs.CeleryTaskLog',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='lighthouse',
+        help_text="Celery task log associated with this lighthouse report"
+    )
 
     def save(self, *args, **kwargs):
         super(LighthouseReport, self).save(*args, **kwargs)

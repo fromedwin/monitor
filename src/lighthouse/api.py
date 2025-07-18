@@ -12,6 +12,7 @@ from django.core.files.storage import default_storage
 from rest_framework.decorators import api_view
 
 from projects.models import Pages
+from logs.models import CeleryTaskLog
 from .models import LighthouseReport
 from django.http import JsonResponse
 
@@ -105,6 +106,12 @@ def report_api(request, secret_key, page_id):
     if data['report']['configSettings']['formFactor'] == 'mobile':
         formFactor = LIGHTHOUSE_FORMFACTOR_CHOICES[1][0]
 
+    celery_task_log = CeleryTaskLog.objects.create(
+        project = page.project,
+        task_name = 'lighthouse',
+        duration = timedelta(milliseconds=data['duration']) if data['duration'] else None
+    )
+
     report = LighthouseReport.objects.create(
         page = page,
         form_factor = formFactor,
@@ -115,7 +122,7 @@ def report_api(request, secret_key, page_id):
         score_pwa = data['report']['categories']['pwa']['score'],
         screenshot = screenshot,
         report_json_file = report_json_file,
-        duration = data['duration']
+        celery_task_log = celery_task_log
     )
     report.save()
 
