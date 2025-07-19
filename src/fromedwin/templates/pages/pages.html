@@ -289,9 +289,9 @@
       <div class="border-b border-gray-200 pb-5">
         <div class="flex flex-row gap-2 items-center justify-between">
           <p class="text-xs text-gray-500 mt-2">
-            Last report: {{ page.lighthouse_report.last.creation_date|naturaltime }}
+            Last report: {{ report.creation_date|naturaltime }}
           </p>
-          {% if page.lighthouse_last_request > page.lighthouse_report.last.creation_date %}
+          {% if page.lighthouse_last_request > report.creation_date %}
           <p class="text-xs text-gray-500 mt-2">Status: Queued</p>
           {% elif page.next_lighthouse_run < 0 %} <p class="text-xs text-gray-500 mt-2">
             Will be picked soon

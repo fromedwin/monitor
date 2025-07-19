@@ -48,3 +48,6 @@ class LighthouseReport(models.Model):
 
     def __str__(self):
         return f'Performance {self.page.id} - {self.creation_date}'
+
+    class Meta:
+        ordering = ['-creation_date']
