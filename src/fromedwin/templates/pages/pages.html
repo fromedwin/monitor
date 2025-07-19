@@ -209,9 +209,6 @@
           <p class="text-sm font-normal">
             {{ page.description }}
           </p>
-          <p class="text-xs text-gray-500">
-            {{ page.sitemap_last_seen|naturaltime }} - {{ page.scraping_last_seen|naturaltime }}
-          </p>
         </div>
         <div class="flex flex-row px-3 py-2 items-center shrink-0">
           {% if report %}
@@ -301,8 +298,10 @@
       <div class="border-b border-gray-200 pb-5">
         <div class="flex flex-row gap-2 items-center justify-between">
           <p class="text-xs text-gray-500 mt-2">
-            Last report: {{ report.creation_date|naturaltime }}
+            Last report: {{ report.creation_date|naturaltime }} - {% if page.sitemap_last_seen %}✅ In sitemap{% else %}❌
+            Not in sitemap{% endif %}
           </p>
+
           {% if page.lighthouse_last_request > report.creation_date %}
           <p class="text-xs text-gray-500 mt-2">Status: Queued</p>
           {% elif page.next_lighthouse_run < 0 %} <p class="text-xs text-gray-500 mt-2">
