@@ -160,11 +160,20 @@
     Pages
   </h1>
 </header>
+
 <div class="pt-4">
-  <div class="pb-5 border-b border-gray-200 sm:flex sm:items-center sm:justify-between">
+  <div class="pb-5 border-b border-gray-200 sm:flex sm:items-center sm:justify-between items-center">
     <h3 class="text-lg leading-6 font-medium text-gray-900">
       Web pages ({{ pages_count }})
     </h3>
+    <a href="{% url 'project_graph_tree' project.id %}"
+      class="inline-flex items-center px-3 py-2 border border-emerald-600 text-emerald-700 bg-white rounded-md text-sm font-medium hover:bg-emerald-50 transition">
+      <svg class="w-5 h-5 mr-2 text-emerald-600" fill="currentColor" viewBox="0 -960 960 960">
+        <path
+          d="m600-120v-120h-160v-400h-80v120h-280v-320h280v120h240v-120h280v320h-280v-120h-80v320h80v-120h280v320zm-440-640v160zm520 400v160zm0-400v160zm0 160h120v-160h-120zm0 400h120v-160h-120zm-520-400h120v-160h-120z" />
+      </svg>
+      View Graph Tree
+    </a>
   </div>
   <div class="flex flex-col mt-4">
 

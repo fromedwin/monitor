@@ -42,16 +42,17 @@ def project(request, id):
 
 @login_required
 @waiting_list_approved_only()
-def project_performances(request, id):
+def project_graph_tree(request, id):
     """
     Show current project status
     """
 
     project = get_object_or_404(Project, pk=id)
 
-    return render(request, 'projects/performances/performances.html', {
+    return render(request, 'graph/graph_tree.html', {
         'project': project,
     })
+
 
 @login_required
 @waiting_list_approved_only()

@@ -13,6 +13,15 @@ from .tasks.scrape_page import scrape_page
 from .models import Project, Pages
 from logs.models import CeleryTaskLog
 
+
+
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from projects.models import Pages, Project
+from django.utils.decorators import method_decorator
+from django.views.decorators.http import require_GET
+
+
 @api_view(["GET"])
 def fetch_deprecated_sitemaps(request, secret_key):
     # Use django settings secret_key to authenticate django worker
@@ -112,3 +121,56 @@ def save_scaping(request, secret_key, page_id):
     page.save()
 
     return JsonResponse({})
+
+@require_GET
+def project_pages_tree_json(request, project_id):
+    """
+    Returns a JSON tree of all pages in a project, organized by URL path,
+    ignoring domain and http(s) parts.
+    """
+    from urllib.parse import urlparse
+
+    project = get_object_or_404(Project, pk=project_id)
+    pages = Pages.objects.filter(project=project).values('id', 'url', 'title')
+
+    # Build a tree from URLs
+    tree = {"name": project.title, "url": project.url, "children": []}
+
+    for page in pages:
+        url = page['url']
+        # Parse the URL and get only the path, ignoring scheme and domain
+        parsed = urlparse(url)
+        path = parsed.path
+        # Remove empty parts (from leading/trailing slashes)
+        parts = [p for p in path.split('/') if p]
+        current = tree
+        for i, part in enumerate(parts):
+            if 'children' not in current:
+                current['children'] = []
+            # Find if this part already exists
+            found = None
+            for child in current['children']:
+                if child.get('name') == part:
+                    found = child
+                    break
+            if not found:
+                # If this is the last part, attach page info
+                if i == len(parts) - 1:
+                    node = {
+                        "name": part,
+                        "url": url,
+                        "title": page.get('title') or part,
+                        "page_id": page['id'],
+                        "children": [],
+                        "collapsed": False
+                    }
+                else:
+                    node = {
+                        "name": part,
+                        "children": []
+                    }
+                current['children'].append(node)
+                found = node
+            current = found
+
+    return JsonResponse(tree, safe=False)

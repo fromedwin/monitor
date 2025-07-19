@@ -1,8 +1,8 @@
 from django.urls import path
 
-from .views import project, projects_form, projects_delete, projects_add
+from .views import project, projects_form, projects_delete, projects_add, project_graph_tree
 from incidents.views import incidents
-from .api import fetch_deprecated_sitemaps, save_sitemap, save_scaping
+from .api import fetch_deprecated_sitemaps, save_sitemap, save_scaping, project_pages_tree_json
 
 urlpatterns = [
     # Add form to create a new project
@@ -17,6 +17,9 @@ urlpatterns = [
     path('project/<int:id>/incidents/', incidents, name='incidents'),
     # List of all incidents with date filter for a specific day
     path('project/<int:id>/incidents/<int:year>/<int:month>/<int:day>/', incidents, name='incidents_date'),
+
+    # Show project overview
+    path('project/<int:id>/graph/tree/', project_graph_tree, name='project_graph_tree'),
 ]
 
 #
@@ -29,5 +32,7 @@ urlpatterns += [
     path('api/save_sitemap/<str:secret_key>/<int:project_id>/', save_sitemap, name='save_sitemap'),
     # 
     path('api/save_scaping/<str:secret_key>/<int:page_id>/', save_scaping, name='save_scaping'),
+    # API endpoint to get project pages tree in JSON format
+    path('api/project/<int:project_id>/pages/tree/', project_pages_tree_json, name='project_pages_tree_json'),
 ]
 
