@@ -359,26 +359,26 @@
                   </div>
                   
                                      <div class="grid grid-cols-5 gap-2">
-                     <div class="text-center">
+                     <a href="{% url 'project_performances_report_viewer' old_report.page.project.id old_report.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
                        <div class="echartgauge" data-score="{{ old_report.score_performance }}"></div>
                        <p class="text-xs text-gray-500 mt-1">Perf</p>
-                     </div>
-                     <div class="text-center">
+                     </a>
+                     <a href="{% url 'project_performances_report_viewer' old_report.page.project.id old_report.id %}#accessibility" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
                        <div class="echartgauge" data-score="{{ old_report.score_accessibility }}"></div>
                        <p class="text-xs text-gray-500 mt-1">A11y</p>
-                     </div>
-                     <div class="text-center">
+                     </a>
+                     <a href="{% url 'project_performances_report_viewer' old_report.page.project.id old_report.id %}#best-practices" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
                        <div class="echartgauge" data-score="{{ old_report.score_best_practices }}"></div>
                        <p class="text-xs text-gray-500 mt-1">BP</p>
-                     </div>
-                     <div class="text-center">
+                     </a>
+                     <a href="{% url 'project_performances_report_viewer' old_report.page.project.id old_report.id %}#seo" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
                        <div class="echartgauge" data-score="{{ old_report.score_seo }}"></div>
                        <p class="text-xs text-gray-500 mt-1">SEO</p>
-                     </div>
-                     <div class="text-center">
+                     </a>
+                     <a href="{% url 'project_performances_report_viewer' old_report.page.project.id old_report.id %}#pwa" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
                        <div class="echartgauge" data-score="{{ old_report.score_pwa }}"></div>
                        <p class="text-xs text-gray-500 mt-1">PWA</p>
-                     </div>
+                     </a>
                    </div>
                 </div>
                 {% endif %}
