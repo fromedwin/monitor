@@ -203,28 +203,28 @@
         </div>
         <div class="flex flex-row px-3 py-2 items-center shrink-0">
           {% if report %}
-          <a href="{% url 'project_performances_report_viewer' report.page.project.id report.id %}"
+          <a href="{% url 'project_pages_report_viewer' report.page.project.id report.id %}"
             class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
             <div class="echartgauge" data-score="{{ report.score_performance }}"></div>
             <p class="text-xs">Performances</p>
           </a>
 
-          <a href="{% url 'project_performances_report_viewer' report.page.project.id report.id %}#accessibility"
+          <a href="{% url 'project_pages_report_viewer' report.page.project.id report.id %}#accessibility"
             class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
             <div class="echartgauge" data-score="{{ report.score_accessibility }}"></div>
             <p class="text-xs">Accessibility</p>
           </a>
-          <a href="{% url 'project_performances_report_viewer' report.page.project.id report.id %}#best-practices"
+          <a href="{% url 'project_pages_report_viewer' report.page.project.id report.id %}#best-practices"
             class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
             <div class="echartgauge" data-score="{{ report.score_best_practices }}"></div>
             <p class="text-xs">Best practices</p>
           </a>
-          <a href="{% url 'project_performances_report_viewer' report.page.project.id report.id %}#seo"
+          <a href="{% url 'project_pages_report_viewer' report.page.project.id report.id %}#seo"
             class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
             <div class="echartgauge" data-score="{{ report.score_seo }}"></div>
             <p class="text-xs">SEO</p>
           </a>
-          <a href="{% url 'project_performances_report_viewer' report.page.project.id report.id %}#pwa"
+          <a href="{% url 'project_pages_report_viewer' report.page.project.id report.id %}#pwa"
             class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
             <div class="echartgauge" data-score="{{ report.score_pwa }}"></div>
             <p class="text-xs">PWA</p>
@@ -275,7 +275,7 @@
               x-transition @click.away="open = false" style="display: none;">
               <div class="py-1" role="none">
                 {% if report %}
-                <a href="{% url 'project_performances_report_viewer' report.page.project.id report.id %}"
+                <a href="{% url 'project_pages_report_viewer' report.page.project.id report.id %}"
                   class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-1">See
                   Report</a>
                 {% endif %}
@@ -332,34 +332,34 @@
                 <p class="text-xs font-medium text-gray-600">
                   Report from {{ old_report.creation_date|naturaltime }}
                 </p>
-                <a href="{% url 'project_performances_report_viewer' old_report.page.project.id old_report.id %}"
+                <a href="{% url 'project_pages_report_viewer' old_report.page.project.id old_report.id %}"
                   class="text-xs text-emerald-600 hover:text-emerald-800">
                   View Report
                 </a>
               </div>
 
               <div class="grid grid-cols-5 gap-2">
-                <a href="{% url 'project_performances_report_viewer' old_report.page.project.id old_report.id %}"
+                <a href="{% url 'project_pages_report_viewer' old_report.page.project.id old_report.id %}"
                   class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
                   <div class="echartgauge" data-score="{{ old_report.score_performance }}"></div>
                   <p class="text-xs text-gray-500 mt-1">Performances</p>
                 </a>
-                <a href="{% url 'project_performances_report_viewer' old_report.page.project.id old_report.id %}#accessibility"
+                <a href="{% url 'project_pages_report_viewer' old_report.page.project.id old_report.id %}#accessibility"
                   class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
                   <div class="echartgauge" data-score="{{ old_report.score_accessibility }}"></div>
                   <p class="text-xs text-gray-500 mt-1">Accessibility</p>
                 </a>
-                <a href="{% url 'project_performances_report_viewer' old_report.page.project.id old_report.id %}#best-practices"
+                <a href="{% url 'project_pages_report_viewer' old_report.page.project.id old_report.id %}#best-practices"
                   class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
                   <div class="echartgauge" data-score="{{ old_report.score_best_practices }}"></div>
                   <p class="text-xs text-gray-500 mt-1">Best practices</p>
                 </a>
-                <a href="{% url 'project_performances_report_viewer' old_report.page.project.id old_report.id %}#seo"
+                <a href="{% url 'project_pages_report_viewer' old_report.page.project.id old_report.id %}#seo"
                   class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
                   <div class="echartgauge" data-score="{{ old_report.score_seo }}"></div>
                   <p class="text-xs text-gray-500 mt-1">SEO</p>
                 </a>
-                <a href="{% url 'project_performances_report_viewer' old_report.page.project.id old_report.id %}#pwa"
+                <a href="{% url 'project_pages_report_viewer' old_report.page.project.id old_report.id %}#pwa"
                   class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
                   <div class="echartgauge" data-score="{{ old_report.score_pwa }}"></div>
                   <p class="text-xs text-gray-500 mt-1">PWA</p>

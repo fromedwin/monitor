@@ -1,11 +1,11 @@
 from django.urls import path
 
 from .api import report_api, fetch_deprecated_performances
-from .views import project_performances_report_viewer
+from .views import project_pages_report_viewer
 
 urlpatterns = [
     # Display performances panel
-    path('project/<int:id>/performances/report/<int:report_id>', project_performances_report_viewer, name='project_performances_report_viewer'),
+    path('project/<int:id>/pages/report/<int:report_id>', project_pages_report_viewer, name='project_pages_report_viewer'),
 ]
 
 #

@@ -10,7 +10,7 @@ from lighthouse.models import LighthouseReport
 
 @login_required
 @waiting_list_approved_only()
-def project_performances_report_viewer(request, id, report_id):
+def project_pages_report_viewer(request, id, report_id):
     """
     Show current project status
     """
