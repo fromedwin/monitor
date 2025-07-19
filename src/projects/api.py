@@ -108,6 +108,7 @@ def save_scaping(request, secret_key, page_id):
 
     page.title = data.get('title')
     page.description = data.get('description')
+    page.scraping_last_seen = timezone.now()
     page.save()
 
     return JsonResponse({})
