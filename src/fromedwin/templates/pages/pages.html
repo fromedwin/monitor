@@ -169,37 +169,11 @@
       {% for page in pages %}
       <div class="pt-4 pb-8 performance_tree">
 
-        <div class="border-b border-gray-200 pb-5">
-          <h3 class="text-base font-semibold leading-6 text-gray-900">{{ page.url }}</h3>
-          <p class="text-sm">
-            {{ page.title }}</page>
-          </p>
-          <p class="text-sm">
-            {{ page.description }}</page>
-          </p>
-          <div class="flex flex-row gap-2 items-center justify-between">
-            <p class="text-xs text-gray-500 mt-2">
-              Last report: {{ page.lighthouse_report.last.creation_date|naturaltime }}
-            </p>
-            {% if page.lighthouse_last_request > page.lighthouse_report.last.creation_date %}
-            <p class="text-xs text-gray-500 mt-2">Status: Queued</p>
-            {% elif page.next_lighthouse_run < 0 %}
-            <p class="text-xs text-gray-500 mt-2">
-              Will be picked soon
-            </p>
-            {% else %}
-            <p class="text-xs text-gray-500 mt-2">
-              Next run in {{ page.next_lighthouse_run|timeuntil }}
-            </p>
-            {% endif %}
-          </div>
-        </div>
-
         
         {% with report=page.lighthouse_report.first %}
-        <div class="flex align-middle">
+        <div class="flex items-start gap-2">
           {% if report and report.screenshot %}
-          <div class="flex items-center">
+          <div class="flex items-center shrink-0">
             <img
               x-data="{ visible: false }"
               x-intersect="visible = true"
@@ -209,20 +183,22 @@
             />
           </div>
           {% endif %}
-          <div class="px-3 text-sm font-medium text-gray-900 flex-grow flex items-center">
-            <p><a href="{{ app }}">{% if child.depth == 0 %}
-              /
-          <div class="inline mt-2 flex items-center text-sm text-gray-500 px-3">
-          </div>
-            {% else %}
-              <span class="text-gray-400 text-sm pr-1">/{{child.path_parent}}</span>{{ child.path_without_parent }}
-            {% endif %} 
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 inline-block ml-2 text-gray-500">
+          <div class="px-3 text-sm font-medium text-gray-900 flex-grow flex flex-col items-start">
+
+            <p class="text-sm font-bold">
+              {{ page.title }}</page>
+            </p>
+            <p><a href="{{ page.url }}">
+              <span class="text-gray-400 text-sm pr-1">{{ page.url }}</span>{{ child.path_without_parent }}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 inline-block ml-1 text-gray-500">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
               </svg></a>
             </p>
+            <p class="text-sm font-normal">
+              {{ page.description }}</page>
+            </p>
           </div>
-          <div class="flex flex-row px-3 py-2">
+          <div class="flex flex-row px-3 py-2 items-center shrink-0">
             {% if report %}
             <a href="{% url 'project_performances_report_viewer' report.page.project.id report.id %}" class="text-sm text-gray-900 flex flex-col justify-center align-middle text-center px-1">
               <div class="echartgauge" data-score="{{ report.score_performance }}"></div>
@@ -309,6 +285,26 @@
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+
+        <div class="border-b border-gray-200 pb-5">
+          <div class="flex flex-row gap-2 items-center justify-between">
+            <p class="text-xs text-gray-500 mt-2">
+              Last report: {{ page.lighthouse_report.last.creation_date|naturaltime }}
+            </p>
+            {% if page.lighthouse_last_request > page.lighthouse_report.last.creation_date %}
+            <p class="text-xs text-gray-500 mt-2">Status: Queued</p>
+            {% elif page.next_lighthouse_run < 0 %}
+            <p class="text-xs text-gray-500 mt-2">
+              Will be picked soon
+            </p>
+            {% else %}
+            <p class="text-xs text-gray-500 mt-2">
+              Next run in {{ page.next_lighthouse_run|timeuntil }}
+            </p>
+            {% endif %}
           </div>
         </div>
         <!--  -->

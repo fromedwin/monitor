@@ -141,7 +141,7 @@ class Pages(models.Model):
     def next_lighthouse_run(self):
         """Calculate when the next lighthouse run is scheduled"""
         if self.lighthouse_last_request:
-            return self.lighthouse_last_request + timedelta(seconds=settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES * 60)
+            return self.lighthouse_last_request + timedelta(minutes=settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES)
         return None
 
     class Meta:
