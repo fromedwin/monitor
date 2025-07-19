@@ -177,17 +177,22 @@
           <p class="text-sm">
             {{ page.description }}</page>
           </p>
-          <p class="text-xs text-gray-500 mt-2">
-            Duration: 
-            {% with duration=page.lighthouse_report.first.celery_task_log.duration %}
-              {% if duration %}
-                {{ duration.total_seconds|floatformat:0 }}s
-              {% else %}
-                N/A
-              {% endif %}
-            {% endwith %}
-            - {{ page.lighthouse_report.first.creation_date|naturaltime }}
-          </p>
+          <div class="flex flex-row gap-2 items-center justify-between">
+            <p class="text-xs text-gray-500 mt-2">
+              Last report: {{ page.lighthouse_report.last.creation_date|naturaltime }}
+            </p>
+            {% if page.lighthouse_last_request > page.lighthouse_report.last.creation_date %}
+            <p class="text-xs text-gray-500 mt-2">Status: Queued</p>
+            {% elif page.next_lighthouse_run < 0 %}
+            <p class="text-xs text-gray-500 mt-2">
+              Will be picked soon
+            </p>
+            {% else %}
+            <p class="text-xs text-gray-500 mt-2">
+              Next run in {{ page.next_lighthouse_run|timeuntil }}
+            </p>
+            {% endif %}
+          </div>
         </div>
 
         
@@ -199,8 +204,8 @@
               x-data="{ visible: false }"
               x-intersect="visible = true"
               :src="visible ? '{{ report.screenshot.url }}' : ''"
-              style="max-height: 4em"
-              alt="Page screenshot"
+              style="width: 100px; height: 70px; background-color: #DDD;"
+              alt=""
             />
           </div>
           {% endif %}

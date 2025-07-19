@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from datetime import timedelta
+from django.conf import settings
 
 # List of status for tasks
 TASK_STATUS = (
@@ -135,6 +137,12 @@ class Pages(models.Model):
     sitemap_last_seen = models.DateTimeField(help_text="Last time sitemap was reported", null=True, blank=True)
     scraping_last_seen = models.DateTimeField(help_text="Last time scraping was run", null=True, blank=True)
     lighthouse_last_request = models.DateTimeField(help_text="Last time lighthouse was requested", null=True, blank=True)
+
+    def next_lighthouse_run(self):
+        """Calculate when the next lighthouse run is scheduled"""
+        if self.lighthouse_last_request:
+            return self.lighthouse_last_request + timedelta(seconds=settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES * 60)
+        return None
 
     class Meta:
         constraints = [
