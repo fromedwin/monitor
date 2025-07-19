@@ -187,7 +187,7 @@
         <div class="px-3 text-sm font-medium text-gray-900 flex-grow flex flex-col items-start">
 
           <p class="text-sm font-bold">
-            {{ page.title }}</page>
+            {{ page.title }}
           </p>
           <p><a href="{{ page.url }}">
               <span class="text-gray-400 text-sm pr-1">{{ page.url }}</span>{{ child.path_without_parent }}
@@ -198,7 +198,10 @@
               </svg></a>
           </p>
           <p class="text-sm font-normal">
-            {{ page.description }}</page>
+            {{ page.description }}
+          </p>
+          <p class="text-xs text-gray-500">
+            {{ page.sitemap_last_seen|naturaltime }} - {{ page.scraping_last_seen|naturaltime }}
           </p>
         </div>
         <div class="flex flex-row px-3 py-2 items-center shrink-0">
