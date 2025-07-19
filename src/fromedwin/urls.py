@@ -55,7 +55,7 @@ urlpatterns = [
     path('restricted/', restricted, name='restricted'),
 
 
-    path('project/<int:id>/performances/', project_pages, name='project_performances'),
+    path('project/<int:id>/pages/', project_pages, name='project_pages'),
 
     # """
     # Administration panel for super user in app
