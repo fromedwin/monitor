@@ -56,7 +56,7 @@ def report_api(request, secret_key, page_id):
             return JsonResponse({}, status=401)
 
         page = get_object_or_404(Pages, pk=page_id)
-        last_report = page.lighthouse_report.last()
+        last_report = page.lighthouse_report.first()
 
         return JsonResponse({
             # List of ids and urls to fetch
