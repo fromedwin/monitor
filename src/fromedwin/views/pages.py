@@ -2,7 +2,7 @@ import json
 
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-
+from django.db.models import Q
 from projects.models import Project
 from fromedwin.decorators import waiting_list_approved_only
 
@@ -18,5 +18,8 @@ def project_pages(request, id):
     return render(request, 'pages/pages.html', {
         'project': project,
         'pages_count': project.pages.count(),
-        'pages': project.pages.all().order_by('url')
+        'pages': project.pages.filter(http_status__lt=400).order_by('url'),
+        'pages_with_errors': project.pages.filter(
+            Q(http_status__gte=400) | Q(http_status__isnull=True)
+        ).order_by('url')
     })

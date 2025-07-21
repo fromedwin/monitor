@@ -115,9 +115,10 @@ def save_scaping(request, secret_key, page_id):
     # Load data from body as json
     data = json.loads(request.body.decode("utf-8"))
 
-    page.title = data.get('title')
-    page.description = data.get('description')
+    page.title = data.get('title', '')
+    page.description = data.get('description', '')
     page.scraping_last_seen = timezone.now()
+    page.http_status = data.get('http_status', 0)
     page.save()
 
     # get urls and create pages for each url. MIght already exist then should ignore
