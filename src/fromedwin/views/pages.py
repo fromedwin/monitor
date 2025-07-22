@@ -20,6 +20,7 @@ def project_pages(request, id):
         'pages_count': project.pages.count(),
         'pages': project.pages.filter(http_status__lt=400).order_by('url'),
         'pages_with_errors': project.pages.filter(
-            Q(http_status__gte=400) | Q(http_status__isnull=True)
-        ).order_by('url')
+            Q(http_status__gte=400) | Q(http_status=0)
+        ).order_by('url'),
+        'pages_loading': project.pages.filter(http_status__isnull=True).order_by('url')
     })

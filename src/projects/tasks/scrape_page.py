@@ -7,9 +7,9 @@ from urllib.parse import urlparse
 
 @shared_task()
 def scrape_page(page_id, url):
+    data = {}
     try:
         response = requests.get(url)
-        data = {}
         if response.status_code == 200:
             # Step 2: Parse the HTML content
             soup = BeautifulSoup(response.content, 'html.parser', from_encoding='utf-8')
@@ -85,10 +85,15 @@ def scrape_page(page_id, url):
                 'http_status': response.status_code
             }
             logging.error(f"Failed to fetch the webpage. Status code: {response.status_code}")
+    except Exception as e:
+        data = {
+            'http_status': 0,
+            'error': str(e)
+        }
+        logging.error(f"Error scraping the page: {e}")
+    finally:
         try:
             response = requests.post(f'{settings.BACKEND_URL}/api/save_scaping/{settings.SECRET_KEY}/{page_id}/', json=data)
             response.raise_for_status()
         except Exception as e:
             logging.error(f"Error sending the result to the backend: {e}")
-    except Exception as e:
-        logging.error(f"Error scraping the page: {e}")
