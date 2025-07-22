@@ -123,7 +123,6 @@ def save_scaping(request, secret_key, page_id):
 
     # get urls and create pages for each url. MIght already exist then should ignore
     urls = data.get('urls')
-    print(urls)
     for url in urls:
         if not Pages.objects.filter(url=url).exists():
             Pages.objects.create(url=url, project=page.project)
