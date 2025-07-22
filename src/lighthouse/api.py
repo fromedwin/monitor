@@ -8,16 +8,15 @@ from django.db.models import Q
 
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 
 from rest_framework.decorators import api_view
 
 from projects.models import Pages
 from logs.models import CeleryTaskLog
 from .models import LighthouseReport
-from django.http import JsonResponse
-
-from django.conf import settings
-
+from fromedwin.decorators import waiting_list_approved_only
 from constants import LIGHTHOUSE_FORMFACTOR_CHOICES
 
 @api_view(["GET"])
@@ -129,3 +128,29 @@ def report_api(request, secret_key, page_id):
     report.save()
 
     return JsonResponse({})
+
+@login_required
+@waiting_list_approved_only()
+@api_view(["GET"])
+def report_json_api(request, report_id):
+    """
+    Return lighthouse report JSON data for authenticated users
+    """
+    try:
+        report = get_object_or_404(LighthouseReport, pk=report_id)
+        
+        # Check if user has access to the project that owns this report
+        if report.page.project.user != request.user:
+            return JsonResponse({'error': 'Unauthorized access to this report'}, status=403)
+        
+        # Read and return the JSON data from the report file
+        if report.report_json_file:
+            report_json_content = report.report_json_file.read()
+            return JsonResponse(json.loads(report_json_content.decode('utf-8')), safe=False)
+        else:
+            return JsonResponse({'error': 'Report JSON file not found'}, status=404)
+            
+    except LighthouseReport.DoesNotExist:
+        return JsonResponse({'error': 'Report not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': f'Error loading report: {str(e)}'}, status=500)
