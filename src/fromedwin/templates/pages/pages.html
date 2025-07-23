@@ -193,7 +193,7 @@
           <div class="w-[100px] h-[70px] bg-gray-200 rounded-md"></div>
         </div>
         {% endif %}
-        <div class="px-3 text-sm font-medium text-gray-900 flex-grow flex flex-col items-start">
+        <div class="px-3 text-sm font-medium text-gray-900 flex-grow flex flex-col gap-1 items-start">
 
           <p class="text-sm font-bold">
             {{ page.title }}
@@ -210,6 +210,10 @@
           <p class="text-sm font-normal">
             {{ page.description }}
           </p>
+          {% else %}
+          <span
+            class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-gray-500/10 ring-inset">No
+            description</span>
           {% endif %}
         </div>
         <div class="flex flex-row px-3 py-2 items-center shrink-0">
