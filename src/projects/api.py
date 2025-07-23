@@ -20,6 +20,7 @@ from django.http import JsonResponse
 from projects.models import Pages, Project
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_GET
+from fromedwin.decorators import waiting_list_approved_only
 
 
 @api_view(["GET"])
@@ -181,3 +182,34 @@ def project_pages_tree_json(request, project_id):
             current = found
 
     return JsonResponse(tree, safe=False)
+
+
+@waiting_list_approved_only()
+@api_view(["DELETE"])
+def delete_page(request, page_id):
+    """
+    Delete a page for authenticated users
+    """
+    try:
+        page = get_object_or_404(Pages, pk=page_id)
+        
+        # Check if user has access to the project that owns this page
+        if page.project.user != request.user:
+            return JsonResponse({'error': 'Unauthorized access to this page'}, status=403)
+        
+        # Store page info for response
+        page_url = page.url
+        page_title = page.title
+        
+        # Delete the page
+        page.delete()
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Page "{page_title or page_url}" has been deleted successfully'
+        })
+            
+    except Pages.DoesNotExist:
+        return JsonResponse({'error': 'Page not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': f'Error deleting page: {str(e)}'}, status=500)

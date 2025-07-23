@@ -144,10 +144,120 @@
       observer.observe(element);
     });
   });
+
+  // Delete page function with confirmation
+  window.deletePage = async function (pageId, pageName) {
+    if (!confirm(`Are you sure you want to delete the page "${pageName}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/page/${pageId}/delete/`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // Reload the page immediately
+        window.location.reload();
+      } else {
+        // Show error toast
+        window.dispatchEvent(new CustomEvent('show-toast', {
+          detail: { message: data.error || 'Failed to delete page', type: 'error' }
+        }));
+      }
+    } catch (error) {
+      console.error('Error deleting page:', error);
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: { message: 'Network error occurred while deleting page', type: 'error' }
+      }));
+    }
+  };
 </script>
 {% endblock %}
 
 {% block subsection %}
+<!-- CSRF Token for AJAX requests -->
+<form style="display: none;">
+  {% csrf_token %}
+</form>
+
+<!-- Toaster Notification -->
+<div x-data="{ 
+  show: false, 
+  message: '', 
+  type: 'success',
+  showToast(msg, toastType = 'success') {
+    this.message = msg;
+    this.type = toastType;
+    this.show = true;
+    setTimeout(() => { this.show = false; }, 5000);
+  }
+}" @show-toast.window="showToast($event.detail.message, $event.detail.type)" class="fixed top-4 right-4  z-50">
+  <div x-show="show" x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="opacity-0 transform translate-x-full"
+    x-transition:enter-end="opacity-100 transform translate-x-0" x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100 transform translate-x-0"
+    x-transition:leave-end="opacity-0 transform translate-x-full"
+    class="max-w-sm w-full shadow-lg rounded-lg pointer-events-auto" :class="{
+         'bg-green-50 border border-green-200': type === 'success',
+         'bg-red-50 border border-red-200': type === 'error',
+         'bg-yellow-50 border border-yellow-200': type === 'warning'
+       }">
+    <div class="p-4">
+      <div class="flex items-start">
+        <div class="flex-shrink-0">
+          <!-- Success Icon -->
+          <svg x-show="type === 'success'" class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <!-- Error Icon -->
+          <svg x-show="type === 'error'" class="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <!-- Warning Icon -->
+          <svg x-show="type === 'warning'" class="h-6 w-6 text-yellow-400" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+        </div>
+        <div class="ml-3 w-0 flex-1 pt-0.5">
+          <p class="text-sm font-medium" :class="{
+               'text-green-800': type === 'success',
+               'text-red-800': type === 'error',
+               'text-yellow-800': type === 'warning'
+             }" x-text="message"></p>
+        </div>
+        <div class="ml-4 flex-shrink-0 flex">
+          <button @click="show = false"
+            class="rounded-md inline-flex focus:outline-none focus:ring-2 focus:ring-offset-2" :class="{
+                    'text-green-400 hover:text-green-600 focus:ring-green-500': type === 'success',
+                    'text-red-400 hover:text-red-600 focus:ring-red-500': type === 'error',
+                    'text-yellow-400 hover:text-yellow-600 focus:ring-yellow-500': type === 'warning'
+                  }">
+            <span class="sr-only">Close</span>
+            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <header class="pb-4">
   <h1 class="text-3xl font-bold leading-tight text-gray-900 relative pl-16 pt-2 pb-8">
     <div class="absolute top-0 left-0 flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-600">
@@ -269,31 +379,49 @@
           </div>
           {% endif %}
         </div>
-        <div class="flex items-center space-x-1">
+        <div class="flex items-center">
+          <!-- Page Actions Dropdown -->
+          <div class="relative" x-data="{ open: false }">
+            <button @click="open = !open" @keydown.escape="open = false"
+              class="flex items-center justify-center w-8 h-8 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-colors">
+              <span class="sr-only">Page options</span>
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM11.5 15.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" />
+              </svg>
+            </button>
 
-          <!-- DROPDOWNM MENU-->
-          <div class="relative inline-block text-left" x-data="{ open: false }">
-            <div>
-              <button id="performance-{{ app }}-button" type="button"
-                class="flex items-center rounded-full text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-gray-100 px-1 py-1"
-                aria-expanded="true" aria-haspopup="true" @click="open = !open" @keydown.escape="open = false">
-                <span class="sr-only">Open options</span>
-                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path
-                    d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM11.5 15.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" />
-                </svg>
-              </button>
-            </div>
-            <div id="performance-{{ app }}-dropdown"
-              class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-              role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1" x-show="open"
-              x-transition @click.away="open = false" style="display: none;">
-              <div class="py-1" role="none">
+            <div x-show="open" x-transition:enter="transition ease-out duration-100"
+              x-transition:enter-start="transform opacity-0 scale-95"
+              x-transition:enter-end="transform opacity-100 scale-100"
+              x-transition:leave="transition ease-in duration-75"
+              x-transition:leave-start="transform opacity-100 scale-100"
+              x-transition:leave-end="transform opacity-0 scale-95" @click.away="open = false"
+              class="absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5"
+              x-cloak style="display: none;">
+
+              <div class="py-1">
                 {% if report %}
                 <a href="{% url 'project_pages_report_viewer' report.page.project.id report.id %}"
-                  class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-1">See
-                  Report</a>
+                  class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                  <svg class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  View Report
+                </a>
+                <div class="border-t border-gray-100"></div>
                 {% endif %}
+
+                <button @click="deletePage({{ page.id }}, '{{ page.title|default:page.url|escapejs }}'); open = false"
+                  class="group flex items-center w-full px-4 py-2 text-sm text-red-700 hover:bg-red-50 transition-colors">
+                  <svg class="mr-3 h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  Delete Page
+                </button>
               </div>
             </div>
           </div>
@@ -447,18 +575,53 @@
                   </p>
                   {% endif %}
                 </div>
-                <div class="ml-4 flex-shrink-0">
-                  {% if page.http_status %}
-                  <span
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                    HTTP {{ page.http_status }}
-                  </span>
-                  {% else %}
-                  <span
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                    No Response
-                  </span>
-                  {% endif %}
+                <div class="ml-4 flex items-center space-x-2">
+                  <div class="flex-shrink-0">
+                    {% if page.http_status %}
+                    <span
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                      HTTP {{ page.http_status }}
+                    </span>
+                    {% else %}
+                    <span
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                      No Response
+                    </span>
+                    {% endif %}
+                  </div>
+
+                  <!-- Dead Link Actions Dropdown -->
+                  <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open" @keydown.escape="open = false"
+                      class="flex items-center justify-center w-6 h-6 rounded-full text-red-400 hover:text-red-600 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">
+                      <span class="sr-only">Dead link options</span>
+                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                          d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM11.5 15.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" />
+                      </svg>
+                    </button>
+
+                    <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                      x-transition:enter-start="transform opacity-0 scale-95"
+                      x-transition:enter-end="transform opacity-100 scale-100"
+                      x-transition:leave="transition ease-in duration-75"
+                      x-transition:leave-start="transform opacity-100 scale-100"
+                      x-transition:leave-end="transform opacity-0 scale-95" @click.away="open = false"
+                      class="absolute right-0 z-50 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5"
+                      x-cloak style="display: none;">
+                      <div class="py-1">
+                        <button
+                          @click="deletePage({{ page.id }}, '{{ page.title|default:page.url|escapejs }}'); open = false"
+                          class="group flex items-center w-full px-3 py-2 text-sm text-red-700 hover:bg-red-50 transition-colors">
+                          <svg class="mr-2 h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                          Delete Page
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
