@@ -10,14 +10,13 @@ from django.http import JsonResponse
 from django.conf import settings
 from rest_framework.decorators import api_view
 from .tasks.scrape_page import scrape_page
-from .models import Project, Pages
+from .models import Project, Pages, PageLink
 from logs.models import CeleryTaskLog
 
 
 
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-from projects.models import Pages, Project
+from django.db import transaction
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_GET
 from fromedwin.decorators import waiting_list_approved_only
@@ -122,13 +121,34 @@ def save_scaping(request, secret_key, page_id):
     page.http_status = data.get('http_status', 0)
     page.save()
 
-    # get urls and create pages for each url. MIght already exist then should ignore
-    urls = data.get('urls')
-    for url in urls:
-        if not Pages.objects.filter(url=url).exists():
-            Pages.objects.create(url=url, project=page.project)
+    # get urls and create pages for each url. Might already exist then should ignore
+    urls = data.get('urls', [])
+    
+    # Use transaction to ensure atomicity and prevent database locks
+    with transaction.atomic():
+        # Delete all existing outbound links from this page first (clean slate)
+        PageLink.objects.filter(from_page=page).delete()
+        
+        # Create new links for all discovered URLs
+        for url in urls:
+            # Prevent a page from linking to itself
+            if url == page.url:
+                continue
+            # Get or create the target page within the same project
+            to_page, created = Pages.objects.get_or_create(
+                url=url, 
+                project=page.project,
+            )
+            
+            # Create the link (no need for get_or_create since we deleted all links above)
+            PageLink.objects.create(
+                from_page=page,
+                to_page=to_page
+            )
 
-    return JsonResponse({})
+    return JsonResponse({
+        'total_urls': len(urls)
+    })
 
 @require_GET
 def project_pages_tree_json(request, project_id):

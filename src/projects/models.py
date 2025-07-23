@@ -149,3 +149,51 @@ class Pages(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['project', 'url'], name='unique_page_project_url')
         ]
+
+    def __str__(self):
+        return f"{self.title or self.url}"
+
+
+class PageLink(models.Model):
+    """
+    Represents a link from one page to another page within the same project.
+    This helps track the internal link structure of websites.
+    """
+    from_page = models.ForeignKey(
+        Pages,
+        on_delete=models.CASCADE,
+        related_name="outbound_links",
+        help_text="The page that contains the link"
+    )
+    to_page = models.ForeignKey(
+        Pages,
+        on_delete=models.CASCADE,
+        related_name="inbound_links",
+        help_text="The page that is being linked to"
+    )
+    created_at = models.DateTimeField(auto_now_add=True, help_text="When this link was first discovered")
+    updated_at = models.DateTimeField(auto_now=True, help_text="When this link was last seen")
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['from_page', 'to_page'], name='unique_page_link')
+        ]
+        indexes = [
+            models.Index(fields=['from_page']),
+            models.Index(fields=['to_page']),
+        ]
+
+    def __str__(self):
+        return f"{self.from_page.title or self.from_page.url} → {self.to_page.title or self.to_page.url}"
+
+    def save(self, *args, **kwargs):
+        # Prevent self-linking
+        if self.from_page == self.to_page:
+            raise ValueError("A page cannot link to itself")
+        
+        # Ensure both pages belong to the same project
+        if self.from_page.project != self.to_page.project:
+            raise ValueError("Pages must belong to the same project")
+        
+        super().save(*args, **kwargs)
+

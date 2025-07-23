@@ -652,6 +652,40 @@
                 </span>
                 {% endif %}
               </div>
+
+              <!-- Show pages that link to this dead page -->
+              {% if page.inbound_links.exists %}
+              <div class="mt-3 p-3 bg-red-25 border border-red-100 rounded-md">
+                <div class="flex items-start">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="h-4 w-4 mr-2 text-red-500 mt-0.5 flex-shrink-0">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+                  </svg>
+                  <div class="flex-1">
+                    <p class="text-xs font-medium text-red-700 mb-2">Found on {{ page.inbound_links.count }} page
+                      {{ page.inbound_links.count|pluralize }}:</p>
+                    <div class="space-y-1">
+                      {% for link in page.inbound_links.all %}
+                      <div class="flex items-center text-xs text-red-600">
+                        <span class="truncate max-w-xs">
+                          <a href="{{ link.from_page.url }}" target="_blank" rel="noopener noreferrer"
+                            class="hover:underline font-medium">
+                            {{ link.from_page.title|default:link.from_page.url }}
+                          </a>
+                        </span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                          stroke="currentColor" class="w-3 h-3 inline-block ml-1 flex-shrink-0">
+                          <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                        </svg>
+                      </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
             </div>
           </div>
         </div>
