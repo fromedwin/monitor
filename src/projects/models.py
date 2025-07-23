@@ -132,7 +132,7 @@ class Pages(models.Model):
     )
     url = models.URLField(max_length=512, blank=False, help_text="URL to monitor")
     title = models.CharField(max_length=128, blank=True, help_text="Page title")
-    description = models.TextField(blank=True, help_text="Page description")
+    description = models.TextField(blank=True, null=True, help_text="Page description")
     created_at = models.DateTimeField(auto_now_add=True)
     http_status = models.IntegerField(help_text="HTTP status of the page", null=True, blank=True)
     sitemap_last_seen = models.DateTimeField(help_text="Last time sitemap was reported", null=True, blank=True)

@@ -20,7 +20,7 @@ def scrape_page(page_id, url):
             
             # Step 4: Extract the meta description
             description_tag = soup.find("meta", attrs={"name": "description"})
-            description = description_tag["content"] if description_tag else "No description meta found"
+            description = description_tag["content"] if description_tag else None
             logging.info(f"Meta Description: {description}")
 
             # get all urls in the page with same domain
