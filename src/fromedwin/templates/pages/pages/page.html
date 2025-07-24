@@ -144,8 +144,8 @@
     <div class="border-b border-gray-200 pb-5">
         <div class="flex flex-row gap-2 items-center justify-between">
             <p class="text-xs text-gray-500 mt-2">
-                Last report: {{ report.creation_date|naturaltime }} - {% if page.sitemap_last_seen %}✅ In sitemap{% else
-                %}❌
+                Last report: {{ report.creation_date|naturaltime }} - {% if page.sitemap_last_seen %}✅ In sitemap
+                {% else %}❌
                 Not in sitemap{% endif %} - http status: {{ page.http_status }}</p>
 
             {% if page.lighthouse_last_request > report.creation_date %}
