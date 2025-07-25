@@ -43,16 +43,37 @@ def project(request, id):
 @login_required
 @waiting_list_approved_only()
 def project_graph_tree(request, id):
-    """
-    Show current project status
-    """
-
     project = get_object_or_404(Project, pk=id)
 
     return render(request, 'graph/graph_tree.html', {
         'project': project,
     })
 
+@login_required
+@waiting_list_approved_only()
+def project_screenshots(request, id):
+    project = get_object_or_404(Project, pk=id)
+
+    # Get the most recent lighthouse report with screenshot for each page in this project
+    from lighthouse.models import LighthouseReport
+
+    # For each page in the project, get the most recent LighthouseReport with a screenshot
+    from projects.models import Pages
+    pages = Pages.objects.filter(project=project)
+    screenshots = []
+    for page in pages:
+        report = LighthouseReport.objects.filter(
+            page=page,
+            screenshot__isnull=False
+        ).order_by('-creation_date').first()
+        if report:
+            screenshots.append(report)
+
+    return render(request, 'screenshots/screenshots.html', {
+        'project': project,
+        'screenshots': screenshots,
+    })
+    
 
 @login_required
 @waiting_list_approved_only()
@@ -116,4 +137,6 @@ def projects_add(request):
     return render(request, 'projects/project_add.html', {
         'form': form,
     })
+
+
 

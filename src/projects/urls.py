@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import project, projects_form, projects_delete, projects_add, project_graph_tree
+from .views import project, projects_form, projects_delete, projects_add, project_graph_tree, project_screenshots
 from incidents.views import incidents
 from .api import fetch_deprecated_sitemaps, save_sitemap, save_scaping, project_pages_tree_json, delete_page
 
@@ -20,6 +20,8 @@ urlpatterns = [
 
     # Show project overview
     path('project/<int:id>/graph/tree/', project_graph_tree, name='project_graph_tree'),
+    # Show project screenshots
+    path('project/<int:id>/screenshots/', project_screenshots, name='project_screenshots'),
 ]
 
 #

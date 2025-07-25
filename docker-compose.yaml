@@ -71,6 +71,7 @@ services:
         - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
         - INFLUXDB_BUCKET=fromedwin
         - INFLUXDB_ORG=fromedwin
+        - TELEGRAF_INTERVAL=${TELEGRAF_INTERVAL-15s}
       ports:
         - "9273:9273"  # Expose Telegraf Prometheus plugin metrics
       volumes:
@@ -133,6 +134,7 @@ services:
         - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
         - INFLUXDB_BUCKET=fromedwin
         - INFLUXDB_ORG=fromedwin
+        - TELEGRAF_INTERVAL=${TELEGRAF_INTERVAL-15s}
       volumes:
         - ./worker/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
     #
