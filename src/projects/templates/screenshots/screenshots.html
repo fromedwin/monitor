@@ -23,7 +23,7 @@
         {% for screenshot in screenshots %}
         {% if screenshot.screenshot %}
         <div class="overflow-hidden">
-            <img src="{{ screenshot.screenshot.url }}" alt="Screenshot" class="w-full h-auto object-cover">
+            <img src="{{ screenshot.screenshot.url }}" alt="Screenshot" class="w-[500px] h-auto object-cover">
             <p class="text-sm text-gray-500">{{ screenshot.page.url }}</p>
         </div>
         {% endif %}

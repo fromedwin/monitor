@@ -59,7 +59,7 @@ def project_screenshots(request, id):
 
     # For each page in the project, get the most recent LighthouseReport with a screenshot
     from projects.models import Pages
-    pages = Pages.objects.filter(project=project)
+    pages = Pages.objects.filter(project=project).order_by('url')
     screenshots = []
     for page in pages:
         report = LighthouseReport.objects.filter(
