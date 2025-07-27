@@ -1,0 +1,44 @@
+# Crawl4AI configuration file
+
+# Logging configuration
+logging:
+  level: INFO
+  file: /var/log/crawl4ai/crawl4ai.log
+
+# Crawler settings
+# crawler:
+#   user_agent: "Crawl4AI/1.0 (+https://github.com/crawl4ai/crawl4ai)"
+#   max_depth: 0
+#   max_pages: 1
+#   obey_robots_txt: true
+#   concurrent_requests: 8
+#   download_delay: 0.5
+#   timeout: 30
+#   retries: 2
+
+# Storage settings
+# storage:
+#   type: filesystem
+#   path: /data/crawl4ai
+
+# Output settings
+# output:
+#   format: jsonl
+#   path: /data/crawl4ai/output
+
+# Seeds (example, override with your own)
+# seeds:
+#   - https://example.com
+
+# Plugins (enable/disable features)
+plugins:
+  screenshot: true
+  javascript_rendering: true
+  sitemap_discovery: false
+  pdf_capture: false
+
+# API server (optional)
+# api:
+#   enabled: true
+#   host: 0.0.0.0
+#   port: 8080
