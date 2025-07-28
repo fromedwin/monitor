@@ -114,37 +114,50 @@ def save_scaping(request, secret_key, page_id):
 
     # Load data from body as json
     data = json.loads(request.body.decode("utf-8"))
-
-    page.title = data.get('title', '')
-    page.description = data.get('description', '')
-    page.scraping_last_seen = timezone.now()
-    page.http_status = data.get('http_status', 0)
-    page.save()
-
-    # get urls and create pages for each url. Might already exist then should ignore
-    urls = data.get('urls', [])
+    urls = []
     
-    # Use transaction to ensure atomicity and prevent database locks
-    with transaction.atomic():
-        # Delete all existing outbound links from this page first (clean slate)
-        PageLink.objects.filter(from_page=page).delete()
+    page.http_status = data.get('http_status', 0)
+    if data.get('redirected_url') and data.get('http_status') == 301:
+        page.save()
+        to_page = Pages.objects.get_or_create(
+            url=data.get('redirected_url'),
+            project=page.project,
+        )
+        # Create the link (no need for get_or_create since we deleted all links above)
+        PageLink.objects.create(
+            from_page=page,
+            to_page=to_page
+        )
+    else:
+        page.title = data.get('title', '')
+        page.description = data.get('description', '')
+        page.scraping_last_seen = timezone.now()
+        page.save()
+
+        # get urls and create pages for each url. Might already exist then should ignore
+        urls = data.get('urls', [])
         
-        # Create new links for all discovered URLs
-        for url in urls:
-            # Prevent a page from linking to itself
-            if url == page.url:
-                continue
-            # Get or create the target page within the same project
-            to_page, created = Pages.objects.get_or_create(
-                url=url, 
-                project=page.project,
-            )
+        # Use transaction to ensure atomicity and prevent database locks
+        with transaction.atomic():
+            # Delete all existing outbound links from this page first (clean slate)
+            PageLink.objects.filter(from_page=page).delete()
             
-            # Create the link (no need for get_or_create since we deleted all links above)
-            PageLink.objects.create(
-                from_page=page,
-                to_page=to_page
-            )
+            # Create new links for all discovered URLs
+            for url in urls:
+                # Prevent a page from linking to itself
+                if url == page.url:
+                    continue
+                # Get or create the target page within the same project
+                to_page, created = Pages.objects.get_or_create(
+                    url=url,
+                    project=page.project,
+                )
+
+                # Create the link (no need for get_or_create since we deleted all links above)
+                PageLink.objects.create(
+                    from_page=page,
+                    to_page=to_page
+                )
 
     return JsonResponse({
         'total_urls': len(urls)
