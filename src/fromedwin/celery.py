@@ -11,6 +11,7 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 # Celery settings
 app.conf.update({
     'task_default_queue': settings.CELERY_QUEUE,
+    'worker_prefetch_multiplier': 1,
 })
 app.autodiscover_tasks()
 

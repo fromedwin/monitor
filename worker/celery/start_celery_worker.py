@@ -7,9 +7,10 @@ load_dotenv()
 
 worker_hostname = os.getenv('CELERY_WORKER_HOSTNAME', 'fromedwin.worker')
 
-# Start Celery Worker using the hostname defined
+# Start Celery Worker with concurrency=1 to process tasks one by one
 call([
     'celery', '-A', 'fromedwin', 'worker',
     '--loglevel=info',
     f'--hostname={worker_hostname}',
+    '--concurrency=1',  # Process only one task at a time
 ])

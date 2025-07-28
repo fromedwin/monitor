@@ -119,10 +119,11 @@ def save_scaping(request, secret_key, page_id):
     page.http_status = data.get('http_status', 0)
     if data.get('redirected_url') and data.get('http_status') == 301:
         page.save()
-        to_page = Pages.objects.get_or_create(
+        to_page, created = Pages.objects.get_or_create(
             url=data.get('redirected_url'),
             project=page.project,
         )
+        PageLink.objects.filter(from_page=page).delete()
         # Create the link (no need for get_or_create since we deleted all links above)
         PageLink.objects.create(
             from_page=page,

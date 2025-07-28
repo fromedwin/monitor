@@ -18,7 +18,8 @@ def project_pages(request, id):
     return render(request, 'pages/pages.html', {
         'project': project,
         'pages_count': project.pages.count(),
-        'pages': project.pages.filter(http_status__lt=400).exclude(http_status=0).order_by('url'),
+        'pages': project.pages.filter(http_status__lt=300).exclude(http_status=0).order_by('url'),
+        'pages_redirected': project.pages.filter(http_status=301).order_by('url'),
         'pages_with_errors': project.pages.filter(
             Q(http_status__gte=400) | Q(http_status=0)
         ).order_by('url'),

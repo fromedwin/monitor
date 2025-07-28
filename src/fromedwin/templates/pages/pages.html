@@ -1,11 +1,9 @@
 {% extends 'projects/project_view.html' %}
 {% load static socialaccount account tailwind_tags fromedwin_tags humanize %}
-
 {% block html_head_title %}Performances - {{ project.title }} - FromEdwin{% endblock %}
-
 {% block javascript %}
-<script src="{% static 'echarts/echarts.min.js' %}"></script>
-<script>
+  <script src="{% static 'echarts/echarts.min.js' %}"></script>
+  <script>
   function initEchartGauge(element) {
     var score = parseFloat(element.getAttribute('data-score'));
     var red = 'rgb(220, 38, 38)';
@@ -178,190 +176,241 @@
       }));
     }
   };
-</script>
+  </script>
 {% endblock %}
-
 {% block subsection %}
-<!-- CSRF Token for AJAX requests -->
-<form style="display: none;">
-  {% csrf_token %}
-</form>
-
-<!-- Toaster Notification -->
-<div x-data="{ 
-  show: false, 
-  message: '', 
-  type: 'success',
-  showToast(msg, toastType = 'success') {
-    this.message = msg;
-    this.type = toastType;
-    this.show = true;
-    setTimeout(() => { this.show = false; }, 5000);
-  }
-}" @show-toast.window="showToast($event.detail.message, $event.detail.type)" class="fixed top-4 right-4  z-50">
-  <div x-show="show" x-transition:enter="transition ease-out duration-300"
-    x-transition:enter-start="opacity-0 transform translate-x-full"
-    x-transition:enter-end="opacity-100 transform translate-x-0" x-transition:leave="transition ease-in duration-200"
-    x-transition:leave-start="opacity-100 transform translate-x-0"
-    x-transition:leave-end="opacity-0 transform translate-x-full"
-    class="max-w-sm w-full shadow-lg rounded-lg pointer-events-auto" :class="{
-         'bg-green-50 border border-green-200': type === 'success',
-         'bg-red-50 border border-red-200': type === 'error',
-         'bg-yellow-50 border border-yellow-200': type === 'warning'
-       }">
-    <div class="p-4">
-      <div class="flex items-start">
-        <div class="flex-shrink-0">
-          <!-- Success Icon -->
-          <svg x-show="type === 'success'" class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <!-- Error Icon -->
-          <svg x-show="type === 'error'" class="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <!-- Warning Icon -->
-          <svg x-show="type === 'warning'" class="h-6 w-6 text-yellow-400" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-          </svg>
-        </div>
-        <div class="ml-3 w-0 flex-1 pt-0.5">
-          <p class="text-sm font-medium" :class="{
-               'text-green-800': type === 'success',
-               'text-red-800': type === 'error',
-               'text-yellow-800': type === 'warning'
-             }" x-text="message"></p>
-        </div>
-        <div class="ml-4 flex-shrink-0 flex">
-          <button @click="show = false"
-            class="rounded-md inline-flex focus:outline-none focus:ring-2 focus:ring-offset-2" :class="{
-                    'text-green-400 hover:text-green-600 focus:ring-green-500': type === 'success',
-                    'text-red-400 hover:text-red-600 focus:ring-red-500': type === 'error',
-                    'text-yellow-400 hover:text-yellow-600 focus:ring-yellow-500': type === 'warning'
-                  }">
-            <span class="sr-only">Close</span>
-            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd"
-                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                clip-rule="evenodd" />
+  <!-- CSRF Token for AJAX requests -->
+  <form style="display: none;">
+    {% csrf_token %}
+  </form>
+  <!-- Toaster Notification -->
+  <div x-data="{ show: false, message: '', type: 'success', showToast(msg, toastType = 'success') { this.message = msg; this.type = toastType; this.show = true; setTimeout(() => { this.show = false; }, 5000); } }"
+       @show-toast.window="showToast($event.detail.message, $event.detail.type)"
+       class="fixed top-4 right-4  z-50">
+    <div x-show="show"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 transform translate-x-full"
+         x-transition:enter-end="opacity-100 transform translate-x-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 transform translate-x-0"
+         x-transition:leave-end="opacity-0 transform translate-x-full"
+         class="max-w-sm w-full shadow-lg rounded-lg pointer-events-auto"
+         :class="{ 'bg-green-50 border border-green-200': type === 'success', 'bg-red-50 border border-red-200': type === 'error', 'bg-yellow-50 border border-yellow-200': type === 'warning' }">
+      <div class="p-4">
+        <div class="flex items-start">
+          <div class="flex-shrink-0">
+            <!-- Success Icon -->
+            <svg x-show="type === 'success'"
+                 class="h-6 w-6 text-green-400"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<header class="pb-4">
-  <h1 class="text-3xl font-bold leading-tight text-gray-900 relative pl-16 pt-2 pb-8">
-    <div class="absolute top-0 left-0 flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-600">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-        class="h-8 w-8 text-white">
-        <path stroke-linecap="round" stroke-linejoin="round"
-          d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
-      </svg>
-    </div>
-    Pages
-  </h1>
-</header>
-
-<div class="pt-4">
-  <div class="pb-5 border-b border-gray-200 sm:flex sm:items-center sm:justify-between items-center">
-    <h3 class="text-lg leading-6 font-medium text-gray-900">
-      Web pages ({{ pages|length }})
-    </h3>
-    <div>
-      <a href="{% url 'project_graph_tree' project.id %}"
-        class="inline-flex items-center px-3 py-2 border border-emerald-600 text-emerald-700 bg-white rounded-md text-sm font-medium hover:bg-emerald-50 transition">
-        <svg class="w-5 h-5 mr-2 text-emerald-600" fill="currentColor" viewBox="0 -960 960 960">
-          <path
-            d="m600-120v-120h-160v-400h-80v120h-280v-320h280v120h240v-120h280v320h-280v-120h-80v320h80v-120h280v320zm-440-640v160zm520 400v160zm0-400v160zm0 160h120v-160h-120zm0 400h120v-160h-120zm-520-400h120v-160h-120z" />
-        </svg>
-        View Graph Tree
-      </a>
-      <a href="{% url 'project_screenshots' project.id %}"
-        class="inline-flex items-center px-3 py-2 border border-emerald-600 text-emerald-700 bg-white rounded-md text-sm font-medium hover:bg-emerald-50 transition">
-        <svg class="w-5 h-5 mr-2 text-emerald-600" xmlns="http://www.w3.org/2000/svg" height="24px"
-          viewBox="0 -960 960 960" width="24px" fill="currentColor">
-          <path
-            d="M184.62-200q-27.62 0-46.12-18.5Q120-237 120-264.62v-430.76q0-27.62 18.5-46.12Q157-760 184.62-760h590.76q27.62 0 46.12 18.5Q840-723 840-695.38v430.76q0 27.62-18.5 46.12Q803-200 775.38-200H184.62Zm0-40h590.76q9.24 0 16.93-7.69 7.69-7.69 7.69-16.93v-430.76q0-9.24-7.69-16.93-7.69-7.69-16.93-7.69H184.62q-9.24 0-16.93 7.69-7.69 7.69-7.69 16.93v430.76q0 9.24 7.69 16.93 7.69 7.69 16.93 7.69Zm63.07-87.69h464.62v-304.62H247.69v304.62ZM160-240v-480 480Z" />
-        </svg>
-        View Screenshots
-      </a>
-    </div>
-  </div>
-  <div class="flex flex-col mt-4">
-
-    {% for page in pages %}
-    {% include 'pages/pages/page.html' with page=page %}
-    {% endfor %}
-
-    {% if pages_with_errors %}
-    <div class="pt-4 pb-8" x-data="{ showDeadLinks: false }">
-      <div class="pb-5 border-b border-gray-200 mb-6">
-        <button @click="showDeadLinks = !showDeadLinks"
-          class="flex items-center w-full text-left hover:bg-gray-50 rounded-lg p-2 -m-2 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
-          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-red-600 mr-3">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-              stroke="currentColor" class="h-5 w-5 text-white">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+            <!-- Error Icon -->
+            <svg x-show="type === 'error'"
+                 class="h-6 w-6 text-red-400"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <!-- Warning Icon -->
+            <svg x-show="type === 'warning'"
+                 class="h-6 w-6 text-yellow-400"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
           </div>
-          <h2 class="text-lg font-semibold text-gray-900 flex-1">Dead Links ({{ pages_with_errors|length }})</h2>
-          <svg class="ml-2 h-5 w-5 text-gray-400 transform transition-transform"
-            :class="{ 'rotate-180': showDeadLinks }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
-      </div>
-
-      <div x-show="showDeadLinks" x-transition:enter="transition ease-out duration-200"
-        x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100"
-        x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 transform scale-100"
-        x-transition:leave-end="opacity-0 transform scale-95" class="space-y-3" style="display: none;">
-        {% for page in pages_with_errors %}
-        {% include 'pages/pages/dead-links.html' with page=page %}
-        {% endfor %}
-      </div>
-    </div>
-    {% endif %}
-
-    {% if pages_loading %}
-    <div class="pt-4 pb-8" x-data="{ showLoading: false }">
-      <div class="pb-5 border-b border-gray-200 mb-6">
-        <button @click="showLoading = !showLoading"
-          class="flex items-center w-full text-left hover:bg-gray-50 rounded-lg p-2 -m-2 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
-          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-200 mr-3">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-              stroke="currentColor" class="h-5 w-5 text-gray-500">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
-            </svg>
+          <div class="ml-3 w-0 flex-1 pt-0.5">
+            <p class="text-sm font-medium"
+               :class="{ 'text-green-800': type === 'success', 'text-red-800': type === 'error', 'text-yellow-800': type === 'warning' }"
+               x-text="message"></p>
           </div>
-          <h2 class="text-lg font-semibold text-gray-900 flex-1">Loading ({{ pages_loading|length }})</h2>
-          <svg class="ml-2 h-5 w-5 text-gray-400 transform transition-transform" :class="{ 'rotate-180': showLoading }"
-            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
-      </div>
-      <div x-show="showLoading" x-transition:enter="transition ease-out duration-200"
-        x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100"
-        x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 transform scale-100"
-        x-transition:leave-end="opacity-0 transform scale-95" class="space-y-3" style="display: none;">
-        {% for page in pages_loading %}
-        {% include 'pages/pages/loading-pages.html' with page=page %}
-        {% endfor %}
+          <div class="ml-4 flex-shrink-0 flex">
+            <button @click="show = false"
+                    class="rounded-md inline-flex focus:outline-none focus:ring-2 focus:ring-offset-2"
+                    :class="{ 'text-green-400 hover:text-green-600 focus:ring-green-500': type === 'success', 'text-red-400 hover:text-red-600 focus:ring-red-500': type === 'error', 'text-yellow-400 hover:text-yellow-600 focus:ring-yellow-500': type === 'warning' }">
+              <span class="sr-only">Close</span>
+              <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
-    {% endif %}
   </div>
-</div>
+  <header class="pb-4">
+    <h1 class="text-3xl font-bold leading-tight text-gray-900 relative pl-16 pt-2 pb-8">
+      <div class="absolute top-0 left-0 flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-600">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke-width="1.5"
+             stroke="currentColor"
+             class="h-8 w-8 text-white">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
+        </svg>
+      </div>
+      Pages
+    </h1>
+  </header>
+  <div class="pt-4">
+    <div class="pb-5 border-b border-gray-200 sm:flex sm:items-center sm:justify-between items-center">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">Web pages ({{ pages|length }})</h3>
+      <div>
+        <a href="{% url 'project_graph_tree' project.id %}"
+           class="inline-flex items-center px-3 py-2 border border-emerald-600 text-emerald-700 bg-white rounded-md text-sm font-medium hover:bg-emerald-50 transition">
+          <svg class="w-5 h-5 mr-2 text-emerald-600"
+               fill="currentColor"
+               viewBox="0 -960 960 960">
+            <path d="m600-120v-120h-160v-400h-80v120h-280v-320h280v120h240v-120h280v320h-280v-120h-80v320h80v-120h280v320zm-440-640v160zm520 400v160zm0-400v160zm0 160h120v-160h-120zm0 400h120v-160h-120zm-520-400h120v-160h-120z" />
+          </svg>
+          View Graph Tree
+        </a>
+        <a href="{% url 'project_screenshots' project.id %}"
+           class="inline-flex items-center px-3 py-2 border border-emerald-600 text-emerald-700 bg-white rounded-md text-sm font-medium hover:bg-emerald-50 transition">
+          <svg class="w-5 h-5 mr-2 text-emerald-600"
+               xmlns="http://www.w3.org/2000/svg"
+               height="24px"
+               viewBox="0 -960 960 960"
+               width="24px"
+               fill="currentColor">
+            <path d="M184.62-200q-27.62 0-46.12-18.5Q120-237 120-264.62v-430.76q0-27.62 18.5-46.12Q157-760 184.62-760h590.76q27.62 0 46.12 18.5Q840-723 840-695.38v430.76q0 27.62-18.5 46.12Q803-200 775.38-200H184.62Zm0-40h590.76q9.24 0 16.93-7.69 7.69-7.69 7.69-16.93v-430.76q0-9.24-7.69-16.93-7.69-7.69-16.93-7.69H184.62q-9.24 0-16.93 7.69-7.69 7.69-7.69 16.93v430.76q0 9.24 7.69 16.93 7.69 7.69 16.93 7.69Zm63.07-87.69h464.62v-304.62H247.69v304.62ZM160-240v-480 480Z" />
+          </svg>
+          View Screenshots
+        </a>
+      </div>
+    </div>
+    <div class="flex flex-col mt-4">
+      {% for page in pages %}
+        {% if page.http_status < 300 %}
+          {% include 'pages/pages/page.html' with page=page %}
+        {% endif %}
+      {% endfor %}
+      {% if pages_with_errors %}
+        <div class="pt-4 pb-8" x-data="{ showDeadLinks: false }">
+          <div class="pb-5 border-b border-gray-200 mb-6">
+            <button @click="showDeadLinks = !showDeadLinks"
+                    class="flex items-center w-full text-left hover:bg-gray-50 rounded-lg p-2 -m-2 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+              <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-red-600 mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke-width="1.5"
+                     stroke="currentColor"
+                     class="h-5 w-5 text-white">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                </svg>
+              </div>
+              <h2 class="text-lg font-semibold text-gray-900 flex-1">Dead Links ({{ pages_with_errors|length }})</h2>
+              <svg class="ml-2 h-5 w-5 text-gray-400 transform transition-transform"
+                   :class="{ 'rotate-180': showDeadLinks }"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </div>
+          <div x-show="showDeadLinks"
+               x-transition:enter="transition ease-out duration-200"
+               x-transition:enter-start="opacity-0 transform scale-95"
+               x-transition:enter-end="opacity-100 transform scale-100"
+               x-transition:leave="transition ease-in duration-150"
+               x-transition:leave-start="opacity-100 transform scale-100"
+               x-transition:leave-end="opacity-0 transform scale-95"
+               class="space-y-3"
+               style="display: none">
+            {% for page in pages_with_errors %}
+              {% include 'pages/pages/dead-links.html' with page=page %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+      {% if pages_redirected %}
+        <div class="pt-4 pb-8" x-data="{ showLoading: false }">
+          <div class="pb-5 border-b border-gray-200 mb-6">
+            <button @click="showLoading = !showLoading"
+                    class="flex items-center w-full text-left hover:bg-green-50 rounded-lg p-2 -m-2 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+              <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-green-600 mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke-width="1.5"
+                     stroke="currentColor"
+                     class="h-5 w-5 text-white">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                </svg>
+              </div>
+              <h2 class="text-lg font-semibold text-gray-900 flex-1">Redirection ({{ pages_redirected|length }})</h2>
+              <svg class="ml-2 h-5 w-5 text-green-400 transform transition-transform"
+                   :class="{ 'rotate-180': showLoading }"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </div>
+          <div x-show="showLoading"
+               x-transition:enter="transition ease-out duration-200"
+               x-transition:enter-start="opacity-0 transform scale-95"
+               x-transition:enter-end="opacity-100 transform scale-100"
+               x-transition:leave="transition ease-in duration-150"
+               x-transition:leave-start="opacity-100 transform scale-100"
+               x-transition:leave-end="opacity-0 transform scale-95"
+               class="space-y-3"
+               style="display: none">
+            {% for page in pages_redirected %}
+              {% include 'pages/pages/redirected-page.html' with page=page %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+      {% if pages_loading %}
+        <div class="pt-4 pb-8" x-data="{ showLoading: false }">
+          <div class="pb-5 border-b border-gray-200 mb-6">
+            <button @click="showLoading = !showLoading"
+                    class="flex items-center w-full text-left hover:bg-gray-50 rounded-lg p-2 -m-2 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+              <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-200 mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke-width="1.5"
+                     stroke="currentColor"
+                     class="h-5 w-5 text-gray-500">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                </svg>
+              </div>
+              <h2 class="text-lg font-semibold text-gray-900 flex-1">Loading ({{ pages_loading|length }})</h2>
+              <svg class="ml-2 h-5 w-5 text-gray-400 transform transition-transform"
+                   :class="{ 'rotate-180': showLoading }"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </div>
+          <div x-show="showLoading"
+               x-transition:enter="transition ease-out duration-200"
+               x-transition:enter-start="opacity-0 transform scale-95"
+               x-transition:enter-end="opacity-100 transform scale-100"
+               x-transition:leave="transition ease-in duration-150"
+               x-transition:leave-start="opacity-100 transform scale-100"
+               x-transition:leave-end="opacity-0 transform scale-95"
+               class="space-y-3"
+               style="display: none">
+            {% for page in pages_loading %}
+              {% include 'pages/pages/loading-pages.html' with page=page %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
 {% endblock %}
