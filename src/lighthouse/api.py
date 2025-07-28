@@ -34,7 +34,7 @@ def fetch_deprecated_performances(request, secret_key):
     print(f"Deprecated if before: {deprecated_if_before}")
     # Filter per last request date OR request_run true or last request date undefined
     pages = Pages.objects.filter(
-        (Q(lighthouse_last_request__isnull=True) | Q(lighthouse_last_request__lt=deprecated_if_before)) & Q(http_status__lt=400)
+        (Q(lighthouse_last_request__isnull=True) | Q(lighthouse_last_request__lt=deprecated_if_before)) & Q(http_status__lt=300)
     )
     print(f"Found {len(list(pages))} pages to refresh with the interval of {settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES} minutes.")
     for page in pages:
