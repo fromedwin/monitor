@@ -80,7 +80,6 @@ def report_api(request, secret_key, page_id):
     # Parse the report JSON string if it's a string (lighthouse returns JSON as string)
     if isinstance(data['report'], str):
         data['report'] = json.loads(data['report'])
-        print("Parsed report from JSON string")
 
     # Generate metadata used for file storage
     path = page.project.directory_path()

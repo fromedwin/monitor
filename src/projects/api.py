@@ -146,7 +146,13 @@ def save_scaping(request, secret_key, page_id):
             # Create new links for all discovered URLs
             for url in urls:
                 # Prevent a page from linking to itself
-                if url == page.url:
+                # Ignore if the URL is the same as the current page, or if it doesn't start with the full domain (scheme + netloc)
+                from urllib.parse import urlparse
+                page_parsed = urlparse(page.url)
+                url_parsed = urlparse(url)
+                page_base = f"{page_parsed.scheme}://{page_parsed.netloc}"
+                url_base = f"{url_parsed.scheme}://{url_parsed.netloc}"
+                if url == page.url or url_base != page_base:
                     continue
                 # Get or create the target page within the same project
                 to_page, created = Pages.objects.get_or_create(
