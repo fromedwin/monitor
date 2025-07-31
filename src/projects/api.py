@@ -129,6 +129,10 @@ def save_scaping(request, secret_key, page_id):
             from_page=page,
             to_page=to_page
         )
+
+    elif data.get('http_status') == 404:
+        page.save()
+        PageLink.objects.filter(from_page=page).delete()
     else:
         page.title = data.get('title', '')
         page.description = data.get('description', '')
