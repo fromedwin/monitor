@@ -238,6 +238,38 @@ def project_pages_tree_json(request, project_id):
 
 
 @waiting_list_approved_only()
+@api_view(["POST"])
+def refresh_page_data(request, page_id):
+    """
+    Trigger a refresh/scrape for a specific page for authenticated users
+    """
+    try:
+        page = get_object_or_404(Pages, pk=page_id)
+        
+        # Check if user has access to the project that owns this page
+        if page.project.user != request.user:
+            return JsonResponse({'error': 'Unauthorized access to this page'}, status=403)
+        
+        # Update the lighthouse_last_request timestamp to mark it as queued
+        # from django.utils import timezone
+        # page.lighthouse_last_request = timezone.now()
+        # page.save()
+        
+        # Trigger the scraping task
+        scrape_page.delay(page.pk, page.url)
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Refresh request sent for "{page.title or page.url}". Data will be updated shortly.'
+        })
+            
+    except Pages.DoesNotExist:
+        return JsonResponse({'error': 'Page not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': f'Error refreshing page: {str(e)}'}, status=500)
+
+
+@waiting_list_approved_only()
 @api_view(["DELETE"])
 def delete_page(request, page_id):
     """

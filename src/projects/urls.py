@@ -2,7 +2,7 @@ from django.urls import path
 
 from .views import project, projects_form, projects_delete, projects_add, project_graph_tree, project_screenshots
 from incidents.views import incidents
-from .api import fetch_deprecated_sitemaps, save_sitemap, save_scaping, project_pages_tree_json, delete_page
+from .api import fetch_deprecated_sitemaps, save_sitemap, save_scaping, project_pages_tree_json, delete_page, refresh_page_data
 
 urlpatterns = [
     # Add form to create a new project
@@ -38,5 +38,7 @@ urlpatterns += [
     path('api/project/<int:project_id>/pages/tree/', project_pages_tree_json, name='project_pages_tree_json'),
     # API endpoint to delete a page
     path('api/page/<int:page_id>/delete/', delete_page, name='delete_page'),
+    # API endpoint to refresh/scrape a page
+    path('api/page/<int:page_id>/refresh/', refresh_page_data, name='refresh_page_data'),
 ]
 
