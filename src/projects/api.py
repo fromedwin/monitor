@@ -76,7 +76,12 @@ def save_sitemap(request, secret_key, project_id):
         page = Pages.objects.get_or_create(project=project, url=project.url)
         scrape_page.delay(page.pk, page.url)
     else:
-        if project.url not in urls:
+        # Add project URL in list of pages to scrape but ignore same url if sitemap contains tailslash
+        isProjectUrlSlashTailed = project.url.endswith('/')
+        if isProjectUrlSlashTailed and project.url[:-1] not in urls and project.url not in urls:
+            urls.append(project.url) # Add project url to the list of pages
+
+        if not isProjectUrlSlashTailed and f'{project.url}/' not in urls and project.url not in urls:
             urls.append(project.url) # Add project url to the list of pages
         
         # Create new pages
