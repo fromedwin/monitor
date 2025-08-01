@@ -66,37 +66,41 @@ def save_sitemap(request, secret_key, project_id):
     # Only keep urls which have the same domain as the project url
     project_domain = project.url.split('/')[2]
     urls = [url for url in urls if project_domain in url]
+
     # Update sitemap_last_edited to pause fetching until deprecated
     project.sitemap_last_edited = sitemap_last_edited
     project.save()
 
-    logging.info(f'Project {project_domain} has {len(urls)} pages in sitemap.')
-    logging.info(f'{len(data.get('urls')) - len(list(urls))} urls got removed because they are not in the same domain.')
+    # If no urls from sitemap, we create a page for the project url
+    if len(urls) == 0:
+        page = Pages.objects.get_or_create(project=project, url=project.url)
+        scrape_page.delay(page.pk, page.url)
+    else:
+        if project.url not in urls:
+            urls.append(project.url) # Add project url to the list of pages
+        
+        # Create new pages
+        Pages.objects.bulk_create(
+            [
+                Pages(project=project, url=url, sitemap_last_seen=sitemap_last_edited) for url in urls
+            ],
+            ignore_conflicts=True  # This avoids inserting rows that violate uniqueness constraints
+        )
+        # Update existing pages data
+        Pages.objects.filter(project=project, url__in=urls).update(sitemap_last_seen=sitemap_last_edited)
 
-    if project.url not in urls:
-        urls.append(project.url) # Add project url to the list of pages
-    
-    # Create new pages
-    Pages.objects.bulk_create(
-        [
-            Pages(project=project, url=url, sitemap_last_seen=sitemap_last_edited) for url in urls
-        ],
-        ignore_conflicts=True  # This avoids inserting rows that violate uniqueness constraints
-    )
-    # Update existing pages data
-    Pages.objects.filter(project=project, url__in=urls).update(sitemap_last_seen=sitemap_last_edited)
+        # Send scraping request for all pages
+        pages = Pages.objects.filter(sitemap_last_seen=sitemap_last_edited, project=project)
+        for page in pages:
+            scrape_page.delay(page.pk, page.url)
 
+    # Save log about sitemap task
     duration = data.get('duration')
     CeleryTaskLog.objects.create(
         project=project,
         task_name='sitemap_task',
         duration=timedelta(seconds=duration) if duration else None,
     )
-
-    # Select all pages updates and trigger scraping
-    pages = Pages.objects.filter(sitemap_last_seen=sitemap_last_edited, project=project)
-    for page in pages:
-        scrape_page.delay(page.pk, page.url)
 
     return JsonResponse({})
 

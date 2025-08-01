@@ -20,8 +20,9 @@ def project_pages(request, id):
     pages_redirected_filtered = []
     for page in pages_redirected:
         url = page.url
-        redirect_url = page.outbound_links.first().to_page.url
-        if redirect_url != f'{url}/':
+        first_link = page.outbound_links.first()
+        redirect_url = first_link.to_page.url if first_link else None
+        if redirect_url and redirect_url != f'{url}/' or page.sitemap_last_seen is not None:
             pages_redirected_filtered.append(page)
 
     return render(request, 'pages/pages.html', {
