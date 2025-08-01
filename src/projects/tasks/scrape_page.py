@@ -1,5 +1,6 @@
 import logging
 import requests
+import time
 from bs4 import BeautifulSoup
 from celery import shared_task
 from django.conf import settings
@@ -33,12 +34,46 @@ def scrape_page(page_id, url):
                 }
             }
         }
-        crawl4ai_response = requests.post(
-            f"{CRAWL4AI_URL}/crawl",
-            json=crawl4ai_payload,
-            timeout=30,
-        )
-        crawl4ai_response.raise_for_status()
+        
+        # Retry mechanism for requests.post
+        max_retries = 3
+        
+        for attempt in range(max_retries):
+            try:
+                crawl4ai_response = requests.post(
+                    f"{CRAWL4AI_URL}/crawl",
+                    json=crawl4ai_payload,
+                    timeout=30,
+                )
+                
+                # Check if we got a 500 error
+                if crawl4ai_response.status_code == 500:
+                    if attempt < max_retries - 1:  # Don't sleep on the last attempt
+                        logging.warning(f"Attempt {attempt + 1} failed with 500 error, retrying in 2 seconds...")
+                        time.sleep(2)
+                        continue
+                    else:
+                        crawl4ai_response.raise_for_status()  # This will raise the 500 error
+                
+                # If we get here, the request succeeded or failed with a non-500 error
+                crawl4ai_response.raise_for_status()
+                break  # Success, exit the retry loop
+                
+            except requests.exceptions.HTTPError as e:
+                if crawl4ai_response.status_code == 500 and attempt < max_retries - 1:
+                    logging.warning(f"Attempt {attempt + 1} failed with 500 error, retrying in 2 seconds...")
+                    time.sleep(2)
+                    continue
+                else:
+                    raise  # Re-raise for non-500 errors or final attempt
+            except requests.exceptions.RequestException as e:
+                if attempt < max_retries - 1:
+                    logging.warning(f"Attempt {attempt + 1} failed with network error, retrying in 2 seconds...")
+                    time.sleep(2)
+                    continue
+                else:
+                    raise  # Re-raise on final attempt
+        
         crawl4ai_data = crawl4ai_response.json()
         
         # crawl4ai_data should contain results for each URL
