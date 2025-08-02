@@ -141,7 +141,8 @@
                                             </td>
                                             <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                                                 {% if log.duration %}
-                                                    {{ log.duration }}
+                                                    <span class="duration-display"
+                                                          data-duration="{{ log.duration.total_seconds }}"></span>
                                                 {% else %}
                                                     <span class="text-gray-400">-</span>
                                                 {% endif %}
@@ -221,6 +222,31 @@
                     }
                 }
             });
+
+            // Format durations in human-readable format
+            const durationDisplays = document.querySelectorAll('.duration-display');
+            durationDisplays.forEach(function(element) {
+                const totalSeconds = parseFloat(element.getAttribute('data-duration'));
+                if (totalSeconds) {
+                    element.textContent = formatDuration(totalSeconds);
+                }
+            });
         });
+
+        function formatDuration(totalSeconds) {
+            if (totalSeconds < 1) {
+                return (totalSeconds * 1000).toFixed(0) + 'ms';
+            } else if (totalSeconds < 60) {
+                return totalSeconds.toFixed(1) + 's';
+            } else if (totalSeconds < 3600) {
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = Math.floor(totalSeconds % 60);
+                return minutes + 'm ' + seconds + 's';
+            } else {
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                return hours + 'h ' + minutes + 'm';
+            }
+        }
     </script>
 {% endblock content %}
