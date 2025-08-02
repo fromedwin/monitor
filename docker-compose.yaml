@@ -195,6 +195,8 @@ services:
       - monitoring
     volumes:
       - ./worker/crawl4ai/config.yml:/etc/crawl4ai/config.yml:ro
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
 
   #
   # Run celery as worker to get tasks from rabbitmq and run them
