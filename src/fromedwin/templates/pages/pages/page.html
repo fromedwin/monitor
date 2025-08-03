@@ -159,7 +159,7 @@
                         ❌
                         Not in sitemap
                     {% endif %}
-                    - http status: {{ page.http_status }}
+                    {% if page.http_status != 200 %}- http status: {{ page.http_status }}{% endif %}
                 </p>
                 {% if page.lighthouse_last_request > report.creation_date %}
                     <p class="text-xs text-gray-500 mt-2">Status: Queued</p>

@@ -73,7 +73,7 @@ def save_sitemap(request, secret_key, project_id):
 
     # If no urls from sitemap, we create a page for the project url
     if len(urls) == 0:
-        page = Pages.objects.get_or_create(project=project, url=project.url)
+        page, created = Pages.objects.get_or_create(project=project, url=project.url)
         scrape_page.delay(page.pk, page.url)
     else:
         # Add project URL in list of pages to scrape but ignore same url if sitemap contains tailslash
@@ -287,7 +287,7 @@ def delete_page(request, page_id):
     Delete a page for authenticated users
     """
     try:
-        page = get_object_or_404(Pages, pk=page_id)
+        page = get_object_or_404(Pages, id=page_id)
         
         # Check if user has access to the project that owns this page
         if page.project.user != request.user:
@@ -309,3 +309,142 @@ def delete_page(request, page_id):
         return JsonResponse({'error': 'Page not found'}, status=404)
     except Exception as e:
         return JsonResponse({'error': f'Error deleting page: {str(e)}'}, status=500)
+
+@waiting_list_approved_only()
+@api_view(["GET"])
+def project_task_status(request, project_id):
+    """Get the status of all tasks for a project"""
+    project = get_object_or_404(Project, id=project_id)
+    
+    # Check if there's a recent favicon task log
+    recent_favicon_log = CeleryTaskLog.objects.filter(
+        project=project,
+        task_name='favicon_task'
+    ).order_by('-created_at').first()
+    
+    # If we have a recent favicon log, use it to determine status
+    if recent_favicon_log:
+        favicon_status = 'SUCCESS'
+    else:
+        # If no log exists, use the favicon model status
+        try:
+            favicon_details = project.favicon_details
+            favicon_status = favicon_details.task_status
+        except:
+            favicon_status = 'UNKNOWN'
+    
+    # Get sitemap status
+    sitemap_status = project.sitemap_task_status
+    
+    # Check if there's a recent sitemap task log
+    recent_sitemap_log = CeleryTaskLog.objects.filter(
+        project=project,
+        task_name='sitemap_task'
+    ).order_by('-created_at').first()
+    
+    # If we have a recent sitemap log, use it to determine status
+    if recent_sitemap_log:
+        # If we have a log and it's not recent, consider it SUCCESS
+        sitemap_status = 'SUCCESS'
+    else:
+        # If no log exists, check the project's sitemap_task_status
+        sitemap_status = project.sitemap_task_status
+    
+    # Get scraping status for all pages
+    pages = Pages.objects.filter(project=project, http_status__lt=300)
+    scraping_status = 'UNKNOWN'
+    scraping_progress = None
+    
+    if pages.exists():
+        # Check if any page is still being scraped
+        pages_without_scraping = pages.filter(scraping_last_seen__isnull=True).exclude(http_status__isnull=True)
+        pages_with_status = pages.filter(http_status__isnull=False)
+        total_pages = pages.count()
+        completed_pages = pages_with_status.count()
+        
+        if pages_without_scraping.exists():
+            scraping_status = 'PENDING'
+            scraping_progress = {
+                'total': total_pages,
+                'completed': completed_pages
+            }
+            if total_pages == completed_pages:
+                scraping_status = 'SUCCESS'
+        else:
+            # Check if any page has failed scraping (no http_status)
+            pages_without_status = pages.filter(http_status__isnull=True)
+            if pages_without_status.exists():
+                scraping_status = 'UNKNOWN'
+            else:
+                scraping_status = 'SUCCESS'
+                scraping_progress = {
+                    'total': total_pages,
+                    'completed': completed_pages
+                }
+    
+    # Get lighthouse status
+    lighthouse_status = 'UNKNOWN'
+    lighthouse_progress = None
+    
+    if pages.exists():
+        from lighthouse.models import LighthouseReport
+        
+        # Check if any page is still waiting for lighthouse
+        pages_without_lighthouse = pages.filter(lighthouse_last_request__isnull=True)
+        pages_with_reports = []
+        pages_done = []
+        for page in pages:
+            if LighthouseReport.objects.filter(page=page).exists():
+                pages_with_reports.append(page)
+            elif page.http_status and page.http_status >= 300:
+                # Pages with 300+ status codes are considered done (no lighthouse needed)
+                pages_done.append(page)
+        
+        total_pages = pages.count()
+        completed_pages = len(pages_with_reports) + len(pages_done)
+        
+        if pages_without_lighthouse.exists():
+            lighthouse_status = 'PENDING'
+            lighthouse_progress = {
+                'total': total_pages,
+                'completed': completed_pages
+            }
+            if total_pages == completed_pages:
+                lighthouse_status = 'SUCCESS'
+        else:
+            # Check if any page has failed lighthouse (no lighthouse reports and not 300+ status)
+            pages_without_reports = []
+            for page in pages:
+                if not LighthouseReport.objects.filter(page=page).exists() and (not page.http_status or page.http_status < 300):
+                    pages_without_reports.append(page)
+            if pages_without_reports:
+                lighthouse_status = 'PENDING'
+                lighthouse_progress = {
+                    'total': total_pages,
+                    'completed': completed_pages
+                }
+            else:
+                lighthouse_status = 'SUCCESS'
+                lighthouse_progress = {
+                    'total': total_pages,
+                    'completed': completed_pages
+                }
+    
+    # Check if all tasks are complete
+    all_complete = (
+        favicon_status == 'SUCCESS' and
+        sitemap_status == 'SUCCESS' and
+        scraping_status == 'SUCCESS' and
+        lighthouse_status == 'SUCCESS'
+    )
+    
+    return JsonResponse({
+        'favicon_status': favicon_status,
+        'sitemap_status': sitemap_status,
+        'scraping_status': scraping_status,
+        'scraping_progress': scraping_progress,
+        'lighthouse_status': lighthouse_status,
+        'lighthouse_progress': lighthouse_progress,
+        'all_complete': all_complete,
+        'project_id': project_id
+    })
