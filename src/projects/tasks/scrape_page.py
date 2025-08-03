@@ -5,10 +5,12 @@ from bs4 import BeautifulSoup
 from celery import shared_task
 from django.conf import settings
 from urllib.parse import urlparse
+import time
 
 @shared_task()
 def scrape_page(page_id, url):
     data = {}
+    start_time = time.time()
     try:
         # Use Crawl4AI to crawl the page and print URLs, title, and description
 
@@ -135,13 +137,15 @@ def scrape_page(page_id, url):
                 'urls': urls,
                 'http_status': result.get("status_code"),
                 'redirected_url': result.get("redirected_url"),
+                'duration': time.time() - start_time,
             }
         else:
             raise Exception("No results from Crawl4AI")
     except Exception as e:
         data = {
             'http_status': 0,
-            'error': str(e)
+            'error': str(e),
+            'duration': time.time() - start_time,
         }
         logging.error(f"Error scraping the page: {e}")
     finally:

@@ -38,6 +38,19 @@
                 {% endif %}
             {% elif "favicon" in log.task_name|lower %}
                 <span class="text-blue-600 font-medium">Favicon fetch</span>
+            {% elif "scraping_task" in log.task_name|lower %}
+                {% if log.page.first %}
+                    {% with page=log.page.first %}
+                        <a href="{{ page.url }}"
+                           class="text-emerald-600 hover:text-emerald-900 font-medium"
+                           title="{{ page.url }}"
+                           target="_blank">
+                            <span class="url-path" data-full-url="{{ page.url }}"></span>
+                        </a>
+                    {% endwith %}
+                {% else %}
+                    <span class="text-blue-600 font-medium">Scraping fetch</span>
+                {% endif %}
             {% else %}
                 <span class="text-gray-400">-</span>
             {% endif %}

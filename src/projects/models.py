@@ -138,6 +138,14 @@ class Pages(models.Model):
     sitemap_last_seen = models.DateTimeField(help_text="Last time sitemap was reported", null=True, blank=True)
     scraping_last_seen = models.DateTimeField(help_text="Last time scraping was run", null=True, blank=True)
     lighthouse_last_request = models.DateTimeField(help_text="Last time lighthouse was requested", null=True, blank=True)
+    scraping_task_log = models.ForeignKey(
+        'logs.CeleryTaskLog',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='page',
+        help_text="Celery task log associated with this scraping task report"
+    )
 
     def next_lighthouse_run(self):
         """Calculate when the next lighthouse run is scheduled"""

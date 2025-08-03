@@ -178,6 +178,17 @@ def save_scaping(request, secret_key, page_id):
                     from_page=page,
                     to_page=to_page
                 )
+    
+    # Save log about sitemap task
+    duration = data.get('duration')
+    log = CeleryTaskLog.objects.create(
+        project=page.project,
+        task_name='scraping_task',
+        duration=timedelta(seconds=duration) if duration else None,
+    )
+
+    page.scraping_task_log = log
+    page.save()
 
     return JsonResponse({
         'total_urls': len(urls)
