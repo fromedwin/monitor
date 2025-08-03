@@ -6,15 +6,15 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.mail import send_mail
+from django.http import JsonResponse
 from workers.models import Server
 from availability.models import Service
 from influxdb_client import InfluxDBClient
 import logging
 
-@staff_member_required
-def administration(request):
+def get_stats_data():
     """
-    Show administration data
+    Get administration statistics data
     """
     # InfluxDB connection settings
     url = settings.INFLUXDB_URL
@@ -114,8 +114,29 @@ def administration(request):
                     fromedwin_queue = record.get_value()
         except Exception as e:
             logging.error(f'Error querying InfluxDB: {e}')
-    servers = []
 
+    servers = Server.objects.filter(
+        last_seen__gte=timezone.now() - timezone.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
+    ).order_by('-creation_date')
+
+    return {
+        'users_count': User.objects.count(),
+        'url_count': Service.objects.count(),
+        'lighthouse_worker': lighthouse_worker,
+        'celery_worker': celery_worker,
+        'lighthouse_queue': lighthouse_queue,
+        'fromedwin_queue': fromedwin_queue,
+        'prometheus_workers': servers.count(),
+    }
+
+@staff_member_required
+def administration(request):
+    """
+    Show administration data
+    """
+    # Get stats data
+    stats = get_stats_data()
+    
     # if get success exist boolean true
     email_success = False
     email_fail = False
@@ -124,7 +145,7 @@ def administration(request):
         email_success = True
     
     if 'email_fail' in request.GET:
-        email_success = True
+        email_fail = True
 
     servers = Server.objects.filter(
         last_seen__gte=timezone.now() - timezone.timedelta(seconds=settings.HEARTBEAT_INTERVAL+5)
@@ -135,15 +156,19 @@ def administration(request):
         'settings': settings,
         'email_success': email_success,
         'email_fail': email_fail,
-        'stats': {
-            'users_count': User.objects.count(),
-            'url_count': Service.objects.count(),
-            'lighthouse_worker': lighthouse_worker,
-            'celery_worker': celery_worker,
-            'lighthouse_queue': lighthouse_queue,
-            'fromedwin_queue': fromedwin_queue,
-        }
+        'stats': stats
     })
+
+
+@staff_member_required
+def administration_stats_api(request):
+    """
+    Return administration statistics as JSON for AJAX calls
+    """
+    if request.method == 'GET':
+        stats = get_stats_data()
+        return JsonResponse(stats)
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 
 @staff_member_required

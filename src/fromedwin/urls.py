@@ -26,7 +26,7 @@ from .sitemaps import StaticViewSitemap
 from django.conf.urls.static import static
 
 from allauth.account.views import login
-from .views.administration import administration, test_email
+from .views.administration import administration, test_email, administration_stats_api
 from .views.dashboard import dashboard
 from .views.pages import project_pages
 
@@ -63,6 +63,7 @@ urlpatterns = [
     # """
     path('', administration, name='administration'),
     path('test_email/', test_email, name='test_email'),
+    path('api/administration/stats/', administration_stats_api, name='administration_stats_api'),
 
     # """
     # Healthcheck APIs
