@@ -210,7 +210,12 @@
                 completionMessage.style.display = 'block';
                 setTimeout(() => {
                   loadingOverlay.style.display = 'none';
+                  // If loadingOverlay is visible, reload the page
+                  if (!loadingOverlay.classList.contains('hidden')) {
+                    window.location.reload();
+                  }
                 }, 2000);
+                return;
               }
             })
             .catch(error => {

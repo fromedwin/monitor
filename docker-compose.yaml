@@ -220,7 +220,7 @@ services:
       BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
       DJANGO_SETTINGS_MODULE: "fromedwin.settings.dev"
       CRAWL4AI_URL: http://crawl4ai:11235
-      CELERYD_CONCURRENCY: 10 # Only run one worker at a time
+      CELERYD_CONCURRENCY: 1 # Only run one worker at a time
     deploy:
       replicas: ${CELERY_WORKER_REPLICA-3}
     volumes:

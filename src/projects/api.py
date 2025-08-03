@@ -315,25 +315,20 @@ def delete_page(request, page_id):
 def project_task_status(request, project_id):
     """Get the status of all tasks for a project"""
     project = get_object_or_404(Project, id=project_id)
-    
-    # Check if there's a recent favicon task log
+    pages = Pages.objects.filter(project=project)
+
+    #
+    # FAVICON Check if there's a recent favicon task log
+    #
     recent_favicon_log = CeleryTaskLog.objects.filter(
         project=project,
         task_name='favicon_task'
     ).order_by('-created_at').first()
+    favicon_status = 'SUCCESS' if recent_favicon_log else 'UNKNOWN'
     
-    # If we have a recent favicon log, use it to determine status
-    if recent_favicon_log:
-        favicon_status = 'SUCCESS'
-    else:
-        # If no log exists, use the favicon model status
-        try:
-            favicon_details = project.favicon_details
-            favicon_status = favicon_details.task_status
-        except:
-            favicon_status = 'UNKNOWN'
-    
-    # Get sitemap status
+    #
+    # SITEMAP Get sitemap status
+    #
     sitemap_status = project.sitemap_task_status
     
     # Check if there's a recent sitemap task log
@@ -341,23 +336,18 @@ def project_task_status(request, project_id):
         project=project,
         task_name='sitemap_task'
     ).order_by('-created_at').first()
-    
-    # If we have a recent sitemap log, use it to determine status
-    if recent_sitemap_log:
-        # If we have a log and it's not recent, consider it SUCCESS
-        sitemap_status = 'SUCCESS'
-    else:
-        # If no log exists, check the project's sitemap_task_status
-        sitemap_status = project.sitemap_task_status
-    
+    sitemap_status = 'SUCCESS' if recent_sitemap_log else 'UNKNOWN'
+
+    #
+    # SCRAPING
     # Get scraping status for all pages
-    pages = Pages.objects.filter(project=project, http_status__lt=300)
+    #
     scraping_status = 'UNKNOWN'
     scraping_progress = None
     
     if pages.exists():
         # Check if any page is still being scraped
-        pages_without_scraping = pages.filter(scraping_last_seen__isnull=True).exclude(http_status__isnull=True)
+        pages_without_scraping = pages.filter(scraping_last_seen__isnull=True)
         pages_with_status = pages.filter(http_status__isnull=False)
         total_pages = pages.count()
         completed_pages = pages_with_status.count()
@@ -374,7 +364,7 @@ def project_task_status(request, project_id):
             # Check if any page has failed scraping (no http_status)
             pages_without_status = pages.filter(http_status__isnull=True)
             if pages_without_status.exists():
-                scraping_status = 'UNKNOWN'
+                scraping_status = 'PENDING'
             else:
                 scraping_status = 'SUCCESS'
                 scraping_progress = {
@@ -382,25 +372,29 @@ def project_task_status(request, project_id):
                     'completed': completed_pages
                 }
     
+    # 
+    # LIGHTHOUSE
     # Get lighthouse status
+    #
     lighthouse_status = 'UNKNOWN'
     lighthouse_progress = None
     
     if pages.exists():
         from lighthouse.models import LighthouseReport
         
-        # Check if any page is still waiting for lighthouse
-        pages_without_lighthouse = pages.filter(lighthouse_last_request__isnull=True)
+        # Only run lighthouse on 200x http code pages
+        pages_http_200 = pages.filter(http_status__lt=300)
+        pages_without_lighthouse = pages_http_200.filter(lighthouse_last_request__isnull=True)
         pages_with_reports = []
         pages_done = []
-        for page in pages:
+        for page in pages_http_200:
             if LighthouseReport.objects.filter(page=page).exists():
                 pages_with_reports.append(page)
             elif page.http_status and page.http_status >= 300:
                 # Pages with 300+ status codes are considered done (no lighthouse needed)
                 pages_done.append(page)
         
-        total_pages = pages.count()
+        total_pages = pages_http_200.count()
         completed_pages = len(pages_with_reports) + len(pages_done)
         
         if pages_without_lighthouse.exists():
