@@ -126,3 +126,51 @@ def get_user_stats(user_id):
         stats['services'] = services
 
     return stats
+
+def is_project_monitored(project_id):
+    """
+        Check if service is monitored
+    """
+    url = settings.INFLUXDB_URL
+    token = settings.INFLUXDB_TOKEN
+    org = settings.INFLUXDB_ORG
+    bucket = settings.INFLUXDB_BUCKET
+
+    result = False
+
+    # Connect to InfluxDB
+    with InfluxDBClient(url=url, token=token, org=org) as client:
+        query_api = client.query_api()
+
+        # Define your Flux query to return only the last value
+        # Add a range to bound the query, e.g., last 1 day
+        flux_query = f'''
+        from(bucket: "{bucket}")
+            |> range(start: -1d)
+            |> filter(fn: (r) => r["_measurement"] == "prometheus_remote_write")
+            |> filter(fn: (r) => r["_field"] == "probe_duration_seconds")
+            |> filter(fn: (r) => r["project"] == "{project_id}")
+            |> last()
+        '''
+
+        services = {}
+
+        try:
+            # Execute the query
+            result = query_api.query(org=org, query=flux_query)
+            for table in result:
+                for record in table.records:
+                    service_name = record['service']
+                    if service_name not in services:
+                        services[service_name] = {
+                            'title': Service.objects.get(pk=service_name).title,
+                        }
+                    services[service_name][record.get_field()] = record.get_value()
+                    if record.get_value() > 0:
+                        result = True
+
+        except Exception as e:
+            logging.error(f'Error querying InfluxDB: {e}')
+        
+
+    return result

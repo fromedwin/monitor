@@ -12,15 +12,10 @@ from rest_framework.decorators import api_view
 from .tasks.scrape_page import scrape_page
 from .models import Project, Pages, PageLink
 from logs.models import CeleryTaskLog
-
-
-
-from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
-from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_GET
 from fromedwin.decorators import waiting_list_approved_only
-
+from availability.utils import is_project_monitored
 
 @api_view(["GET"])
 def fetch_deprecated_sitemaps(request, secret_key):
@@ -423,18 +418,25 @@ def project_task_status(request, project_id):
                     'total': total_pages,
                     'completed': completed_pages
                 }
-    
+
+    #
+    # PROMETHEUS
+    #
+    prometheus_status = 'SUCCESS' if is_project_monitored(project_id) else 'PENDING'
+
     # Check if all tasks are complete
     all_complete = (
         favicon_status == 'SUCCESS' and
         sitemap_status == 'SUCCESS' and
         scraping_status == 'SUCCESS' and
-        lighthouse_status == 'SUCCESS'
+        lighthouse_status == 'SUCCESS' and
+        prometheus_status == 'SUCCESS'
     )
     
     return JsonResponse({
         'favicon_status': favicon_status,
         'sitemap_status': sitemap_status,
+        'prometheus_status': prometheus_status,
         'scraping_status': scraping_status,
         'scraping_progress': scraping_progress,
         'lighthouse_status': lighthouse_status,

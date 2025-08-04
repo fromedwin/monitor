@@ -140,13 +140,15 @@
           favicon: document.getElementById('favicon-progress'),
           sitemap: document.getElementById('sitemap-progress'),
           scraping: document.getElementById('scraping-progress'),
-          lighthouse: document.getElementById('lighthouse-progress')
+          lighthouse: document.getElementById('lighthouse-progress'),
+          prometheus: document.getElementById('prometheus-progress')
         };
         const statusTexts = {
           favicon: document.getElementById('favicon-status'),
           sitemap: document.getElementById('sitemap-status'),
           scraping: document.getElementById('scraping-status'),
-          lighthouse: document.getElementById('lighthouse-status')
+          lighthouse: document.getElementById('lighthouse-status'),
+          prometheus: document.getElementById('prometheus-status')
         };
         const completionMessage = document.getElementById('completion-message');
         
@@ -178,6 +180,11 @@
             progressBar.style.width = '100%';
             statusText.textContent = '✗ Failed';
             statusText.className = 'text-sm text-red-600 font-medium';
+          } else if (status === 'UNKNOWN') {
+            progressBar.className = 'h-2 bg-gray-300 rounded-full transition-all duration-500';
+            progressBar.style.width = '0%';
+            statusText.textContent = '❓ Unknown';
+            statusText.className = 'text-sm text-gray-600 font-medium';
           } else {
             progressBar.className = 'h-2 bg-gray-300 rounded-full transition-all duration-500';
             progressBar.style.width = '0%';
@@ -194,6 +201,7 @@
               updateProgressBar('sitemap', data.sitemap_status);
               updateProgressBar('scraping', data.scraping_status, data.scraping_progress);
               updateProgressBar('lighthouse', data.lighthouse_status, data.lighthouse_progress);
+              updateProgressBar('prometheus', data.prometheus_status);
               
               // Check if any task is still pending 
               const hasPendingTasks = !data.all_complete
@@ -322,6 +330,17 @@
             </div>
             <div class="w-full bg-gray-200 rounded-full h-2">
               <div id="sitemap-progress"
+                   class="h-2 bg-gray-300 rounded-full transition-all duration-500 w-0"></div>
+            </div>
+          </div>
+          <!-- Prometheus Progress -->
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-sm font-medium text-gray-700">Prometheus Monitoring</span>
+              <span id="prometheus-status" class="text-sm text-gray-600">⏳ Waiting...</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div id="prometheus-progress"
                    class="h-2 bg-gray-300 rounded-full transition-all duration-500 w-0"></div>
             </div>
           </div>
