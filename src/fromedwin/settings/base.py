@@ -137,6 +137,7 @@ INSTALLED_APPS = [
     'notifications',
     'profile',
     'projects',
+    'reports',
     'website',
     'status',
     'workers',

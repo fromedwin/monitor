@@ -42,6 +42,7 @@ urlpatterns = [
     path('', include('incidents.urls')),
     path('', include('favicons.urls')),
     path('', include('logs.urls')),
+    path('', include('reports.urls')),
     # monitor-worker api
     path('clients/', include('workers.urls')),
     # Settings URL

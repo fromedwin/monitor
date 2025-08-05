@@ -75,6 +75,7 @@
                 {% url_start_with 'incidents' app.id as is_incident %}
                 {% url_start_with 'project_pages' app.id as is_performance %}
                 {% url_start_with 'project_notifications' app.id as is_notifications %}
+                {% url_start_with 'project_reports' app.id as is_reports %}
                 {% url_start_with 'project_status_public' app.id as is_status_public %}
                 {% starts_with request.path app.pathname as is_project_selected %}
                 <a href="{% url 'project' app.id %}"
@@ -195,6 +196,18 @@
                       </svg>
                       Public page
                     </a>
+                    <a href="{% url 'project_reports' app.id %}"
+                       class="group flex w-full items-center rounded-md py-2 ml-2 pl-3 text-md font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 {% if is_reports %}bg-gray-100 text-gray-900{% endif %}">
+                      <svg xmlns="http://www.w3.org/2000/svg"
+                           fill="none"
+                           viewBox="0 0 24 24"
+                           stroke-width="1.5"
+                           stroke="currentColor"
+                           class="w-4 h-4 mr-3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      Reports
+                    </a>
                   </div>
                 {% endif %}
               {% endfor %}
@@ -215,6 +228,11 @@
                 <a href="{% url 'logs' %}"
                    class="{% if is_selected %}bg-gray-100 text-gray-900 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% else %}text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% endif %}">
                   <span class="truncate">Logs</span>
+                </a>
+                {% starts_with request.path '/reports' as is_selected %}
+                <a href="{% url 'reports_home' %}"
+                   class="{% if is_selected %}bg-gray-100 text-gray-900 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% else %}text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% endif %}">
+                  <span class="truncate">Reports</span>
                 </a>
                 {% if user.is_staff %}
                   {% starts_with request.path '/administration' as is_selected %}
@@ -334,6 +352,7 @@
               {% url_start_with 'incidents' app.id as is_incident %}
               {% url_start_with 'project_pages' app.id as is_performance %}
               {% url_start_with 'project_notifications' app.id as is_notifications %}
+              {% url_start_with 'project_reports' app.id as is_reports %}
               {% url_start_with 'project_status_public' app.id as is_status_public %}
               {% starts_with request.path app.pathname as is_project_selected %}
               <div x-data="{ open:
@@ -474,6 +493,18 @@
                       </svg>
                       Public page
                     </a>
+                    <a href="{% url 'project_reports' app.id %}"
+                       class="py-2 pl-3 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex w-full items-center rounded-md {% if is_reports %}bg-gray-100 text-gray-900{% endif %}">
+                      <svg xmlns="http://www.w3.org/2000/svg"
+                           fill="none"
+                           viewBox="0 0 24 24"
+                           stroke-width="1.5"
+                           stroke="currentColor"
+                           class="w-4 h-4 mr-3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      Reports
+                    </a>
                   </div>
                 </template>
               </div>
@@ -496,6 +527,11 @@
                 <a href="{% url 'logs' %}"
                    class="{% if is_selected %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-3 py-2 text-sm font-medium{% else %}group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900{% endif %}">
                   <span class="truncate">Logs</span>
+                </a>
+                {% starts_with request.path '/reports' as is_selected %}
+                <a href="{% url 'reports_home' %}"
+                   class="{% if is_selected %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-3 py-2 text-sm font-medium{% else %}group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900{% endif %}">
+                  <span class="truncate">Reports</span>
                 </a>
                 {% if user.is_staff %}
                   {% starts_with request.path '/administration' as is_selected %}
