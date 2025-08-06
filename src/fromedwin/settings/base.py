@@ -123,6 +123,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'storages',
     'django_celery_beat',
+    'django_cotton',
     # Tailwind
     'theme',
     'tailwind',
