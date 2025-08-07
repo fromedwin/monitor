@@ -17,6 +17,7 @@ from django.views.decorators.http import require_GET
 from fromedwin.decorators import waiting_list_approved_only
 from availability.utils import is_project_monitored
 from workers.models import Server
+from reports.models import ProjectReport
 
 @api_view(["GET"])
 def fetch_deprecated_sitemaps(request, secret_key):
@@ -311,6 +312,14 @@ def delete_page(request, page_id):
 def project_task_status(request, project_id):
     """Get the status of all tasks for a project"""
     project = get_object_or_404(Project, id=project_id)
+
+    if ProjectReport.objects.filter(project=project).exists():
+        return JsonResponse({
+            'all_complete': True,
+            'project_id': project_id
+        })
+
+
     pages = Pages.objects.filter(project=project)
 
     #

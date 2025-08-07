@@ -1,5 +1,6 @@
 import logging
 import json
+from datetime import timedelta
 from django.utils import timezone
 from django.conf import settings
 from django.http import JsonResponse
@@ -34,6 +35,7 @@ def fetch_projects_needing_reports(request, secret_key):
 def save_report(request, secret_key, project_id):
     """
     Save a generated report for a specific project.
+    Accepts JSON with keys: report_data (object), duration (seconds float or null)
     """
     # Use django settings secret_key to authenticate django worker
     if secret_key != settings.SECRET_KEY:
@@ -46,7 +48,7 @@ def save_report(request, secret_key, project_id):
     # Load data from body as json
     data = json.loads(request.body.decode("utf-8"))
     report_data = data.get('report_data', {})
-    duration = data.get('duration')
+    duration_seconds = data.get('duration')
 
     # Create the report
     report = ProjectReport.objects.create(
@@ -54,20 +56,29 @@ def save_report(request, secret_key, project_id):
         data=report_data
     )
 
+    # Normalize duration: convert float seconds to timedelta if provided
+    duration_value = None
+    if isinstance(duration_seconds, (int, float)):
+        duration_value = timedelta(seconds=float(duration_seconds))
+
     # Create a task log entry
     task_log = CeleryTaskLog.objects.create(
         project=project,
         task_name='report_task',
-        duration=duration,
+        duration=duration_value,
     )
 
     # Link the task log to the report
     report.celery_task_log = task_log
     report.save()
 
-    logging.info(f'Saved report for project {project_id} with duration {duration}')
+    logging.info(f'Saved report for project {project_id} with duration {duration_value}')
 
     return JsonResponse({
         'report_id': report.id,
         'status': 'success'
     })
+
+
+# Backward/alias endpoint compatible name
+save_project_report = save_report
