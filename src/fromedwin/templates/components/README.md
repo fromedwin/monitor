@@ -11,7 +11,7 @@ Include the component in your template:
   project_id=project.id 
   title="Scanning your website..." 
   description="We're analyzing your website to gather performance data"
-  tasks="favicon,sitemap,scraping,lighthouse,prometheus"
+  tasks="favicon,sitemap,prometheus,scraping,lighthouse"
 %}
 ```
 
@@ -37,6 +37,7 @@ Include the component in your template:
 - **Completed**: Green progress bar, "✓ Completed" status
 - **Failed**: Red progress bar, "✗ Failed" status
 - **Unknown**: Gray progress bar, "❓ Unknown" status
+- **Deploying**: Purple progress bar with animation, "🚀 Deploying..." status
 
 ## API Requirements
 
@@ -46,11 +47,13 @@ The component expects an API endpoint at `/api/project/{project_id}/task_status/
 {
   "favicon_status": "SUCCESS|PENDING|FAILURE|UNKNOWN",
   "sitemap_status": "SUCCESS|PENDING|FAILURE|UNKNOWN",
+  "prometheus_status": "SUCCESS|PENDING|FAILURE|UNKNOWN|DEPLOYING",
   "scraping_status": "SUCCESS|PENDING|FAILURE|UNKNOWN",
   "scraping_progress": {"completed": 5, "total": 10},
   "lighthouse_status": "SUCCESS|PENDING|FAILURE|UNKNOWN",
   "lighthouse_progress": {"completed": 3, "total": 8},
-  "prometheus_status": "SUCCESS|PENDING|FAILURE|UNKNOWN",
+  "reports_status": "SUCCESS|PENDING|FAILURE|UNKNOWN",
+  "reports_progress": {"completed": 1, "total": 1},
   "all_complete": true
 }
 ```
@@ -70,7 +73,7 @@ The component expects an API endpoint at `/api/project/{project_id}/task_status/
       project_id=project.id 
       title="Processing your project..." 
       description="We're setting up monitoring for your website"
-      tasks="favicon,sitemap,scraping,lighthouse"
+      tasks="favicon,sitemap,prometheus,scraping,lighthouse,reports"
     %}
     
     <!-- Your other content here -->

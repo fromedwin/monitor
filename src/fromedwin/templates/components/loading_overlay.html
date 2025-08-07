@@ -6,7 +6,7 @@
     project_id=project.id 
     title="Scanning your website..." 
     description="We're analyzing your website to gather performance data"
-    tasks="favicon,sitemap,scraping,lighthouse,prometheus"
+    tasks="favicon,sitemap,prometheus,scraping,lighthouse,reports"
   %}
   
   Parameters:
@@ -18,29 +18,29 @@
 <!-- Loading Overlay -->
 <div id="loading-overlay"
      class="hidden bg-white bg-opacity-90 z-10 flex items-center justify-center mb-6 rounded-lg border border-gray-200">
-    <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full mx-4">
-        <div class="text-center mb-6">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ title|default:"Loading..." }}</h3>
-            <p class="text-sm text-gray-600">{{ description|default:"Please wait while we process your request" }}</p>
-        </div>
-        <div class="space-y-4" id="tasks-container">
-            <!-- Tasks will be dynamically generated here -->
-        </div>
-        <!-- Completion Message -->
-        <div id="completion-message"
-             class="hidden mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-            <div class="flex items-center">
-                <svg class="w-5 h-5 text-green-600 mr-2"
-                     fill="none"
-                     stroke="currentColor"
-                     viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                <span class="text-sm font-medium text-green-800">All tasks completed! Your analysis is ready.</span>
-            </div>
-        </div>
+  <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full mx-4">
+    <div class="text-center mb-6">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ title|default:"Loading..." }}</h3>
+      <p class="text-sm text-gray-600">{{ description|default:"Please wait while we process your request" }}</p>
     </div>
+    <div class="space-y-4" id="tasks-container">
+      <!-- Tasks will be dynamically generated here -->
+    </div>
+    <!-- Completion Message -->
+    <div id="completion-message"
+         class="hidden mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+      <div class="flex items-center">
+        <svg class="w-5 h-5 text-green-600 mr-2"
+             fill="none"
+             stroke="currentColor"
+             viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+        <span class="text-sm font-medium text-green-800">All tasks completed! Your analysis is ready.</span>
+      </div>
+    </div>
+  </div>
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -109,6 +109,11 @@ document.addEventListener('DOMContentLoaded', () => {
       progressBar.style.width = '0%';
       statusText.textContent = '❓ Unknown';
       statusText.className = 'text-sm text-gray-600 font-medium';
+    } else if (status === 'DEPLOYING') {
+      progressBar.className = 'h-2 bg-purple-500 rounded-full transition-all duration-500 animate-pulse';
+      progressBar.style.width = '75%';
+      statusText.textContent = '🚀 Deploying...';
+      statusText.className = 'text-sm text-purple-600 font-medium';
     } else {
       progressBar.className = 'h-2 bg-gray-300 rounded-full transition-all duration-500';
       progressBar.style.width = '0%';

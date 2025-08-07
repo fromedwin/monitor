@@ -16,6 +16,7 @@ from django.db import transaction
 from django.views.decorators.http import require_GET
 from fromedwin.decorators import waiting_list_approved_only
 from availability.utils import is_project_monitored
+from workers.models import Server
 
 @api_view(["GET"])
 def fetch_deprecated_sitemaps(request, secret_key):
@@ -422,15 +423,53 @@ def project_task_status(request, project_id):
     #
     # PROMETHEUS
     #
-    prometheus_status = 'SUCCESS' if is_project_monitored(project_id) else 'PENDING'
+    # Get the project's creation date
+    project_date = project.created_at
+    # get server last_modified_setup
+    server = Server.objects.last()
+    last_seen = server.last_seen if server else None
+    # Initialize prometheus status
+    prometheus_status = 'UNKNOWN'
+    
+    if project_date and last_seen:
+        # Check if project was created before the last server config update
+        project_before_last_report = project_date < last_seen
+        
+        if project_before_last_report:
+            # Project was created before last config update, check if it's being monitored
+            prometheus_status = 'SUCCESS' if is_project_monitored(project_id) else 'PENDING'
+        else:
+            # Project was created after last config update, wait for server to pick up new config
+            prometheus_status = 'DEPLOYING'
+    else:
+        # No server or project date info, fall back to monitoring check
+        prometheus_status = 'SUCCESS' if is_project_monitored(project_id) else 'PENDING'
 
-    # Check if all tasks are complete
-    all_complete = (
+    #
+    # REPORTS
+    # Check if reports are available for the project
+    #
+    reports_status = 'WAITING'
+    reports_progress = None
+
+    if (
         favicon_status == 'SUCCESS' and
         sitemap_status == 'SUCCESS' and
         scraping_status == 'SUCCESS' and
         lighthouse_status == 'SUCCESS' and
         prometheus_status == 'SUCCESS'
+    ):
+        reports_status = 'PENDING'
+    #
+    #  ALL_COMPLETE
+    #
+    all_complete = (
+        favicon_status == 'SUCCESS' and
+        sitemap_status == 'SUCCESS' and
+        scraping_status == 'SUCCESS' and
+        lighthouse_status == 'SUCCESS' and
+        prometheus_status == 'SUCCESS' and
+        reports_status == 'SUCCESS'
     )
     
     return JsonResponse({
@@ -441,6 +480,8 @@ def project_task_status(request, project_id):
         'scraping_progress': scraping_progress,
         'lighthouse_status': lighthouse_status,
         'lighthouse_progress': lighthouse_progress,
+        'reports_status': reports_status,
+        'reports_progress': reports_progress,
         'all_complete': all_complete,
         'project_id': project_id
     })

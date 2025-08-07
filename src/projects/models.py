@@ -28,6 +28,7 @@ class Project(models.Model):
     # Handle sitemaps
     sitemap_task_status = models.CharField(max_length=16, choices=TASK_STATUS, default='UNKNOWN', help_text="Sitemap task status")
     sitemap_last_edited = models.DateTimeField(help_text="Last time sitemap was edited", default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def is_offline(self):
         return self.services.filter(
