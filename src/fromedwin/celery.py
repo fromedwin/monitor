@@ -28,4 +28,8 @@ app.conf.beat_schedule = {
         'task': 'lighthouse.tasks.queue_deprecated_performance.queue_deprecated_performance',
         'schedule': 30, #24 * 60 * 60,  # Run every 24 hours
     },
+    'queue_report_creation': {
+        'task': 'reports.tasks.queue_report_creation.queue_report_creation',
+        'schedule': 60,  # Run every 60 seconds
+    },
 }
