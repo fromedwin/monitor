@@ -201,7 +201,17 @@
                             try {
                                 const url = new URL(fullUrl);
                                 const path = url.pathname + url.search + url.hash;
-                                element.textContent = path === '/' ? '/' : path;
+                                const displayPath = path === '/' ? '/' : path;
+                                
+                                // Truncate long paths to keep them responsive
+                                const maxLength = 50;
+                                if (displayPath.length > maxLength) {
+                                    const truncated = displayPath.substring(0, maxLength - 3) + '...';
+                                    element.textContent = truncated;
+                                    element.title = fullUrl; // Show full URL on hover
+                                } else {
+                                    element.textContent = displayPath;
+                                }
                             } catch (e) {
                                 element.textContent = fullUrl;
                             }

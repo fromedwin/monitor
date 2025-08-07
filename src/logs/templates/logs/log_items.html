@@ -28,9 +28,10 @@
                 {% if log.lighthouse.first %}
                     {% with lighthouse_report=log.lighthouse.first %}
                         <a href="{% url 'project_pages_report_viewer' lighthouse_report.page.project.id lighthouse_report.id %}"
-                           class="text-emerald-600 hover:text-emerald-900 font-medium"
+                           class="text-emerald-600 hover:text-emerald-900 font-medium block max-w-xs"
                            title="{{ lighthouse_report.page.url }}">
-                            <span class="url-path" data-full-url="{{ lighthouse_report.page.url }}"></span>
+                            <span class="url-path truncate block"
+                                  data-full-url="{{ lighthouse_report.page.url }}"></span>
                         </a>
                     {% endwith %}
                 {% else %}
@@ -42,10 +43,10 @@
                 {% if log.page.first %}
                     {% with page=log.page.first %}
                         <a href="{{ page.url }}"
-                           class="text-emerald-600 hover:text-emerald-900 font-medium"
+                           class="text-emerald-600 hover:text-emerald-900 font-medium block max-w-xs"
                            title="{{ page.url }}"
                            target="_blank">
-                            <span class="url-path" data-full-url="{{ page.url }}"></span>
+                            <span class="url-path truncate block" data-full-url="{{ page.url }}"></span>
                         </a>
                     {% endwith %}
                 {% else %}
