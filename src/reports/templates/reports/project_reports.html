@@ -8,10 +8,11 @@
                         <h2 class="text-lg font-semibold">Reports for {{ project.title }}</h2>
                     </div>
                 </div>
-                <div class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <!-- Left: Reports list -->
-                    <div class="md:col-span-1">
-                        <div class="bg-white shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                <div class="mt-4 bg-white shadow ring-1 ring-black ring-opacity-5 md:rounded-lg overflow-hidden">
+                    <style>.reports-split { height: calc(100vh - 10rem); }</style>
+                    <div class="grid grid-cols-1 lg:grid-cols-12 reports-split">
+                        <!-- Left: Full-height reports list -->
+                        <aside class="lg:col-span-4 border-r border-gray-200 overflow-y-auto">
                             <div class="px-4 py-3 border-b border-gray-200">
                                 <h3 class="text-sm font-medium text-gray-900">Reports</h3>
                             </div>
@@ -21,54 +22,61 @@
                                         <button type="button"
                                                 class="w-full text-left px-4 py-3 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none flex items-center justify-between"
                                                 data-report-id="{{ report.id }}"
-                                                data-report-json="{{ report.data|escapejs }}">
-                                            <span class="text-sm text-gray-900">Report {{ forloop.revcounter }}</span>
-                                            <span class="ml-2 text-xs text-gray-500">{{ report.creation_date|date:"Y-m-d H:i" }}</span>
+                                                data-json-id="report-json-{{ report.id }}">
+                                            <span class="text-sm text-gray-900">{{ report.creation_date|date:"Y-m-d H:i" }}</span>
+                                            <span class="ml-3 text-xs text-gray-500">#{{ report.id }}</span>
                                         </button>
+                                        {% with rid=report.id|stringformat:"s" %}
+                                            {% with json_id="report-json-"|add:rid %}{{ report.data|json_script:json_id }}{% endwith %}
+                                        {% endwith %}
                                     </li>
                                 {% endfor %}
                             </ul>
-                        </div>
-                    </div>
-                    <!-- Right: Report content -->
-                    <div class="md:col-span-3">
-                        <div class="bg-white shadow ring-1 ring-black ring-opacity-5 md:rounded-lg h-full">
+                        </aside>
+                        <!-- Right: Full-height report content -->
+                        <section class="lg:col-span-8 flex flex-col overflow-hidden">
                             <div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
                                 <h3 id="report-title" class="text-sm font-medium text-gray-900">Selected report</h3>
                             </div>
-                            <div class="p-4">
-                                <textarea id="report-content"
-                                          class="w-full h-96 border-gray-300 rounded-md shadow-sm font-mono text-sm"
-                                          readonly></textarea>
+                            <div class="flex-1 overflow-auto">
+                                <pre class="p-4 h-full whitespace-pre text-xs font-mono"><code id="report-content" class="language-json"></code></pre>
                             </div>
-                        </div>
+                        </section>
                     </div>
                 </div>
             </div>
-            <script>
-    (function() {
+            {% block javascript %}
+                {% load static %}
+                <script src="{% static 'prismjs/prism.js' %}"></script>
+                <script>
+    document.addEventListener('DOMContentLoaded', function() {
         const list = document.getElementById('reports-list');
-        const textarea = document.getElementById('report-content');
+        const code = document.getElementById('report-content');
         const title = document.getElementById('report-title');
-        if (!list || !textarea) return;
+        if (!list || !code) return;
 
-        function pretty(jsonStr) {
+        function prettyFromElementId(elemId) {
+            const script = document.getElementById(elemId);
+            if (!script) return '';
             try {
-                const obj = JSON.parse(jsonStr);
+                // json_script renders valid JSON in a <script type="application/json"> tag
+                const obj = JSON.parse(script.textContent);
                 return JSON.stringify(obj, null, 2);
             } catch (e) {
-                return jsonStr;
+                return script.textContent;
             }
         }
 
         function select(button) {
-            // remove active from others
             list.querySelectorAll('button').forEach(b => b.classList.remove('bg-gray-50'));
             button.classList.add('bg-gray-50');
-            const json = button.getAttribute('data-report-json') || '{}';
+            const jsonId = button.getAttribute('data-json-id');
             const id = button.getAttribute('data-report-id');
             title.textContent = `Report #${id}`;
-            textarea.value = pretty(json);
+            code.textContent = prettyFromElementId(jsonId);
+            if (window.Prism && Prism.highlightElement) {
+                Prism.highlightElement(code);
+            }
         }
 
         list.addEventListener('click', function(e) {
@@ -76,47 +84,37 @@
             if (btn) select(btn);
         });
 
-        // Auto-select first report
         const first = list.querySelector('button[data-report-id]');
         if (first) select(first);
-    })();
-            </script>
-        {% else %}
-            <div class="px-4 sm:px-6 lg:px-8">
-                <div class="sm:flex sm:items-center">
-                    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                        <a href="{% url 'reports_home' %}"
-                           class="inline-flex items-center bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
-                            <svg class="-ml-1 mr-2 h-5 w-5"
-                                 xmlns="http://www.w3.org/2000/svg"
-                                 fill="none"
-                                 viewBox="0 0 24 24"
-                                 stroke-width="1.5"
-                                 stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                            </svg>
-                            Back to All Reports
-                        </a>
-                    </div>
-                </div>
-                <div class="mt-8">
-                    <div class="bg-white shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                        <div class="px-4 py-5 sm:p-6">
-                            <div class="text-center">
-                                <svg class="mx-auto h-12 w-12 text-gray-400"
-                                     fill="none"
-                                     viewBox="0 0 24 24"
-                                     stroke="currentColor"
-                                     aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                <h3 class="mt-2 text-sm font-semibold text-gray-900">No reports available</h3>
-                                <p class="mt-1 text-sm text-gray-500">Reports functionality will be implemented soon.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {% endif %}
-    {% endwith %}
-{% endblock %}
+    });
+</script>
+{% endblock javascript %}
+{% else %}
+<div class="px-4 sm:px-6 lg:px-8">
+<div class="sm:flex sm:items-center">
+<div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+<a href="{% url 'reports_home' %}" class="inline-flex items-center bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
+<svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+</svg>
+Back to All Reports
+</a>
+</div>
+</div>
+<div class="mt-8">
+<div class="bg-white shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+<div class="px-4 py-5 sm:p-6">
+<div class="text-center">
+<svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+<h3 class="mt-2 text-sm font-semibold text-gray-900">No reports available</h3>
+<p class="mt-1 text-sm text-gray-500">Reports functionality will be implemented soon.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+{% endif %}
+{% endwith %}
+{% endblock content %}

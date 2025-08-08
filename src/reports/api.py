@@ -7,9 +7,9 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from projects.models import Project
+from projects.utils import get_project_task_status
 from .models import ProjectReport
 from logs.models import CeleryTaskLog
-
 
 @api_view(["GET"])
 def fetch_projects_needing_reports(request, secret_key):
@@ -23,11 +23,18 @@ def fetch_projects_needing_reports(request, secret_key):
         project_report__isnull=True
     )
 
-    logging.debug(f'Found {projects_without_reports.count()} projects to create reports for.')
+    # Keep only those whose task status reports_status is PENDING
+    projects_needing_reports = []
+    for project in projects_without_reports:
+        status = get_project_task_status(project)
+        if status.get('reports_status') == 'PENDING':
+            projects_needing_reports.append(project)
+
+    logging.debug(f'Found {len(projects_needing_reports)} projects to create reports for (pending only).')
 
     return JsonResponse({
         # List of ids and urls to fetch
-        'projects': [{'id': project.pk, 'url': project.url} for project in projects_without_reports]
+        'projects': [{'id': project.pk, 'url': project.url} for project in projects_needing_reports]
     })
 
 
