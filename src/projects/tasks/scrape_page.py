@@ -97,7 +97,7 @@ def scrape_page(page_id, url):
                 '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx',
                 '.zip', '.rar', '.tar', '.gz', '.mp3', '.mp4', '.avi', '.mov', '.wmv',
                 '.css', '.js', '.ico', '.xml', '.txt',
-                '.tex', '.py', '.bx2', '.tar.bz2'
+                '.tex', '.py', '.bx2', '.tar.bz2', '.bz2'
             )
             
             def is_file_url(link_url):
