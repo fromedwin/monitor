@@ -1,6 +1,7 @@
 import logging
 import json
 from datetime import timedelta
+from django.db import models
 from django.utils import timezone
 from django.conf import settings
 from django.http import JsonResponse
@@ -31,6 +32,30 @@ def fetch_projects_needing_reports(request, secret_key):
             projects_needing_reports.append(project)
 
     logging.debug(f'Found {len(projects_needing_reports)} projects to create reports for (pending only).')
+
+    # This code finds projects that already have at least one report,
+    # but their most recent report was created more than 7 days ago.
+    # It does this by:
+    # 1. Calculating the datetime for 7 days ago.
+    seven_days_ago = timezone.now() - timedelta(days=7)
+    # 2. Filtering projects that have at least one related ProjectReport (project_report__isnull=False).
+    # 3. Annotating each project with the latest 'created_at' timestamp from its related reports.
+    # 4. Filtering to only include projects whose latest report is older than 7 days.
+    projects_with_old_reports = Project.objects.filter(
+        project_report__isnull=False
+    ).annotate(
+        latest_report_time=models.Max('project_report__created_at')
+    ).filter(
+        latest_report_time__lt=seven_days_ago
+    )
+
+    # Combine projects without reports and those with old reports, avoiding duplicates
+    projects_needing_reports = list(projects_needing_reports) + [
+        project for project in projects_with_old_reports
+        if get_project_task_status(project).get('reports_status') == 'PENDING'
+        and project not in projects_needing_reports
+    ]
+
 
     return JsonResponse({
         # List of ids and urls to fetch
