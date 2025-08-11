@@ -39,12 +39,12 @@ def fetch_projects_needing_reports(request, secret_key):
     # 1. Calculating the datetime for 7 days ago.
     seven_days_ago = timezone.now() - timedelta(days=7)
     # 2. Filtering projects that have at least one related ProjectReport (project_report__isnull=False).
-    # 3. Annotating each project with the latest 'created_at' timestamp from its related reports.
+    # 3. Annotating each project with the latest 'creation_date' timestamp from its related reports.
     # 4. Filtering to only include projects whose latest report is older than 7 days.
     projects_with_old_reports = Project.objects.filter(
         project_report__isnull=False
     ).annotate(
-        latest_report_time=models.Max('project_report__created_at')
+        latest_report_time=models.Max('project_report__creation_date')
     ).filter(
         latest_report_time__lt=seven_days_ago
     )

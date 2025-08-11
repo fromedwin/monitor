@@ -126,7 +126,7 @@ def scrape_page(page_id, url):
                     
                     # Skip root path and duplicates
                     if parsed_href.path != "/" and clean_url not in seen_urls:
-                        urls.append(href)
+                        urls.append(clean_url)  # Add the cleaned URL without query params
                         seen_urls.add(clean_url)
             
             print("Filtered URLs:", urls)
