@@ -30,6 +30,9 @@ from .views.administration import administration, test_email, administration_sta
 from .views.dashboard import dashboard
 from .views.pages import project_pages
 
+# Override admin login to use custom login page
+admin.site.login = login
+
 urlpatterns = [
     # """
     # Project URLs
