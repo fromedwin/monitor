@@ -37,9 +37,40 @@
                         <section class="lg:col-span-8 flex flex-col overflow-hidden">
                             <div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
                                 <h3 id="report-title" class="text-sm font-medium text-gray-900">Selected report</h3>
+                                <div class="flex space-x-2">
+                                    <button type="button"
+                                            id="json-tab"
+                                            class="px-3 py-1 text-xs font-medium rounded-md bg-blue-100 text-blue-700 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            data-tab="json">JSON Data</button>
+                                    <button type="button"
+                                            id="email-tab"
+                                            class="px-3 py-1 text-xs font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                            data-tab="email">Email Preview</button>
+                                </div>
                             </div>
                             <div class="flex-1 overflow-auto">
-                                <pre class="p-4 h-full whitespace-pre text-xs font-mono"><code id="report-content" class="language-json"></code></pre>
+                                <!-- JSON Data Tab -->
+                                <div id="json-content" class="h-full">
+                                    <pre class="p-4 h-full whitespace-pre text-xs font-mono"><code id="report-content" class="language-json"></code></pre>
+                                </div>
+                                <!-- Email Preview Tab -->
+                                <div id="email-content" class="h-full hidden">
+                                    <div class="h-full flex flex-col">
+                                        <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+                                            <p class="text-sm text-gray-600">Email preview for this report</p>
+                                            <button type="button"
+                                                    id="open-email-new-tab"
+                                                    class="px-3 py-1 text-xs font-medium rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                                                Open in New Tab
+                                            </button>
+                                        </div>
+                                        <div class="flex-1 overflow-auto p-4">
+                                            <div id="email-preview-content" class="max-w-2xl mx-auto">
+                                                <!-- Email content will be loaded here -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </section>
                     </div>
@@ -53,7 +84,15 @@
         const list = document.getElementById('reports-list');
         const code = document.getElementById('report-content');
         const title = document.getElementById('report-title');
+        const jsonTab = document.getElementById('json-tab');
+        const emailTab = document.getElementById('email-tab');
+        const jsonContent = document.getElementById('json-content');
+        const emailContent = document.getElementById('email-content');
+        const emailPreviewContent = document.getElementById('email-preview-content');
+        
         if (!list || !code) return;
+
+        let currentReportId = null;
 
         function prettyFromElementId(elemId) {
             const script = document.getElementById(elemId);
@@ -67,17 +106,108 @@
             }
         }
 
+        function switchTab(tabName) {
+            // Update tab button styles
+            [jsonTab, emailTab].forEach(tab => {
+                tab.classList.remove('bg-blue-100', 'text-blue-700');
+                tab.classList.add('text-gray-500');
+            });
+            
+            if (tabName === 'json') {
+                jsonTab.classList.add('bg-blue-100', 'text-blue-700');
+                jsonContent.classList.remove('hidden');
+                emailContent.classList.add('hidden');
+            } else {
+                emailTab.classList.add('bg-blue-100', 'text-blue-700');
+                emailContent.classList.remove('hidden');
+                jsonContent.classList.add('hidden');
+                
+                // Load email preview if we have a current report
+                if (currentReportId) {
+                    loadEmailPreview(currentReportId);
+                }
+            }
+        }
+
+        function loadEmailPreview(reportId) {
+            const projectId = window.location.pathname.split('/')[2]; // Extract project ID from URL
+            const emailPreviewUrl = `/project/${projectId}/reports/${reportId}/email-preview/`;
+            
+            console.log('Loading email preview from:', emailPreviewUrl);
+            
+            // Show loading state
+            emailPreviewContent.innerHTML = '<div class="flex items-center justify-center py-8"><div class="text-gray-500">Loading email preview...</div></div>';
+            
+            // Fetch email content via AJAX
+            fetch(emailPreviewUrl)
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    console.log('Email HTML loaded, length:', html.length);
+                    
+                    // Insert the email HTML content directly
+                    emailPreviewContent.innerHTML = html;
+                    
+                    // Apply any necessary styling adjustments for inline display
+                    const emailContainer = emailPreviewContent.querySelector('.container');
+                    if (emailContainer) {
+                        emailContainer.style.maxWidth = '100%';
+                        emailContainer.style.margin = '0';
+                        emailContainer.style.boxShadow = 'none';
+                        emailContainer.style.borderRadius = '0';
+                    }
+                    
+                    console.log('Email preview rendered successfully');
+                })
+                .catch(error => {
+                    console.error('Error loading email preview:', error);
+                    emailPreviewContent.innerHTML = `
+                        <div class="text-red-500 text-center py-8">
+                            <div class="mb-2">Error loading email preview</div>
+                            <div class="text-sm text-gray-500">${error.message}</div>
+                            <div class="mt-2">
+                                <button onclick="loadEmailPreview('${reportId}')" class="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600">
+                                    Retry
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+        }
+
         function select(button) {
             list.querySelectorAll('button').forEach(b => b.classList.remove('bg-gray-50'));
             button.classList.add('bg-gray-50');
             const jsonId = button.getAttribute('data-json-id');
             const id = button.getAttribute('data-report-id');
+            currentReportId = id;
             title.textContent = `Report #${id}`;
             code.textContent = prettyFromElementId(jsonId);
             if (window.Prism && Prism.highlightElement) {
                 Prism.highlightElement(code);
             }
+            
+            // Reset to JSON tab when selecting a new report
+            switchTab('json');
         }
+
+        // Tab switching event listeners
+        jsonTab.addEventListener('click', () => switchTab('json'));
+        emailTab.addEventListener('click', () => switchTab('email'));
+        
+        // Open email in new tab button
+        document.getElementById('open-email-new-tab').addEventListener('click', function() {
+            if (currentReportId) {
+                const projectId = window.location.pathname.split('/')[2];
+                const emailPreviewUrl = `/project/${projectId}/reports/${currentReportId}/email-preview/`;
+                window.open(emailPreviewUrl, '_blank');
+            }
+        });
 
         list.addEventListener('click', function(e) {
             const btn = e.target.closest('button[data-report-id]');
