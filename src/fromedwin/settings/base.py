@@ -216,6 +216,7 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 # Email settings
 CONTACT_NAME = os.environ.get('CONTACT_NAME', 'FromEdwin')
 CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL', 'no-reply@core.com')
+DEFAULT_FROM_EMAIL = CONTACT_EMAIL
 EMAIL_HOST = os.environ.get('EMAIL_HOST')
 EMAIL_PORT = os.environ.get('EMAIL_PORT')
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')

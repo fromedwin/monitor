@@ -8,3 +8,4 @@ class ReportsConfig(AppConfig):
     def ready(self):
         import reports.tasks.queue_report_creation
         import reports.tasks.create_report
+        import reports.signals  # Import signals to register them
