@@ -127,7 +127,6 @@ def get_stats_data():
         'lighthouse_queue': lighthouse_queue,
         'fromedwin_queue': fromedwin_queue,
         'prometheus_workers': servers.count(),
-        'settings': settings,
     }
 
 @staff_member_required
