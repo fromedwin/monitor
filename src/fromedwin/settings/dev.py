@@ -3,6 +3,7 @@ Development settings for fromedwin project.
 """
 
 from .base import *
+from .timings import DEV;
 
 # Override debug mode for development
 DEBUG = True
@@ -44,6 +45,8 @@ LOGGING = {
         'level': 'DEBUG',
     },
 }
+
+TIMINGS = DEV;
 
 # Development-specific settings for faster development
 CELERY_TASK_ALWAYS_EAGER = False  # Execute tasks synchronously in development

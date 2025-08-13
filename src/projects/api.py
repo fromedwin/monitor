@@ -7,7 +7,6 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.http import JsonResponse
-from django.conf import settings
 from rest_framework.decorators import api_view
 from .tasks.scrape_page import scrape_page
 from .models import Project, Pages, PageLink
@@ -15,10 +14,7 @@ from logs.models import CeleryTaskLog
 from django.db import transaction
 from django.views.decorators.http import require_GET
 from fromedwin.decorators import waiting_list_approved_only
-from .utils import get_project_task_status, get_project_task_status_by_id
-from availability.utils import is_project_monitored
-from workers.models import Server
-from reports.models import ProjectReport
+from .utils import get_project_task_status
 
 @api_view(["GET"])
 def fetch_deprecated_sitemaps(request, secret_key):
@@ -27,7 +23,7 @@ def fetch_deprecated_sitemaps(request, secret_key):
         # return http unauthorized if secret key doesn't match
         return JsonResponse({}, status=401)
 
-    one_day_ago = timezone.now() - timedelta(days=1)
+    one_day_ago = timezone.now() - timedelta(days=settings.TIMINGS['SITEMAP_INTERVAL_HOURS'])
     projects = Project.objects.filter(
         sitemap_last_edited__lt=one_day_ago,
     )

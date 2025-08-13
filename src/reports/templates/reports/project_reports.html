@@ -80,143 +80,143 @@
                 {% load static %}
                 <script src="{% static 'prismjs/prism.js' %}"></script>
                 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const list = document.getElementById('reports-list');
-        const code = document.getElementById('report-content');
-        const title = document.getElementById('report-title');
-        const jsonTab = document.getElementById('json-tab');
-        const emailTab = document.getElementById('email-tab');
-        const jsonContent = document.getElementById('json-content');
-        const emailContent = document.getElementById('email-content');
-        const emailPreviewContent = document.getElementById('email-preview-content');
-        
-        if (!list || !code) return;
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const list = document.getElementById('reports-list');
+                        const code = document.getElementById('report-content');
+                        const title = document.getElementById('report-title');
+                        const jsonTab = document.getElementById('json-tab');
+                        const emailTab = document.getElementById('email-tab');
+                        const jsonContent = document.getElementById('json-content');
+                        const emailContent = document.getElementById('email-content');
+                        const emailPreviewContent = document.getElementById('email-preview-content');
+                        
+                        if (!list || !code) return;
 
-        let currentReportId = null;
+                        let currentReportId = null;
 
-        function prettyFromElementId(elemId) {
-            const script = document.getElementById(elemId);
-            if (!script) return '';
-            try {
-                // json_script renders valid JSON in a <script type="application/json"> tag
-                const obj = JSON.parse(script.textContent);
-                return JSON.stringify(obj, null, 2);
-            } catch (e) {
-                return script.textContent;
-            }
-        }
+                        function prettyFromElementId(elemId) {
+                            const script = document.getElementById(elemId);
+                            if (!script) return '';
+                            try {
+                                // json_script renders valid JSON in a <script type="application/json"> tag
+                                const obj = JSON.parse(script.textContent);
+                                return JSON.stringify(obj, null, 2);
+                            } catch (e) {
+                                return script.textContent;
+                            }
+                        }
 
-        function switchTab(tabName) {
-            // Update tab button styles
-            [jsonTab, emailTab].forEach(tab => {
-                tab.classList.remove('bg-blue-100', 'text-blue-700');
-                tab.classList.add('text-gray-500');
-            });
-            
-            if (tabName === 'json') {
-                jsonTab.classList.add('bg-blue-100', 'text-blue-700');
-                jsonContent.classList.remove('hidden');
-                emailContent.classList.add('hidden');
-            } else {
-                emailTab.classList.add('bg-blue-100', 'text-blue-700');
-                emailContent.classList.remove('hidden');
-                jsonContent.classList.add('hidden');
-                
-                // Load email preview if we have a current report
-                if (currentReportId) {
-                    loadEmailPreview(currentReportId);
-                }
-            }
-        }
+                        function switchTab(tabName) {
+                            // Update tab button styles
+                            [jsonTab, emailTab].forEach(tab => {
+                                tab.classList.remove('bg-blue-100', 'text-blue-700');
+                                tab.classList.add('text-gray-500');
+                            });
+                            
+                            if (tabName === 'json') {
+                                jsonTab.classList.add('bg-blue-100', 'text-blue-700');
+                                jsonContent.classList.remove('hidden');
+                                emailContent.classList.add('hidden');
+                            } else {
+                                emailTab.classList.add('bg-blue-100', 'text-blue-700');
+                                emailContent.classList.remove('hidden');
+                                jsonContent.classList.add('hidden');
+                                
+                                // Load email preview if we have a current report
+                                if (currentReportId) {
+                                    loadEmailPreview(currentReportId);
+                                }
+                            }
+                        }
 
-        function loadEmailPreview(reportId) {
-            const projectId = window.location.pathname.split('/')[2]; // Extract project ID from URL
-            const emailPreviewUrl = `/project/${projectId}/reports/${reportId}/email-preview/`;
-            
-            console.log('Loading email preview from:', emailPreviewUrl);
-            
-            // Show loading state
-            emailPreviewContent.innerHTML = '<div class="flex items-center justify-center py-8"><div class="text-gray-500">Loading email preview...</div></div>';
-            
-            // Fetch email content via AJAX
-            fetch(emailPreviewUrl)
-                .then(response => {
-                    console.log('Response status:', response.status);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.text();
-                })
-                .then(html => {
-                    console.log('Email HTML loaded, length:', html.length);
-                    
-                    // Insert the email HTML content directly
-                    emailPreviewContent.innerHTML = html;
-                    
-                    // Apply any necessary styling adjustments for inline display
-                    const emailContainer = emailPreviewContent.querySelector('.container');
-                    if (emailContainer) {
-                        emailContainer.style.maxWidth = '100%';
-                        emailContainer.style.margin = '0';
-                        emailContainer.style.boxShadow = 'none';
-                        emailContainer.style.borderRadius = '0';
-                    }
-                    
-                    console.log('Email preview rendered successfully');
-                })
-                .catch(error => {
-                    console.error('Error loading email preview:', error);
-                    emailPreviewContent.innerHTML = `
-                        <div class="text-red-500 text-center py-8">
-                            <div class="mb-2">Error loading email preview</div>
-                            <div class="text-sm text-gray-500">${error.message}</div>
-                            <div class="mt-2">
-                                <button onclick="loadEmailPreview('${reportId}')" class="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600">
-                                    Retry
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                });
-        }
+                        function loadEmailPreview(reportId) {
+                            const projectId = window.location.pathname.split('/')[2]; // Extract project ID from URL
+                            const emailPreviewUrl = `/project/${projectId}/reports/${reportId}/email-preview/`;
+                            
+                            console.log('Loading email preview from:', emailPreviewUrl);
+                            
+                            // Show loading state
+                            emailPreviewContent.innerHTML = '<div class="flex items-center justify-center py-8"><div class="text-gray-500">Loading email preview...</div></div>';
+                            
+                            // Fetch email content via AJAX
+                            fetch(emailPreviewUrl)
+                                .then(response => {
+                                    console.log('Response status:', response.status);
+                                    if (!response.ok) {
+                                        throw new Error(`HTTP error! status: ${response.status}`);
+                                    }
+                                    return response.text();
+                                })
+                                .then(html => {
+                                    console.log('Email HTML loaded, length:', html.length);
+                                    
+                                    // Insert the email HTML content directly
+                                    emailPreviewContent.innerHTML = html;
+                                    
+                                    // Apply any necessary styling adjustments for inline display
+                                    const emailContainer = emailPreviewContent.querySelector('.container');
+                                    if (emailContainer) {
+                                        emailContainer.style.maxWidth = '100%';
+                                        emailContainer.style.margin = '0';
+                                        emailContainer.style.boxShadow = 'none';
+                                        emailContainer.style.borderRadius = '0';
+                                    }
+                                    
+                                    console.log('Email preview rendered successfully');
+                                })
+                                .catch(error => {
+                                    console.error('Error loading email preview:', error);
+                                    emailPreviewContent.innerHTML = `
+                                        <div class="text-red-500 text-center py-8">
+                                            <div class="mb-2">Error loading email preview</div>
+                                            <div class="text-sm text-gray-500">${error.message}</div>
+                                            <div class="mt-2">
+                                                <button onclick="loadEmailPreview('${reportId}')" class="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600">
+                                                    Retry
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `;
+                                });
+                        }
 
-        function select(button) {
-            list.querySelectorAll('button').forEach(b => b.classList.remove('bg-gray-50'));
-            button.classList.add('bg-gray-50');
-            const jsonId = button.getAttribute('data-json-id');
-            const id = button.getAttribute('data-report-id');
-            currentReportId = id;
-            title.textContent = `Report #${id}`;
-            code.textContent = prettyFromElementId(jsonId);
-            if (window.Prism && Prism.highlightElement) {
-                Prism.highlightElement(code);
-            }
-            
-            // Reset to JSON tab when selecting a new report
-            switchTab('json');
-        }
+                        function select(button) {
+                            list.querySelectorAll('button').forEach(b => b.classList.remove('bg-gray-50'));
+                            button.classList.add('bg-gray-50');
+                            const jsonId = button.getAttribute('data-json-id');
+                            const id = button.getAttribute('data-report-id');
+                            currentReportId = id;
+                            title.textContent = `Report #${id}`;
+                            code.textContent = prettyFromElementId(jsonId);
+                            if (window.Prism && Prism.highlightElement) {
+                                Prism.highlightElement(code);
+                            }
+                            
+                            // Reset to JSON tab when selecting a new report
+                            switchTab('json');
+                        }
 
-        // Tab switching event listeners
-        jsonTab.addEventListener('click', () => switchTab('json'));
-        emailTab.addEventListener('click', () => switchTab('email'));
-        
-        // Open email in new tab button
-        document.getElementById('open-email-new-tab').addEventListener('click', function() {
-            if (currentReportId) {
-                const projectId = window.location.pathname.split('/')[2];
-                const emailPreviewUrl = `/project/${projectId}/reports/${currentReportId}/email-preview/`;
-                window.open(emailPreviewUrl, '_blank');
-            }
-        });
+                        // Tab switching event listeners
+                        jsonTab.addEventListener('click', () => switchTab('json'));
+                        emailTab.addEventListener('click', () => switchTab('email'));
+                        
+                        // Open email in new tab button
+                        document.getElementById('open-email-new-tab').addEventListener('click', function() {
+                            if (currentReportId) {
+                                const projectId = window.location.pathname.split('/')[2];
+                                const emailPreviewUrl = `/project/${projectId}/reports/${currentReportId}/email-preview/`;
+                                window.open(emailPreviewUrl, '_blank');
+                            }
+                        });
 
-        list.addEventListener('click', function(e) {
-            const btn = e.target.closest('button[data-report-id]');
-            if (btn) select(btn);
-        });
+                        list.addEventListener('click', function(e) {
+                            const btn = e.target.closest('button[data-report-id]');
+                            if (btn) select(btn);
+                        });
 
-        const first = list.querySelector('button[data-report-id]');
-        if (first) select(first);
-    });
+                        const first = list.querySelector('button[data-report-id]');
+                        if (first) select(first);
+                    });
 </script>
 {% endblock javascript %}
 {% else %}

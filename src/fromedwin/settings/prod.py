@@ -3,6 +3,7 @@ Production settings for fromedwin project.
 """
 
 from .base import *
+from .timings import PRODUCTION;
 
 # Override debug mode for production
 DEBUG = False
@@ -81,6 +82,8 @@ CACHES = {
         'LOCATION': os.getenv('REDIS_URL', 'redis://127.0.0.1:6379/1'),
     }
 }
+
+TIMINGS = PRODUCTION;
 
 # Production session settings
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'

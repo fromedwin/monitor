@@ -30,13 +30,13 @@ def fetch_deprecated_performances(request, secret_key):
         # return http unauthorized if secret key doesn't match
         return JsonResponse({}, status=401)
 
-    deprecated_if_before = timezone.now() - timedelta(minutes=settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES)
+    deprecated_if_before = timezone.now() - timedelta(hours=settings.TIMINGS['LIGHTHOUSE_INTERVAL_HOURS'])
     print(f"Deprecated if before: {deprecated_if_before}")
     # Filter per last request date OR request_run true or last request date undefined
     pages = Pages.objects.filter(
         (Q(lighthouse_last_request__isnull=True) | Q(lighthouse_last_request__lt=deprecated_if_before)) & Q(http_status__lt=300)
     )
-    print(f"Found {len(list(pages))} pages to refresh with the interval of {settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES} minutes.")
+    print(f"Found {len(list(pages))} pages to refresh with the interval of {settings.TIMINGS['LIGHTHOUSE_INTERVAL_HOURS']} hours.")
     for page in pages:
         page.lighthouse_last_request = timezone.now()
         page.save()
@@ -64,7 +64,7 @@ def report_api(request, secret_key, page_id):
             'id': page.pk,
             'url': page.url,
             'last_report_date': last_report.creation_date if last_report else None,
-            'LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES': settings.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES
+            'LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES': settings.TIMINGS['LIGHTHOUSE_INTERVAL_HOURS'] * 60
         })
 
     # Use django settings secret_key to authenticate django worker
