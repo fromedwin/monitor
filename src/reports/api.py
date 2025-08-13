@@ -49,14 +49,12 @@ def fetch_projects_needing_reports(request, secret_key):
         latest_report_time__lt=generate_reports_older_than
     )
 
-    # Combine projects without reports and those with old reports, avoiding duplicates
-    projects_needing_reports = list(projects_needing_reports) + [
-        project for project in projects_with_old_reports
-        if get_project_task_status(project).get('reports_status') == 'PENDING'
-        and project not in projects_needing_reports
-    ]
+    print(projects_with_old_reports)
+    # Simply merge projects without reports and those with old reports
+    projects_needing_reports = list(projects_needing_reports) + list(projects_with_old_reports)
 
 
+    print(projects_needing_reports)
     return JsonResponse({
         # List of ids and urls to fetch
         'projects': [{'id': project.pk, 'url': project.url} for project in projects_needing_reports]

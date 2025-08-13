@@ -87,6 +87,8 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+      django:
+        condition: service_healthy
     networks:
       - monitoring
     environment:
@@ -96,6 +98,7 @@ services:
       DJANGO_SETTINGS_MODULE: "fromedwin.settings.dev"
     volumes:
       - ./src:/app/src
+      - ./data:/app/data
     entrypoint: ["/app/scheduler/entrypoint.sh"]
   #
   # Lighthouse is a tool to check website performances
@@ -208,6 +211,8 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+      django:
+        condition: service_healthy
       crawl4ai:
         condition: service_started
     networks:
@@ -225,6 +230,7 @@ services:
       replicas: ${CELERY_WORKER_REPLICA-3}
     volumes:
       - ./src:/app/src
+      - ./data:/app/data
     entrypoint: ["/app/worker/celery/entrypoint.sh"]
 
   heartbeats:
@@ -286,6 +292,7 @@ services:
       CELERY_BEAT_HOSTNAME: ${CELERY_BEAT_HOSTNAME-}
     volumes:
       - ./src:/app/src
+      - ./data:/app/data
     entrypoint: ["/app/src/entrypoint.sh"]
     healthcheck:
       test:

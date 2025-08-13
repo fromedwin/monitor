@@ -30,8 +30,8 @@ from .views.administration import administration, test_email, administration_sta
 from .views.dashboard import dashboard
 from .views.pages import project_pages
 
-# Override admin login to use custom login page
-admin.site.login = login
+# Note: Using standard Django admin login for staff authentication
+# allauth login is available at /login/ for regular users
 
 urlpatterns = [
     # """
@@ -65,7 +65,7 @@ urlpatterns = [
     # """
     # Administration panel for super user in app
     # """
-    path('', administration, name='administration'),
+    path('administration/', administration, name='administration'),
     path('test_email/', test_email, name='test_email'),
     path('api/administration/stats/', administration_stats_api, name='administration_stats_api'),
 
