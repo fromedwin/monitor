@@ -234,6 +234,65 @@
       </div>
     </div>
   </div>
+  <div class="pt-4 pb-2 border-b border-gray-200">
+    <div class="flex items-center justify-between">
+      <h3 class="text-sm font-medium text-gray-600">
+        Timings:
+        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium {% if settings.TIMINGS.BEAT_SCHEDULE_INTERVAL_SECONDS == 60 %}bg-blue-100 text-blue-700 {% elif settings.TIMINGS.BEAT_SCHEDULE_INTERVAL_SECONDS == 10 %}bg-green-100 text-green-700 {% else %}bg-yellow-100 text-yellow-700{% endif %}">
+          {% if settings.TIMINGS.BEAT_SCHEDULE_INTERVAL_SECONDS == 60 %}
+            SLOW
+          {% elif settings.TIMINGS.BEAT_SCHEDULE_INTERVAL_SECONDS == 10 %}
+            FAST
+          {% else %}
+            CUSTOM
+          {% endif %}
+        </span>
+      </h3>
+      <div class="text-xs text-gray-400">
+        {% if settings.TIMINGS.BEAT_SCHEDULE_INTERVAL_SECONDS == 10 %}
+          Dev
+        {% elif settings.TIMINGS.BEAT_SCHEDULE_INTERVAL_SECONDS == 60 %}
+          Prod
+        {% else %}
+          Custom
+        {% endif %}
+      </div>
+    </div>
+    <div class="mt-2 flex items-center space-x-4 text-xs">
+      <span class="text-gray-500">
+        <span class="font-medium">Beat:</span>
+        {% if settings.TIMINGS.BEAT_SCHEDULE_INTERVAL_SECONDS %}
+          {{ settings.TIMINGS.BEAT_SCHEDULE_INTERVAL_SECONDS }}s
+        {% else %}
+          N/A
+        {% endif %}
+      </span>
+      <span class="text-gray-500">
+        <span class="font-medium">Report:</span>
+        {% if settings.TIMINGS.REPORT_INTERVAL_DAYS %}
+          {{ settings.TIMINGS.REPORT_INTERVAL_DAYS }}d
+        {% else %}
+          N/A
+        {% endif %}
+      </span>
+      <span class="text-gray-500">
+        <span class="font-medium">LH:</span>
+        {% if settings.TIMINGS.LIGHTHOUSE_INTERVAL_HOURS %}
+          {{ settings.TIMINGS.LIGHTHOUSE_INTERVAL_HOURS }}h
+        {% else %}
+          N/A
+        {% endif %}
+      </span>
+      <span class="text-gray-500">
+        <span class="font-medium">Sitemap:</span>
+        {% if settings.TIMINGS.SITEMAP_INTERVAL_HOURS %}
+          {{ settings.TIMINGS.SITEMAP_INTERVAL_HOURS }}h
+        {% else %}
+          N/A
+        {% endif %}
+      </span>
+    </div>
+  </div>
   <div class="pt-8 pb-5 border-b border-gray-200 sm:flex sm:items-center sm:justify-between">
     <h3 class="text-lg leading-6 font-medium text-gray-900">Others</h3>
   </div>
