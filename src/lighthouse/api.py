@@ -64,7 +64,7 @@ def report_api(request, secret_key, page_id):
             'id': page.pk,
             'url': page.url,
             'last_report_date': last_report.creation_date if last_report else None,
-            'LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES': settings.TIMINGS['LIGHTHOUSE_INTERVAL_HOURS'] * 60
+            'LIGHTHOUSE_INTERVAL_HOURS': settings.TIMINGS['LIGHTHOUSE_INTERVAL_HOURS'] * 60
         })
 
     # Use django settings secret_key to authenticate django worker

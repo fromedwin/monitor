@@ -60,7 +60,6 @@ jobs:
           EMAIL_USE_TLS=${{ secrets.EMAIL_USE_TLS }}
           ENABLE_GZIP_COMPRESSION=true
           FORCE_HTTPS=True
-          LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES=1440
           PORT=80
           SECRET_KEY=${{ secrets.SECRET_KEY }}
           SENTRY_ENVIRONMENT=production

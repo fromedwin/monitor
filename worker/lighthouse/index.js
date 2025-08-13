@@ -140,7 +140,7 @@ async function restartChromeIfNeeded() {
 					// Get body as json
 					const data = await returnedResponse.json();
 					const now = new Date();
-					const goodIfBefore = new Date(now.getTime() - data.LIGHTHOUSE_SCRAPE_INTERVAL_MINUTES * 60000);
+					const goodIfBefore = new Date(now.getTime() - data.LIGHTHOUSE_INTERVAL_HOURS * 60000);
 					const lastReportDate = new Date(data.last_report_date);
 
 					if (lastReportDate > goodIfBefore || !data.id) {
