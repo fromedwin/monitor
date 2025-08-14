@@ -291,6 +291,14 @@
           N/A
         {% endif %}
       </span>
+      <span class="text-gray-500">
+        <span class="font-medium">Favicon:</span>
+        {% if settings.TIMINGS.FAVICON_INTERVAL_HOURS %}
+          {{ settings.TIMINGS.FAVICON_INTERVAL_HOURS }}h
+        {% else %}
+          N/A
+        {% endif %}
+      </span>
     </div>
   </div>
   <div class="pt-8 pb-5 border-b border-gray-200 sm:flex sm:items-center sm:justify-between">

@@ -20,7 +20,7 @@ def fetch_deprecated_favicons(request, secret_key):
         # return http unauthorized if secret key doesn't match
         return JsonResponse({}, status=401)
 
-    six_hours_ago = timezone.now() - timedelta(hours=6)
+    six_hours_ago = timezone.now() - timedelta(hours=settings.TIMINGS['FAVICON_INTERVAL_HOURS'])
     projects = Project.objects.filter(
         Q(favicon_details__last_edited__lt=six_hours_ago) | Q(favicon_details__isnull=True)
     )
