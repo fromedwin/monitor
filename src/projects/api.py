@@ -1,105 +1,11 @@
-from io import BytesIO
-import json
-import base64
-import logging
-from datetime import timedelta
-from django.utils import timezone
 from django.shortcuts import get_object_or_404
-from django.conf import settings
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from .tasks.scrape_page import scrape_page
-from .models import Project, Pages, PageLink
-from logs.models import CeleryTaskLog
-from django.db import transaction
+from .models import Project, Pages
 from django.views.decorators.http import require_GET
 from fromedwin.decorators import waiting_list_approved_only
 from .utils import get_project_task_status
-
-
-@api_view(["POST"])
-def save_scaping(request, secret_key, page_id):
-
-    # Use django settings secret_key to authenticate django worker
-    if secret_key != settings.SECRET_KEY:
-        # return http unauthorized
-        return JsonResponse({}, status=401)
-
-    # Get performance to update
-    page = get_object_or_404(Pages, id=page_id)
-
-    # Load data from body as json
-    data = json.loads(request.body.decode("utf-8"))
-    urls = []
-    
-    page.http_status = data.get('http_status', 0)
-    if data.get('redirected_url') and data.get('http_status') == 301:
-        page.save()
-        to_page, created = Pages.objects.get_or_create(
-            url=data.get('redirected_url'),
-            project=page.project,
-        )
-        PageLink.objects.filter(from_page=page).delete()
-        # Create the link (no need for get_or_create since we deleted all links above)
-        PageLink.objects.create(
-            from_page=page,
-            to_page=to_page
-        )
-
-    elif data.get('http_status') == 404:
-        page.save()
-        PageLink.objects.filter(from_page=page).delete()
-    else:
-        page.title = data.get('title', '')
-        page.description = data.get('description', '')
-        page.scraping_last_seen = timezone.now()
-        page.save()
-
-        # get urls and create pages for each url. Might already exist then should ignore
-        urls = data.get('urls', [])
-        
-        # Use transaction to ensure atomicity and prevent database locks
-        with transaction.atomic():
-            # Delete all existing outbound links from this page first (clean slate)
-            PageLink.objects.filter(from_page=page).delete()
-            
-            # Create new links for all discovered URLs
-            for url in urls:
-                # Prevent a page from linking to itself
-                # Ignore if the URL is the same as the current page, or if it doesn't start with the full domain (scheme + netloc)
-                from urllib.parse import urlparse
-                page_parsed = urlparse(page.url)
-                url_parsed = urlparse(url)
-                page_base = f"{page_parsed.scheme}://{page_parsed.netloc}"
-                url_base = f"{url_parsed.scheme}://{url_parsed.netloc}"
-                if url == page.url or url_base != page_base:
-                    continue
-                # Get or create the target page within the same project
-                to_page, created = Pages.objects.get_or_create(
-                    url=url,
-                    project=page.project,
-                )
-
-                # Create the link (no need for get_or_create since we deleted all links above)
-                PageLink.objects.create(
-                    from_page=page,
-                    to_page=to_page
-                )
-    
-    # Save log about sitemap task
-    duration = data.get('duration')
-    log = CeleryTaskLog.objects.create(
-        project=page.project,
-        task_name='scraping_task',
-        duration=timedelta(seconds=duration) if duration else None,
-    )
-
-    page.scraping_task_log = log
-    page.save()
-
-    return JsonResponse({
-        'total_urls': len(urls)
-    })
 
 @require_GET
 def project_pages_tree_json(request, project_id):
