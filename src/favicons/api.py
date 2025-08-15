@@ -13,33 +13,6 @@ from projects.models import Project
 from .models import Favicon
 from logs.models import CeleryTaskLog
 
-@api_view(["GET"])
-def fetch_deprecated_favicons(request, secret_key):
-    # Use django settings secret_key to authenticate django worker
-    if secret_key != settings.SECRET_KEY:
-        # return http unauthorized if secret key doesn't match
-        return JsonResponse({}, status=401)
-
-    six_hours_ago = timezone.now() - timedelta(hours=settings.TIMINGS['FAVICON_INTERVAL_HOURS'])
-    projects = Project.objects.filter(
-        Q(favicon_details__last_edited__lt=six_hours_ago) | Q(favicon_details__isnull=True)
-    )
-    
-    for project in projects:
-        favicon, created = Favicon.objects.get_or_create(
-            project=project,
-            defaults={'task_status': 'PENDING'}
-        )
-        if not created:
-            favicon.task_status = 'PENDING'
-            favicon.save()
-
-    return JsonResponse({
-        # List of ids and urls to fetch
-        'projects': [{'id': project.pk, 'url': project.url} for project in projects]
-    })
-
-
 @api_view(["POST"])
 def save_favicon(request, secret_key, project_id):
 

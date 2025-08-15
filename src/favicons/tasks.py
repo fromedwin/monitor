@@ -8,6 +8,11 @@ from urllib.parse import urljoin, urlparse
 from PIL import Image
 from io import BytesIO
 from django.conf import settings
+from django.utils import timezone
+from datetime import timedelta
+from django.db.models import Q
+from projects.models import Project
+from .models import Favicon
 
 @shared_task()
 def fetch_favicon(pk, url):
@@ -122,12 +127,22 @@ def queue_deprecated_favicons(self):
     if reserved_tasks:
         revoke_tasks(reserved_tasks)
 
-    #
-    # Fetch backend to queue deprecated favicons
-    #
-    response = requests.get(f'{settings.BACKEND_URL}/api/fetch_deprecated_favicons/{settings.SECRET_KEY}/')
-    response.raise_for_status()
-    projects = response.json().get('projects', [])
+    six_hours_ago = timezone.now() - timedelta(hours=settings.TIMINGS['FAVICON_INTERVAL_HOURS'])
+    projects = Project.objects.filter(
+        Q(favicon_details__last_edited__lt=six_hours_ago) | Q(favicon_details__isnull=True)
+    )
+    
+    for project in projects:
+        favicon, created = Favicon.objects.get_or_create(
+            project=project,
+            defaults={'task_status': 'PENDING'}
+        )
+        if not created:
+            favicon.task_status = 'PENDING'
+            favicon.save()
+
+    projects = [{'id': project.pk, 'url': project.url} for project in projects]
+
     logging.info(f'Found {len(list(projects))} projects to refresh favicon.')
     for project in projects:
         fetch_favicon.delay(project.get('id'), project.get('url'))
