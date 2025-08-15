@@ -19,34 +19,6 @@ from .models import LighthouseReport
 from fromedwin.decorators import waiting_list_approved_only
 from constants import LIGHTHOUSE_FORMFACTOR_CHOICES
 
-@api_view(["GET"])
-def fetch_deprecated_performances(request, secret_key):
-    """
-    Return projects id and url which need a refresh of the token
-    """
-
-    # Use django settings secret_key to authenticate django worker
-    if secret_key != settings.SECRET_KEY:
-        # return http unauthorized if secret key doesn't match
-        return JsonResponse({}, status=401)
-
-    deprecated_if_before = timezone.now() - timedelta(hours=settings.TIMINGS['LIGHTHOUSE_INTERVAL_HOURS'])
-    print(f"Deprecated if before: {deprecated_if_before}")
-    # Filter per last request date OR request_run true or last request date undefined
-    pages = Pages.objects.filter(
-        (Q(lighthouse_last_request__isnull=True) | Q(lighthouse_last_request__lt=deprecated_if_before)) & Q(http_status__lt=300)
-    )
-    print(f"Found {len(list(pages))} pages to refresh with the interval of {settings.TIMINGS['LIGHTHOUSE_INTERVAL_HOURS']} hours.")
-    for page in pages:
-        page.lighthouse_last_request = timezone.now()
-        page.save()
-
-    return JsonResponse({
-        # List of ids and urls to fetch
-        'performances': [{'id': page.pk, 'url': page.url} for page in pages]
-    })
-
-
 @api_view(["GET", "POST"])
 def report_api(request, secret_key, page_id):
 

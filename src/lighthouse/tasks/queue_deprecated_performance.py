@@ -2,6 +2,10 @@ import logging
 import requests
 from celery import shared_task, current_app
 from django.conf import settings
+from django.utils import timezone
+from datetime import timedelta
+from django.db.models import Q
+from projects.models import Pages
 
 @shared_task(bind=True)
 def queue_deprecated_performance(self):
@@ -30,12 +34,18 @@ def queue_deprecated_performance(self):
     if reserved_tasks:
         revoke_tasks(reserved_tasks)
 
-    #
-    # Fetch backend to queue deprecated favicons
-    #
-    response = requests.get(f'{settings.BACKEND_URL}/api/fetch_deprecated_performances/{settings.SECRET_KEY}/')
-    response.raise_for_status()
-    performances = response.json().get('performances', [])
+    deprecated_if_before = timezone.now() - timedelta(hours=settings.TIMINGS['LIGHTHOUSE_INTERVAL_HOURS'])
+    print(f"Deprecated if before: {deprecated_if_before}")
+    # Filter per last request date OR request_run true or last request date undefined
+    pages = Pages.objects.filter(
+        (Q(lighthouse_last_request__isnull=True) | Q(lighthouse_last_request__lt=deprecated_if_before)) & Q(http_status__lt=300)
+    )
+    print(f"Found {len(list(pages))} pages to refresh with the interval of {settings.TIMINGS['LIGHTHOUSE_INTERVAL_HOURS']} hours.")
+    for page in pages:
+        page.lighthouse_last_request = timezone.now()
+        page.save()
+
+    performances = [{'id': page.pk, 'url': page.url} for page in pages]
 
     logging.info(f'Found {len(list(performances))} performances to refresh with the interval of {settings.TIMINGS['LIGHTHOUSE_INTERVAL_HOURS']} minutes.')
 

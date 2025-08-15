@@ -6,6 +6,8 @@ from .models import Project, Pages
 from django.views.decorators.http import require_GET
 from fromedwin.decorators import waiting_list_approved_only
 from .utils.get_project_task_status import get_project_task_status
+from celery import current_app
+from django.conf import settings
 
 @require_GET
 def project_pages_tree_json(request, project_id):
@@ -70,6 +72,7 @@ def refresh_page_data(request, page_id):
     try:
         page = get_object_or_404(Pages, pk=page_id)
         
+        
         # Check if user has access to the project that owns this page
         if page.project.user != request.user:
             return JsonResponse({'error': 'Unauthorized access to this page'}, status=403)
@@ -78,10 +81,14 @@ def refresh_page_data(request, page_id):
         # from django.utils import timezone
         # page.lighthouse_last_request = timezone.now()
         # page.save()
+
+        source = 'refresh_page_data' # Specify this is a scheduled task so when workers fetch the report they can verify if still required based on scheduled interval
+        task_kwargs = {'id': page.pk, 'url': page.url, 'source': source}
+        current_app.send_task('fetch_lighthouse_report', kwargs=task_kwargs, queue=settings.CELERY_QUEUE_LIGHTHOUSE, task_id=f'performance_{page.pk}')
         
         # Trigger the scraping task
         scrape_page.delay(page.pk, page.url)
-        
+
         return JsonResponse({
             'success': True,
             'message': f'Refresh request sent for "{page.title or page.url}". Data will be updated shortly.'
