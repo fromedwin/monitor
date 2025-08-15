@@ -229,11 +229,6 @@
                    class="{% if is_selected %}bg-gray-100 text-gray-900 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% else %}text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% endif %}">
                   <span class="truncate">Logs</span>
                 </a>
-                {% starts_with request.path '/reports' as is_selected %}
-                <a href="{% url 'reports_home' %}"
-                   class="{% if is_selected %}bg-gray-100 text-gray-900 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% else %}text-gray-600 hover:bg-gray-100 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium{% endif %}">
-                  <span class="truncate">Reports</span>
-                </a>
                 {% if user.is_staff %}
                   {% starts_with request.path '/administration' as is_selected %}
                   <a href="{% url 'administration' %}"
@@ -527,11 +522,6 @@
                 <a href="{% url 'logs' %}"
                    class="{% if is_selected %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-3 py-2 text-sm font-medium{% else %}group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900{% endif %}">
                   <span class="truncate">Logs</span>
-                </a>
-                {% starts_with request.path '/reports' as is_selected %}
-                <a href="{% url 'reports_home' %}"
-                   class="{% if is_selected %}bg-gray-100 text-gray-900 group flex items-center rounded-md px-3 py-2 text-sm font-medium{% else %}group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900{% endif %}">
-                  <span class="truncate">Reports</span>
                 </a>
                 {% if user.is_staff %}
                   {% starts_with request.path '/administration' as is_selected %}
