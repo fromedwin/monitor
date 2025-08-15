@@ -2,7 +2,7 @@ from django.urls import path
 
 from .views import project, projects_form, projects_delete, projects_add, project_graph_tree, project_screenshots
 from incidents.views import incidents
-from .api import save_scaping, project_pages_tree_json, delete_page, refresh_page_data, project_task_status
+from .api import project_pages_tree_json, delete_page, refresh_page_data, project_task_status
 
 urlpatterns = [
     # Add form to create a new project
@@ -28,8 +28,6 @@ urlpatterns = [
 # Add APIs URL
 #
 urlpatterns += [
-    # 
-    path('api/save_scaping/<str:secret_key>/<int:page_id>/', save_scaping, name='save_scaping'),
     # API endpoint to get project pages tree in JSON format
     path('api/project/<int:project_id>/pages/tree/', project_pages_tree_json, name='project_pages_tree_json'),
     # API endpoint to delete a page

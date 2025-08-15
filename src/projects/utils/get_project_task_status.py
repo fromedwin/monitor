@@ -1,15 +1,10 @@
-from datetime import timedelta
 from typing import Dict, Optional
-
-from django.shortcuts import get_object_or_404
-
 from availability.utils import is_project_monitored
 from logs.models import CeleryTaskLog
 from reports.models import ProjectReport
 from workers.models import Server
 
-from .models import Project, Pages
-
+from projects.models import Project, Pages
 
 def get_project_task_status(project: Project) -> Dict:
     """Compute task status overview for a project.
@@ -179,11 +174,4 @@ def get_project_task_status(project: Project) -> Dict:
         'all_complete': all_complete,
         'project_id': project.id,
     }
-
-
-def get_project_task_status_by_id(project_id: int) -> Dict:
-    """Convenience wrapper when only an id is available."""
-    project = get_object_or_404(Project, id=project_id)
-    return get_project_task_status(project)
-
 

@@ -5,7 +5,7 @@ from .tasks.scrape_page import scrape_page
 from .models import Project, Pages
 from django.views.decorators.http import require_GET
 from fromedwin.decorators import waiting_list_approved_only
-from .utils import get_project_task_status
+from .utils.get_project_task_status import get_project_task_status
 
 @require_GET
 def project_pages_tree_json(request, project_id):
