@@ -48,4 +48,4 @@ def queue_deprecated_sitemaps(self):
         project.save()  
 
     for project in projects:
-        fetch_sitemap.delay(project.get('id'), project.get('url'))
+        fetch_sitemap.delay(project.pk, project.url)

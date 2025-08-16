@@ -226,6 +226,10 @@ services:
       DJANGO_SETTINGS_MODULE: "fromedwin.settings.dev"
       CRAWL4AI_URL: http://crawl4ai:11235
       CELERYD_CONCURRENCY: 4 # Only run one worker at a time
+      INFLUXDB_URL: ${INFLUXDB_URL-http://influxdb:8086} # access parent container
+      INFLUXDB_DEFAULT_USER: ${INFLUXDB_DEFAULT_USER-}
+      INFLUXDB_DEFAULT_PASS: ${INFLUXDB_DEFAULT_PASS-}
+      INFLUXDB_TOKEN: ${INFLUXDB_TOKEN-}
     deploy:
       replicas: ${CELERY_WORKER_REPLICA-3}
     volumes:

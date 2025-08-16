@@ -171,6 +171,6 @@ def is_project_monitored(project_id):
 
         except Exception as e:
             logging.error(f'Error querying InfluxDB: {e}')
-        
+            raise e
 
     return result

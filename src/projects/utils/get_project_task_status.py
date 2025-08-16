@@ -3,7 +3,7 @@ from availability.utils import is_project_monitored
 from logs.models import CeleryTaskLog
 from reports.models import ProjectReport
 from workers.models import Server
-
+import logging
 from projects.models import Project, Pages
 
 def get_project_task_status(project: Project) -> Dict:
@@ -131,14 +131,19 @@ def get_project_task_status(project: Project) -> Dict:
     server = Server.objects.last()
     last_seen = server.last_seen if server else None
     prometheus_status = 'UNKNOWN'
-    if project_date and last_seen:
-        project_before_last_report = project_date < last_seen
-        if project_before_last_report:
-            prometheus_status = 'SUCCESS' if is_project_monitored(project.id) else 'PENDING'
+
+    try:
+        if project_date and last_seen:
+            project_before_last_report = project_date < last_seen
+            if project_before_last_report:
+                prometheus_status = 'SUCCESS' if is_project_monitored(project.id) else 'PENDING'
+            else:
+                prometheus_status = 'DEPLOYING'
         else:
-            prometheus_status = 'DEPLOYING'
-    else:
-        prometheus_status = 'SUCCESS' if is_project_monitored(project.id) else 'PENDING'
+            prometheus_status = 'SUCCESS' if is_project_monitored(project.id) else 'PENDING'
+    except Exception as e:
+        logging.error(f"Error getting prometheus status for project {project.id}: {e}")
+        prometheus_status = 'FAILED'
 
     # Reports status gates on other statuses being complete
     reports_status = 'WAITING'

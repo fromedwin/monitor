@@ -1,7 +1,6 @@
 import logging
 from celery import shared_task, current_app
 from django.conf import settings
-import requests
 from .create_report import create_report
 from projects.models import Project
 from projects.utils.get_project_task_status import get_project_task_status
@@ -41,7 +40,7 @@ def queue_report_creation(self):
     projects_without_reports = Project.objects.filter(
         project_report__isnull=True
     )
-
+    print('projects_without_reports', projects_without_reports)
     # Keep only those whose task status reports_status is PENDING
     projects_needing_reports = []
     for project in projects_without_reports:
@@ -73,10 +72,9 @@ def queue_report_creation(self):
 
 
     print(projects_needing_reports)
-    projects = [{'id': project.pk, 'url': project.url} for project in projects_needing_reports]
 
-    logging.info(f'Found {len(list(projects))} projects needing reports.')
+    logging.info(f'Found {len(list(projects_needing_reports))} projects needing reports.')
 
-    for project in projects:
-        create_report.delay(project.get('id'), project.get('url'))
+    for project in projects_needing_reports:
+        create_report.delay(project.pk, project.url)
         logging.info(f'Queuing report creation for project {project.get("id")} ({project.get("url")})')
