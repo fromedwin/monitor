@@ -12,50 +12,22 @@ def create_report(project_id, project_url):
     Create a report for a specific project.
     """
     start_time = time.time()
+
+    # Get project to update
+    project = get_object_or_404(Project, id=project_id)
     
-
-    # Report should generate json contianing the following:
-    # - status: OK, WARNING, or ERROR
-    status = "OK"
-    # - Incidents: availablility
-    incidents = []
-    # - https when expiring
-    https_expiring = None
-    # - Lighthouse performance average for all pages.
-    #    - top 5 worst page to improve
-    lighthouse_performance = {
-        "average": 0,
-        "top_5_worst": [],
-    }
-    #    - Trend compare to previous report +2% - 5% ...
-    lighthouse_performance_trend = None
-    # - Counters: pages, 404, 301
-    counters = {
-        "pages": 0,
-        "404": 0,
-        "301": 0,
-    }
-
 
     # Create a simple report with status OK
     report_data = {
-        "status": status,
-        "incidents": [],
-        "https_expiring": None,
-        "lighthouse_performance": {
-            "average": 0,
-            "top_5_worst": [],
-        },
-        "lighthouse_performance_trend": None,   
-        "counters": {
-            "pages": 0,
-            "404": 0,
-            "301": 0,
-        },
+        "pages": [
+            {
+                "url": project_url,
+                "http_status": page.http_status,
+            }
+            for page in project.pages.all()
+        ]
     }
 
-        # Get project to update
-    project = get_object_or_404(Project, id=project_id)
 
     duration_seconds = time.time() - start_time,
 
