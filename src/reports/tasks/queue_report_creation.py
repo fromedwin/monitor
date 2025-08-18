@@ -77,4 +77,4 @@ def queue_report_creation(self):
 
     for project in projects_needing_reports:
         create_report.delay(project.pk, project.url)
-        logging.info(f'Queuing report creation for project {project.get("id")} ({project.get("url")})')
+        logging.info(f'Queuing report creation for project {project.pk} ({project.url})')

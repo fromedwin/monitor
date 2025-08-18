@@ -32,11 +32,6 @@ def create_report(project_id, project_url):
                 "http_status": page.http_status,
                 "title": page.title,
                 "description": page.description,
-                "lighthouse_report": page.lighthouse_report.first().report_json_file.url if page.lighthouse_report.first() else None,
-                "lighthouse_report_date": page.lighthouse_report.first().creation_date if page.lighthouse_report.first() else None,
-                "lighthouse_report_form_factor": page.lighthouse_report.first().form_factor if page.lighthouse_report.first() else None,
-                "lighthouse_report_score_performance": page.lighthouse_report.first().score_performance if page.lighthouse_report.first() else None,
-                "lighthouse_report_score_accessibility": page.lighthouse_report.first().score_accessibility if page.lighthouse_report.first() else None,
             }
             for page in project.pages.all()
         ],
