@@ -19,7 +19,7 @@ def create_report(project_id, project_url):
     project = get_object_or_404(Project, id=project_id)
     
     # Get the previous report for this project, if any
-    previous_report = ProjectReport.objects.filter(project=project).order_by('-created_at').first()
+    previous_report = ProjectReport.objects.filter(project=project).order_by('-creation_date').first()
 
     # Create a simple report with status OK
     report_data = {
