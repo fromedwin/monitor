@@ -1,11 +1,9 @@
 from django.urls import path
 
-from .views import reports_home, project_reports, report_email_preview
+from .views import project_reports, report_email_preview
 from .api import queue_report_generation
 
 urlpatterns = [
-    # Reports home page showing list of all reports
-    path('reports/', reports_home, name='reports_home'),
     # Project-specific reports page
     path('project/<int:id>/reports/', project_reports, name='project_reports'),
     # Email preview for a specific report
