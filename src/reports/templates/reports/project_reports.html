@@ -4,7 +4,7 @@
     {% with reports=project.project_report.all %}
         {% if reports %}
             <div class="px-4 sm:px-6 lg:px-8">
-                <div class="sm:flex sm:items-center">
+                <div class="sm:flex sm:items-center justify-between">
                     <div>
                         <h2 class="text-lg font-semibold">Reports for {{ project.title }}</h2>
                     </div>
