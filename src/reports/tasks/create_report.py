@@ -28,7 +28,7 @@ def create_report(project_id, project_url):
         "date": timezone.now().isoformat(),
         "pages": [
             {
-                "url": project_url,
+                "url": page.url,
                 "http_status": page.http_status,
                 "title": page.title,
                 "description": page.description,
