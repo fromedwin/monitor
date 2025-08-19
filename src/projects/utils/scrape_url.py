@@ -2,7 +2,6 @@ import logging
 import requests
 import time
 from bs4 import BeautifulSoup
-from celery import shared_task
 from django.conf import settings
 from urllib.parse import urlparse, urljoin
 import time
@@ -47,7 +46,6 @@ def scrape_url(url):
         soup = BeautifulSoup(response.text, 'html.parser')
         hrefs = [a['href'] for a in soup.find_all('a', href=True)]
 
-        
         for href in hrefs:
             if href and not is_file_url(href):
                 # Handle relative URLs (starting with /)
@@ -96,13 +94,18 @@ def scrape_url(url):
                 "type": "CrawlerRunConfig", 
                 "params": {
                     "stream": False,
-                    "cache_mode": "bypass",
+                    "cache_mode": "disabled",
+                    "exclude_external_links": True,
+                    "remove_overlay_elements": True,
+                    "word_count_threshold": 5,
                 }
             },
             "browser_config": {
                 "type": "BrowserConfig",
                 "params": {
-                    "headless": True
+                    "headless": True,
+                    "text_mode": True,
+                    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
                 }
             }
         }
