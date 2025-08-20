@@ -30,8 +30,9 @@ def create_report(project_id, project_url):
             {
                 "url": page.url,
                 "http_status": page.http_status,
-                "title": page.title,
-                "description": page.description,
+                "title": page.title or None,
+                "description": page.description or None,
+                "redirected_url": page.outbound_links.first().to_page.url if page.http_status == 301 else None,
             }
             for page in project.pages.all()
         ],
