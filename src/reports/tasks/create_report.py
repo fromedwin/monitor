@@ -39,9 +39,6 @@ def create_report(project_id, project_url):
         "previous_report": previous_report.data if previous_report else None,
     }
 
-
-    duration_seconds = time.time() - start_time,
-
     # Create the report
     report = ProjectReport.objects.create(
         project=project,
@@ -49,15 +46,13 @@ def create_report(project_id, project_url):
     )
 
     # Normalize duration: convert float seconds to timedelta if provided
-    duration_value = None
-    if isinstance(duration_seconds, (int, float)):
-        duration_value = timedelta(seconds=float(duration_seconds))
+    duration = time.time() - start_time
 
     # Create a task log entry
     task_log = CeleryTaskLog.objects.create(
         project=project,
         task_name='report_task',
-        duration=duration_value,
+        duration=timedelta(seconds=duration) if duration else None,
     )
 
     # Link the task log to the report
