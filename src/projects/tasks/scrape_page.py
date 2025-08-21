@@ -20,6 +20,7 @@ def scrape_page(page_id, url):
     page = get_object_or_404(Pages, id=page_id)
 
     page.http_status = http_status if http_status else 0
+    page.scraping_last_seen = timezone.now()
     if redirected_url and http_status == 301:
         page.save()
         to_page, created = Pages.objects.get_or_create(
@@ -39,7 +40,6 @@ def scrape_page(page_id, url):
     else:
         page.title = title
         page.description = description
-        page.scraping_last_seen = timezone.now()
         page.save()
 
         # Use transaction to ensure atomicity and prevent database locks
