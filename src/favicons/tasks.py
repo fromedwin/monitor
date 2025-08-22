@@ -83,7 +83,7 @@ def fetch_favicon(pk, url):
             # Wrap the content in a BytesIO object
             largest_content = base64.b64encode(response.content).decode('utf-8')
 
-    except e:
+    except Exception as e:
         logging.error(f"Error fetching the webpage: {e}")
     finally:
         duration = time.time() - start_time
