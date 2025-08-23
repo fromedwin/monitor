@@ -26,6 +26,7 @@ def create_report(project_id, project_url):
         "id": sha256(str(project.id).encode('utf-8')).hexdigest(),
         "project_id": project.id,
         "date": timezone.now().isoformat(),
+        "performance_score": project.performance_score() or None,
         "pages": [
             {
                 "url": page.url,
