@@ -1,7 +1,3 @@
-import requests
-import json
-import logging
-
 from django.conf import settings
 from django.urls import reverse
 from django.http import HttpResponse
@@ -12,15 +8,10 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 
-from rest_framework.authtoken.models import Token
-from allauth.socialaccount.models import SocialApp
-
-from workers.models import Server
 from incidents.models import Incident
 from projects.models import Project
-from projects.forms import ProjectForm
 
-from .models import Service, HTTPCodeService, HTTPMockedCodeService
+from .models import HTTPCodeService, HTTPMockedCodeService
 from .forms import ServiceForm, HTTPCodeServiceForm, MockedHTTPCodeServiceForm
 from .utils import get_project_stats, get_user_stats
 

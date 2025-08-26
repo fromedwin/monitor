@@ -153,8 +153,9 @@
             <div class="flex flex-row gap-2 items-center justify-between">
                 <p class="text-xs text-gray-500 mt-2">
                     Last visited: {{ page.scraping_last_seen|naturaltime|default:"Never" }} -
-                    Last sitemap check: {{ page.sitemap_last_seen|naturaltime|default:"Never" }} -
-                    Last report: {{ report.creation_date|naturaltime }} -
+                    {% if page.sitemap_last_seen %}
+                        Last sitemap check: {{ page.sitemap_last_seen|naturaltime|default:"Never" }} -
+                    {% endif %}
                     {% if page.sitemap_last_seen %}
                         ✅ In sitemap
                     {% else %}
@@ -163,13 +164,18 @@
                     {% endif %}
                     {% if page.http_status != 200 %}- http status: {{ page.http_status }}{% endif %}
                 </p>
-                {% if page.lighthouse_last_request > report.creation_date %}
-                    <p class="text-xs text-gray-500 mt-2">Status: Queued</p>
-                {% elif page.next_lighthouse_run < 0 %}
-                    <p class="text-xs text-gray-500 mt-2">Will be picked soon</p>
-                {% else %}
-                    <p class="text-xs text-gray-500 mt-2">Next run in {{ page.next_lighthouse_run|timeuntil }}</p>
-                {% endif %}
+                <div>
+                    <p class="text-xs text-gray-500 mt-2">
+                        Last report: {{ report.creation_date|naturaltime }} -
+                        {% if page.lighthouse_last_request > report.creation_date %}
+                            Status: Queued
+                        {% elif page.next_lighthouse_run < 0 %}
+                            Will be picked soon
+                        {% else %}
+                            Next run in {{ page.next_lighthouse_run|timeuntil }}
+                        {% endif %}
+                    </p>
+                </div>
             </div>
         </div>
         <!--  -->

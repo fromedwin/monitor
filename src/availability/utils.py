@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 from .models import Service
 
-def get_project_stats(project_id, duration):
+def get_project_stats(project_id, duration=60*60):
     """"
         get_project_stats fetch project data from influxDB and bundle them into a dictionary
     """
