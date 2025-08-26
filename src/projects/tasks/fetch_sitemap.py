@@ -60,6 +60,14 @@ def fetch_sitemap(pk, url):
         for page in pages:
             scrape_page.delay(page.pk, page.url)
 
+    # Send scraping request for all pages not in sitemap which were triggered on creation
+    pages = Pages.objects.filter(sitemap_last_seen__isnull=True, project=project)
+    for page in pages:
+        page.sitemap_last_seen = sitemap_last_edited
+        page.save()
+        scrape_page.delay(page.pk, page.url)
+
+
     # Save log about sitemap task
     CeleryTaskLog.objects.create(
         project=project,
