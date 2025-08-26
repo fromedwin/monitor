@@ -2,7 +2,7 @@ from django.urls import path
 
 from .views import project, projects_form, projects_delete, projects_add, project_graph_tree, project_screenshots
 from incidents.views import incidents
-from .api import project_pages_tree_json, delete_page, refresh_page_data, project_task_status
+from .api import project_pages_tree_json, delete_page, refresh_page_data, project_task_status, refresh_sitemap
 
 urlpatterns = [
     # Add form to create a new project
@@ -36,5 +36,7 @@ urlpatterns += [
     path('api/page/<int:page_id>/refresh/', refresh_page_data, name='refresh_page_data'),
     # API endpoint to get project task status
     path('api/project/<int:project_id>/task_status/', project_task_status, name='project_task_status'),
+    # API endpoint to refresh sitemap
+    path('api/project/<int:project_id>/refresh_sitemap/', refresh_sitemap, name='refresh_sitemap'),
 ]
 

@@ -8,6 +8,7 @@ from fromedwin.decorators import waiting_list_approved_only
 from .utils.get_project_task_status import get_project_task_status
 from celery import current_app
 from django.conf import settings
+from .tasks.fetch_sitemap import fetch_sitemap
 
 @require_GET
 def project_pages_tree_json(request, project_id):
@@ -137,3 +138,29 @@ def project_task_status(request, project_id):
     project = get_object_or_404(Project, id=project_id)
     data = get_project_task_status(project)
     return JsonResponse(data)
+
+@waiting_list_approved_only()
+@api_view(["POST"])
+def refresh_sitemap(request, project_id):
+    """
+    Trigger a sitemap refresh for a specific project for authenticated users
+    """
+    try:
+        project = get_object_or_404(Project, pk=project_id)
+        
+        # Check if user has access to the project
+        if project.user != request.user:
+            return JsonResponse({'error': 'Unauthorized access to this project'}, status=403)
+        
+        # Trigger the sitemap fetch task
+        fetch_sitemap.delay(project.pk, project.url)
+
+        return JsonResponse({
+            'success': True,
+            'message': f'Sitemap refresh request sent for "{project.title}". Pages will be updated shortly.'
+        })
+            
+    except Project.DoesNotExist:
+        return JsonResponse({'error': 'Project not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': f'Error refreshing sitemap: {str(e)}'}, status=500)
