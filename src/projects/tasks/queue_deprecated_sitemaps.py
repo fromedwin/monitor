@@ -35,15 +35,15 @@ def queue_deprecated_sitemaps(self):
         revoke_tasks(reserved_tasks)
 
     # Fetch projects which need to update sitemap
-    one_day_ago = timezone.now() - timedelta(days=settings.TIMINGS['SITEMAP_INTERVAL_HOURS'])
+    sitemap_interval = timezone.now() - timedelta(hours=settings.TIMINGS['SITEMAP_INTERVAL_HOURS'])
     projects = Project.objects.filter(
-        sitemap_last_edited__lt=one_day_ago,
+        sitemap_last_edited__lt=sitemap_interval,
     )
 
     logging.info(f'Found {len(list(projects))} projects to refresh sitemap.')
 
     for project in projects:
-        logging.debug(f'Project {project.pk} has {project.sitemap_task_status} status and {project.sitemap_last_edited} value lower than {one_day_ago}.')
+        logging.debug(f'Project {project.pk} has {project.sitemap_task_status} status and {project.sitemap_last_edited} value lower than {sitemap_interval} hour(s).')
         project.sitemap_task_status = 'PENDING'
         project.save()  
 
