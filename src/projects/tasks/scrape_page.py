@@ -64,10 +64,6 @@ def scrape_page(page_id, url):
                     project=page.project,
                 )
 
-                # If not created we trigger a page scrape manually.
-                if not created:
-                    scrape_page.delay(to_page.pk, to_page.url)
-
                 # Create the link (no need for get_or_create since we deleted all links above)
                 PageLink.objects.create(
                     from_page=page,
