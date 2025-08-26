@@ -32,6 +32,9 @@ def fetch_sitemap(pk, url):
     project.sitemap_last_edited = sitemap_last_edited
     project.save()
 
+    # Reset sitemap on all pages so we can remove pages no longer in sitemap.
+    Pages.objects.filter(project=project).update(sitemap_last_seen=None)
+
     # If no urls from sitemap, we create a page for the project url
     if len(urls) == 0:
         page, created = Pages.objects.get_or_create(project=project, url=project.url)
@@ -63,7 +66,6 @@ def fetch_sitemap(pk, url):
     # Send scraping request for all pages not in sitemap which were triggered on creation
     pages = Pages.objects.filter(sitemap_last_seen__isnull=True, project=project)
     for page in pages:
-        page.sitemap_last_seen = sitemap_last_edited
         page.save()
         scrape_page.delay(page.pk, page.url)
 
