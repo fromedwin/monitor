@@ -111,15 +111,7 @@
                 Last visited: {{ page.scraping_last_seen|naturaltime|default:"Never" }}
                 {% if page.sitemap_last_seen %}
                     <span class="ml-3 inline-flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             fill="none"
-                             viewBox="0 0 24 24"
-                             stroke-width="1.5"
-                             stroke="currentColor"
-                             class="h-4 w-4 mr-1 text-green-600">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span class="text-green-600">In sitemap</span>
+                        <span class="text-green-600">✅ In sitemap</span>
                     </span>
                 {% else %}
                     <span class="ml-3 inline-flex items-center">
