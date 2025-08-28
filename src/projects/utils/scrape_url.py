@@ -77,12 +77,14 @@ def scrape_url(url):
                     json=crawl4ai_payload,
                     timeout=30,
                 )
+
+                retry_delay_seconds = 1
                 
                 # Check if we got a 500 error
                 if crawl4ai_response.status_code == 500:
                     if attempt < max_retries - 1:  # Don't sleep on the last attempt
-                        logging.warning(f"Attempt {attempt + 1} failed with 500 error, retrying in 2 seconds...")
-                        time.sleep(2)
+                        logging.warning(f"Attempt {attempt + 1} failed with 500 error, retrying in {retry_delay_seconds} seconds...")
+                        time.sleep(retry_delay_seconds)
                         continue
                     else:
                         crawl4ai_response.raise_for_status()  # This will raise the 500 error
@@ -93,15 +95,15 @@ def scrape_url(url):
                 
             except requests.exceptions.HTTPError as e:
                 if crawl4ai_response.status_code == 500 and attempt < max_retries - 1:
-                    logging.warning(f"Attempt {attempt + 1} failed with 500 error, retrying in 2 seconds...")
-                    time.sleep(2)
+                    logging.warning(f"Attempt {attempt + 1} failed with 500 error, retrying in {retry_delay_seconds} seconds...")
+                    time.sleep(retry_delay_seconds)
                     continue
                 else:
                     raise  # Re-raise for non-500 errors or final attempt
             except requests.exceptions.RequestException as e:
                 if attempt < max_retries - 1:
-                    logging.warning(f"Attempt {attempt + 1} failed with network error, retrying in 2 seconds...")
-                    time.sleep(2)
+                    logging.warning(f"Attempt {attempt + 1} failed with network error, retrying in {retry_delay_seconds} seconds...")
+                    time.sleep(retry_delay_seconds)
                     continue
                 else:
                     raise  # Re-raise on final attempt
