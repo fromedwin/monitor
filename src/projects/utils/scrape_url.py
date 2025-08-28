@@ -69,6 +69,7 @@ def scrape_url(url):
         
         # Retry mechanism for requests.post
         max_retries = 3
+        retry_delay_seconds = 1
         
         for attempt in range(max_retries):
             try:
@@ -77,8 +78,6 @@ def scrape_url(url):
                     json=crawl4ai_payload,
                     timeout=30,
                 )
-
-                retry_delay_seconds = 1
                 
                 # Check if we got a 500 error
                 if crawl4ai_response.status_code == 500:
