@@ -11,17 +11,20 @@ from django.shortcuts import get_object_or_404
 from projects.models import Pages
 
 @shared_task()
-def fetch_sitemap(pk, url):
+def fetch_sitemap(pk, url, source='unknown'):
     start_time = time.time()
+    # Get performance to update
+    project = get_object_or_404(Project, id=pk)
+
+    if source == 'scheduler' and project.sitemap_last_edited < timezone.now() - timedelta(minutes=5):
+        print(f'Sitemap for project {project.pk} is less than 5 minutes old, skipping...')
+        return
+    
+    # Fetch sitemap
     tree = sitemap_tree_for_homepage(url)
 
     urls = [page.url for page in tree.all_pages()]
     duration = time.time() - start_time
-
-
-    # Get performance to update
-    project = get_object_or_404(Project, id=pk)
-
     sitemap_last_edited = timezone.now()
 
     # Only keep urls which have the same domain as the project url
