@@ -10,7 +10,7 @@ from hashlib import sha256
 from availability.utils import get_project_stats
 
 @shared_task()
-def create_report(project_id, project_url):
+def create_report(project_id, source='unknown'):
     """
     Create a report for a specific project.
     """
@@ -21,6 +21,9 @@ def create_report(project_id, project_url):
     
     # Get the previous report for this project, if any
     previous_report = ProjectReport.objects.filter(project=project).order_by('-creation_date').first()
+    if source == 'scheduler' and previous_report and previous_report.creation_date > timezone.now() - timedelta(minutes=5):
+        print(f'Report for project {project.pk} is less than 5 minutes old, skipping...')
+        return
 
     stats = get_project_stats(project_id, 60)
     # Remove duration_seconds values equal to 0 for each service
