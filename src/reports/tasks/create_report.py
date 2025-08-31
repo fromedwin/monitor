@@ -56,6 +56,15 @@ def create_report(project_id, source='unknown'):
                 "title": page.title or None,
                 "description": page.description or None,
                 "redirected_url": page.outbound_links.first().to_page.url if page.http_status == 301 else None,
+                "lighthouse_report": (
+                    {
+                        "score_performance": lh.score_performance,
+                        "score_accessibility": lh.score_accessibility,
+                        "score_best_practices": lh.score_best_practices,
+                        "score_seo": lh.score_seo,
+                        "score_pwa": lh.score_pwa,
+                    } if (lh := page.lighthouse_report.first()) else None
+                ),
             }
             for page in project.pages.all()
         ],
