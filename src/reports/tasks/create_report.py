@@ -58,6 +58,8 @@ def create_report(project_id, source='unknown'):
                 "redirected_url": page.outbound_links.first().to_page.url if page.http_status == 301 else None,
                 "lighthouse_report": (
                     {
+                        "id": lh.id,
+                        "creation_date": lh.creation_date,
                         "score_performance": lh.score_performance,
                         "score_accessibility": lh.score_accessibility,
                         "score_best_practices": lh.score_best_practices,
