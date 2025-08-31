@@ -113,4 +113,76 @@
             </div>
         </div>
     {% endif %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const queueReportBtn = document.getElementById('queue-report-btn');
+            if (queueReportBtn) {
+                queueReportBtn.addEventListener('click', function() {
+                    // Disable button and show loading state
+                    const originalText = queueReportBtn.innerHTML;
+                    queueReportBtn.disabled = true;
+                    queueReportBtn.innerHTML = `
+                        <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Queuing Report...
+                    `;
+                    
+                    // Get CSRF token
+                    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                    
+                    // Make API call to queue report generation
+                    fetch(`/api/project/{{ project.id }}/queue-report/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken,
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Show success message
+                            queueReportBtn.innerHTML = `
+                                <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                                Report Queued!
+                            `;
+                            queueReportBtn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
+                            queueReportBtn.classList.add('bg-green-600');
+                            
+                            // Reload page after 2 seconds to show new report
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 2000);
+                        } else {
+                            throw new Error(data.error || 'Failed to queue report');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        // Show error message
+                        queueReportBtn.innerHTML = `
+                            <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            Error - Try Again
+                        `;
+                        queueReportBtn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
+                        queueReportBtn.classList.add('bg-red-600');
+                        
+                        // Reset button after 3 seconds
+                        setTimeout(() => {
+                            queueReportBtn.disabled = false;
+                            queueReportBtn.innerHTML = originalText;
+                            queueReportBtn.classList.remove('bg-red-600');
+                            queueReportBtn.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
+                        }, 3000);
+                    });
+                });
+            }
+        });
+    </script>
 {% endblock content %}
