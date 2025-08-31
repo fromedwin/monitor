@@ -34,6 +34,14 @@ def create_report(project_id, source='unknown'):
             service['duration_timestamp'] = non_null_entries[0][0] if non_null_entries else None
             service['duration_seconds'] = non_null_entries[0][1] if non_null_entries else None
 
+    previous_report_data = (
+        {
+            key: value
+            for key, value in previous_report.data.items()
+            if key != "previous_report"
+        } if previous_report else None
+    )
+
     # Create a simple report with status OK
     report_data = {
         "id": sha256(str(project.id).encode('utf-8')).hexdigest(),
@@ -51,13 +59,7 @@ def create_report(project_id, source='unknown'):
             }
             for page in project.pages.all()
         ],
-        "previous_report": (
-            {
-                key: value
-                for key, value in previous_report.data.items()
-                if key != "previous_report"
-            } if previous_report else None
-        ),
+        "previous_report": previous_report_data,
     }
 
     # Create the report
