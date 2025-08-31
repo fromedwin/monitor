@@ -51,7 +51,13 @@ def create_report(project_id, source='unknown'):
             }
             for page in project.pages.all()
         ],
-        "previous_report": previous_report.data if previous_report else None,
+        "previous_report": (
+            {
+                key: value
+                for key, value in previous_report.data.items()
+                if key != "previous_report"
+            } if previous_report else None
+        ),
     }
 
     # Create the report

@@ -1,334 +1,116 @@
 {% extends "application.html" %}
 {% block content %}
     {% csrf_token %}
-    {% with reports=project.project_report.all %}
-        {% if reports %}
-            <div class="px-4 sm:px-6 lg:px-8">
-                <div class="sm:flex sm:items-center justify-between">
-                    <div>
-                        <h2 class="text-lg font-semibold">Reports for {{ project.title }}</h2>
-                    </div>
-                    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                        <button type="button"
-                                id="queue-report-btn"
-                                class="inline-flex items-center bg-emerald-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
-                            <svg class="-ml-1 mr-2 h-5 w-5"
-                                 xmlns="http://www.w3.org/2000/svg"
-                                 fill="none"
-                                 viewBox="0 0 24 24"
-                                 stroke-width="1.5"
-                                 stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                            </svg>
-                            Queue Report
-                        </button>
-                    </div>
-                </div>
-                <div class="mt-4 bg-white shadow ring-1 ring-black ring-opacity-5 md:rounded-lg overflow-hidden">
-                    <style>.reports-split { height: calc(100vh - 10rem); }</style>
-                    <div class="grid grid-cols-1 lg:grid-cols-12 reports-split">
-                        <!-- Left: Full-height reports list -->
-                        <aside class="lg:col-span-4 border-r border-gray-200 overflow-y-auto">
-                            <div class="px-4 py-3 border-b border-gray-200">
-                                <h3 class="text-sm font-medium text-gray-900">Reports</h3>
-                            </div>
-                            <ul id="reports-list" class="divide-y divide-gray-200">
-                                {% for report in reports %}
-                                    <li>
-                                        <button type="button"
-                                                class="w-full text-left px-4 py-3 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none flex items-center justify-between"
-                                                data-report-id="{{ report.id }}"
-                                                data-json-id="report-json-{{ report.id }}">
-                                            <span class="text-sm text-gray-900">{{ report.creation_date|date:"Y-m-d H:i" }}</span>
-                                            <span class="ml-3 text-xs text-gray-500">#{{ report.id }}</span>
-                                        </button>
-                                        {% with rid=report.id|stringformat:"s" %}
-                                            {% with json_id="report-json-"|add:rid %}{{ report.data|json_script:json_id }}{% endwith %}
-                                        {% endwith %}
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </aside>
-                        <!-- Right: Full-height report content -->
-                        <section class="lg:col-span-8 flex flex-col overflow-hidden">
-                            <div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
-                                <h3 id="report-title" class="text-sm font-medium text-gray-900">Selected report</h3>
-                                <div class="flex space-x-2">
-                                    <button type="button"
-                                            id="json-tab"
-                                            class="px-3 py-1 text-xs font-medium rounded-md bg-blue-100 text-blue-700 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                            data-tab="json">JSON Data</button>
-                                    <button type="button"
-                                            id="email-tab"
-                                            class="px-3 py-1 text-xs font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                                            data-tab="email">Email Preview</button>
-                                </div>
-                            </div>
-                            <div class="flex-1 overflow-auto">
-                                <!-- JSON Data Tab -->
-                                <div id="json-content" class="h-full">
-                                    <pre class="p-4 h-full whitespace-pre text-xs font-mono"><code id="report-content" class="language-json"></code></pre>
-                                </div>
-                                <!-- Email Preview Tab -->
-                                <div id="email-content" class="h-full hidden">
-                                    <div class="h-full flex flex-col">
-                                        <div class="p-4 border-b border-gray-200 flex items-center justify-between">
-                                            <p class="text-sm text-gray-600">Email preview for this report</p>
-                                            <button type="button"
-                                                    id="open-email-new-tab"
-                                                    class="px-3 py-1 text-xs font-medium rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
-                                                Open in New Tab
-                                            </button>
-                                        </div>
-                                        <div class="flex-1 overflow-auto p-4">
-                                            <div id="email-preview-content" class="max-w-2xl mx-auto">
-                                                <!-- Email content will be loaded here -->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-                </div>
-            </div>
-        {% else %}
-            <div class="px-4 sm:px-6 lg:px-8">
-                <div class="sm:flex sm:items-center">
-                    <div>
-                        <h2 class="text-lg font-semibold">Reports for {{ project.title }}</h2>
-                    </div>
-                    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                        <button type="button"
-                                id="queue-report-btn"
-                                class="inline-flex items-center bg-emerald-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
-                            <svg class="-ml-1 mr-2 h-5 w-5"
-                                 xmlns="http://www.w3.org/2000/svg"
-                                 fill="none"
-                                 viewBox="0 0 24 24"
-                                 stroke-width="1.5"
-                                 stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                            </svg>
-                            Queue Report
-                        </button>
-                    </div>
+    {% if reports %}
+        <div class="px-4 sm:px-6 lg:px-8">
+            <div class="sm:flex sm:items-center justify-between">
+                <div>
+                    <h2 class="text-lg font-semibold">Reports for {{ project.title }}</h2>
                 </div>
                 <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                    <a href="{% url 'reports_home' %}"
-                       class="inline-flex items-center bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
+                    <button type="button"
+                            id="queue-report-btn"
+                            class="inline-flex items-center bg-emerald-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
                         <svg class="-ml-1 mr-2 h-5 w-5"
                              xmlns="http://www.w3.org/2000/svg"
                              fill="none"
                              viewBox="0 0 24 24"
                              stroke-width="1.5"
                              stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>
-                        Back to All Reports
-                    </a>
+                        Request new Report
+                    </button>
                 </div>
-                <div class="mt-8">
-                    <div class="bg-white shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                        <div class="px-4 py-5 sm:p-6">
-                            <div class="text-center">
-                                <svg class="mx-auto h-12 w-12 text-gray-400"
-                                     fill="none"
-                                     viewBox="0 0 24 24"
-                                     stroke="currentColor"
-                                     aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                <h3 class="mt-2 text-sm font-semibold text-gray-900">No reports available</h3>
-                                <p class="mt-1 text-sm text-gray-500">Reports functionality will be implemented soon.</p>
-                            </div>
+            </div>
+            <div class="mt-4 bg-white shadow ring-1 ring-black ring-opacity-5 md:rounded-lg overflow-hidden">
+                <style>.reports-split { height: calc(100vh - 10rem); }</style>
+                <div class="grid grid-cols-1 lg:grid-cols-12 reports-split">
+                    <!-- Left: Full-height reports list -->
+                    <aside class="lg:col-span-4 border-r border-gray-200 overflow-y-auto">
+                        <div class="px-4 py-3 border-b border-gray-200">
+                            <h3 class="text-sm font-medium text-gray-900">Reports</h3>
+                        </div>
+                        <ul id="reports-list" class="divide-y divide-gray-200">
+                            {% for report in reports %}
+                                <li>
+                                    <div class="flex items-center justify-between px-4 py-3 hover:bg-gray-50">
+                                        <div class="flex-1">
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-sm text-gray-900">{{ report.creation_date|date:"Y-m-d H:i" }}</span>
+                                                <span class="ml-3 text-xs text-gray-500">#{{ report.id }}</span>
+                                            </div>
+                                            <div class="mt-1">
+                                                <a href="{% url 'view_report' report.id %}"
+                                                   class="text-xs text-blue-600 hover:text-blue-800 focus:outline-none">
+                                                    Full Report
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% with rid=report.id|stringformat:"s" %}
+                                        {% with json_id="report-json-"|add:rid %}{{ report.data|json_script:json_id }}{% endwith %}
+                                    {% endwith %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="px-4 sm:px-6 lg:px-8">
+            <div class="sm:flex sm:items-center">
+                <div>
+                    <h2 class="text-lg font-semibold">Reports for {{ project.title }}</h2>
+                </div>
+                <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+                    <button type="button"
+                            id="queue-report-btn"
+                            class="inline-flex items-center bg-emerald-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
+                        <svg class="-ml-1 mr-2 h-5 w-5"
+                             xmlns="http://www.w3.org/2000/svg"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke-width="1.5"
+                             stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        Queue Report
+                    </button>
+                </div>
+            </div>
+            <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+                <a href="{% url 'reports_home' %}"
+                   class="inline-flex items-center bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
+                    <svg class="-ml-1 mr-2 h-5 w-5"
+                         xmlns="http://www.w3.org/2000/svg"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke-width="1.5"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                    </svg>
+                    Back to All Reports
+                </a>
+            </div>
+            <div class="mt-8">
+                <div class="bg-white shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <div class="text-center">
+                            <svg class="mx-auto h-12 w-12 text-gray-400"
+                                 fill="none"
+                                 viewBox="0 0 24 24"
+                                 stroke="currentColor"
+                                 aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <h3 class="mt-2 text-sm font-semibold text-gray-900">No reports available</h3>
+                            <p class="mt-1 text-sm text-gray-500">Reports functionality will be implemented soon.</p>
                         </div>
                     </div>
                 </div>
             </div>
-        {% endif %}
-    {% endwith %}
+        </div>
+    {% endif %}
 {% endblock content %}
-{% block javascript %}
-    {% load static %}
-    <script src="{% static 'prismjs/prism.js' %}"></script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const list = document.getElementById('reports-list');
-        const code = document.getElementById('report-content');
-        const title = document.getElementById('report-title');
-        const jsonTab = document.getElementById('json-tab');
-        const emailTab = document.getElementById('email-tab');
-        const jsonContent = document.getElementById('json-content');
-        const emailContent = document.getElementById('email-content');
-        const emailPreviewContent = document.getElementById('email-preview-content');
-        
-        if (!list || !code) return;
-
-        let currentReportId = null;
-
-        function prettyFromElementId(elemId) {
-            const script = document.getElementById(elemId);
-            if (!script) return '';
-            try {
-                // json_script renders valid JSON in a <script type="application/json"> tag
-                const obj = JSON.parse(script.textContent);
-                return JSON.stringify(obj, null, 2);
-            } catch (e) {
-                return script.textContent;
-            }
-        }
-
-        function switchTab(tabName) {
-            // Update tab button styles
-            [jsonTab, emailTab].forEach(tab => {
-                tab.classList.remove('bg-blue-100', 'text-blue-700');
-                tab.classList.add('text-gray-500');
-            });
-            
-            if (tabName === 'json') {
-                jsonTab.classList.add('bg-blue-100', 'text-blue-700');
-                jsonContent.classList.remove('hidden');
-                emailContent.classList.add('hidden');
-            } else {
-                emailTab.classList.add('bg-blue-100', 'text-blue-700');
-                emailContent.classList.remove('hidden');
-                jsonContent.classList.add('hidden');
-                
-                // Load email preview if we have a current report
-                if (currentReportId) {
-                    loadEmailPreview(currentReportId);
-                }
-            }
-        }
-
-        function loadEmailPreview(reportId) {
-            const projectId = window.location.pathname.split('/')[2]; // Extract project ID from URL
-            const emailPreviewUrl = `/project/${projectId}/reports/${reportId}/email-preview/`;
-            
-            console.log('Loading email preview from:', emailPreviewUrl);
-            
-            // Show loading state
-            emailPreviewContent.innerHTML = '<div class="flex items-center justify-center py-8"><div class="text-gray-500">Loading email preview...</div></div>';
-            
-            // Fetch email content via AJAX
-            fetch(emailPreviewUrl)
-                .then(response => {
-                    console.log('Response status:', response.status);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.text();
-                })
-                .then(html => {
-                    console.log('Email HTML loaded, length:', html.length);
-                    
-                    // Insert the email HTML content directly
-                    emailPreviewContent.innerHTML = html;
-                    
-                    // Apply any necessary styling adjustments for inline display
-                    const emailContainer = emailPreviewContent.querySelector('.container');
-                    if (emailContainer) {
-                        emailContainer.style.maxWidth = '100%';
-                        emailContainer.style.margin = '0';
-                        emailContainer.style.boxShadow = 'none';
-                        emailContainer.style.borderRadius = '0';
-                    }
-                    
-                    console.log('Email preview rendered successfully');
-                })
-                .catch(error => {
-                    console.error('Error loading email preview:', error);
-                    emailPreviewContent.innerHTML = `
-                        <div class="text-red-500 text-center py-8">
-                            <div class="mb-2">Error loading email preview</div>
-                            <div class="text-sm text-gray-500">${error.message}</div>
-                            <div class="mt-2">
-                                <button onclick="loadEmailPreview('${reportId}')" class="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600">
-                                    Retry
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                });
-        }
-
-        function select(button) {
-            list.querySelectorAll('button').forEach(b => b.classList.remove('bg-gray-50'));
-            button.classList.add('bg-gray-50');
-            const jsonId = button.getAttribute('data-json-id');
-            const id = button.getAttribute('data-report-id');
-            currentReportId = id;
-            title.textContent = `Report #${id}`;
-            code.textContent = prettyFromElementId(jsonId);
-            if (window.Prism && Prism.highlightElement) {
-                Prism.highlightElement(code);
-            }
-            
-            // Reset to JSON tab when selecting a new report
-            switchTab('json');
-        }
-
-        // Tab switching event listeners
-        jsonTab.addEventListener('click', () => switchTab('json'));
-        emailTab.addEventListener('click', () => switchTab('email'));
-        
-        // Open email in new tab button
-        document.getElementById('open-email-new-tab').addEventListener('click', function() {
-            if (currentReportId) {
-                const projectId = window.location.pathname.split('/')[2];
-                const emailPreviewUrl = `/project/${projectId}/reports/${currentReportId}/email-preview/`;
-                window.open(emailPreviewUrl, '_blank');
-            }
-        });
-
-        list.addEventListener('click', function(e) {
-            const btn = e.target.closest('button[data-report-id]');
-            if (btn) select(btn);
-        });
-
-        const first = list.querySelector('button[data-report-id]');
-        if (first) select(first);
-        
-        // Queue Report functionality
-        const queueReportBtn = document.getElementById('queue-report-btn');
-        if (queueReportBtn) {
-            // Remove any existing click event listener before adding a new one
-            queueReportBtn.removeEventListener('click', queueReportBtn._queueReportHandler);
-
-            queueReportBtn._queueReportHandler = function() {
-                if (confirm('Queue report generation for this project?')) {
-                    this.disabled = true;
-                    this.textContent = 'Queuing...';
-                    
-                    const projectId = window.location.pathname.split('/')[2];
-                    
-                    fetch(`/api/project/${projectId}/queue-report/`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                        },
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        alert(data.success ? 'Report queued successfully!' : 'Error: ' + data.error);
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 2000);
-                    })
-                    .catch(error => {
-                        alert('Error queuing report');
-                    })
-                    .finally(() => {
-                        this.disabled = false;
-                        this.textContent = 'Queue Report';
-                    });
-                }
-            };
-
-            queueReportBtn.addEventListener('click', queueReportBtn._queueReportHandler);
-        }
-    });
-</script>
-{% endblock javascript %}
