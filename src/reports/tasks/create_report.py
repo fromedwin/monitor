@@ -59,7 +59,6 @@ def create_report(project_id, source='unknown'):
                 "lighthouse_report": (
                     {
                         "id": lh.id,
-                        "creation_date": lh.creation_date,
                         "score_performance": lh.score_performance,
                         "score_accessibility": lh.score_accessibility,
                         "score_best_practices": lh.score_best_practices,

@@ -41,7 +41,7 @@
                                                 <span class="ml-3 text-xs text-gray-500">#{{ report.id }}</span>
                                             </div>
                                             <div class="mt-1">
-                                                <a href="{% url 'view_report' report.id %}"
+                                                <a href="{% url 'view_report' project.id report.id %}"
                                                    class="text-xs text-blue-600 hover:text-blue-800 focus:outline-none">
                                                     Full Report
                                                 </a>

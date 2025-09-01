@@ -9,7 +9,7 @@ urlpatterns = [
     # Email preview for a specific report
     path('project/<int:project_id>/reports/<int:report_id>/email-preview/', report_email_preview, name='report_email_preview'),
     # View a specific report by ID
-    path('reports/<int:report_id>/', view_report, name='view_report'),
+    path('project/<int:project_id>/reports/reports/<int:report_id>/', view_report, name='view_report'),
     # API endpoint for queuing report generation
     path('api/project/<int:project_id>/queue-report/', queue_report_generation, name='queue_report_generation_api'),
     # API endpoint for fetching a specific report by ID

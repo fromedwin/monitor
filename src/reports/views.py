@@ -36,9 +36,9 @@ def report_email_preview(request, project_id, report_id):
     return render(request, 'reports/emails/report_available.html', context)
 
 @login_required
-def view_report(request, report_id):
+def view_report(request, project_id, report_id):
     """View a specific report by ID"""
-    report = get_object_or_404(ProjectReport, id=report_id)
+    report = get_object_or_404(ProjectReport, id=report_id, project_id=project_id)
     
     # Check if user has access to this report (through project ownership)
     if report.project.user != request.user:
