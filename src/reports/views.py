@@ -18,7 +18,41 @@ def project_reports(request, id):
     return render(request, 'reports/project_reports.html', context)
 
 @login_required
-def report_email_preview(request, project_id, report_id):
+def view_report_html(request, project_id, report_id):
+    """View a specific report by ID"""
+    report = get_object_or_404(ProjectReport, id=report_id, project_id=project_id)
+    
+    # Check if user has access to this report (through project ownership)
+    if report.project.user != request.user:
+        from django.http import Http404
+        raise Http404("Report not found")
+    
+    context = {
+        'report': report,
+        'project': report.project,
+    }
+    return render(request, 'reports/view_report_html.html', context)
+
+
+@login_required
+def view_report_json(request, project_id, report_id):
+    """View a specific report by ID"""
+    report = get_object_or_404(ProjectReport, id=report_id, project_id=project_id)
+    
+    # Check if user has access to this report (through project ownership)
+    if report.project.user != request.user:
+        from django.http import Http404
+        raise Http404("Report not found")
+    
+    context = {
+        'report': report,
+        'project': report.project,
+    }
+    return render(request, 'reports/view_report_json.html', context)
+
+@login_required
+def view_report_email(request, project_id, report_id):
+
     """Preview the email template for a specific report"""
     project = get_object_or_404(Project, id=project_id, user=request.user)
     report = get_object_or_404(ProjectReport, id=report_id, project=project)
@@ -34,19 +68,3 @@ def report_email_preview(request, project_id, report_id):
         'user': request.user,
     }
     return render(request, 'reports/emails/report_available.html', context)
-
-@login_required
-def view_report(request, project_id, report_id):
-    """View a specific report by ID"""
-    report = get_object_or_404(ProjectReport, id=report_id, project_id=project_id)
-    
-    # Check if user has access to this report (through project ownership)
-    if report.project.user != request.user:
-        from django.http import Http404
-        raise Http404("Report not found")
-    
-    context = {
-        'report': report,
-        'project': report.project,
-    }
-    return render(request, 'reports/view_report.html', context)

@@ -40,10 +40,18 @@
                                                 <span class="text-sm text-gray-900">{{ report.creation_date|date:"Y-m-d H:i" }}</span>
                                                 <span class="ml-3 text-xs text-gray-500">#{{ report.id }}</span>
                                             </div>
-                                            <div class="mt-1">
-                                                <a href="{% url 'view_report' project.id report.id %}"
+                                            <div class="mt-1 flex space-x-3">
+                                                <a href="{% url 'view_report_html' project.id report.id %}"
                                                    class="text-xs text-blue-600 hover:text-blue-800 focus:outline-none">
                                                     Full Report
+                                                </a>
+                                                <a href="{% url 'view_report_json' project.id report.id %}"
+                                                   class="text-xs text-green-600 hover:text-green-800 focus:outline-none">
+                                                    JSON Report
+                                                </a>
+                                                <a href="{% url 'view_report_email' project.id report.id %}"
+                                                   class="text-xs text-purple-600 hover:text-purple-800 focus:outline-none">
+                                                    Email Report
                                                 </a>
                                             </div>
                                         </div>
