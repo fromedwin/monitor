@@ -49,6 +49,11 @@ def create_report(project_id, source='unknown'):
         "date": timezone.now().isoformat(),
         "performance_score": project.performance_score() or None,
         'services': stats['services'],
+        "availability": {
+            "7": project.availability(days=7),
+            "30": project.availability(days=30),
+            "incidents_count": project.incidents_count(),
+        },
         "pages": [
             {
                 "url": page.url,
