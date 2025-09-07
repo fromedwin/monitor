@@ -143,9 +143,9 @@
                                         {{ previous_report.performance_score.score_performance|floatformat:2 }}
                                     </td>
                                     <td class="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
-                                        {% if data.performance_score.score_performance > previous_report.performance_score.score_performance %}
+                                        {% if data.performance_score.score_performance|floatformat:2 > previous_report.performance_score.score_performance|floatformat:2 %}
                                             📈
-                                        {% elif data.performance_score.score_performance < previous_report.performance_score.score_performance %}
+                                        {% elif data.performance_score.score_performance|floatformat:2 < previous_report.performance_score.score_performance|floatformat:2 %}
                                             📉
                                         {% else %}
                                             ✅
@@ -161,9 +161,9 @@
                                         {{ previous_report.performance_score.score_accessibility|floatformat:2 }}
                                     </td>
                                     <td class="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
-                                        {% if data.performance_score.score_accessibility > previous_report.performance_score.score_accessibility %}
+                                        {% if data.performance_score.score_accessibility|floatformat:2 > previous_report.performance_score.score_accessibility|floatformat:2 %}
                                             📈
-                                        {% elif data.performance_score.score_accessibility < previous_report.performance_score.score_accessibility %}
+                                        {% elif data.performance_score.score_accessibility|floatformat:2 < previous_report.performance_score.score_accessibility|floatformat:2 %}
                                             📉
                                         {% else %}
                                             ✅
@@ -179,9 +179,9 @@
                                         {{ previous_report.performance_score.score_best_practices|floatformat:2 }}
                                     </td>
                                     <td class="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
-                                        {% if data.performance_score.score_best_practices > previous_report.performance_score.score_best_practices %}
+                                        {% if data.performance_score.score_best_practices|floatformat:2 > previous_report.performance_score.score_best_practices|floatformat:2 %}
                                             📈
-                                        {% elif data.performance_score.score_best_practices < previous_report.performance_score.score_best_practices %}
+                                        {% elif data.performance_score.score_best_practices|floatformat:2 < previous_report.performance_score.score_best_practices|floatformat:2 %}
                                             📉
                                         {% else %}
                                             ✅
@@ -195,9 +195,9 @@
                                         {{ previous_report.performance_score.score_seo|floatformat:2 }}
                                     </td>
                                     <td class="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
-                                        {% if data.performance_score.score_seo > previous_report.performance_score.score_seo %}
+                                        {% if data.performance_score.score_seo|floatformat:2 > previous_report.performance_score.score_seo|floatformat:2 %}
                                             📈
-                                        {% elif data.performance_score.score_seo < previous_report.performance_score.score_seo %}
+                                        {% elif data.performance_score.score_seo|floatformat:2 < previous_report.performance_score.score_seo|floatformat:2 %}
                                             📉
                                         {% else %}
                                             ✅
@@ -211,9 +211,9 @@
                                         {{ previous_report.performance_score.score_pwa|floatformat:2 }}
                                     </td>
                                     <td class="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
-                                        {% if data.performance_score.score_pwa > previous_report.performance_score.score_pwa %}
+                                        {% if data.performance_score.score_pwa|floatformat:2 > previous_report.performance_score.score_pwa|floatformat:2 %}
                                             📈
-                                        {% elif data.performance_score.score_pwa < previous_report.performance_score.score_pwa %}
+                                        {% elif data.performance_score.score_pwa|floatformat:2 < previous_report.performance_score.score_pwa|floatformat:2 %}
                                             📉
                                         {% else %}
                                             ✅
