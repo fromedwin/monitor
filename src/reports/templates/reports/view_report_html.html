@@ -36,9 +36,13 @@
                                         Metric
                                     </th>
                                     <th scope="col"
-                                        class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Current</th>
+                                        class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Current ({{ report.creation_date|date:"Y-m-d" }})
+                                    </th>
                                     <th scope="col"
-                                        class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Previous</th>
+                                        class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Previous ({{ previous_report.date|slice:":10" }})
+                                    </th>
                                     <th scope="col"
                                         class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Change</th>
                                 </tr>
