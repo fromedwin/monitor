@@ -28,6 +28,17 @@ def split(value, arg):
     return value.split(arg)
 
 @register.filter()
+def mul(value, arg):
+    """
+    Multiply a value by the given argument
+    Usage: {{ value|mul:100 }}
+    """
+    try:
+        return float(value) * float(arg)
+    except (ValueError, TypeError):
+        return 0
+
+@register.filter()
 def http_status_20x_only(pages):
     """
     Filter pages to only include those with 20x HTTP status codes (200-299)
