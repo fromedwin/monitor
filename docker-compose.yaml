@@ -20,6 +20,7 @@ services:
       CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
       DJANGO_SETTINGS_MODULE: "fromedwin.settings.dev"
     volumes:
+      - ./scheduler:/app/scheduler
       - ./src:/app/src
       - ./data:/app/data
     entrypoint: ["/app/scheduler/entrypoint.sh"]
