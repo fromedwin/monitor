@@ -41,7 +41,7 @@ services:
       SECRET_KEY: ${SECRET_KEY}
       DEBUG: ${DEBUG-0} # Use to authenticate worker queries
       SAAS: ${SAAS-0}
-      DATABASE_URL: ${DATABASE_URL-postgresql://fromedwin:fromedwin@postgresql:5432/fromedwin}
+      DATABASE_URL: ${DATABASE_URL}
       GITHUB_OAUTH_CLIENT_ID: ${GITHUB_OAUTH_CLIENT_ID-a88dc4c15606cc0dd96f}
       GITHUB_OAUTH_CLIENT_SECRET: ${GITHUB_OAUTH_CLIENT_SECRET-61a117434565f3c755927f8c5e1698f6bd9fad42}
       DOMAIN: ${DOMAIN-localhost}
@@ -52,7 +52,7 @@ services:
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY-}
       AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME-}
       CONTACT_EMAIL: ${CONTACT_EMAIL-}
-      CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@rabbitmq}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:adminadmin@rabbitmq}
       INFLUXDB_URL: ${INFLUXDB_URL-http://influxdb:8086} # access parent container
       INFLUXDB_TOKEN: ${INFLUXDB_TOKEN-}
     volumes:

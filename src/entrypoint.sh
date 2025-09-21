@@ -8,13 +8,14 @@ fi
 
 export COMPRESS_OFFLINE=True
 
-python src/manage.py compilescss
-python src/manage.py collectstatic --noinput
-python src/manage.py migrate
-
-python src/manage.py tailwind install
-python src/manage.py tailwind start &
 cd /app/src
+
+python manage.py compilescss
+python manage.py collectstatic --noinput
+python manage.py migrate
+
+python manage.py tailwind install
+python manage.py tailwind start &
 
 
 # gunicorn fromedwin.wsgi:application --bind 0.0.0.0:${PORT:-8000}
