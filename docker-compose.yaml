@@ -2,6 +2,66 @@
 
 services:
   #
+  # Run prometheus to fetch metrics from workers and alertmanager to send alerts
+  #
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: fromedwin_prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - monitoring
+    labels:
+      - "coolify.managed=true"
+      - "coolify.type=database"
+      - "coolify.expose=true"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus/data"
+      - "--web.enable-lifecycle" # Enable /-/reload entrypoint
+    volumes:
+      - ./data/prometheus:/prometheus
+      - ./worker/prometheus/alerts:/etc/prometheus/alerts
+      - ./worker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    links:
+      - blackbox
+  #
+  # Run alertmanager to send alerts
+  #
+  alertmanager:
+    image: quay.io/prometheus/alertmanager:v0.27.0
+    container_name: fromedwin_alertmanager
+    networks:
+      - monitoring
+    labels:
+      - "coolify.managed=true"
+      - "coolify.type=database"
+      - "coolify.expose=true"
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+      - "--storage.path=/alertmanager/data"
+    volumes:
+      - ./data/alertmanager:/alertmanager
+      - ./worker/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+  #
+  # Run blackbox to fetch metrics from workers and alertmanager to send alerts
+  #
+  blackbox:
+    image: prom/blackbox-exporter:v0.25.0
+    container_name: fromedwin_blackbox
+    networks:
+      - monitoring
+    labels:
+      - "coolify.managed=true"
+      - "coolify.type=database"
+      - "coolify.expose=true"
+    command:
+      - "--config.file=/etc/prometheus/blackbox.yml"
+    # user: "65534"
+    volumes:
+      - ./worker/blackbox/blackbox.yml:/etc/prometheus/blackbox.yml:ro
+
+  #
   # Scheduler run django within celery to dispatch scheduled tasks
   #
   scheduler:
