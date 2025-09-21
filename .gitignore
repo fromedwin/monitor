@@ -144,7 +144,11 @@ src/media
 src/staticfiles
 
 # Docker-compose storage
-data
+data/alertmanager
+data/prometheus
+data/rabbitmq
+data/postgresql
+data/influxdb
 
 # Celery related
 src/celerybeat-schedule.db

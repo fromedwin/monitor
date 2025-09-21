@@ -2,66 +2,6 @@
 
 services:
   #
-  # Run prometheus to fetch metrics from workers and alertmanager to send alerts
-  #
-  prometheus:
-    image: prom/prometheus:v2.54.1
-    container_name: fromedwin_prometheus
-    ports:
-      - "9090:9090"
-    networks:
-      - monitoring
-    labels:
-      - "coolify.managed=true"
-      - "coolify.type=database"
-      - "coolify.expose=true"
-    command:
-      - "--config.file=/etc/prometheus/prometheus.yml"
-      - "--storage.tsdb.path=/prometheus/data"
-      - "--web.enable-lifecycle" # Enable /-/reload entrypoint
-    volumes:
-      - ./data/prometheus:/prometheus
-      - ./worker/prometheus/alerts:/etc/prometheus/alerts
-      - ./worker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    links:
-      - blackbox
-  #
-  # Run alertmanager to send alerts
-  #
-  alertmanager:
-    image: quay.io/prometheus/alertmanager:v0.27.0
-    container_name: fromedwin_alertmanager
-    networks:
-      - monitoring
-    labels:
-      - "coolify.managed=true"
-      - "coolify.type=database"
-      - "coolify.expose=true"
-    command:
-      - "--config.file=/etc/alertmanager/alertmanager.yml"
-      - "--storage.path=/alertmanager/data"
-    volumes:
-      - ./data/alertmanager:/alertmanager
-      - ./worker/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
-  #
-  # Run blackbox to fetch metrics from workers and alertmanager to send alerts
-  #
-  blackbox:
-    image: prom/blackbox-exporter:v0.25.0
-    container_name: fromedwin_blackbox
-    networks:
-      - monitoring
-    labels:
-      - "coolify.managed=true"
-      - "coolify.type=database"
-      - "coolify.expose=true"
-    command:
-      - "--config.file=/etc/prometheus/blackbox.yml"
-    # user: "65534"
-    volumes:
-      - ./worker/blackbox/blackbox.yml:/etc/prometheus/blackbox.yml:ro
-
-  #
   # Scheduler run django within celery to dispatch scheduled tasks
   #
   scheduler:
@@ -70,10 +10,6 @@ services:
       context: .
       dockerfile: ./Dockerfile
     depends_on:
-      rabbitmq:
-        condition: service_healthy
-      postgresql:
-        condition: service_healthy
       django:
         condition: service_healthy
     networks:
@@ -89,139 +25,6 @@ services:
     entrypoint: ["/app/scheduler/entrypoint.sh"]
 
   #
-  # Telegraf read prometheus metrics and store them in InfluxDB
-  #
-  telegraf:
-    image: telegraf:latest
-    container_name: fromedwin_telegraf
-    depends_on:
-      influxdb:
-        condition: service_healthy
-    networks:
-      - monitoring
-    environment:
-      - INFLUXDB_URL=http://influxdb:8086
-      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
-      - INFLUXDB_BUCKET=fromedwin
-      - INFLUXDB_ORG=fromedwin
-      - TELEGRAF_INTERVAL=${TELEGRAF_INTERVAL-15s}
-    ports:
-      - "9273:9273" # Expose Telegraf Prometheus plugin metrics
-    volumes:
-      - ./services/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
-  #
-  # Lighthouse is a tool to check website performances
-  lighthouse:
-    build: ./worker/lighthouse
-    user: root
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-    networks:
-      - monitoring
-    deploy:
-      replicas: ${LIGHTHOUSE_WORKER_REPLICA-1}
-    volumes:
-      - ./worker:/etc/monitor/worker
-    environment:
-      CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
-      BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
-      CHROME_PATH: /usr/lib/chromium/chrome
-      SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
-    command: ["sh", "/etc/monitor/worker/lighthouse/entrypoint.sh"]
-
-  #
-  # Get Prometheus metrics from worker and store them in InfluxDB
-  #
-  worker_telegraf:
-    image: telegraf:latest
-    container_name: fromedwin_worker_telegraf
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-    networks:
-      - monitoring
-    environment:
-      - INFLUXDB_URL=http://influxdb:8086
-      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
-      - INFLUXDB_BUCKET=fromedwin
-      - INFLUXDB_ORG=fromedwin
-      - TELEGRAF_INTERVAL=${TELEGRAF_INTERVAL-15s}
-    volumes:
-      - ./worker/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
-
-  #Crawl4Ai
-  crawl4ai:
-    image: unclecode/crawl4ai:latest
-    container_name: fromedwin_crawl4ai
-    ports:
-      - "11235:11235"
-    networks:
-      - monitoring
-    volumes:
-      - ./worker/crawl4ai/config.yml:/etc/crawl4ai/config.yml:ro
-    environment:
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-
-  #
-  # Run celery as worker to get tasks from rabbitmq and run them
-  #
-  worker:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-      postgresql:
-        condition: service_healthy
-      django:
-        condition: service_healthy
-      crawl4ai:
-        condition: service_started
-    networks:
-      - monitoring
-    links:
-      - crawl4ai
-    environment:
-      CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
-      SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
-      BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
-      DJANGO_SETTINGS_MODULE: "fromedwin.settings.dev"
-      CRAWL4AI_URL: http://crawl4ai:11235
-      CELERYD_CONCURRENCY: 4 # Only run one worker at a time
-      INFLUXDB_URL: ${INFLUXDB_URL-http://influxdb:8086} # access parent container
-      INFLUXDB_DEFAULT_USER: ${INFLUXDB_DEFAULT_USER-}
-      INFLUXDB_DEFAULT_PASS: ${INFLUXDB_DEFAULT_PASS-}
-      INFLUXDB_TOKEN: ${INFLUXDB_TOKEN-}
-    deploy:
-      replicas: ${CELERY_WORKER_REPLICA-3}
-    volumes:
-      - ./src:/app/src
-      - ./data:/app/data
-    entrypoint: ["/app/worker/celery/entrypoint.sh"]
-
-  heartbeats:
-    container_name: fromedwin_heartbeats
-    build:
-      context: .
-      dockerfile: ./worker/heartbeats/Dockerfile
-    depends_on:
-      postgresql:
-        condition: service_healthy
-      django:
-        condition: service_healthy
-    networks:
-      - monitoring
-    volumes:
-      - ./worker:/etc/fromedwin_heartbeats/worker
-      - ./worker/heartbeats/requirements.txt:/etc/fromedwin_heartbeats/worker/heartbeats/requirements.txt:ro
-    environment:
-      BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
-      SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
-    entrypoint: /etc/fromedwin_heartbeats/worker/heartbeats/entrypoint.sh
-
-  #
   # Run django framework, backend front-end API ORM and database
   #
   django:
@@ -233,13 +36,6 @@ services:
       - "8000:8000"
     networks:
       - monitoring
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-      postgresql:
-        condition: service_healthy
-      influxdb:
-        condition: service_healthy
     environment:
       SECRET_KEY: ${SECRET_KEY}
       DEBUG: ${DEBUG-0} # Use to authenticate worker queries
@@ -256,13 +52,8 @@ services:
       AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME-}
       CONTACT_EMAIL: ${CONTACT_EMAIL-}
       CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@rabbitmq}
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER-}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS-}
       INFLUXDB_URL: ${INFLUXDB_URL-http://influxdb:8086} # access parent container
-      INFLUXDB_DEFAULT_USER: ${INFLUXDB_DEFAULT_USER-}
-      INFLUXDB_DEFAULT_PASS: ${INFLUXDB_DEFAULT_PASS-}
       INFLUXDB_TOKEN: ${INFLUXDB_TOKEN-}
-      CELERY_BEAT_HOSTNAME: ${CELERY_BEAT_HOSTNAME-}
     volumes:
       - ./src:/app/src
       - ./data:/app/data

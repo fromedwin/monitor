@@ -1,0 +1,93 @@
+# No version needed in modern Docker Compose
+
+# Env var needed:
+# CELERY_BROKER_URL
+# BACKEND_URL
+# SECRET_KEY
+# INFLUXDB_URL
+# INFLUXDB_TOKEN
+# LIGHTHOUSE_WORKER_REPLICA
+# CELERY_WORKER_REPLICA
+
+services:
+  #
+  # Lighthouse is a tool to check website performances
+  lighthouse:
+    build: ./worker/lighthouse
+    user: root
+    networks:
+      - monitoring
+    deploy:
+      replicas: ${LIGHTHOUSE_WORKER_REPLICA-1}
+    volumes:
+      - ./worker:/etc/monitor/worker
+    environment:
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
+      BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
+      CHROME_PATH: /usr/lib/chromium/chrome
+      SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
+    command: ["sh", "/etc/monitor/worker/lighthouse/entrypoint.sh"]
+
+  #
+  # Get Prometheus metrics from worker and store them in InfluxDB
+  #
+  worker_telegraf:
+    image: telegraf:latest
+    container_name: fromedwin_worker_telegraf
+    networks:
+      - monitoring
+    environment:
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
+      - INFLUXDB_BUCKET=fromedwin
+      - INFLUXDB_ORG=fromedwin
+      - TELEGRAF_INTERVAL=${TELEGRAF_INTERVAL-15s}
+    volumes:
+      - ./worker/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+
+  #Crawl4Ai
+  crawl4ai:
+    image: unclecode/crawl4ai:latest
+    container_name: fromedwin_crawl4ai
+    ports:
+      - "11235:11235"
+    networks:
+      - monitoring
+    volumes:
+      - ./worker/crawl4ai/config.yml:/etc/crawl4ai/config.yml:ro
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+
+  #
+  # Run celery as worker to get tasks from rabbitmq and run them
+  #
+  worker:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    depends_on:
+      crawl4ai:
+        condition: service_started
+    networks:
+      - monitoring
+    links:
+      - crawl4ai
+    environment:
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
+      SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
+      BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
+      DJANGO_SETTINGS_MODULE: "fromedwin.settings.dev"
+      CRAWL4AI_URL: http://crawl4ai:11235
+      CELERYD_CONCURRENCY: 4 # Only run one worker at a time
+      INFLUXDB_URL: ${INFLUXDB_URL-http://influxdb:8086} # access parent container
+      INFLUXDB_TOKEN: ${INFLUXDB_TOKEN-}
+    deploy:
+      replicas: ${CELERY_WORKER_REPLICA-3}
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+    entrypoint: ["/app/worker/celery/entrypoint.sh"]
+
+networks:
+  monitoring:
+    driver: bridge
