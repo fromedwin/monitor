@@ -1,0 +1,140 @@
+# No version needed in modern Docker Compose
+
+# Needed env var:
+# DB_DEFAULT_USER
+# DB_DEFAULT_PASS
+
+services:
+  #
+  # RabbitMQ queue messages for celery between worke
+  #
+  rabbitmq:
+    container_name: fromedwin_rabbitmq
+    image: rabbitmq:3-management
+    privileged: true
+    networks:
+      - monitoring
+    environment:
+      RABBITMQ_DEFAULT_USER: ${DB_DEFAULT_USER-}
+      RABBITMQ_DEFAULT_PASS: ${DB_DEFAULT_PASS-}
+      prometheus.return_per_object_metrics: "true" # Enable per-object metrics
+    ports:
+      - "5672:5672" # RabbitMQ
+      - "15672:15672" # RabbitMQ Management UI
+      - "15692:15692" # Prometheus metrics endpoint (default for rabbitmq_prometheus)
+    volumes:
+      - ./data/rabbitmq:/var/lib/rabbitmq # Optional: persistent data storage
+    command: >
+      sh -c "rabbitmq-plugins enable rabbitmq_prometheus &&
+            rabbitmq-plugins enable rabbitmq_management &&
+            rabbitmq-server"
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+  #
+  # PostgreSQL main database for Django application
+  #
+  postgresql:
+    container_name: fromedwin_postgresql
+    image: postgres:17-alpine
+    networks:
+      - monitoring
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB-fromedwin}
+      POSTGRES_USER: ${DB_DEFAULT_USER-}
+      POSTGRES_PASSWORD: ${DB_DEFAULT_PASS-}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432" # PostgreSQL
+    volumes:
+      - ./data/postgresql:/var/lib/postgresql/data # Persistent data storage
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DB_DEFAULT_USER-fromedwin} -d ${POSTGRES_DB-fromedwin}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+  #
+  # InfluxDB store time serie data from telegraf reading prometeheus metrics
+  #
+  influxdb:
+    image: influxdb:2.7
+    container_name: fromedwin_influxdb
+    networks:
+      - monitoring
+    ports:
+      - "8086:8086" # Map InfluxDB port to host
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=${DB_DEFAULT_USER-}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${DB_DEFAULT_PASS-}
+      - DOCKER_INFLUXDB_INIT_ORG=fromedwin
+      - DOCKER_INFLUXDB_INIT_BUCKET=fromedwin
+      - DOCKER_INFLUXDB_INIT_RETENTION=1w # 1 week retention policy
+    volumes:
+      - ./data/influxdb:/var/lib/influxdb2
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  #
+  # Run prometheus to fetch metrics from workers and alertmanager to send alerts
+  #
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: fromedwin_prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - monitoring
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus/data"
+      - "--web.enable-lifecycle" # Enable /-/reload entrypoint
+    volumes:
+      - ./data/prometheus:/prometheus
+      - ./worker/prometheus/alerts:/etc/prometheus/alerts
+      - ./worker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    links:
+      - blackbox
+  #
+  # Run alertmanager to send alerts
+  #
+  alertmanager:
+    image: quay.io/prometheus/alertmanager:v0.27.0
+    container_name: fromedwin_alertmanager
+    networks:
+      - monitoring
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+      - "--storage.path=/alertmanager/data"
+    volumes:
+      - ./data/alertmanager:/alertmanager
+      - ./worker/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+  #
+  # Run blackbox to fetch metrics from workers and alertmanager to send alerts
+  #
+  blackbox:
+    image: prom/blackbox-exporter:v0.25.0
+    container_name: fromedwin_blackbox
+    networks:
+      - monitoring
+    command:
+      - "--config.file=/etc/prometheus/blackbox.yml"
+    # user: "65534"
+    volumes:
+      - ./worker/blackbox/blackbox.yml:/etc/prometheus/blackbox.yml:ro
+
+networks:
+  monitoring:
+    driver: bridge
