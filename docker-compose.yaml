@@ -17,13 +17,20 @@ services:
     environment:
       SECRET_KEY: ${SECRET_KEY-}
       DATABASE_URL: ${DATABASE_URL-}
-      CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:admin@host.docker.internal}
+      CELERY_BEAT_HOSTNAME: ${CELERY_BEAT_HOSTNAME-fromedwin.scheduler}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:adminadmin@rabbitmq}
       DJANGO_SETTINGS_MODULE: "fromedwin.settings.dev"
-    volumes:
-      - ./scheduler:/app/scheduler
-      - ./src:/app/src
-      - ./data:/app/data
-    entrypoint: ["/app/scheduler/entrypoint.sh"]
+    working_dir: /app/src
+    command:
+      [
+        "celery",
+        "-A",
+        "fromedwin",
+        "beat",
+        "--loglevel=info",
+        "--scheduler",
+        "django_celery_beat.schedulers:DatabaseScheduler",
+      ]
 
   #
   # Run django framework, backend front-end API ORM and database
@@ -55,9 +62,6 @@ services:
       CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:adminadmin@rabbitmq}
       INFLUXDB_URL: ${INFLUXDB_URL-http://influxdb:8086} # access parent container
       INFLUXDB_TOKEN: ${INFLUXDB_TOKEN-}
-    volumes:
-      - ./src:/app/src
-      - ./data:/app/data
     entrypoint: ["/app/src/entrypoint.sh"]
     healthcheck:
       test:

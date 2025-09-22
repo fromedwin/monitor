@@ -68,9 +68,6 @@ services:
   telegraf:
     image: telegraf:latest
     container_name: fromedwin_telegraf
-    depends_on:
-      influxdb:
-        condition: service_healthy
     networks:
       - monitoring
     environment:
@@ -89,11 +86,6 @@ services:
     build:
       context: .
       dockerfile: ./worker/heartbeats/Dockerfile
-    depends_on:
-      postgresql:
-        condition: service_healthy
-      django:
-        condition: service_healthy
     networks:
       - monitoring
     volumes:
