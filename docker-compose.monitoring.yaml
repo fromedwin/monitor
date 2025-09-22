@@ -94,7 +94,8 @@ services:
     environment:
       BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
       SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
-    entrypoint: /etc/fromedwin_heartbeats/worker/heartbeats/entrypoint.sh
+    command:
+      ["python3", "/etc/fromedwin_heartbeats/worker/heartbeats/heartbeats.py"]
 
 networks:
   monitoring:

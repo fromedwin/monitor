@@ -87,7 +87,7 @@ services:
     volumes:
       - ./src:/app/src
       - ./data:/app/data
-    entrypoint: ["/app/worker/celery/entrypoint.sh"]
+    command: ["python", "/app/worker/celery/start_celery_worker.py"]
 
 networks:
   monitoring:
