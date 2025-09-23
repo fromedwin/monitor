@@ -1,5 +1,11 @@
 #!/bin/sh
 
+if [ "$DJANGO_SETTINGS_MODULE" = "fromedwin.settings.prod" ]; then
+  echo "Production mode detected. Exiting immediately."
+  exit 0
+fi
+
+
 if [ -z "$SECRET_KEY" ]; then
   echo "WARNING: No SECRET_KEY set. Please generate one and export it as SECRET_KEY env variable."
   export SECRET_KEY=$(tr -dc 'a-z0-9!@#$%^&*(-_=+)' < /dev/urandom | head -c50)

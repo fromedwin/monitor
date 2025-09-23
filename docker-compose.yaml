@@ -63,6 +63,18 @@ services:
       INFLUXDB_URL: ${INFLUXDB_URL-http://influxdb:8086} # access parent container
       INFLUXDB_TOKEN: ${INFLUXDB_TOKEN-}
     entrypoint: ["/app/src/entrypoint.sh"]
+    working_dir: /app/src
+    command:
+      [
+        "gunicorn",
+        "--bind",
+        "0.0.0.0:8000",
+        "--workers",
+        "3",
+        "--timeout",
+        "120",
+        "fromedwin.wsgi:application",
+      ]
     healthcheck:
       test:
         [

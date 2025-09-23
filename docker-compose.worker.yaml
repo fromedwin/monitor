@@ -84,6 +84,7 @@ services:
       INFLUXDB_TOKEN: ${INFLUXDB_TOKEN-}
     deploy:
       replicas: ${CELERY_WORKER_REPLICA-3}
+    working_dir: /app/src
     volumes:
       - ./src:/app/src
       - ./data:/app/data
