@@ -26,7 +26,7 @@ services:
       BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
       CHROME_PATH: /usr/lib/chromium/chrome
       SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
-    command: ["sh", "/etc/monitor/worker/lighthouse/entrypoint.sh"]
+    command: ["sh", "/etc/monitor/worker/lighthouse/run.sh"]
 
   #
   # Get Prometheus metrics from worker and store them in InfluxDB
