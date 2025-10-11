@@ -117,7 +117,7 @@ scrape_configs:
     replacement: blackbox:9115
 
 remote_write:
- - url: "http://worker_telegraf:1234/receive"
+ - url: "http://worker-telegraf:1234/receive"
    write_relabel_configs:
      # Keep only specific metrics by name
      - source_labels: ["__name__"]
