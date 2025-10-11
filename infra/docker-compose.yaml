@@ -45,6 +45,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
+      - ../src:/app/src
       - ../data/django/media:/app/src/fromedwin/media
     networks:
       - monitoring
