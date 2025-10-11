@@ -13,14 +13,14 @@ services:
   #
   # Lighthouse is a tool to check website performances
   lighthouse:
-    build: ./worker/lighthouse
+    build: ../worker/lighthouse
     user: root
     networks:
       - monitoring
     deploy:
       replicas: ${LIGHTHOUSE_WORKER_REPLICA-1}
     volumes:
-      - ./worker:/etc/monitor/worker
+      - ../worker:/etc/monitor/worker
     environment:
       CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:adminadmin@rabbitmq}
       BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
@@ -43,7 +43,7 @@ services:
       - INFLUXDB_ORG=fromedwin
       - TELEGRAF_INTERVAL=${TELEGRAF_INTERVAL-15s}
     volumes:
-      - ./worker/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - ../worker/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
 
   #Crawl4Ai
   crawl4ai:
@@ -54,7 +54,7 @@ services:
     networks:
       - monitoring
     volumes:
-      - ./worker/crawl4ai/config.yml:/etc/crawl4ai/config.yml:ro
+      - ../worker/crawl4ai/config.yml:/etc/crawl4ai/config.yml:ro
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
 
@@ -63,7 +63,7 @@ services:
   #
   worker:
     build:
-      context: .
+      context: ..
       dockerfile: ./Dockerfile
     depends_on:
       crawl4ai:
@@ -86,8 +86,8 @@ services:
       replicas: ${CELERY_WORKER_REPLICA-3}
     working_dir: /app/src
     volumes:
-      - ./src:/app/src
-      - ./data:/app/data
+      - ../src:/app/src
+      - ../data:/app/data
     command: ["python", "/app/worker/celery/start_celery_worker.py"]
 
 networks:

@@ -47,6 +47,13 @@ FromEdwin Monitor is a highly opinionated implementation of open-source monitori
 
 3. **Start all services**
    ```bash
+   ./fromedwin start
+   ```
+   
+   The script will automatically create a `.env` file with default values if one doesn't exist. You can customize the environment variables in the `.env` file as needed.
+   
+   Or alternatively:
+   ```bash
    docker compose up -d
    ```
 
@@ -56,6 +63,22 @@ FromEdwin Monitor is a highly opinionated implementation of open-source monitori
    ```
 
 That's it! Your monitoring system is now running locally.
+
+## 🐳 Docker Management
+
+The project includes a convenient script (`fromedwin`) to manage Docker services:
+
+### Start Services
+```bash
+./fromedwin start
+```
+This starts all Docker services (database, monitoring, worker, and main services) in detached mode.
+
+### Stop Services
+```bash
+./fromedwin stop
+```
+This stops all Docker services and cleans up containers.
 
 ## 📖 Documentation
 

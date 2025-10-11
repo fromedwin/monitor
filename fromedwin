@@ -1,0 +1,135 @@
+#!/bin/bash
+
+# Docker services management script
+# Usage:
+#   ./fromedwin start  - Start all Docker services
+#   ./fromedwin stop   - Stop all Docker services
+#   ./fromedwin status - Show status of all Docker services
+#   ./fromedwin        - Start all Docker services (default)
+
+# Docker Compose files configuration
+COMPOSE_FILES="-f infra/docker-compose.db.yaml -f infra/docker-compose.yaml -f infra/docker-compose.monitoring.yaml -f infra/docker-compose.worker.yaml"
+
+# Local development override file (only used when running locally)
+LOCAL_OVERRIDE_FILE="-f infra/docker-compose.override.yaml"
+
+# Environment file configuration
+ENV_FILE="--env-file .env"
+
+# Function to start services
+start_services() {
+    # Check if .env file exists
+    if [ ! -f ".env" ]; then
+        echo "Warning: .env file not found in root directory."
+        echo "Creating a basic .env file with default values..."
+        create_env_file
+    fi
+    
+    echo "Starting Docker services..."
+    docker compose $ENV_FILE $COMPOSE_FILES $LOCAL_OVERRIDE_FILE up -d
+    
+    if [ $? -eq 0 ]; then
+        echo "Docker services started successfully!"
+        echo "Use './fromedwin status' to check service status"
+        echo "Use 'docker compose logs -f' to view logs"
+    else
+        echo "Failed to start Docker services"
+        exit 1
+    fi
+}
+
+# Function to stop services
+stop_services() {
+    echo "Stopping Docker services..."
+    docker compose $ENV_FILE $COMPOSE_FILES $LOCAL_OVERRIDE_FILE down
+    
+    if [ $? -eq 0 ]; then
+        echo "Docker services stopped successfully!"
+    else
+        echo "Failed to stop Docker services"
+        exit 1
+    fi
+}
+
+# Function to show service status
+show_status() {
+    echo "Docker services status:"
+    docker compose $ENV_FILE $COMPOSE_FILES $LOCAL_OVERRIDE_FILE ps
+}
+
+# Function to create a basic .env file
+create_env_file() {
+    cat > .env << 'EOF'
+# FromEdwin Monitor Environment Configuration
+# Customize these values for your environment
+
+# Database Configuration
+DB_DEFAULT_USER=fromedwin
+DB_DEFAULT_PASS=fromedwin_password
+POSTGRES_DB=fromedwin
+
+# Django Configuration
+SECRET_KEY=your-secret-key-here-change-this-in-production
+DEBUG=1
+SAAS=0
+DOMAIN=localhost
+PORT=8000
+
+# Database URL
+DATABASE_URL=postgresql://fromedwin:fromedwin_password@postgresql:5432/fromedwin
+
+# InfluxDB Configuration
+INFLUXDB_URL=http://influxdb:8086
+INFLUXDB_TOKEN=your-influxdb-token-here
+
+# Celery Configuration
+CELERY_BROKER_URL=amqp://admin:adminadmin@rabbitmq
+CELERY_BEAT_HOSTNAME=fromedwin.scheduler
+
+# Worker Configuration
+LIGHTHOUSE_WORKER_REPLICA=1
+CELERY_WORKER_REPLICA=3
+BACKEND_URL=http://host.docker.internal:8000
+
+# GitHub OAuth (optional)
+GITHUB_OAUTH_CLIENT_ID=a88dc4c15606cc0dd96f
+GITHUB_OAUTH_CLIENT_SECRET=61a117434565f3c755927f8c5e1698f6bd9fad42
+
+# AWS S3 Configuration (optional)
+AWS_S3_ENDPOINT_URL=
+AWS_S3_CUSTOM_DOMAIN=
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_STORAGE_BUCKET_NAME=
+
+# Contact Email (optional)
+CONTACT_EMAIL=
+
+# OpenAI API Key (optional)
+OPENAI_API_KEY=
+
+# Telegraf Configuration
+TELEGRAF_INTERVAL=15s
+EOF
+    echo "Created .env file with default values. Please review and customize as needed."
+}
+
+# Parse command line arguments
+case "${1:-start}" in
+    start)
+        start_services
+        ;;
+    stop)
+        stop_services
+        ;;
+    status)
+        show_status
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|status}"
+        echo "  start  - Start all Docker services (default)"
+        echo "  stop   - Stop all Docker services"
+        echo "  status - Show status of all Docker services"
+        exit 1
+        ;;
+esac

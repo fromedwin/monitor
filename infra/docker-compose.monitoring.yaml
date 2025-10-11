@@ -20,9 +20,9 @@ services:
       - "--storage.tsdb.path=/prometheus/data"
       - "--web.enable-lifecycle" # Enable /-/reload entrypoint
     volumes:
-      - ./data/prometheus:/prometheus
-      - ./worker/prometheus/alerts:/etc/prometheus/alerts
-      - ./worker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../data/prometheus:/prometheus
+      - ../worker/prometheus/alerts:/etc/prometheus/alerts
+      - ../worker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     links:
       - blackbox
 
@@ -42,8 +42,8 @@ services:
       - "--config.file=/etc/alertmanager/alertmanager.yml"
       - "--storage.path=/alertmanager/data"
     volumes:
-      - ./data/alertmanager:/alertmanager
-      - ./worker/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - ../data/alertmanager:/alertmanager
+      - ../worker/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
   #
   # Run blackbox to fetch metrics from workers and alertmanager to send alerts
   #
@@ -60,7 +60,7 @@ services:
       - "--config.file=/etc/prometheus/blackbox.yml"
     # user: "65534"
     volumes:
-      - ./worker/blackbox/blackbox.yml:/etc/prometheus/blackbox.yml:ro
+      - ../worker/blackbox/blackbox.yml:/etc/prometheus/blackbox.yml:ro
 
   #
   # Telegraf read prometheus metrics and store them in InfluxDB
@@ -79,18 +79,18 @@ services:
     ports:
       - "9273:9273" # Expose Telegraf Prometheus plugin metrics
     volumes:
-      - ./services/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - ../services/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
 
   heartbeats:
     container_name: fromedwin_heartbeats
     build:
-      context: .
+      context: ..
       dockerfile: ./worker/heartbeats/Dockerfile
     networks:
       - monitoring
     volumes:
-      - ./worker:/etc/fromedwin_heartbeats/worker
-      - ./worker/heartbeats/requirements.txt:/etc/fromedwin_heartbeats/worker/heartbeats/requirements.txt:ro
+      - ../worker:/etc/fromedwin_heartbeats/worker
+      - ../worker/heartbeats/requirements.txt:/etc/fromedwin_heartbeats/worker/heartbeats/requirements.txt:ro
     environment:
       BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
       SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries

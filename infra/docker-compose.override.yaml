@@ -1,0 +1,80 @@
+# Local development override for all Docker Compose files
+# This file adds depends_on configurations for proper startup order when running locally
+# Startup order: db → main → monitoring → worker
+
+services:
+  # Main services (docker-compose.yaml)
+  django:
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
+
+  scheduler:
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  # Monitoring services (docker-compose.monitoring.yaml)
+  prometheus:
+    depends_on:
+      django:
+        condition: service_healthy
+      scheduler:
+        condition: service_started
+
+  alertmanager:
+    depends_on:
+      django:
+        condition: service_healthy
+
+  blackbox:
+    depends_on:
+      django:
+        condition: service_healthy
+
+  telegraf:
+    depends_on:
+      django:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
+
+  heartbeats:
+    depends_on:
+      django:
+        condition: service_healthy
+
+  # Worker services (docker-compose.worker.yaml)
+  lighthouse:
+    depends_on:
+      django:
+        condition: service_healthy
+      prometheus:
+        condition: service_started
+
+  worker_telegraf:
+    depends_on:
+      django:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
+
+  crawl4ai:
+    depends_on:
+      django:
+        condition: service_healthy
+
+  worker:
+    depends_on:
+      django:
+        condition: service_healthy
+      prometheus:
+        condition: service_started
+      crawl4ai:
+        condition: service_started

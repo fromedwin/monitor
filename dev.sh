@@ -1,1 +1,0 @@
-docker compose -f docker-compose.db.yaml -f docker-compose.yaml -f docker-compose.monitoring.yaml -f docker-compose.worker.yaml up -d
