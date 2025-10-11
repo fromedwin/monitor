@@ -1,11 +1,12 @@
 # No version needed in modern Docker Compose
 
+name: fromedwin
+
 services:
   #
   # Scheduler run django within celery to dispatch scheduled tasks
   #
   scheduler:
-    container_name: fromedwin_scheduler
     build:
       context: ..
       dockerfile: ./Dockerfile
@@ -36,7 +37,6 @@ services:
   # Run django framework, backend front-end API ORM and database
   #
   django:
-    container_name: fromedwin_django
     build:
       context: ..
       dockerfile: ./Dockerfile

@@ -1,12 +1,13 @@
 # No version needed in modern Docker Compose
 
+name: fromedwin
+
 services:
   #
   # Run prometheus to fetch metrics from workers and alertmanager to send alerts
   #
   prometheus:
     image: prom/prometheus:v2.54.1
-    container_name: fromedwin_prometheus
     ports:
       - "9090:9090"
     networks:
@@ -31,7 +32,6 @@ services:
   #
   alertmanager:
     image: quay.io/prometheus/alertmanager:v0.27.0
-    container_name: fromedwin_alertmanager
     networks:
       - monitoring
     labels:
@@ -49,7 +49,6 @@ services:
   #
   blackbox:
     image: prom/blackbox-exporter:v0.25.0
-    container_name: fromedwin_blackbox
     networks:
       - monitoring
     labels:
@@ -67,7 +66,6 @@ services:
   #
   telegraf:
     image: telegraf:latest
-    container_name: fromedwin_telegraf
     networks:
       - monitoring
     environment:
@@ -82,7 +80,6 @@ services:
       - ../services/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
 
   heartbeats:
-    container_name: fromedwin_heartbeats
     build:
       context: ..
       dockerfile: ./worker/heartbeats/Dockerfile

@@ -1,5 +1,7 @@
 # No version needed in modern Docker Compose
 
+name: fromedwin
+
 # Env var needed:
 # CELERY_BROKER_URL
 # BACKEND_URL
@@ -31,9 +33,8 @@ services:
   #
   # Get Prometheus metrics from worker and store them in InfluxDB
   #
-  worker_telegraf:
+  worker-telegraf:
     image: telegraf:latest
-    container_name: fromedwin_worker_telegraf
     networks:
       - monitoring
     environment:
@@ -48,7 +49,6 @@ services:
   #Crawl4Ai
   crawl4ai:
     image: unclecode/crawl4ai:latest
-    container_name: fromedwin_crawl4ai
     ports:
       - "11235:11235"
     networks:

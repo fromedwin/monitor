@@ -1,6 +1,7 @@
 # Local development override for all Docker Compose files
 # This file adds depends_on configurations for proper startup order when running locally
 # Startup order: db → main → monitoring → worker
+name: fromedwin
 
 services:
   # Main services (docker-compose.yaml)

@@ -1,5 +1,7 @@
 # No version needed in modern Docker Compose
 
+name: fromedwin
+
 # Needed env var:
 # DB_DEFAULT_USER
 # DB_DEFAULT_PASS
@@ -9,7 +11,6 @@ services:
   # RabbitMQ queue messages for celery between worke
   #
   rabbitmq:
-    container_name: fromedwin_rabbitmq
     image: rabbitmq:3-management
     privileged: true
     networks:
@@ -42,7 +43,6 @@ services:
   # PostgreSQL main database for Django application
   #
   postgresql:
-    container_name: fromedwin_postgresql
     image: postgres:17-alpine
     networks:
       - monitoring
@@ -73,7 +73,6 @@ services:
   #
   influxdb:
     image: influxdb:2.7
-    container_name: fromedwin_influxdb
     networks:
       - monitoring
     labels:
