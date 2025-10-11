@@ -146,6 +146,7 @@ src/staticfiles
 # Docker-compose storage
 data/alertmanager
 data/prometheus
+data/django
 data/rabbitmq
 data/postgresql
 data/influxdb

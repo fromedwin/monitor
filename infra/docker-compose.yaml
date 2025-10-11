@@ -44,6 +44,8 @@ services:
     container_name: fromedwin-django
     ports:
       - "8000:8000"
+    volumes:
+      - ../data/django/media:/app/src/fromedwin/media
     networks:
       - monitoring
     environment:
