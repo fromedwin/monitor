@@ -12,6 +12,7 @@ services:
   #
   rabbitmq:
     image: rabbitmq:3-management
+    container_name: fromedwin-rabbitmq
     privileged: true
     networks:
       - monitoring
@@ -44,6 +45,7 @@ services:
   #
   postgresql:
     image: postgres:17-alpine
+    container_name: fromedwin-postgresql
     networks:
       - monitoring
     labels:
@@ -73,6 +75,7 @@ services:
   #
   influxdb:
     image: influxdb:2.7
+    container_name: fromedwin-influxdb
     networks:
       - monitoring
     labels:

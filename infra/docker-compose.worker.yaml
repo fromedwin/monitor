@@ -35,6 +35,7 @@ services:
   #
   worker-telegraf:
     image: telegraf:latest
+    container_name: fromedwin-worker-telegraf
     networks:
       - monitoring
     environment:
@@ -49,6 +50,7 @@ services:
   #Crawl4Ai
   crawl4ai:
     image: unclecode/crawl4ai:latest
+    container_name: fromedwin-crawl4ai
     ports:
       - "11235:11235"
     networks:

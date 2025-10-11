@@ -59,7 +59,7 @@ services:
       prometheus:
         condition: service_started
 
-  worker_telegraf:
+  worker-telegraf:
     depends_on:
       django:
         condition: service_healthy
