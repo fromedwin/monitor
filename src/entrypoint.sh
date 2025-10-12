@@ -7,9 +7,9 @@ fi
 
 
 if [ -z "$SECRET_KEY" ]; then
-  echo "WARNING: No SECRET_KEY set. Please generate one and export it as SECRET_KEY env variable."
+  echo "No SECRET_KEY found. Generating a new one..."
   export SECRET_KEY=$(tr -dc 'a-z0-9!@#$%^&*(-_=+)' < /dev/urandom | head -c50)
-  echo "Temporary one created. This will be lost on restart and deprecate all open session forcing user to reload."
+  echo "SECRET_KEY generated successfully."
 fi
 
 export COMPRESS_OFFLINE=True
