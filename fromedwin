@@ -6,27 +6,52 @@
 #   ./fromedwin stop   - Stop all Docker services
 #   ./fromedwin status - Show status of all Docker services
 #   ./fromedwin        - Start all Docker services (default)
+#
+# This script can be called from any directory and will automatically
+# find the project root directory and use the correct paths.
 
-# Docker Compose files configuration
-COMPOSE_FILES="-f infra/docker-compose.db.yaml -f infra/docker-compose.yaml -f infra/docker-compose.monitoring.yaml -f infra/docker-compose.worker.yaml"
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Find the project root directory (where the script is located)
+PROJECT_ROOT="$SCRIPT_DIR"
+
+# Docker Compose files configuration (using absolute paths)
+COMPOSE_FILES="-f $PROJECT_ROOT/infra/docker-compose.db.yaml -f $PROJECT_ROOT/infra/docker-compose.yaml -f $PROJECT_ROOT/infra/docker-compose.monitoring.yaml -f $PROJECT_ROOT/infra/docker-compose.worker.yaml"
 
 # Local development override file (only used when running locally)
-LOCAL_OVERRIDE_FILE="-f infra/docker-compose.override.yaml"
+LOCAL_OVERRIDE_FILE="-f $PROJECT_ROOT/infra/docker-compose.override.yaml"
 
 # Environment file configuration
-ENV_FILE="--env-file .env"
+ENV_FILE="--env-file $PROJECT_ROOT/.env"
+
+# Function to validate Docker and Docker Compose availability
+validate_docker() {
+    if ! command -v docker &> /dev/null; then
+        echo "Error: Docker is not installed or not in PATH"
+        exit 1
+    fi
+    
+    if ! docker compose version &> /dev/null; then
+        echo "Error: Docker Compose is not available"
+        exit 1
+    fi
+}
 
 # Function to start services
 start_services() {
+    # Validate Docker is available
+    validate_docker
+    
     # Check if .env file exists
-    if [ ! -f ".env" ]; then
-        echo "Warning: .env file not found in root directory."
+    if [ ! -f "$PROJECT_ROOT/.env" ]; then
+        echo "Warning: .env file not found in project root directory."
         echo "Creating a basic .env file with default values..."
         create_env_file
     fi
     
-    echo "Starting Docker services..."
-    docker compose $ENV_FILE $COMPOSE_FILES $LOCAL_OVERRIDE_FILE up -d
+    echo "Starting Docker services from project root: $PROJECT_ROOT"
+    cd "$PROJECT_ROOT" && docker compose $ENV_FILE $COMPOSE_FILES $LOCAL_OVERRIDE_FILE up -d
     
     if [ $? -eq 0 ]; then
         echo "Docker services started successfully!"
@@ -40,8 +65,11 @@ start_services() {
 
 # Function to stop services
 stop_services() {
-    echo "Stopping Docker services..."
-    docker compose $ENV_FILE $COMPOSE_FILES $LOCAL_OVERRIDE_FILE down
+    # Validate Docker is available
+    validate_docker
+    
+    echo "Stopping Docker services from project root: $PROJECT_ROOT"
+    cd "$PROJECT_ROOT" && docker compose $ENV_FILE $COMPOSE_FILES $LOCAL_OVERRIDE_FILE down
     
     if [ $? -eq 0 ]; then
         echo "Docker services stopped successfully!"
@@ -53,13 +81,16 @@ stop_services() {
 
 # Function to show service status
 show_status() {
-    echo "Docker services status:"
-    docker compose $ENV_FILE $COMPOSE_FILES $LOCAL_OVERRIDE_FILE ps
+    # Validate Docker is available
+    validate_docker
+    
+    echo "Docker services status from project root: $PROJECT_ROOT"
+    cd "$PROJECT_ROOT" && docker compose $ENV_FILE $COMPOSE_FILES $LOCAL_OVERRIDE_FILE ps
 }
 
 # Function to create a basic .env file
 create_env_file() {
-    cat > .env << 'EOF'
+    cat > "$PROJECT_ROOT/.env" << 'EOF'
 # FromEdwin Monitor Environment Configuration
 # Customize these values for your environment
 
@@ -130,6 +161,9 @@ case "${1:-start}" in
         echo "  start  - Start all Docker services (default)"
         echo "  stop   - Stop all Docker services"
         echo "  status - Show status of all Docker services"
+        echo ""
+        echo "This script can be called from any directory and will automatically"
+        echo "find the project root directory and use the correct paths."
         exit 1
         ;;
 esac
