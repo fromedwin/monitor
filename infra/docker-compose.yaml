@@ -19,7 +19,7 @@ services:
     environment:
       SECRET_KEY: ${SECRET_KEY-}
       DATABASE_URL: ${DATABASE_URL-postgresql://admin:adminadmin@host.docker.internal:5432/fromedwin}
-      CELERY_BEAT_HOSTNAME: ${CELERY_BEAT_HOSTNAME-fromedwin.scheduler}
+      CELERY_BEAT_HOSTNAME: ${fromedwin.scheduler}
       CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:adminadmin@rabbitmq}
       DJANGO_SETTINGS_MODULE: "fromedwin.settings.dev"
     working_dir: /app/src
