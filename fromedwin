@@ -1,14 +1,5 @@
 #!/bin/bash
 
-# ASCII Art for FROMEDWIN
-cat << 'EOF'
-███████╗██████╗  ██████╗ ███╗   ███╗███████╗██████╗ ██╗    ██╗██╗███╗   ██╗
-██╔════╝██╔══██╗██╔═══██╗████╗ ████║██╔════╝██╔══██╗██║    ██║██║████╗  ██║
-█████╗  ██████╔╝██║   ██║██╔████╔██║█████╗  ██║  ██║██║ █╗ ██║██║██╔██╗ ██║
-██╔══╝  ██╔══██╗██║   ██║██║╚██╔╝██║██╔══╝  ██║  ██║██║███╗██║██║██║╚██╗██║
-██║     ██║  ██║╚██████╔╝██║ ╚═╝ ██║███████╗██████╔╝╚███╔███╔╝██║██║ ╚████║
-╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═════╝  ╚══╝╚══╝ ╚═╝╚═╝  ╚═══╝
-EOF
 
 # Docker services management script
 # Usage:
@@ -35,6 +26,17 @@ LOCAL_OVERRIDE_FILE="-f $PROJECT_ROOT/infra/docker-compose.override.yaml"
 # Environment file configuration
 ENV_FILE="--env-file $PROJECT_ROOT/.env"
 
+show_ascii_art() {
+    # ASCII Art for FROMEDWIN
+    echo "███████╗██████╗  ██████╗ ███╗   ███╗███████╗██████╗ ██╗    ██╗██╗███╗   ██╗"
+    echo "██╔════╝██╔══██╗██╔═══██╗████╗ ████║██╔════╝██╔══██╗██║    ██║██║████╗  ██║"
+    echo "█████╗  ██████╔╝██║   ██║██╔████╔██║█████╗  ██║  ██║██║ █╗ ██║██║██╔██╗ ██║"
+    echo "██╔══╝  ██╔══██╗██║   ██║██║╚██╔╝██║██╔══╝  ██║  ██║██║███╗██║██║██║╚██╗██║"
+    echo "██║     ██║  ██║╚██████╔╝██║ ╚═╝ ██║███████╗██████╔╝╚███╔███╔╝██║██║ ╚████║"
+    echo "╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═════╝  ╚══╝╚══╝ ╚═╝╚═╝  ╚═══╝"
+    echo ""
+}
+
 # Function to validate Docker and Docker Compose availability
 validate_docker() {
     if ! command -v docker &> /dev/null; then
@@ -50,6 +52,7 @@ validate_docker() {
 
 # Function to start services
 start_services() {
+    show_ascii_art
     # Validate Docker is available
     validate_docker
     
