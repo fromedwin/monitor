@@ -28,9 +28,6 @@ services:
       EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD-}
       EMAIL_USE_TLS: ${EMAIL_USE_TLS-}
     working_dir: /app/src
-    volumes:
-      - ../src:/app/src
-      - ../data/django/media:/app/src/fromedwin/media
     command:
       [
         "celery",
@@ -52,9 +49,6 @@ services:
     container_name: fromedwin-django
     ports:
       - "8000:8000"
-    volumes:
-      - ../src:/app/src
-      - ../data/django/media:/app/src/fromedwin/media
     networks:
       - monitoring
     environment:

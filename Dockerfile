@@ -24,5 +24,8 @@ RUN \
 # Add in docker image full code base
 COPY --chown=fromedwin . .
 
+# Ensure entrypoint script is executable
+RUN chmod +x /app/src/entrypoint.sh
+
 USER fromedwin
 EXPOSE 8000

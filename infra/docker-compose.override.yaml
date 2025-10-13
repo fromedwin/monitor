@@ -15,6 +15,9 @@ services:
         condition: service_healthy
     environment:
       DJANGO_SETTINGS_MODULE: "fromedwin.settings.dev"
+    volumes:
+      - ../src:/app/src
+      - ../data/django/media:/app/src/fromedwin/media
 
   scheduler:
     depends_on:
@@ -24,6 +27,9 @@ services:
         condition: service_healthy
     environment:
       DJANGO_SETTINGS_MODULE: "fromedwin.settings.dev"
+    volumes:
+      - ../src:/app/src
+      - ../data/django/media:/app/src/fromedwin/media
 
   # Monitoring services (docker-compose.monitoring.yaml)
   prometheus:
