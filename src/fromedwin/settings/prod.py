@@ -49,8 +49,10 @@ INSTALLED_APPS = [
 TIMINGS = PRODUCTION;
 
 # Production session settings
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-SESSION_CACHE_ALIAS = 'default'
+# Using database sessions for reliability across multiple workers
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 1209600  # 2 weeks
+SESSION_SAVE_EVERY_REQUEST = False
 
 # Production performance settings
 CELERY_TASK_ALWAYS_EAGER = False  # Use actual task queue in production 
