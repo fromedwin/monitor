@@ -13,6 +13,8 @@ services:
         condition: service_healthy
       influxdb:
         condition: service_healthy
+    environment:
+      DJANGO_SETTINGS_MODULE: "fromedwin.settings.dev"
 
   scheduler:
     depends_on:
@@ -20,6 +22,8 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+    environment:
+      DJANGO_SETTINGS_MODULE: "fromedwin.settings.dev"
 
   # Monitoring services (docker-compose.monitoring.yaml)
   prometheus:

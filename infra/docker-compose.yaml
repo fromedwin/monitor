@@ -19,10 +19,18 @@ services:
     environment:
       SECRET_KEY: ${SECRET_KEY-}
       DATABASE_URL: ${DATABASE_URL-postgresql://admin:adminadmin@host.docker.internal:5432/fromedwin}
-      CELERY_BEAT_HOSTNAME: ${fromedwin.scheduler}
+      CELERY_BEAT_HOSTNAME: fromedwin.scheduler
       CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:adminadmin@rabbitmq}
-      DJANGO_SETTINGS_MODULE: "fromedwin.settings.dev"
+      DJANGO_SETTINGS_MODULE: "fromedwin.settings.prod"
+      EMAIL_HOST: ${EMAIL_HOST-}
+      EMAIL_PORT: ${EMAIL_PORT-}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER-}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD-}
+      EMAIL_USE_TLS: ${EMAIL_USE_TLS-}
     working_dir: /app/src
+    volumes:
+      - ../src:/app/src
+      - ../data/django/media:/app/src/fromedwin/media
     command:
       [
         "celery",
@@ -67,19 +75,14 @@ services:
       CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:adminadmin@rabbitmq}
       INFLUXDB_URL: ${INFLUXDB_URL-http://influxdb:8086} # access parent container
       INFLUXDB_TOKEN: ${INFLUXDB_TOKEN-}
+      DJANGO_SETTINGS_MODULE: "fromedwin.settings.prod"
+      EMAIL_HOST: ${EMAIL_HOST-}
+      EMAIL_PORT: ${EMAIL_PORT-}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER-}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD-}
+      EMAIL_USE_TLS: ${EMAIL_USE_TLS-}
     entrypoint: ["/app/src/entrypoint.sh"]
     working_dir: /app/src
-    command:
-      [
-        "gunicorn",
-        "--bind",
-        "0.0.0.0:8000",
-        "--workers",
-        "3",
-        "--timeout",
-        "120",
-        "fromedwin.wsgi:application",
-      ]
     healthcheck:
       test:
         [
@@ -90,8 +93,8 @@ services:
         ]
       interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 30s
+      retries: 5
+      start_period: 180s
 
 networks:
   monitoring:
