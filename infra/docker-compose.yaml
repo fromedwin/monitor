@@ -9,7 +9,7 @@ services:
   scheduler:
     build:
       context: ..
-      dockerfile: ./Dockerfile
+      dockerfile: Dockerfile
     container_name: fromedwin-scheduler
     depends_on:
       django:
@@ -48,7 +48,7 @@ services:
   django:
     build:
       context: ..
-      dockerfile: ./Dockerfile
+      dockerfile: Dockerfile
     container_name: fromedwin-django
     ports:
       - "8000:8000"
