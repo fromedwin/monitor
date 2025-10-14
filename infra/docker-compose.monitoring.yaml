@@ -68,7 +68,9 @@ services:
   # Telegraf read prometheus metrics and store them in InfluxDB
   #
   telegraf:
-    image: telegraf:latest
+    build:
+      context: ..
+      dockerfile: worker/telegraf/Dockerfile
     container_name: fromedwin-telegraf
     networks:
       - monitoring
@@ -80,8 +82,6 @@ services:
       - TELEGRAF_INTERVAL=${TELEGRAF_INTERVAL-15s}
     ports:
       - "9273:9273" # Expose Telegraf Prometheus plugin metrics
-    volumes:
-      - ../services/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
 
   heartbeats:
     build:
