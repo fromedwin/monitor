@@ -4,11 +4,8 @@ FROM zenika/alpine-chrome:with-node
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-
-# Fix permissions for npm to work properly
-RUN chmod 644 package*.json
+# Copy package files with proper permissions
+COPY --chmod=644 package*.json ./
 
 # Install dependencies
 RUN npm install
