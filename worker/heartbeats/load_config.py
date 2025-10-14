@@ -87,14 +87,14 @@ def load_config(url=None, uuid=None):
     # script notify prometheus and alertmanager to reload.
     try:
         print('Reloading Prometheus configuration...')
-        retry_request('http://prometheus:9090/-/reload')
+        retry_request('http://prometheus:9090/-/reload', method='POST', base_delay=10)
         print('✅ Prometheus configuration reloaded successfully')
     except Exception as err:
         print(f'❌ Prometheus reload failed after retries: {err}')
 
     try:
         print('Reloading Alertmanager configuration...')
-        retry_request('http://alertmanager:9093/-/reload')
+        retry_request('http://alertmanager:9093/-/reload', method='POST', base_delay=10)
         print('✅ Alertmanager configuration reloaded successfully')
     except Exception as err:
         print(f'❌ Alertmanager reload failed after retries: {err}')
