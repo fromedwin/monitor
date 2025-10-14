@@ -9,11 +9,14 @@ headers = {
     'User-Agent': 'FromEdwinBot Python load_config',
 }
 
-def retry_request(url, max_retries=3, base_delay=1):
+def retry_request(url, max_retries=3, base_delay=1, method='GET'):
     """Retry a request with exponential backoff"""
     for attempt in range(max_retries):
         try:
-            response = requests.post(url, headers=headers, timeout=10)
+            if method.upper() == 'GET':
+                response = requests.get(url, headers=headers, timeout=10)
+            else:
+                response = requests.post(url, headers=headers, timeout=10)
             response.raise_for_status()
             return response
         except Exception as err:
@@ -41,8 +44,7 @@ def load_config(url=None, uuid=None):
     SERVER_PROMETHEUS_CONFIG_URL = f'{SERVER_URL}/clients/prometheus/{uuid}/'
     print(f'Loading PROMETHEUS configuration files at {SERVER_PROMETHEUS_CONFIG_URL}')
     try:
-        response = requests.get(SERVER_PROMETHEUS_CONFIG_URL, headers=headers)
-        response.raise_for_status()
+        response = retry_request(SERVER_PROMETHEUS_CONFIG_URL, method='GET')
     except Exception as err:
         raise Exception(f"[{datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S')}]: {err}")
     else:
@@ -56,8 +58,7 @@ def load_config(url=None, uuid=None):
     SERVER_ALERTS_CONFIG_URL = f'{SERVER_URL}/clients/alerts/{uuid}/'
     print(f'Loading ALERTS configuration files at {SERVER_ALERTS_CONFIG_URL}')
     try:
-        response = requests.get(SERVER_ALERTS_CONFIG_URL, headers=headers)
-        response.raise_for_status()
+        response = retry_request(SERVER_ALERTS_CONFIG_URL, method='GET')
     except Exception as err:
         raise Exception(f"[{datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S')}]: {err}")
     else:
@@ -68,12 +69,11 @@ def load_config(url=None, uuid=None):
             file.close()
 
 
-    # Fetch ALERTS configuration files
+    # Fetch ALERTMANAGER configuration files
     SERVER_ALERTMANAGER_CONFIG_URL = f'{SERVER_URL}/clients/alertmanager/{uuid}/'
     print(f'Loading ALERTMANAGER configuration files at {SERVER_ALERTMANAGER_CONFIG_URL}')
     try:
-        response = requests.get(SERVER_ALERTMANAGER_CONFIG_URL, headers=headers)
-        response.raise_for_status()
+        response = retry_request(SERVER_ALERTMANAGER_CONFIG_URL, method='GET')
     except Exception as err:
         raise Exception(f"[{datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S')}]: {err}")
     else:
