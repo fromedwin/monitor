@@ -19,7 +19,9 @@ services:
   #
   # Lighthouse is a tool to check website performances
   lighthouse:
-    build: ../worker/lighthouse
+    build:
+      context: ..
+      dockerfile: ./worker/lighthouse/Dockerfile
     networks:
       - monitoring
     user: root
@@ -28,8 +30,8 @@ services:
       BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
       CHROME_PATH: /usr/lib/chromium/chrome
       SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
-    command: ["./run.sh"]
-
+    working_dir: /app
+    command: ["npm", "start"]
   #
   # Run celery as worker to get tasks from rabbitmq and run them
   #

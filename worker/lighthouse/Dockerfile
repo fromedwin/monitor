@@ -6,17 +6,8 @@ USER root
 WORKDIR /app
 
 # Copy package files with proper permissions
-COPY --chmod=644 package*.json ./
+COPY --chmod=644 worker/lighthouse/package*.json ./
+COPY worker/lighthouse/index.js ./
 
 # Install dependencies
 RUN npm install
-
-# Copy application files
-COPY index.js ./
-COPY run.sh ./
-
-# Make run.sh executable
-RUN chmod +x run.sh
-
-# Set the default command
-CMD ["./run.sh"]
