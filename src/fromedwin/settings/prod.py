@@ -10,6 +10,8 @@ DEBUG = False
 
 # Production security settings
 FORCE_HTTPS = True
+# Trust X-Forwarded-Proto header from reverse proxy (Coolify/Caddy)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = FORCE_HTTPS
 SECURE_REDIRECT_EXEMPT = [r'^health/$']  # Exempt healthcheck from HTTPS redirect
 SECURE_HSTS_SECONDS = 31536000 if FORCE_HTTPS else 0
