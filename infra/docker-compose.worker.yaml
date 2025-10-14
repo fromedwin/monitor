@@ -7,6 +7,7 @@ services:
   # Lighthouse is a tool to check website performances
   lighthouse:
     build: ../worker/lighthouse
+    container_name: null
     user: root
     networks:
       - monitoring
@@ -24,6 +25,7 @@ services:
   #Crawl4Ai
   crawl4ai:
     image: unclecode/crawl4ai:latest
+    container_name: null
     ports:
       - "11235:11235"
     networks:
@@ -40,6 +42,7 @@ services:
     build:
       context: ..
       dockerfile: Dockerfile
+    container_name: null
     depends_on:
       crawl4ai:
         condition: service_started
