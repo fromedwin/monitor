@@ -45,7 +45,7 @@ services:
       - "--storage.path=/alertmanager/data"
     volumes:
       - ../data/alertmanager:/alertmanager
-      - ../worker/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - ../worker/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
   #
   # Run blackbox to fetch metrics from workers and alertmanager to send alerts
   #
