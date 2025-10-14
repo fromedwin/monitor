@@ -20,7 +20,6 @@ services:
   # Lighthouse is a tool to check website performances
   lighthouse:
     build: ../worker/lighthouse
-    user: root
     networks:
       - monitoring
     environment:
