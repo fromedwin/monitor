@@ -1,11 +1,12 @@
 # No version needed in modern Docker Compose
 
-name: fromedwin-workers
+name: fromedwin
 
 services:
   #Crawl4Ai
   crawl4ai:
     image: unclecode/crawl4ai:latest
+    container_name: fromedwin-crawl4ai
     ports:
       - "11235:11235"
     networks:
@@ -22,8 +23,6 @@ services:
     user: root
     networks:
       - monitoring
-    deploy:
-      replicas: ${LIGHTHOUSE_WORKER_REPLICA-1}
     volumes:
       - ../worker:/etc/monitor/worker
     environment:
@@ -36,7 +35,7 @@ services:
   #
   # Run celery as worker to get tasks from rabbitmq and run them
   #
-  celery-worker:
+  worker:
     build:
       context: ..
       dockerfile: Dockerfile
@@ -55,8 +54,6 @@ services:
       CELERYD_CONCURRENCY: 4 # Only run one worker at a time
       INFLUXDB_URL: ${INFLUXDB_URL-http://influxdb:8086} # access parent container
       INFLUXDB_TOKEN: ${INFLUXDB_TOKEN-}
-    deploy:
-      replicas: ${CELERY_WORKER_REPLICA-3}
     working_dir: /app/src
     volumes:
       - ../src:/app/src
