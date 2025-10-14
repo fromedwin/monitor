@@ -45,8 +45,6 @@ services:
         condition: service_started
     networks:
       - monitoring
-    links:
-      - crawl4ai
     environment:
       CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:adminadmin@rabbitmq}
       SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
