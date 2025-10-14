@@ -36,7 +36,7 @@ services:
   #
   # Run celery as worker to get tasks from rabbitmq and run them
   #
-  worker:
+  celery-worker:
     build:
       context: ..
       dockerfile: Dockerfile

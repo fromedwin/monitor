@@ -87,7 +87,7 @@ services:
       django:
         condition: service_healthy
 
-  worker:
+  celery-worker:
     depends_on:
       django:
         condition: service_healthy
