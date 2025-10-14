@@ -22,6 +22,7 @@ services:
     build: ../worker/lighthouse
     networks:
       - monitoring
+    user: root
     environment:
       CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:adminadmin@rabbitmq}
       BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}

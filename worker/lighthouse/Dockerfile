@@ -2,6 +2,7 @@ FROM zenika/alpine-chrome:with-node
 # Using https://github.com/Zenika/alpine-chrome
 
 # Set working directory
+USER root
 WORKDIR /app
 
 # Copy package files with proper permissions
