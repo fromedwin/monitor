@@ -24,7 +24,7 @@ services:
     volumes:
       - ../data/prometheus:/prometheus
       - ../worker/prometheus/alerts:/etc/prometheus/alerts
-      - ../worker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../worker/prometheus:/etc/prometheus
     links:
       - blackbox
 
