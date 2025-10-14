@@ -210,6 +210,11 @@ LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/login/'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
+# Social account settings
+SOCIALACCOUNT_AUTO_SIGNUP = True  # Auto-create user account without signup form
+SOCIALACCOUNT_EMAIL_REQUIRED = False  # Don't require email from provider
+SOCIALACCOUNT_QUERY_EMAIL = True  # Try to get email from provider if available
+
 # Email settings
 CONTACT_NAME = os.environ.get('CONTACT_NAME', 'FromEdwin')
 CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL', 'no-reply@core.com')
