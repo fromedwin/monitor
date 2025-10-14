@@ -38,16 +38,25 @@ services:
         condition: service_healthy
       scheduler:
         condition: service_started
+    volumes:
+      - ../data/prometheus:/prometheus
+      - ../worker/prometheus/alerts:/etc/prometheus/alerts
+      - ../worker/prometheus:/etc/prometheus
 
   alertmanager:
     depends_on:
       django:
         condition: service_healthy
+    volumes:
+      - ../data/alertmanager:/alertmanager
+      - ../worker/alertmanager:/etc/alertmanager
 
   blackbox:
     depends_on:
       django:
         condition: service_healthy
+    volumes:
+      - ../worker/blackbox/blackbox.yml:/etc/prometheus/blackbox.yml:ro
 
   telegraf:
     depends_on:
@@ -60,6 +69,10 @@ services:
     depends_on:
       django:
         condition: service_healthy
+    volumes:
+      - ../worker:/etc/fromedwin_heartbeats/worker
+      - ../worker/prometheus:/etc/fromedwin_heartbeats/worker/prometheus
+      - ../worker/alertmanager:/etc/fromedwin_heartbeats/worker/alertmanager
 
   # Worker services (docker-compose.worker.yaml)
   lighthouse:

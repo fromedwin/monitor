@@ -7,7 +7,9 @@ services:
   # Run prometheus to fetch metrics from workers and alertmanager to send alerts
   #
   prometheus:
-    image: prom/prometheus:v2.54.1
+    build:
+      context: ..
+      dockerfile: worker/prometheus/Dockerfile
     container_name: fromedwin-prometheus
     ports:
       - "9090:9090"
@@ -22,9 +24,7 @@ services:
       - "--storage.tsdb.path=/prometheus/data"
       - "--web.enable-lifecycle" # Enable /-/reload entrypoint
     volumes:
-      - ../data/prometheus:/prometheus
-      - ../worker/prometheus/alerts:/etc/prometheus/alerts
-      - ../worker/prometheus:/etc/prometheus
+      - prometheus_config:/etc/prometheus
     links:
       - blackbox
 
@@ -32,7 +32,9 @@ services:
   # Run alertmanager to send alerts
   #
   alertmanager:
-    image: quay.io/prometheus/alertmanager:v0.27.0
+    build:
+      context: ..
+      dockerfile: worker/alertmanager/Dockerfile
     container_name: fromedwin-alertmanager
     networks:
       - monitoring
@@ -44,13 +46,14 @@ services:
       - "--config.file=/etc/alertmanager/alertmanager.yml"
       - "--storage.path=/alertmanager/data"
     volumes:
-      - ../data/alertmanager:/alertmanager
-      - ../worker/alertmanager:/etc/alertmanager
+      - alertmanager_config:/etc/alertmanager
   #
   # Run blackbox to fetch metrics from workers and alertmanager to send alerts
   #
   blackbox:
-    image: prom/blackbox-exporter:v0.25.0
+    build:
+      context: ..
+      dockerfile: worker/blackbox/Dockerfile
     container_name: fromedwin-blackbox
     networks:
       - monitoring
@@ -61,8 +64,6 @@ services:
     command:
       - "--config.file=/etc/prometheus/blackbox.yml"
     # user: "65534"
-    volumes:
-      - ../worker/blackbox/blackbox.yml:/etc/prometheus/blackbox.yml:ro
 
   #
   # Telegraf read prometheus metrics and store them in InfluxDB
@@ -91,14 +92,18 @@ services:
     container_name: fromedwin-heartbeats
     networks:
       - monitoring
-    volumes:
-      - ../worker:/etc/fromedwin_heartbeats/worker
-      - ../worker/heartbeats/requirements.txt:/etc/fromedwin_heartbeats/worker/heartbeats/requirements.txt:ro
     environment:
       BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
       SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
     command:
       ["python3", "/etc/fromedwin_heartbeats/worker/heartbeats/heartbeats.py"]
+    volumes:
+      - prometheus_config:/etc/fromedwin_heartbeats/worker/prometheus
+      - alertmanager_config:/etc/fromedwin_heartbeats/worker/alertmanager
+
+volumes:
+  prometheus_config:
+  alertmanager_config:
 
 networks:
   monitoring:
