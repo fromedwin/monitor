@@ -3,10 +3,25 @@ import requests
 import json
 from dotenv import load_dotenv
 import datetime
+import time
 
 headers = {
     'User-Agent': 'FromEdwinBot Python load_config',
 }
+
+def retry_request(url, max_retries=3, base_delay=1):
+    """Retry a request with exponential backoff"""
+    for attempt in range(max_retries):
+        try:
+            response = requests.post(url, headers=headers, timeout=10)
+            response.raise_for_status()
+            return response
+        except Exception as err:
+            if attempt == max_retries - 1:
+                raise err
+            delay = base_delay * (2 ** attempt)
+            print(f'Request failed (attempt {attempt + 1}/{max_retries}): {err}. Retrying in {delay}s...')
+            time.sleep(delay)
 
 # Fetch Prometheur, alertmanager, and alert rules from server_url
 def load_config(url=None, uuid=None):
@@ -71,13 +86,15 @@ def load_config(url=None, uuid=None):
     # When all config files are locally stored, 
     # script notify prometheus and alertmanager to reload.
     try:
-        response = requests.post('http://fromedwin-prometheus:9090/-/reload', headers=headers)
-        response.raise_for_status()
+        print('Reloading Prometheus configuration...')
+        retry_request('http://prometheus:9090/-/reload')
+        print('✅ Prometheus configuration reloaded successfully')
     except Exception as err:
-        print(f'Prometheus reload failed: {err}')
+        print(f'❌ Prometheus reload failed after retries: {err}')
 
     try:
-        response = requests.post('http://fromedwin-alertmanager:9093/-/reload', headers=headers)
-        response.raise_for_status()
+        print('Reloading Alertmanager configuration...')
+        retry_request('http://alertmanager:9093/-/reload')
+        print('✅ Alertmanager configuration reloaded successfully')
     except Exception as err:
-        print(f'Alertmanager reload failed: {err}')
+        print(f'❌ Alertmanager reload failed after retries: {err}')
