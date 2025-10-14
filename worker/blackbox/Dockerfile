@@ -2,4 +2,4 @@
 FROM prom/blackbox-exporter:v0.25.0
 
 # Copy configuration file into the container
-COPY ./worker/blackbox/blackbox.yml /etc/prometheus/blackbox.yml
+COPY ./worker/blackbox/blackbox.template.yml /etc/prometheus/blackbox.yml

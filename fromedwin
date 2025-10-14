@@ -6,6 +6,7 @@
 #   ./fromedwin start  - Start all Docker services
 #   ./fromedwin stop   - Stop all Docker services
 #   ./fromedwin status - Show status of all Docker services
+#   ./fromedwin build  - Rebuild all Docker images
 #   ./fromedwin        - Start all Docker services (default)
 #
 # This script can be called from any directory and will automatically
@@ -101,6 +102,23 @@ show_status() {
     cd "$PROJECT_ROOT" && docker compose $ENV_FILE $COMPOSE_FILES $LOCAL_OVERRIDE_FILE ps
 }
 
+# Function to rebuild Docker images
+build_images() {
+    # Validate Docker is available
+    validate_docker
+    
+    echo "Rebuilding Docker images from project root: $PROJECT_ROOT"
+    cd "$PROJECT_ROOT" && docker compose $ENV_FILE $COMPOSE_FILES $LOCAL_OVERRIDE_FILE build --no-cache
+    
+    if [ $? -eq 0 ]; then
+        echo "Docker images rebuilt successfully!"
+        echo "Use './fromedwin start' to start services with the new images"
+    else
+        echo "Failed to rebuild Docker images"
+        exit 1
+    fi
+}
+
 # Function to create a basic .env file
 create_env_file() {
     # Generate a secure SECRET_KEY for Django
@@ -123,11 +141,15 @@ case "${1:-start}" in
     status)
         show_status
         ;;
+    build)
+        build_images
+        ;;
     *)
-        echo "Usage: $0 {start|stop|status}"
+        echo "Usage: $0 {start|stop|status|build}"
         echo "  start  - Start all Docker services (default)"
         echo "  stop   - Stop all Docker services"
         echo "  status - Show status of all Docker services"
+        echo "  build  - Rebuild all Docker images"
         echo ""
         echo "This script can be called from any directory and will automatically"
         echo "find the project root directory and use the correct paths."
