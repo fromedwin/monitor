@@ -44,7 +44,7 @@ def load_config(url=None, uuid=None):
     SERVER_PROMETHEUS_CONFIG_URL = f'{SERVER_URL}/clients/prometheus/{uuid}/'
     print(f'Loading PROMETHEUS configuration files at {SERVER_PROMETHEUS_CONFIG_URL}')
     try:
-        response = retry_request(SERVER_PROMETHEUS_CONFIG_URL, method='GET')
+        response = retry_request(SERVER_PROMETHEUS_CONFIG_URL, method='GET', base_delay=10)
     except Exception as err:
         raise Exception(f"[{datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S')}]: {err}")
     else:
@@ -58,7 +58,7 @@ def load_config(url=None, uuid=None):
     SERVER_ALERTS_CONFIG_URL = f'{SERVER_URL}/clients/alerts/{uuid}/'
     print(f'Loading ALERTS configuration files at {SERVER_ALERTS_CONFIG_URL}')
     try:
-        response = retry_request(SERVER_ALERTS_CONFIG_URL, method='GET')
+        response = retry_request(SERVER_ALERTS_CONFIG_URL, method='GET', base_delay=10)
     except Exception as err:
         raise Exception(f"[{datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S')}]: {err}")
     else:
@@ -73,7 +73,7 @@ def load_config(url=None, uuid=None):
     SERVER_ALERTMANAGER_CONFIG_URL = f'{SERVER_URL}/clients/alertmanager/{uuid}/'
     print(f'Loading ALERTMANAGER configuration files at {SERVER_ALERTMANAGER_CONFIG_URL}')
     try:
-        response = retry_request(SERVER_ALERTMANAGER_CONFIG_URL, method='GET')
+        response = retry_request(SERVER_ALERTMANAGER_CONFIG_URL, method='GET', base_delay=10)
     except Exception as err:
         raise Exception(f"[{datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S')}]: {err}")
     else:
