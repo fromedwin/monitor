@@ -1,6 +1,6 @@
 # No version needed in modern Docker Compose
 
-name: fromedwin
+name: fromedwin-workers
 
 services:
   #Crawl4Ai
