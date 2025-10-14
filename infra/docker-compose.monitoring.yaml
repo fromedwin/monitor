@@ -80,6 +80,7 @@ services:
       - INFLUXDB_BUCKET=fromedwin
       - INFLUXDB_ORG=fromedwin
       - TELEGRAF_INTERVAL=${TELEGRAF_INTERVAL-15s}
+      - CELERY_BROKER_UI_URL=${CELERY_BROKER_UI_URL-http://rabbitmq:15692}
     ports:
       - "9273:9273" # Expose Telegraf Prometheus plugin metrics
 
