@@ -7,6 +7,9 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
+# Fix permissions for npm to work properly
+RUN chown -R node:node /app && chmod -R 755 /app
+
 # Install dependencies
 RUN npm install
 
