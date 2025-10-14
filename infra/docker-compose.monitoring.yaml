@@ -73,7 +73,7 @@ services:
   telegraf:
     build:
       context: ..
-      dockerfile: worker/telegraf/Dockerfile
+      dockerfile: services/telegraf/Dockerfile
     container_name: fromedwin-telegraf
     networks:
       - monitoring
