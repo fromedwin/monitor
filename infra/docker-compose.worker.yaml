@@ -3,6 +3,18 @@
 name: fromedwin
 
 services:
+  #Crawl4Ai
+  crawl4ai:
+    image: unclecode/crawl4ai:latest
+    ports:
+      - "11235:11235"
+    networks:
+      - monitoring
+    volumes:
+      - ../worker/crawl4ai/config.yml:/etc/crawl4ai/config.yml:ro
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+
   #
   # Lighthouse is a tool to check website performances
   lighthouse:
@@ -20,18 +32,6 @@ services:
       CHROME_PATH: /usr/lib/chromium/chrome
       SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
     command: ["sh", "/etc/monitor/worker/lighthouse/run.sh"]
-
-  #Crawl4Ai
-  crawl4ai:
-    image: unclecode/crawl4ai:latest
-    ports:
-      - "11235:11235"
-    networks:
-      - monitoring
-    volumes:
-      - ../worker/crawl4ai/config.yml:/etc/crawl4ai/config.yml:ro
-    environment:
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
 
   #
   # Run celery as worker to get tasks from rabbitmq and run them
