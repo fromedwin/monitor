@@ -2,15 +2,6 @@
 
 name: fromedwin
 
-# Env var needed:
-# CELERY_BROKER_URL
-# BACKEND_URL
-# SECRET_KEY
-# INFLUXDB_URL
-# INFLUXDB_TOKEN
-# LIGHTHOUSE_WORKER_REPLICA
-# CELERY_WORKER_REPLICA
-
 services:
   #
   # Lighthouse is a tool to check website performances
@@ -29,23 +20,6 @@ services:
       CHROME_PATH: /usr/lib/chromium/chrome
       SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
     command: ["sh", "/etc/monitor/worker/lighthouse/run.sh"]
-
-  #
-  # Get Prometheus metrics from worker and store them in InfluxDB
-  #
-  worker-telegraf:
-    image: telegraf:latest
-    container_name: fromedwin-worker-telegraf
-    networks:
-      - monitoring
-    environment:
-      - INFLUXDB_URL=http://influxdb:8086
-      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
-      - INFLUXDB_BUCKET=fromedwin
-      - INFLUXDB_ORG=fromedwin
-      - TELEGRAF_INTERVAL=${TELEGRAF_INTERVAL-15s}
-    volumes:
-      - ../worker/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
 
   #Crawl4Ai
   crawl4ai:
