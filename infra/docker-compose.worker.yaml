@@ -23,14 +23,12 @@ services:
     user: root
     networks:
       - monitoring
-    volumes:
-      - ../worker:/etc/monitor/worker
     environment:
       CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:adminadmin@rabbitmq}
       BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
       CHROME_PATH: /usr/lib/chromium/chrome
       SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
-    command: ["sh", "/etc/monitor/worker/lighthouse/run.sh"]
+    command: ["./run.sh"]
 
   #
   # Run celery as worker to get tasks from rabbitmq and run them
@@ -55,9 +53,6 @@ services:
       INFLUXDB_URL: ${INFLUXDB_URL-http://influxdb:8086} # access parent container
       INFLUXDB_TOKEN: ${INFLUXDB_TOKEN-}
     working_dir: /app/src
-    volumes:
-      - ../src:/app/src
-      - ../data:/app/data
     command: ["python", "/app/worker/celery/start_celery_worker.py"]
 
 networks:

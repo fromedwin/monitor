@@ -81,13 +81,17 @@ services:
         condition: service_healthy
       prometheus:
         condition: service_started
+    deploy:
+      replicas: ${LIGHTHOUSE_WORKER_REPLICA-1}
+    volumes:
+      - ../worker:/etc/monitor/worker
 
   crawl4ai:
     depends_on:
       django:
         condition: service_healthy
 
-  celery-worker:
+  worker:
     depends_on:
       django:
         condition: service_healthy
@@ -95,3 +99,8 @@ services:
         condition: service_started
       crawl4ai:
         condition: service_started
+    deploy:
+      replicas: ${CELERY_WORKER_REPLICA-3}
+    volumes:
+      - ../src:/app/src
+      - ../data:/app/data
