@@ -29,6 +29,8 @@ services:
       - "11235:11235"
     networks:
       - monitoring
+    deploy:
+      replicas: 1
     volumes:
       - ../worker/crawl4ai/config.yml:/etc/crawl4ai/config.yml:ro
     environment:
