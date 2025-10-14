@@ -27,6 +27,12 @@ services:
       - prometheus_config:/etc/prometheus
     links:
       - blackbox
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9090/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
   #
   # Run alertmanager to send alerts
@@ -36,6 +42,8 @@ services:
       context: ..
       dockerfile: worker/alertmanager/Dockerfile
     container_name: fromedwin-alertmanager
+    ports:
+      - "9093:9093"
     networks:
       - monitoring
     labels:
@@ -47,6 +55,12 @@ services:
       - "--storage.path=/alertmanager/data"
     volumes:
       - alertmanager_config:/etc/alertmanager
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9093/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
   #
   # Run blackbox to fetch metrics from workers and alertmanager to send alerts
   #
@@ -92,6 +106,11 @@ services:
     container_name: fromedwin-heartbeats
     networks:
       - monitoring
+    depends_on:
+      prometheus:
+        condition: service_healthy
+      alertmanager:
+        condition: service_healthy
     environment:
       BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
       SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
