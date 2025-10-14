@@ -73,7 +73,7 @@ services:
     networks:
       - monitoring
     environment:
-      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_URL=${INFLUXDB_URL-http://influxdb:8086}
       - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
       - INFLUXDB_BUCKET=fromedwin
       - INFLUXDB_ORG=fromedwin
