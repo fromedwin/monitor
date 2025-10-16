@@ -1,41 +1,72 @@
-# Crawl4AI configuration file
+# Crawl4AI configuration file - Memory Optimized
 
 # Logging configuration
 logging:
-  level: INFO
+  level: WARNING  # Reduced from INFO to WARNING to minimize log overhead
   file: /var/log/crawl4ai/crawl4ai.log
 
-# Crawler settings
+# Crawler settings - Memory optimized
 # crawler:
 #   user_agent: "Crawl4AI/1.0 (+https://github.com/crawl4ai/crawl4ai)"
 #   max_depth: 0
 #   max_pages: 1
 #   obey_robots_txt: true
-#   concurrent_requests: 8
-#   download_delay: 0.5
-#   timeout: 30
-#   retries: 2
+#   concurrent_requests: 2  # Reduced from 8 to 2 to minimize memory usage
+#   download_delay: 1.0     # Increased from 0.5 to 1.0 for better resource management
+#   timeout: 15             # Reduced from 30 to 15 to prevent hanging requests
+#   retries: 1              # Reduced from 2 to 1 to minimize resource usage
+crawler:
+  restart_browser_every: 100
+  persist_session: false
+  close_context_after_each: true
+  gc_every_n_pages: 50
 
-# Storage settings
-# storage:
-#   type: filesystem
-#   path: /data/crawl4ai
+extractors:
+  - type: text
+
+embedding:
+  enabled: false
+
+# Browser settings - Memory optimized
+browser:
+  headless: true
+  text_mode: true         # Enable text mode to reduce memory usage
+  disable_images: true    # Disable image loading to save memory
+  disable_css: true       # Disable CSS loading to save memory
+  disable_javascript: true # Disable JavaScript to save memory
+  memory_limit: 256       # Set memory limit in MB
+
+# Storage settings - Disk-based for memory optimization
+storage:
+  type: disk              # Changed from memory to disk to reduce RAM usage
+  cache_enabled: true     # Enable disk-based caching
+  cleanup_after_use: true
+  max_cache_size: 100     # Limit cache size in MB
 
 # Output settings
-# output:
-#   format: jsonl
-#   path: /data/crawl4ai/output
+output:
+  format: jsonl
+  path: /data/crawl4ai/output
+  compress: true          # Enable compression to reduce storage
 
 # Seeds (example, override with your own)
 # seeds:
 #   - https://example.com
 
-# Plugins (enable/disable features)
+# Plugins (enable/disable features) - All disabled for memory optimization
 plugins:
-  screenshot: true
-  javascript_rendering: true
+  screenshot: false
+  javascript_rendering: false  # Disabled to save memory
   sitemap_discovery: false
   pdf_capture: false
+  link_extraction: false       # Disable if not needed
+  content_extraction: true     # Keep only essential content extraction
+
+# Memory management settings
+memory:
+  max_memory_usage: 512        # Set maximum memory usage in MB
+  gc_interval: 10              # Garbage collection interval in seconds
+  cleanup_interval: 30         # Cleanup interval in seconds
 
 # API server (optional)
 # api:

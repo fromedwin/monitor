@@ -27,6 +27,9 @@ services:
       EMAIL_HOST_USER: ${EMAIL_HOST_USER-}
       EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD-}
       EMAIL_USE_TLS: ${EMAIL_USE_TLS-}
+      INFLUXDB_UI_URL: ${INFLUXDB_UI_URL-http://localhost:8086}
+      CELERY_BROKER_UI_URL: ${CELERY_BROKER_UI_URL-http://localhost:15672}
+      PROMETHEUS_UI_URL: ${PROMETHEUS_UI_URL-http://localhost:9090}
     working_dir: /app/src
     command:
       [
