@@ -60,7 +60,7 @@ def create_report(project_id, source='unknown'):
                 "http_status": page.http_status,
                 "title": page.title or None,
                 "description": page.description or None,
-                "redirected_url": page.outbound_links.first().to_page.url if page.http_status == 301 else None,
+                "redirected_url": page.outbound_links.first().to_page.url if page.http_status == 301 and page.outbound_links.exists() else None,
                 "lighthouse_report": (
                     {
                         "id": lh.id,

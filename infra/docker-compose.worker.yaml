@@ -26,6 +26,7 @@ services:
       dockerfile: ./worker/lighthouse/Dockerfile
     networks:
       - monitoring
+    restart: unless-stopped
     user: root
     environment:
       CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:adminadmin@rabbitmq}
@@ -46,6 +47,7 @@ services:
         condition: service_started
     networks:
       - monitoring
+    restart: unless-stopped
     environment:
       CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:adminadmin@rabbitmq}
       SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
