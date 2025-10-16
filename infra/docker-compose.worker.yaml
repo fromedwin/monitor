@@ -7,6 +7,8 @@ services:
   crawl4ai:
     image: unclecode/crawl4ai:latest
     container_name: fromedwin-crawl4ai
+    mem_limit: 4g
+    restart: unless-stopped
     ports:
       - "11235:11235"
     networks:
