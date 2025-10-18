@@ -301,19 +301,21 @@ if INFLUXDB_URL_PROMETHEUS.startswith('http://localhost'):
 
 PROMETHEUS_UI_URL = os.getenv('PROMETHEUS_UI_URL', 'http://localhost:9090')
 
-# Generate webhook URL used by alert manager yml file
-ALERTMANAGER_WEBHOOK_URL = ''
-if FORCE_HTTPS:
-    ALERTMANAGER_WEBHOOK_URL += 'https://'
-else:
-    ALERTMANAGER_WEBHOOK_URL += 'http://'
+ALERTMANAGER_WEBHOOK_URL =os.getenv('ALERTMANAGER_WEBHOOK_URL', '')
+if not ALERTMANAGER_WEBHOOK_URL:
+    # Generate webhook URL used by alert manager yml file
+    ALERTMANAGER_WEBHOOK_URL = ''
+    if FORCE_HTTPS:
+        ALERTMANAGER_WEBHOOK_URL += 'https://'
+    else:
+        ALERTMANAGER_WEBHOOK_URL += 'http://'
 
-if DOMAIN == 'localhost' or DOMAIN == None:
-    ALERTMANAGER_WEBHOOK_URL += 'host.docker.internal'
-else:
-    ALERTMANAGER_WEBHOOK_URL += DOMAIN
+    if DOMAIN == 'localhost' or DOMAIN == None:
+        ALERTMANAGER_WEBHOOK_URL += 'host.docker.internal'
+    else:
+        ALERTMANAGER_WEBHOOK_URL += DOMAIN
 
-if PORT and PORT != '80' and PORT != '443':
-    ALERTMANAGER_WEBHOOK_URL += f':{PORT}'
-ALERTMANAGER_WEBHOOK_URL += '/alert/' 
+    if PORT and PORT != '80' and PORT != '443':
+        ALERTMANAGER_WEBHOOK_URL += f':{PORT}'
+    ALERTMANAGER_WEBHOOK_URL += '/alert/' 
 
