@@ -35,6 +35,7 @@ def get_project_stats(project_id, duration=60*60):
         try:
             # Execute the query
             result = query_api.query(org=org, query=flux_query)
+            print(result)
             for table in result:
                 for record in table.records:
                     service_name = record['service']
@@ -64,18 +65,37 @@ def get_project_stats(project_id, duration=60*60):
         try:
             # Execute the query
             result = query_api.query(org=org, query=flux_query)
+            # print(result)
             for table in result:
+                # print(table)
                 for record in table.records:
+                    print(record)
                     service_id = record['service']
                     if service_id not in services:
                         services[service_id] = {}
                     if 'duration_seconds' not in services[service_id]:
                         services[service_id]['duration_seconds'] = []
-                    services[service_id]['duration_seconds'].append([record.get_time().strftime('%Y-%m-%dT%H:%M:%S'), record.get_value()])
+
+
+                    timestamp = record.get_time().strftime('%Y-%m-%dT%H:%M:%S')
+                    # Find existing entry with the same timestamp
+                    index = -1
+                    for i, entry in enumerate(services[service_id]['duration_seconds']):
+                        if entry[0] == timestamp:
+                            index = i
+                            break
+                    
+                    if index == -1:
+                        services[service_id]['duration_seconds'].append([timestamp, record.get_value()])
+                    else:
+                        value = services[service_id]['duration_seconds'][index][1] if services[service_id]['duration_seconds'][index][1] is not None else 0
+                        if value == 0:
+                            services[service_id]['duration_seconds'][index][1] = record.get_value()
+
 
         except Exception as e:
             logging.error(f'Error querying InfluxDB: {e}')
-
+        print(services)
         stats['services'] = services
 
     return stats
