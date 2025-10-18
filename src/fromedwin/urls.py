@@ -55,7 +55,7 @@ urlpatterns = [
     # Login page from allauth with github button
     path('login/', login, name='login'),
     # Webhook to receive alerts
-    path('alert/', webhook, name='alert'),
+    path('alert/<str:secret_key>/', webhook, name='alert'),
     # Display restricted message for user trying to login
     path('restricted/', restricted, name='restricted'),
 

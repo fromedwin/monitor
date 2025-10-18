@@ -317,5 +317,6 @@ if not ALERTMANAGER_WEBHOOK_URL:
 
     if PORT and PORT != '80' and PORT != '443':
         ALERTMANAGER_WEBHOOK_URL += f':{PORT}'
-    ALERTMANAGER_WEBHOOK_URL += '/alert/' 
+
+ALERTMANAGER_WEBHOOK_URL += f'/alert/{SECRET_KEY}/' 
 
