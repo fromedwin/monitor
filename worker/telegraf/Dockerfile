@@ -1,7 +1,0 @@
-FROM telegraf:latest
-
-# Copy telegraf configuration
-COPY worker/telegraf/telegraf.conf /etc/telegraf/telegraf.conf
-
-# The configuration will be baked into the image
-
