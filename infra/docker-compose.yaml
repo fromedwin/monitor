@@ -71,20 +71,21 @@ services:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID-}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY-}
       AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME-}
+      ALERTMANAGER_UI_URL: ${ALERTMANAGER_UI_URL-http://localhost:9093}
       ALERTMANAGER_WEBHOOK_URL: ${ALERTMANAGER_WEBHOOK_URL-}
       CONTACT_EMAIL: ${CONTACT_EMAIL-}
-      CELERY_BROKER_UI_URL: ${CELERY_BROKER_UI_URL-}
+      CELERY_BROKER_UI_URL: ${CELERY_BROKER_UI_URL-http://localhost:15672}
       CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:adminadmin@rabbitmq}
       INFLUXDB_URL: ${INFLUXDB_URL-http://influxdb:8086} # access parent container
       INFLUXDB_TOKEN: ${INFLUXDB_TOKEN-}
-      INFLUXDB_UI_URL: ${INFLUXDB_UI_URL-}
+      INFLUXDB_UI_URL: ${INFLUXDB_UI_URL-http://localhost:8086}
       DJANGO_SETTINGS_MODULE: "fromedwin.settings.prod"
       EMAIL_HOST: ${EMAIL_HOST-}
       EMAIL_PORT: ${EMAIL_PORT-}
       EMAIL_HOST_USER: ${EMAIL_HOST_USER-}
       EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD-}
       EMAIL_USE_TLS: ${EMAIL_USE_TLS-}
-      PROMETHEUS_UI_URL: ${PROMETHEUS_UI_URL-}
+      PROMETHEUS_UI_URL: ${PROMETHEUS_UI_URL-http://localhost:9090}
     entrypoint: ["/app/src/entrypoint.sh"]
     working_dir: /app/src
     healthcheck:
