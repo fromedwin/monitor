@@ -69,7 +69,6 @@ def get_project_stats(project_id, duration=60*60):
             for table in result:
                 # print(table)
                 for record in table.records:
-                    print(record)
                     service_id = record['service']
                     if service_id not in services:
                         services[service_id] = {}
@@ -95,7 +94,7 @@ def get_project_stats(project_id, duration=60*60):
 
         except Exception as e:
             logging.error(f'Error querying InfluxDB: {e}')
-        print(services)
+
         stats['services'] = services
 
     return stats
