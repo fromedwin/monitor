@@ -52,7 +52,7 @@ services:
       CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:adminadmin@rabbitmq}
       SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
       BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
-      DJANGO_SETTINGS_MODULE: "fromedwin.settings.dev"
+      DJANGO_SETTINGS_MODULE: "fromedwin.settings.prod"
       DATABASE_URL: ${DATABASE_URL-postgresql://admin:adminadmin@host.docker.internal:5432/fromedwin}
       CRAWL4AI_URL: http://crawl4ai:11235
       CELERYD_CONCURRENCY: ${CELERYD_CONCURRENCY-1} # Only run one worker at a time

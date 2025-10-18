@@ -18,18 +18,18 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'queue_deprecated_favicons': {
         'task': 'favicons.tasks.queue_deprecated_favicons',
-        'schedule': settings.TIMINGS['BEAT_SCHEDULE_INTERVAL_SECONDS'],  # Run every 60 seconds
+        'schedule': settings.TIMINGS['BEAT_SCHEDULE_INTERVAL_SECONDS'],
     },
     'queue_deprecated_sitemaps': {
         'task': 'projects.tasks.queue_deprecated_sitemaps.queue_deprecated_sitemaps',
-        'schedule': settings.TIMINGS['BEAT_SCHEDULE_INTERVAL_SECONDS'],  # Run every 60 seconds
+        'schedule': settings.TIMINGS['BEAT_SCHEDULE_INTERVAL_SECONDS'],
     },
     'queue_deprecated_performance': {
         'task': 'lighthouse.tasks.queue_deprecated_performance.queue_deprecated_performance',
-        'schedule': settings.TIMINGS['BEAT_SCHEDULE_INTERVAL_SECONDS'],  # Run every 60 seconds
+        'schedule': settings.TIMINGS['BEAT_SCHEDULE_INTERVAL_SECONDS'],
     },
     'queue_report_creation': {
         'task': 'reports.tasks.queue_report_creation.queue_report_creation',
-        'schedule': settings.TIMINGS['BEAT_SCHEDULE_INTERVAL_SECONDS'],  # Run every 60 seconds
+        'schedule': settings.TIMINGS['BEAT_SCHEDULE_INTERVAL_SECONDS'],
     },
 }

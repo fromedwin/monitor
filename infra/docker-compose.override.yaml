@@ -101,6 +101,8 @@ services:
         condition: service_started
     deploy:
       replicas: ${CELERY_WORKER_REPLICA-3}
+    environment:
+      DJANGO_SETTINGS_MODULE: "fromedwin.settings.dev"
     volumes:
       - ../src:/app/src
       - ../data:/app/data
