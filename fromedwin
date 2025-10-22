@@ -1,0 +1,158 @@
+#!/bin/bash
+
+
+# Docker services management script
+# Usage:
+#   ./fromedwin start  - Start all Docker services
+#   ./fromedwin stop   - Stop all Docker services
+#   ./fromedwin status - Show status of all Docker services
+#   ./fromedwin build  - Rebuild all Docker images
+#   ./fromedwin        - Start all Docker services (default)
+#
+# This script can be called from any directory and will automatically
+# find the project root directory and use the correct paths.
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Find the project root directory (where the script is located)
+PROJECT_ROOT="$SCRIPT_DIR"
+
+# Docker Compose files configuration (using absolute paths)
+COMPOSE_FILES="-f $PROJECT_ROOT/infra/docker-compose.db.yaml -f $PROJECT_ROOT/infra/docker-compose.yaml -f $PROJECT_ROOT/infra/docker-compose.monitoring.yaml -f $PROJECT_ROOT/infra/docker-compose.worker.yaml"
+
+# Local development override file (only used when running locally)
+LOCAL_OVERRIDE_FILE="-f $PROJECT_ROOT/infra/docker-compose.override.yaml"
+
+# Environment file configuration
+ENV_FILE="--env-file $PROJECT_ROOT/.env"
+
+show_ascii_art() {
+    # ASCII Art for FROMEDWIN
+    echo "███████╗██████╗  ██████╗ ███╗   ███╗███████╗██████╗ ██╗    ██╗██╗███╗   ██╗"
+    echo "██╔════╝██╔══██╗██╔═══██╗████╗ ████║██╔════╝██╔══██╗██║    ██║██║████╗  ██║"
+    echo "█████╗  ██████╔╝██║   ██║██╔████╔██║█████╗  ██║  ██║██║ █╗ ██║██║██╔██╗ ██║"
+    echo "██╔══╝  ██╔══██╗██║   ██║██║╚██╔╝██║██╔══╝  ██║  ██║██║███╗██║██║██║╚██╗██║"
+    echo "██║     ██║  ██║╚██████╔╝██║ ╚═╝ ██║███████╗██████╔╝╚███╔███╔╝██║██║ ╚████║"
+    echo "╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═════╝  ╚══╝╚══╝ ╚═╝╚═╝  ╚═══╝"
+    echo ""
+}
+
+# Function to validate Docker and Docker Compose availability
+validate_docker() {
+    if ! command -v docker &> /dev/null; then
+        echo "Error: Docker is not installed or not in PATH"
+        exit 1
+    fi
+    
+    if ! docker compose version &> /dev/null; then
+        echo "Error: Docker Compose is not available"
+        exit 1
+    fi
+}
+
+# Function to start services
+start_services() {
+    show_ascii_art
+    # Validate Docker is available
+    validate_docker
+    
+    # Check if .env file exists
+    if [ ! -f "$PROJECT_ROOT/.env" ]; then
+        echo "Warning: .env file not found in project root directory."
+        echo "Creating a basic .env file with default values..."
+        create_env_file
+    fi
+    
+    echo "Starting Docker services from project root: $PROJECT_ROOT"
+    cd "$PROJECT_ROOT" && docker compose $ENV_FILE $COMPOSE_FILES $LOCAL_OVERRIDE_FILE up -d
+    
+    if [ $? -eq 0 ]; then
+        echo "Docker services started successfully!"
+        echo "Use './fromedwin status' to check service status"
+        echo "Use 'docker compose logs -f' to view logs"
+    else
+        echo "Failed to start Docker services"
+        exit 1
+    fi
+}
+
+# Function to stop services
+stop_services() {
+    # Validate Docker is available
+    validate_docker
+    
+    echo "Stopping Docker services from project root: $PROJECT_ROOT"
+    cd "$PROJECT_ROOT" && docker compose $ENV_FILE $COMPOSE_FILES $LOCAL_OVERRIDE_FILE down
+    
+    if [ $? -eq 0 ]; then
+        echo "Docker services stopped successfully!"
+    else
+        echo "Failed to stop Docker services"
+        exit 1
+    fi
+}
+
+# Function to show service status
+show_status() {
+    # Validate Docker is available
+    validate_docker
+    
+    echo "Docker services status from project root: $PROJECT_ROOT"
+    cd "$PROJECT_ROOT" && docker compose $ENV_FILE $COMPOSE_FILES $LOCAL_OVERRIDE_FILE ps
+}
+
+# Function to rebuild Docker images
+build_images() {
+    # Validate Docker is available
+    validate_docker
+    
+    echo "Rebuilding Docker images from project root: $PROJECT_ROOT"
+    cd "$PROJECT_ROOT" && docker compose $ENV_FILE $COMPOSE_FILES $LOCAL_OVERRIDE_FILE build --no-cache
+    
+    if [ $? -eq 0 ]; then
+        echo "Docker images rebuilt successfully!"
+        echo "Use './fromedwin start' to start services with the new images"
+    else
+        echo "Failed to rebuild Docker images"
+        exit 1
+    fi
+}
+
+# Function to create a basic .env file
+create_env_file() {
+    # Generate a secure SECRET_KEY for Django
+    SECRET_KEY=$(tr -dc 'a-z0-9!@#$%^&*(-_=+)' < /dev/urandom | head -c50)
+    
+    cat > "$PROJECT_ROOT/.env" << EOF
+SECRET_KEY=$SECRET_KEY
+EOF
+    echo "Created .env file with default values and generated SECRET_KEY. Please review and customize as needed."
+}
+
+# Parse command line arguments
+case "${1:-start}" in
+    start)
+        start_services
+        ;;
+    stop)
+        stop_services
+        ;;
+    status)
+        show_status
+        ;;
+    build)
+        build_images
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|status|build}"
+        echo "  start  - Start all Docker services (default)"
+        echo "  stop   - Stop all Docker services"
+        echo "  status - Show status of all Docker services"
+        echo "  build  - Rebuild all Docker images"
+        echo ""
+        echo "This script can be called from any directory and will automatically"
+        echo "find the project root directory and use the correct paths."
+        exit 1
+        ;;
+esac

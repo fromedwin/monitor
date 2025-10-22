@@ -1,0 +1,106 @@
+# No version needed in modern Docker Compose
+
+name: fromedwin
+
+services:
+  #
+  # Scheduler run django within celery to dispatch scheduled tasks
+  #
+  scheduler:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: fromedwin-scheduler
+    depends_on:
+      django:
+        condition: service_healthy
+    networks:
+      - monitoring
+    environment:
+      SECRET_KEY: ${SECRET_KEY-}
+      DATABASE_URL: ${DATABASE_URL-postgresql://admin:adminadmin@host.docker.internal:5432/fromedwin}
+      CELERY_BEAT_HOSTNAME: fromedwin.scheduler
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:adminadmin@rabbitmq}
+      DJANGO_SETTINGS_MODULE: "fromedwin.settings.prod"
+      EMAIL_HOST: ${EMAIL_HOST-}
+      EMAIL_PORT: ${EMAIL_PORT-}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER-}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD-}
+      EMAIL_USE_TLS: ${EMAIL_USE_TLS-}
+      INFLUXDB_UI_URL: ${INFLUXDB_UI_URL-http://localhost:8086}
+      CELERY_BROKER_UI_URL: ${CELERY_BROKER_UI_URL-http://localhost:15672}
+      PROMETHEUS_UI_URL: ${PROMETHEUS_UI_URL-http://localhost:9090}
+    working_dir: /app/src
+    command:
+      [
+        "celery",
+        "-A",
+        "fromedwin",
+        "beat",
+        "--loglevel=info",
+        "--scheduler",
+        "django_celery_beat.schedulers:DatabaseScheduler",
+      ]
+
+  #
+  # Run django framework, backend front-end API ORM and database
+  #
+  django:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: fromedwin-django
+    ports:
+      - "8000:8000"
+    networks:
+      - monitoring
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      DEBUG: ${DEBUG-0} # Use to authenticate worker queries
+      SAAS: ${SAAS-0}
+      DATABASE_URL: ${DATABASE_URL-postgresql://admin:adminadmin@host.docker.internal:5432/fromedwin}
+      GITHUB_OAUTH_CLIENT_ID: ${GITHUB_OAUTH_CLIENT_ID-a88dc4c15606cc0dd96f}
+      GITHUB_OAUTH_CLIENT_SECRET: ${GITHUB_OAUTH_CLIENT_SECRET-61a117434565f3c755927f8c5e1698f6bd9fad42}
+      DOMAIN: ${DOMAIN-localhost}
+      PORT: ${PORT-8000}
+      STORAGE: ${STORAGE-}
+      STATIC_URL_PREFIX: ${STATIC_URL_PREFIX-}
+      STATIC_FILES_PATH: ${STATIC_FILES_PATH-}
+      AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL-}
+      AWS_S3_CUSTOM_DOMAIN: ${AWS_S3_CUSTOM_DOMAIN-}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY-}
+      AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME-}
+      ALERTMANAGER_UI_URL: ${ALERTMANAGER_UI_URL-http://localhost:9093}
+      ALERTMANAGER_WEBHOOK_URL: ${ALERTMANAGER_WEBHOOK_URL-}
+      CONTACT_EMAIL: ${CONTACT_EMAIL-}
+      CELERY_BROKER_UI_URL: ${CELERY_BROKER_UI_URL-http://localhost:15672}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL-amqp://admin:adminadmin@rabbitmq}
+      INFLUXDB_URL: ${INFLUXDB_URL-http://influxdb:8086} # access parent container
+      INFLUXDB_TOKEN: ${INFLUXDB_TOKEN-}
+      INFLUXDB_UI_URL: ${INFLUXDB_UI_URL-http://localhost:8086}
+      DJANGO_SETTINGS_MODULE: "fromedwin.settings.prod"
+      EMAIL_HOST: ${EMAIL_HOST-}
+      EMAIL_PORT: ${EMAIL_PORT-}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER-}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD-}
+      EMAIL_USE_TLS: ${EMAIL_USE_TLS-}
+      PROMETHEUS_UI_URL: ${PROMETHEUS_UI_URL-http://localhost:9090}
+    entrypoint: ["/app/src/entrypoint.sh"]
+    working_dir: /app/src
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/')",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 180s
+
+networks:
+  monitoring:
+    driver: bridge

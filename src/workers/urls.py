@@ -6,7 +6,7 @@ from workers.views import prometheus, alertmanager, register, heartbeat, alerts
 
 urlpatterns = [
     # Worker register and receive uuid to identify
-    path('register', register),
+    path('register/<str:secret_key>/', register),
     # Worker update it status as online every x minutes
     path('heartbeat/<uuid:id>/', heartbeat),
 

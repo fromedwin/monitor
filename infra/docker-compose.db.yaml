@@ -1,0 +1,105 @@
+# No version needed in modern Docker Compose
+
+name: fromedwin
+
+# Needed env var:
+# DB_DEFAULT_USER
+# DB_DEFAULT_PASS
+
+services:
+  #
+  # RabbitMQ queue messages for celery between worke
+  #
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: fromedwin-rabbitmq
+    privileged: true
+    networks:
+      - monitoring
+    labels:
+      - "coolify.managed=true"
+      - "coolify.type=database"
+      - "coolify.expose=true"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${DB_DEFAULT_USER-admin}
+      RABBITMQ_DEFAULT_PASS: ${DB_DEFAULT_PASS-adminadmin}
+      prometheus.return_per_object_metrics: "true" # Enable per-object metrics
+    ports:
+      - "5672:5672" # RabbitMQ
+      - "15672:15672" # RabbitMQ Management UI
+      - "15692:15692" # Prometheus metrics endpoint (default for rabbitmq_prometheus)
+    volumes:
+      - ../data/rabbitmq:/var/lib/rabbitmq # Optional: persistent data storage
+    command: >
+      sh -c "rabbitmq-plugins enable rabbitmq_prometheus &&
+            rabbitmq-plugins enable rabbitmq_management &&
+            rabbitmq-server"
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+  #
+  # PostgreSQL main database for Django application
+  #
+  postgresql:
+    image: postgres:17-alpine
+    container_name: fromedwin-postgresql
+    networks:
+      - monitoring
+    labels:
+      - "coolify.managed=true"
+      - "coolify.type=database"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB-fromedwin}
+      POSTGRES_USER: ${DB_DEFAULT_USER-admin}
+      POSTGRES_PASSWORD: ${DB_DEFAULT_PASS-adminadmin}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432" # PostgreSQL
+    volumes:
+      - ../data/postgresql:/var/lib/postgresql/data # Persistent data storage
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DB_DEFAULT_USER-fromedwin} -d ${POSTGRES_DB-fromedwin}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+  #
+  # InfluxDB store time serie data from telegraf reading prometeheus metrics
+  #
+  influxdb:
+    image: influxdb:2.7
+    container_name: fromedwin-influxdb
+    networks:
+      - monitoring
+    labels:
+      - "coolify.managed=true"
+      - "coolify.type=database"
+      - "coolify.expose=true"
+    ports:
+      - "8086:8086" # Map InfluxDB port to host
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=${DB_DEFAULT_USER-admin}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${DB_DEFAULT_PASS-adminadmin}
+      - DOCKER_INFLUXDB_INIT_ORG=fromedwin
+      - DOCKER_INFLUXDB_INIT_BUCKET=fromedwin
+      - DOCKER_INFLUXDB_INIT_RETENTION=1w # 1 week retention policy
+    volumes:
+      - ../data/influxdb:/var/lib/influxdb2
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+networks:
+  monitoring:
+    driver: bridge

@@ -1,28 +1,14 @@
-import requests
-import json
-
 from django.conf import settings
 from django.urls import reverse
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.utils import timezone
-from django.utils.dateformat import format
-from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 
-from rest_framework.authtoken.models import Token
-from allauth.socialaccount.models import SocialApp
-
 from .forms import ProjectForm, ProjectCreateForm
 
-from core.decorators import waiting_list_approved_only
+from fromedwin.decorators import waiting_list_approved_only
 from projects.models import Project
-from availability.models import Service, HTTPCodeService, HTTPMockedCodeService
-from workers.models import Server
 from incidents.models import Incident
-
-from performances.models import Performance
 
 @login_required
 @waiting_list_approved_only()
@@ -56,16 +42,38 @@ def project(request, id):
 
 @login_required
 @waiting_list_approved_only()
-def project_performances(request, id):
-    """
-    Show current project status
-    """
-
+def project_graph_tree(request, id):
     project = get_object_or_404(Project, pk=id)
 
-    return render(request, 'projects/performances/performances.html', {
+    return render(request, 'graph/graph_tree.html', {
         'project': project,
     })
+
+@login_required
+@waiting_list_approved_only()
+def project_screenshots(request, id):
+    project = get_object_or_404(Project, pk=id)
+
+    # Get the most recent lighthouse report with screenshot for each page in this project
+    from lighthouse.models import LighthouseReport
+
+    # For each page in the project, get the most recent LighthouseReport with a screenshot
+    from projects.models import Pages
+    pages = Pages.objects.filter(project=project).order_by('url')
+    screenshots = []
+    for page in pages:
+        report = LighthouseReport.objects.filter(
+            page=page,
+            screenshot__isnull=False
+        ).order_by('-creation_date').first()
+        if report:
+            screenshots.append(report)
+
+    return render(request, 'screenshots/screenshots.html', {
+        'project': project,
+        'screenshots': screenshots,
+    })
+    
 
 @login_required
 @waiting_list_approved_only()
@@ -130,24 +138,5 @@ def projects_add(request):
         'form': form,
     })
 
-@login_required
-@waiting_list_approved_only()
-def projects_welcome(request):
-    """
-        Create or edit project model
-    """
 
-    if request.POST:
-
-        form = ProjectCreateForm(request.POST, user=request.user)
-
-        if form.is_valid():
-            project = form.save(user=request.user)
-            return redirect(reverse('project', args=[project.id]))
-    else:
-        form = ProjectCreateForm()
-
-    return render(request, 'projects/project_welcome.html', {
-        'form': form,
-    })
 

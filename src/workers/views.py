@@ -69,23 +69,20 @@ def alertmanager(request, id):
     return HttpResponse(yaml, content_type="text/plain")
 
 @api_view(['GET'])
-def register(request):
+def register(request, secret_key):
     """
     Fetched on start by monitor_client to introduce itself and get credentials
     """
+
+    # Use django settings secret_key to authenticate django worker
+    if secret_key != settings.SECRET_KEY:
+        # return http unauthorized if secret key doesn't match
+        return JsonResponse({}, status=401)
+
     ip = ipaddress.IPv4Address(request.META['REMOTE_ADDR'])
 
-    url = request.GET.get('url')
-
-    server = Server(ip=ip, url=url)
+    server = Server(ip=ip)
     server.save()
-
-    if request.GET.get('username') and request.GET.get('password'):
-        AuthBasic(
-            server=server, 
-            username=request.GET.get('username'), 
-            password=request.GET.get('password')
-        ).save()
 
     return JsonResponse({
         'uuid': server.uuid

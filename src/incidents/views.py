@@ -11,7 +11,7 @@ from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from core.decorators import waiting_list_approved_only
+from fromedwin.decorators import waiting_list_approved_only
 from .models import Incident
 from projects.models import Project
 from availability.models import Service

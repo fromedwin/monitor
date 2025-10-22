@@ -1,0 +1,117 @@
+# No version needed in modern Docker Compose
+
+name: fromedwin
+
+services:
+  #
+  # Run prometheus to fetch metrics from workers and alertmanager to send alerts
+  #
+  prometheus:
+    build:
+      context: ..
+      dockerfile: worker/prometheus/Dockerfile
+    container_name: fromedwin-prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - monitoring
+    labels:
+      - "coolify.managed=true"
+      - "coolify.type=database"
+      - "coolify.expose=true"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus/data"
+      - "--web.enable-lifecycle" # Enable /-/reload entrypoint
+    volumes:
+      - prometheus_config:/etc/prometheus
+    links:
+      - blackbox
+
+  #
+  # Run alertmanager to send alerts
+  #
+  alertmanager:
+    build:
+      context: ..
+      dockerfile: worker/alertmanager/Dockerfile
+    container_name: fromedwin-alertmanager
+    ports:
+      - "9093:9093"
+    networks:
+      - monitoring
+    labels:
+      - "coolify.managed=true"
+      - "coolify.type=database"
+      - "coolify.expose=true"
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+      - "--storage.path=/alertmanager/data"
+    volumes:
+      - alertmanager_config:/etc/alertmanager
+  #
+  # Run blackbox to fetch metrics from workers and alertmanager to send alerts
+  #
+  blackbox:
+    build:
+      context: ..
+      dockerfile: worker/blackbox/Dockerfile
+    container_name: fromedwin-blackbox
+    networks:
+      - monitoring
+    labels:
+      - "coolify.managed=true"
+      - "coolify.type=database"
+      - "coolify.expose=true"
+    command:
+      - "--config.file=/etc/prometheus/blackbox.yml"
+    # user: "65534"
+
+  #
+  # Telegraf read prometheus metrics and store them in InfluxDB
+  #
+  telegraf:
+    build:
+      context: ..
+      dockerfile: services/telegraf/Dockerfile
+    container_name: fromedwin-telegraf
+    networks:
+      - monitoring
+    environment:
+      - INFLUXDB_URL=${INFLUXDB_URL-http://influxdb:8086}
+      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
+      - INFLUXDB_BUCKET=fromedwin
+      - INFLUXDB_ORG=fromedwin
+      - TELEGRAF_INTERVAL=${TELEGRAF_INTERVAL-15s}
+      - CELERY_BROKER_METRICS_URL=${CELERY_BROKER_METRICS_URL-http://rabbitmq:15692}
+    ports:
+      - "9273:9273" # Expose Telegraf Prometheus plugin metrics
+
+  heartbeats:
+    build:
+      context: ..
+      dockerfile: worker/heartbeats/Dockerfile
+    container_name: fromedwin-heartbeats
+    networks:
+      - monitoring
+    depends_on:
+      prometheus:
+        condition: service_started
+      alertmanager:
+        condition: service_started
+    environment:
+      BACKEND_URL: ${BACKEND_URL-http://host.docker.internal:8000}
+      SECRET_KEY: ${SECRET_KEY} # Use to authenticate worker queries
+    command:
+      ["python3", "/etc/fromedwin_heartbeats/worker/heartbeats/heartbeats.py"]
+    volumes:
+      - prometheus_config:/etc/fromedwin_heartbeats/worker/prometheus
+      - alertmanager_config:/etc/fromedwin_heartbeats/worker/alertmanager
+
+volumes:
+  prometheus_config:
+  alertmanager_config:
+
+networks:
+  monitoring:
+    driver: bridge

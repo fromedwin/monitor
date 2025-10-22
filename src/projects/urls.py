@@ -1,11 +1,10 @@
 from django.urls import path
 
-from .views import project, projects_form, projects_delete, projects_add, projects_welcome
+from .views import project, projects_form, projects_delete, projects_add, project_graph_tree, project_screenshots
 from incidents.views import incidents
+from .api import project_pages_tree_json, delete_page, refresh_page_data, project_task_status, refresh_sitemap
 
 urlpatterns = [
-    # Welcome page
-    path('welcome/', projects_welcome, name='projects_welcome'),
     # Add form to create a new project
     path('project/add', projects_add, name='projects_add'),
     # Show project overview
@@ -19,4 +18,25 @@ urlpatterns = [
     # List of all incidents with date filter for a specific day
     path('project/<int:id>/incidents/<int:year>/<int:month>/<int:day>/', incidents, name='incidents_date'),
 
+    # Show project overview
+    path('project/<int:id>/graph/tree/', project_graph_tree, name='project_graph_tree'),
+    # Show project screenshots
+    path('project/<int:id>/screenshots/', project_screenshots, name='project_screenshots'),
 ]
+
+#
+# Add APIs URL
+#
+urlpatterns += [
+    # API endpoint to get project pages tree in JSON format
+    path('api/project/<int:project_id>/pages/tree/', project_pages_tree_json, name='project_pages_tree_json'),
+    # API endpoint to delete a page
+    path('api/page/<int:page_id>/delete/', delete_page, name='delete_page'),
+    # API endpoint to refresh/scrape a page
+    path('api/page/<int:page_id>/refresh/', refresh_page_data, name='refresh_page_data'),
+    # API endpoint to get project task status
+    path('api/project/<int:project_id>/task_status/', project_task_status, name='project_task_status'),
+    # API endpoint to refresh sitemap
+    path('api/project/<int:project_id>/refresh_sitemap/', refresh_sitemap, name='refresh_sitemap'),
+]
+

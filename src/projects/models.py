@@ -1,12 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from datetime import timedelta
+from django.conf import settings
 
-def project_favicon_path(self, filename):
-    return f'{self.directory_path()}/favicons/{filename}'
-
-# List of status for favicon task
-FAVICON_TASK_STATUS = (
+# List of status for tasks
+TASK_STATUS = (
     ('PENDING', 'Pending'),
     ('SUCCESS', 'Success'),
     ('FAILURE', 'Failure'),
@@ -26,10 +25,10 @@ class Project(models.Model):
     url = models.URLField(max_length=512, blank=True, null=True, help_text="Application's URL")
     is_favorite = models.BooleanField('Is favorite', default=False, help_text="Favorite project are highlighted and first shown when possible.")
     enable_public_page = models.BooleanField('Enable public page', default=False, help_text="Will enable the public page to share current project status")
-    # Handle favicon
-    favicon = models.ImageField(upload_to=project_favicon_path, blank=True, null=True, help_text="Application's favicon")
-    favicon_task_status = models.CharField(max_length=16, choices=FAVICON_TASK_STATUS, default='UNKNOWN', help_text="Favicon task status")
-    favicon_last_edited = models.DateTimeField(editable=False, help_text="Last time favicon was edited", default=timezone.now)
+    # Handle sitemaps
+    sitemap_task_status = models.CharField(max_length=16, choices=TASK_STATUS, default='UNKNOWN', help_text="Sitemap task status")
+    sitemap_last_edited = models.DateTimeField(help_text="Last time sitemap was edited", default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def is_offline(self):
         return self.services.filter(
@@ -94,47 +93,116 @@ class Project(models.Model):
         return Incident.objects.filter(service__in=self.services.all()).count()
 
     def performance_score(self):
-        result = {
-            'score_performance': None,
-            'score_accessibility': None,
-            'score_best_practices': None,
-            'score_seo': None,
-            'score_pwa': None,
-        }
-        last_run = None
-        performances = self.performances.all()
+        from lighthouse.models import LighthouseReport
+        from django.db.models import Avg
+        
+        reports = LighthouseReport.objects.filter(page__project=self)
+        if reports.exists():
+            averages = reports.aggregate(
+                avg_performance=Avg('score_performance'),
+                avg_accessibility=Avg('score_accessibility'),
+                avg_best_practices=Avg('score_best_practices'),
+                avg_seo=Avg('score_seo'),
+                avg_pwa=Avg('score_pwa'),
+            )
+            return {
+                'score_performance': averages['avg_performance'],
+                'score_accessibility': averages['avg_accessibility'],
+                'score_best_practices': averages['avg_best_practices'],
+                'score_seo': averages['avg_seo'],
+                'score_pwa': averages['avg_pwa'],
+            }
+        return None
 
-        # If performances are available, we add all p=score for all page then divide by page number
-        if len(performances) > 0:
-            for key in result.keys():
-                if result[key] is None:
-                    result[key] = 0
-
-            try:
-                for performance in performances:
-                    score = performance.last_score()
-                    if performance.reports.last().creation_date:
-                        for key in score.keys():
-                            if score[key]:
-                                result[key] = result[key] + score[key]
-                        if last_run is None or last_run < performance.reports.last().creation_date:
-                            last_run = performance.reports.last().creation_date
-            except:
-                pass
-            for key in score.keys():
-                result[key] = result[key] / len(performances)
-
-        # If no report, we change None to '--' so eschart can display empty diagram
-        for key in result.keys():
-            if result[key] is None:
-                result[key] = '--'
-
-        result['last_run'] = last_run
-        return result
 
     def directory_path(self):
         return f'user_{self.user.pk}/prjct_{self.pk}'
 
     def __str__(self):
         return self.title
+
+
+class Pages(models.Model):
+    """
+    List of all urls identified for a project based on url value
+    """
+    project = models.ForeignKey(
+        Project,
+        on_delete = models.CASCADE,
+        related_name = "pages",
+    )
+    url = models.URLField(max_length=512, blank=False, help_text="URL to monitor")
+    title = models.CharField(max_length=128, blank=True, help_text="Page title")
+    description = models.TextField(blank=True, null=True, help_text="Page description")
+    created_at = models.DateTimeField(auto_now_add=True)
+    http_status = models.IntegerField(help_text="HTTP status of the page", null=True, blank=True)
+    sitemap_last_seen = models.DateTimeField(help_text="Last time sitemap was reported", null=True, blank=True)
+    scraping_last_seen = models.DateTimeField(help_text="Last time scraping was run", null=True, blank=True)
+    lighthouse_last_request = models.DateTimeField(help_text="Last time lighthouse was requested", null=True, blank=True)
+    scraping_task_log = models.ForeignKey(
+        'logs.CeleryTaskLog',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='page',
+        help_text="Celery task log associated with this scraping task report"
+    )
+
+    def next_lighthouse_run(self):
+        """Calculate when the next lighthouse run is scheduled"""
+        if self.lighthouse_last_request:
+            return self.lighthouse_last_request + timedelta(minutes=settings.TIMINGS['LIGHTHOUSE_INTERVAL_HOURS'])
+        return None
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['project', 'url'], name='unique_page_project_url')
+        ]
+
+    def __str__(self):
+        return f"{self.title or self.url}"
+
+
+class PageLink(models.Model):
+    """
+    Represents a link from one page to another page within the same project.
+    This helps track the internal link structure of websites.
+    """
+    from_page = models.ForeignKey(
+        Pages,
+        on_delete=models.CASCADE,
+        related_name="outbound_links",
+        help_text="The page that contains the link"
+    )
+    to_page = models.ForeignKey(
+        Pages,
+        on_delete=models.CASCADE,
+        related_name="inbound_links",
+        help_text="The page that is being linked to"
+    )
+    created_at = models.DateTimeField(auto_now_add=True, help_text="When this link was first discovered")
+    updated_at = models.DateTimeField(auto_now=True, help_text="When this link was last seen")
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['from_page', 'to_page'], name='unique_page_link')
+        ]
+        indexes = [
+            models.Index(fields=['from_page']),
+            models.Index(fields=['to_page']),
+        ]
+
+    def __str__(self):
+        return f"{self.from_page.title or self.from_page.url} → {self.to_page.title or self.to_page.url}"
+
+    def save(self, *args, **kwargs):
+        # Prevent self-linking
+        if self.from_page == self.to_page:
+            raise ValueError("A page cannot link to itself")
+        
+        # Ensure both pages belong to the same project
+        if self.from_page.project != self.to_page.project:
+            raise ValueError("Pages must belong to the same project")
+        
+        super().save(*args, **kwargs)
 

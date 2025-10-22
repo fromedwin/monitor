@@ -1,0 +1,108 @@
+# Local development override for all Docker Compose files
+# This file adds depends_on configurations for proper startup order when running locally
+# Startup order: db → main → monitoring → worker
+name: fromedwin
+
+services:
+  # Main services (docker-compose.yaml)
+  django:
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
+    environment:
+      DJANGO_SETTINGS_MODULE: "fromedwin.settings.dev"
+    volumes:
+      - ../src:/app/src
+      - ../data/django/media:/app/src/fromedwin/media
+
+  scheduler:
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      DJANGO_SETTINGS_MODULE: "fromedwin.settings.dev"
+    volumes:
+      - ../src:/app/src
+      - ../data/django/media:/app/src/fromedwin/media
+
+  # Monitoring services (docker-compose.monitoring.yaml)
+  prometheus:
+    depends_on:
+      django:
+        condition: service_healthy
+      scheduler:
+        condition: service_started
+    volumes:
+      - ../data/prometheus:/prometheus
+      - ../worker/prometheus/alerts:/etc/prometheus/alerts
+      - ../worker/prometheus:/etc/prometheus
+
+  alertmanager:
+    depends_on:
+      django:
+        condition: service_healthy
+    volumes:
+      - ../data/alertmanager:/alertmanager
+      - ../worker/alertmanager:/etc/alertmanager
+
+  blackbox:
+    depends_on:
+      django:
+        condition: service_healthy
+    volumes:
+      - ../worker/blackbox/blackbox.yml:/etc/prometheus/blackbox.yml:ro
+
+  telegraf:
+    depends_on:
+      django:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
+
+  heartbeats:
+    depends_on:
+      django:
+        condition: service_healthy
+    volumes:
+      - ../worker:/etc/fromedwin_heartbeats/worker
+      - ../worker/prometheus:/etc/fromedwin_heartbeats/worker/prometheus
+      - ../worker/alertmanager:/etc/fromedwin_heartbeats/worker/alertmanager
+
+  # Worker services (docker-compose.worker.yaml)
+  lighthouse:
+    depends_on:
+      django:
+        condition: service_healthy
+      prometheus:
+        condition: service_started
+    deploy:
+      replicas: ${LIGHTHOUSE_WORKER_REPLICA-1}
+    volumes:
+      - ../worker:/etc/monitor/worker
+
+  crawl4ai:
+    depends_on:
+      django:
+        condition: service_healthy
+
+  worker:
+    depends_on:
+      django:
+        condition: service_healthy
+      prometheus:
+        condition: service_started
+      crawl4ai:
+        condition: service_started
+    deploy:
+      replicas: ${CELERY_WORKER_REPLICA-3}
+    environment:
+      DJANGO_SETTINGS_MODULE: "fromedwin.settings.dev"
+    volumes:
+      - ../src:/app/src
+      - ../data:/app/data

@@ -1,6 +1,5 @@
 from django.forms import ModelForm, URLField, CharField, ValidationError
 from .models import Project
-from performances.models import Performance
 from notifications.models import Emails
 from availability.models import Service, HTTPCodeService 
 from django.conf import settings
@@ -96,7 +95,7 @@ class ProjectCreateForm(ModelForm):
         project.user = user
         project.save()
 
-        Performance.objects.create(url=url, project=project)
+        # Lighthouse.objects.create(url=url, project=project)
         service = Service.objects.create(project=project, title=domain)
         HTTPCodeService.objects.create(url=url, service=service)
         Emails.objects.create(project=project, email=user.email)

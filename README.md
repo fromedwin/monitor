@@ -1,109 +1,144 @@
-# Status From Edwin
+# FromEdwin Monitor
 
-This project provide an **out of the box** **highly opinionated implementation** of open-source **monitoring tools**, unified as a **no code web interface**.
+**A comprehensive, out-of-the-box monitoring solution with a no-code web interface**
 
-Metrics are focused on **availability**, with future integration for **performance**, **statistics**, **budget**, and **energy consumption**.
+FromEdwin Monitor is a highly opinionated implementation of open-source monitoring tools, unified through an intuitive web interface. Built for teams who want enterprise-grade monitoring without the complexity.
 
-[![Build action badge](https://github.com/fromedwin/monitor/actions/workflows/django.yml/badge.svg?branch=main)](https://github.com/fromedwin/monitor/actions/) [![Documentation Status](https://readthedocs.org/projects/fromedwin-monitor/badge/?version=latest)](https://fromedwin-monitor.readthedocs.io/en/latest/?badge=latest) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/fromedwin/monitor/blob/main/LICENSE)
+[![Build Status](https://github.com/fromedwin/monitor/actions/workflows/django.yml/badge.svg?branch=main)](https://github.com/fromedwin/monitor/actions/) [![Documentation Status](https://readthedocs.org/projects/fromedwin-monitor/badge/?version=latest)](https://fromedwin-monitor.readthedocs.io/en/latest/?badge=latest) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/fromedwin/monitor/blob/main/LICENSE)
 
-## Installation
+## ✨ Features
 
+- **🔍 Availability Monitoring** - Track website uptime and service availability
+- **📊 Performance Insights** - Monitor response times and performance metrics
+- **🚨 Intelligent Alerting** - Get notified when issues occur
+- **📈 Visual Dashboards** - Beautiful, intuitive monitoring dashboards
+- **🔧 No-Code Setup** - Configure monitoring through a web interface
+- **🐳 Docker Ready** - Deploy with a single command
+- **🔗 Integration Ready** - Built-in support for popular monitoring tools
+
+### Upcoming Features
+- Performance monitoring and optimization insights
+- Statistical analysis and reporting
+- Budget tracking and cost optimization
+- Energy consumption monitoring
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Python 3.8+
+- Docker & Docker Compose
+- Git
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/fromedwin/monitor.git
+   cd monitor
+   ```
+
+2. **Set up Python environment**
+   ```bash
+   python3 -m venv apps
+   source apps/bin/activate
+   pip install -r src/requirements.txt
+   ```
+
+3. **Start all services**
+   ```bash
+   ./fromedwin start
+   ```
+   
+   The script will automatically create a `.env` file with default values if one doesn't exist. You can customize the environment variables in the `.env` file as needed.
+   
+   Or alternatively:
+   ```bash
+   docker compose up -d
+   ```
+
+4. **Access the application**
+   ```bash
+   open http://localhost:8000
+   ```
+
+That's it! Your monitoring system is now running locally.
+
+## 🐳 Docker Management
+
+The project includes a convenient script (`fromedwin`) to manage Docker services:
+
+### Start Services
 ```bash
-python3 -m venv apps
-source apps/bin/activate
-
-# psycopg2 lib Apple silicon specific
-# brew install openssl
-# export LIBRARY_PATH=$LIBRARY_PATH:/opt/homebrew/opt/openssl/lib
-
-pip install -r src/requirements.txt
-
-# Generate random SECRET_KEY and inject in .env file
-SECRET_KEY=$(LC_CTYPE=C tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 32)
-# Or 
-# SECRET_KEY=$(openssl rand -base64 64)
-
-echo "SECRET_KEY=$SECRET_KEY" >> .env
-
-# For development, add DEBUG=1 in .env file
-# echo "DEBUG=1" >> .env
-
-# For a first setup, run migrate and createsuperuser
-python src/manage.py migrate
-# Create superuser to access django admin panel (migrate first for the first setup)
-python src/manage.py createsuperuser
-
-python src/manage.py tailwind install
+./fromedwin start
 ```
+This starts all Docker services (database, monitoring, worker, and main services) in detached mode.
 
-## Developpment mode
-
-### Django development server
-
-Start the development server by running the following command:
-
+### Stop Services
 ```bash
-python src/manage.py runserver
+./fromedwin stop
 ```
+This stops all Docker services and cleans up containers.
 
-To enable styling and hot-reload, run in parallel the following command:
+## 📖 Documentation
 
-```bash
-python src/manage.py tailwind start
-```
+Comprehensive documentation is available at [fromedwin-monitor.readthedocs.io](https://fromedwin-monitor.readthedocs.io/)
 
-### Services
+### Quick Links
+- [📚 Getting Started Guide](https://fromedwin-monitor.readthedocs.io/en/latest/introduction.html)
+- [⚙️ Installation Instructions](https://fromedwin-monitor.readthedocs.io/en/latest/installation.html)
+- [🏗️ Architecture Overview](https://fromedwin-monitor.readthedocs.io/en/latest/architecture.html)
+- [🔧 Configuration Guide](https://fromedwin-monitor.readthedocs.io/en/latest/models/)
 
-Project need a set of services like rabbitmq to run in the background. 
+### Local Development
 
-You can run them using the following:
+To run the documentation locally for development:
 
-```
-docker-compose -f docker-compose-services.yaml up -d
-```
+1. **Install sphinx-autobuild** (if not already installed):
+   ```bash
+   pip install sphinx-autobuild
+   ```
 
-### Scheduler
+2. **Navigate to the docs directory**:
+   ```bash
+   cd docs
+   ```
 
-Scheduler will run periodical tasks and propagate to workers
+3. **Start the local documentation server**:
+   ```bash
+   sphinx-autobuild ./docs ./docs/_build --port 8001
+   ```
 
-```
-cd src
-python ../scheduler/start_celery_beat.py
-```
+4. **Access local documentation** at `http://localhost:8001`
 
-or using docker
+The documentation will automatically rebuild when you make changes to the source files.
 
-```
-docker-compose -f docker-compose-beat.yaml --env-file=.env up -d
-```
+### Contributing
 
-### Worker
+We welcome contributions! Please see our [Contributing Guide](docs/contributing.md) for details.
 
-Worker will listen to tasks and run then individually 
+- 🐛 [Report bugs](https://github.com/fromedwin/monitor/issues/new)
+- 💡 [Suggest features](https://github.com/fromedwin/monitor/issues/new)
+- 📝 [Improve documentation](docs/)
+- 🔧 [Submit pull requests](https://github.com/fromedwin/monitor/pulls)
 
-```
-cd src
-python ../worker/start_celery_worker.py
-```
+## 🤝 Community
 
-or using docker
+- [Code of Conduct](docs/code-of-conduct.md)
+- [Contributing Guidelines](docs/contributing.md)
+- [Documentation](https://fromedwin-monitor.readthedocs.io/)
 
-```
-docker-compose -f docker-compose-worker.yaml --env-file=.env up -d
-```
+## 📄 License
 
-## Running documentation
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-```bash
-cd ./sphinx
-pip install -r requirements.txt
-sphinx-reload ../docs
-```
+## 🙏 Acknowledgments
 
-## Env variables
+Special thanks to the open-source projects that make FromEdwin Monitor possible:
 
-`DATABASE_URL`: (optional) URL to access database
+- [Lighthouse Viewer](https://github.com/dvelasquez/lighthouse-viewer) - Performance visualization
+- Django, Prometheus, Grafana, and the entire open-source monitoring ecosystem
 
-## Dependencies
+---
 
-- https://github.com/dvelasquez/lighthouse-viewer
+**Made with ❤️ by the FromEdwin team**

@@ -1,42 +1,80 @@
-# System architecture
+# Architecture
 
-<!--     
-	High-level overview of the system architecture
-    Detailed description of the major components and how they interact with each other
-    Information on the technologies and frameworks used to build the system
-    Details on the system's scalability and performance characteristics
-    Diagrams or illustrations to help explain the architecture
-    Information on how the system integrates with other tools and systems
-    Information on the security and data protection measures that are in place 
---> 
+User interface run as a **django project**. Data are stored in dev mode within **sqlite**, but should be stored on **postgresql** in production.
 
-The high-level overview of the FromEdwin's system architecture is a star pattern with a centralized server that acts as the hub for all the major components of the system. 
+**Django** create tasks using **celery** and dispatch them using **rabbitMQ**. It runs a **scheduler** to trigger tasks at regular interval. It also run multiple **workers** based on django code base.
 
-With such configuration, the centralized server is connected to multiple other systems or devices, which are referred as workers in the architecture. These workers are responsible for collecting data and sending it to the centralized server for processing and storage.
+A **typescript worker** run multipel replicas to trigger **lighthouse** reports.
 
-## Server
+Django generate a **prometheus** config file to trigger monitoring using **blackbox** plugin. **Alertmanager** is connected to prometheus and calling back webhooks to django.
 
-The UI and APIs provided by the centralized server allows users to **access** and **interact** with the monitoring data.
+**InfluxDB** store time serie metrics, using **telegraf** to read prometheus metrics. Django can query InfluxDB directly to display metrics.
 
-It is responsible for:
+```{mermaid}
+graph TD
+    %% Define styles
+    classDef infrastructure fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef worker fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    classDef monitoring fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef scheduler fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px
+    classDef external fill:#f5f5f5,stroke:#616161,stroke-width:1px
 
-- The **user interface** (UI)
-- The **application programming interfaces** (APIs) that allow communication between the different components
-- The **configuration files** that define the settings and parameters of the workers
-- The **databases** that store the data
+    %% Infrastructure Layer
+    RabbitMQ[RabbitMQ<br>Message Broker]
+    InfluxDB[InfluxDB<br>Time Series DB]
+    Telegraf[Telegraf<br>Metrics Collector]
 
-## Workers
+    %% Worker Layer
+    Celery[Celery Workers<br>Task Processing]
+    Lighthouse[Lighthouse Workers<br>Web Performance]
+    Heartbeats[Heartbeats Service<br>Health Monitoring]
 
-Each worker is responsible for **collecting** monitoring data, **processing**, and **storage**. 
+    %% Monitoring Layer
+    Prometheus[Prometheus<br>Metrics & Alerting]
+    Alertmanager[Alertmanager<br>Alert Handling]
+    Blackbox[Blackbox Exporter<br>Endpoint Monitoring]
 
-The worker functions as follows:
+    %% Scheduler Layer
+    Scheduler[Scheduler<br>Task Scheduling]
 
-- Upon initialization, the worker **registers itself** with the centralized server and **loads its configuration** files.
-- The worker then begins sending **regular updates**, called *"heartbeats",* to the centralized server at a set interval *(e.g., 10 seconds)*. These updates include information about the worker's status.
-- The worker also stores **non-critical data** locally used to trigger an alert.
+    %% External Systems
+    Backend[Backend API<br>External System]:::external
+    Websites[Monitored Websites<br>External Systems]:::external
 
-In this way, the worker functions as a monitoring agent that is able to function independently but still communicates with the centralized server to ensure data integrity and consistency.
-
----
-
-It is important to note that this is a high-level overview and more details about the different components and how they interact with each other will be discussed later in the documentation.
+    %% Connections - Infrastructure
+    RabbitMQ -->|Tasks| Celery
+    RabbitMQ -->|Tasks| Lighthouse
+    InfluxDB <-->|Store Metrics| Telegraf
+    
+    %% Connections - Workers
+    Celery -->|Results| Backend
+    Lighthouse -->|Performance Data| Backend
+    Lighthouse -->|Analyzes| Websites
+    Heartbeats -->|Health Status| Backend
+    
+    %% Connections - Monitoring
+    Prometheus -->|Alerts| Alertmanager
+    Prometheus -.->|Scrapes Metrics| RabbitMQ
+    Prometheus -.->|Scrapes Metrics| Blackbox
+    Blackbox -.->|Probes| Websites
+    Telegraf -.->|Collects Metrics| RabbitMQ
+    Telegraf -.->|Collects Metrics| Celery
+    
+    %% Connections - Scheduler
+    Scheduler -->|Schedules Tasks| RabbitMQ
+    
+    %% Apply styles
+    RabbitMQ:::infrastructure
+    InfluxDB:::infrastructure
+    Telegraf:::infrastructure
+    
+    Celery:::worker
+    Lighthouse:::worker
+    Heartbeats:::worker
+    
+    Prometheus:::monitoring
+    Alertmanager:::monitoring
+    Blackbox:::monitoring
+    
+    Scheduler:::scheduler
+```

@@ -59,22 +59,22 @@
                             {% if service.httpmockedcode %}Return HTTP {{ service.httpmockedcode.code }}{% endif %}</span>
                           </div>
                           <div class="text-sm pt-2 flex flex-wrap">
-                            {% if data.http_version %}
+                            {% if data.probe_http_version %}
                             <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 mb-2 mr-1">
-                              http{{ data.http_version }}
+                              http{{ data.probe_http_version }}
                             </span>
                             {% endif %}
-                            {% if data.http_code %}
+                            {% if data.probe_http_status_code %}
                             <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 mb-2 mr-1">
-                              http status code {{ data.http_code }}
+                              http status code {{ data.probe_http_status_code|floatformat:0 }}
                             </span>
                             {% endif %}
-                            {% if data.http_redirects %}
+                            {% if data.probe_http_redirects %}
                             <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 mb-2 mr-1">
-                              HTTP Redirect: {{ data.http_redirects }} 
+                              HTTP Redirect: {{ data.probe_http_redirects }} 
                             </span>
                             {% endif %}
-                            {% if data.tls_version_info %}
+                            {% if data.probe_tls_version_info %}
                             <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium text-yellow-800 bg-yellow-100 mb-2 mr-1">
                               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="-ml-0.5 mr-1.5 h-3 w-3 text-yellow-800">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
@@ -83,10 +83,10 @@
                             </span>
 
                             <span class="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 mb-2 mr-1">
-                              {{ data.tls_version_info }}
+                              TLS {{ data.probe_tls_version_info }}
                             </span>
                             <span class="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 mb-2 mr-1">
-                              SSL expiring in {{ data.ssl_earliest_cert_expiry|timestamp_to_date|timeuntil }}
+                              SSL expiring in {{ data.probe_ssl_earliest_cert_expiry|timestamp_to_date|timeuntil }}
                             </span>
                             {% elif data %}
                             <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 mb-2 mr-1">

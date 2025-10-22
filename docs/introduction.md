@@ -1,18 +1,23 @@
 # Introduction
 
-FromEdwin is a fast, easy-to-use, and highly opinionated monitoring solution designed for small business owners and web developers with side projects in mind. 
+FromEdwin Monitor was born from a real wake-up call: discovering that my project had been down for days without me knowing. This frustrating experience highlighted the critical need for reliable monitoring that doesn't require constant attention or complex setup.
 
-## Why an other monitoring app ?
+## The Problem
 
-FromEdwin is based on existing monitoring solutions, rather than being a completely new product. It offers a none customizable configuration setup that enables quick and easy monitoring of systems and applications, making it a highly opinionated and time-saving solution for basic needs.
+When building and growing projects, solo entrepreneurs and small teams often find themselves wishing for someone who could keep an eye on their applications, monitor their health, and report back regularly or alert them immediately when something goes wrong. This would allow them to focus on what they do best - building and growing - rather than spending countless hours configuring and maintaining monitoring systems.
 
-Designed to fulfill a specific need on one of our projects, it was decided to make it available as a SaaS version, allowing others to benefit from its simplicity as well, with the idea that if it works well for us, it might work well for others.
+## The Solution
 
-## List of features 
+With the advent of AI and modern monitoring tools, this has become easier to fulfill. **FromEdwin** is an implementation of an easy solution - an automated monitoring companion designed to watch over applications and infrastructure.
 
-- Monitors the **HTTP status code** of a specified URL
-- Notifies users of changes via **PagerDuty** notifications
-- Uses **GitHub for single sign-on** to simplify authentication
-- Provides a **public status page** to share availability information
+## Philosophy
 
-To learn more about the system architecture, please continue reading the next section.
+FromEdwin Monitor is built on the principle of **"opinionated but simple"**. It's designed to work out of the box with minimal configuration, providing users with:
+
+- **Immediate deployment** - Get started in minutes, not hours
+- **Comprehensive monitoring** - Availability, performance, and more
+- **Smart alerts** - Get notified when things matter
+- **Beautiful dashboards** - Clear, actionable insights
+- **Zero maintenance** - Edwin handles the monitoring so you don't have to
+  
+The philosophy culminates in regular "FromEdwin" reports - weekly insights into your system's health and performance. Yes, that's where the name comes from - Edwin sends you regular updates, just like a reliable colleague who keeps you in the loop!
